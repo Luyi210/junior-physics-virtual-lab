@@ -59,6 +59,7 @@ const modules: ExploreModule[] = [
 ];
 
 const lensDimensionModes = new Set<ExploreMode>(["magnifier", "bench", "camera", "eye", "correction", "instruments"]);
+const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
 
 function isMode(value: string | null): value is ExploreMode {
   return modules.some((module) => module.key === value);
@@ -256,7 +257,7 @@ function RainbowLifeSection() {
       number: "01",
       title: "雨后彩虹",
       tag: "最典型的自然色散",
-      image: "/images/rainbow/rainbow-after-rain.webp",
+      image: publicAsset("images/rainbow/rainbow-after-rain.webp"),
       alt: "雨后乌云和阳光之间出现完整的主虹",
       text: "太阳光进入雨滴时先折射并发生色散，在水滴内部反射一次，离开水滴时再次折射。不同颜色以不同方向进入眼睛，于是我们看见外红内紫的圆弧。"
     },
@@ -264,7 +265,7 @@ function RainbowLifeSection() {
       number: "02",
       title: "喷泉与水雾彩虹",
       tag: "生活中可以主动寻找",
-      image: "/images/rainbow/fountain-rainbow.webp",
+      image: publicAsset("images/rainbow/fountain-rainbow.webp"),
       alt: "阳光照射公园喷泉水雾形成近距离彩虹",
       text: "喷泉、瀑布和洒水器产生的大量小水滴，也能像雨滴一样分解阳光。背对太阳、面向水雾并改变观察位置，常能找到一段近距离彩虹。"
     },
@@ -272,7 +273,7 @@ function RainbowLifeSection() {
       number: "03",
       title: "双彩虹",
       tag: "一次反射与两次反射",
-      image: "/images/rainbow/double-rainbow.webp",
+      image: publicAsset("images/rainbow/double-rainbow.webp"),
       alt: "山脉上方同时出现明亮主虹和较暗副虹",
       text: "较亮的主虹来自水滴内一次反射；较暗的副虹来自两次反射，损失的光更多，而且颜色顺序与主虹相反。两道虹之间通常还会显得更暗。"
     }
@@ -302,7 +303,7 @@ function ShadowlessLampLife() {
       number: "01",
       title: "一只灯头，里面有许多发光单元",
       tag: "多个位置同时发光",
-      image: "/images/shadowless-lamp/lamp-closeup.jpg",
+      image: publicAsset("images/shadowless-lamp/lamp-closeup.jpg"),
       alt: "由多个反光面和发光区域组成的手术无影灯灯头",
       text: "无影灯不是只从一个小点发光。灯头里的多个灯珠或反光面，让光从不同位置同时射向同一片区域。"
     },
@@ -310,7 +311,7 @@ function ShadowlessLampLife() {
       number: "02",
       title: "多个灯头，从不同方向照明",
       tag: "让光线绕开遮挡",
-      image: "/images/shadowless-lamp/cardiac-operating-room.jpg",
+      image: publicAsset("images/shadowless-lamp/cardiac-operating-room.jpg"),
       alt: "手术室内悬挂在手术台上方的多个圆形无影灯",
       text: "手术台上方常有两个或更多灯头。医生的头或手挡住一个方向的光时，其他方向的光仍能到达手术区域。"
     },
@@ -318,7 +319,7 @@ function ShadowlessLampLife() {
       number: "03",
       title: "灯头对准同一个工作区域",
       tag: "阴影被其他光束补亮",
-      image: "/images/shadowless-lamp/laparoscopic-operating-room.jpg",
+      image: publicAsset("images/shadowless-lamp/laparoscopic-operating-room.jpg"),
       alt: "无影灯安装在手术台上方的现代手术室",
       text: "不同方向形成的影子位置并不完全重合。某束光留下的暗处，会被其他光束照亮，因此看起来影子很淡。"
     }
@@ -362,7 +363,7 @@ function EuvMirrorLife() {
       number: "01",
       title: "先进入几乎没有尘埃的制造环境",
       tag: "半导体洁净室",
-      image: "/images/euv-mirror/semiconductor-cleanroom.jpg",
+      image: publicAsset("images/euv-mirror/semiconductor-cleanroom.jpg"),
       alt: "研究人员在黄色照明的半导体洁净室中操作设备",
       text: "芯片上的结构非常微小，灰尘也可能破坏图案。EUV光路还必须在真空中工作，因为空气会强烈吸收这种极短波长的光。"
     },
@@ -370,7 +371,7 @@ function EuvMirrorLife() {
       number: "02",
       title: "普通玻璃透镜在这里帮不上忙",
       tag: "早期EUV实验设备",
-      image: "/images/euv-mirror/euv-tool.jpg",
+      image: publicAsset("images/euv-mirror/euv-tool.jpg"),
       alt: "研究人员站在早期极紫外光刻实验设备旁",
       text: "13.5纳米的极紫外光会被普通玻璃吸收，因此设备不能像照相机那样主要依靠透镜，只能让光在多面超精密反射镜之间接力传播。"
     },
@@ -378,7 +379,7 @@ function EuvMirrorLife() {
       number: "03",
       title: "最后把微小图案投向硅晶圆",
       tag: "晶圆与芯片阵列",
-      image: "/images/euv-mirror/silicon-wafer.jpg",
+      image: publicAsset("images/euv-mirror/silicon-wafer.jpg"),
       alt: "表面排列着大量方形芯片图案的硅晶圆",
       text: "反射镜不仅改变光的方向，还要把光准确整形和聚焦，最终将掩模上的图案缩小投射到涂有感光材料的晶圆上。"
     }
@@ -446,7 +447,7 @@ function NegativeRefractionLife() {
       number: "01",
       title: "关键不只在材料成分，更在微小结构",
       tag: "NASA超材料阵列",
-      image: "/images/negative-refraction/split-ring-array.jpg",
+      image: publicAsset("images/negative-refraction/split-ring-array.jpg"),
       alt: "由许多铜制开口环和导线单元排列成的超材料阵列",
       text: "超材料常由大量比工作波长更小的人工单元按规律排列。电磁波感受到的是整体结构产生的效果，因此它可能表现出普通天然材料没有的性质。"
     },
@@ -454,7 +455,7 @@ function NegativeRefractionLife() {
       number: "02",
       title: "折射光跑到了法线的“反常”一侧",
       tag: "正折射与负折射",
-      image: "/images/negative-refraction/negative-index-focusing.png",
+      image: publicAsset("images/negative-refraction/negative-index-focusing.png"),
       alt: "正折射、负折射和负折射材料聚焦光线的对比示意图",
       text: "普通材料中，折射光与入射光分居法线两侧；在负折射示意中，折射光会落在法线的另一种位置，看起来像向通常相反的方向偏折。"
     },
@@ -462,7 +463,7 @@ function NegativeRefractionLife() {
       number: "03",
       title: "让电磁波像水流绕过石头",
       tag: "实验性电磁隐身样品",
-      image: "/images/negative-refraction/electromagnetic-cloak.jpg",
+      image: publicAsset("images/negative-refraction/electromagnetic-cloak.jpg"),
       alt: "由多层金属圆片组成的宽带电磁隐身实验样品",
       text: "某些隐身设计尝试让电磁波在物体周围分流，经过后再重新汇合，减少反射和阴影。已有代表性实验主要针对微波等特定波段，并非肉眼可见的万能隐身衣。"
     }

@@ -2,6 +2,12 @@
 
 现代化、组件化、前后端可扩展的初中物理实验平台。当前第一阶段实现网页端平台首页与凸透镜实验工作台。
 
+## 在线访问
+
+GitHub Pages：<https://luyi210.github.io/junior-physics-virtual-lab/>
+
+每次更新 `main` 分支后，GitHub Actions 会自动构建并发布最新网页。
+
 ## 技术结构
 
 - `apps/web`：React + TypeScript + Vite 网页端
