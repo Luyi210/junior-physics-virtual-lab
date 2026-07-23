@@ -147,6 +147,241 @@
   .harness-dock-trigger { right: auto; bottom: 20px; left: 20px; }
 }
 
+@layer pages {
+  /* Tray balance: a complete measurement workflow instead of a pre-filled calculator. */
+  .balance-guide-backdrop { position: fixed; z-index: 1200; inset: 0; display: grid; place-items: center; padding: 24px; overflow-y: auto; color: #17313a; background: rgba(3,18,25,.8); backdrop-filter: blur(12px) saturate(.78); animation: balance-guide-backdrop-in .22s ease both; }
+  .balance-guide-dialog { --guide-gold: #d8b756; width: min(1080px,100%); min-height: 660px; display: grid; grid-template-columns: minmax(365px,.82fr) minmax(500px,1.18fr); overflow: hidden; border: 1px solid rgba(238,218,157,.48); background: #f6f2e7; box-shadow: 15px 15px 0 rgba(216,183,86,.76),0 40px 100px rgba(0,10,15,.55); animation: balance-guide-dialog-in .38s cubic-bezier(.2,.8,.2,1) both; }
+  .balance-guide-close { position: absolute; z-index: 5; top: max(38px,calc((100vh - 660px)/2 + 18px)); right: max(38px,calc((100vw - min(1080px,100vw))/2 + 18px)); width: 40px; height: 40px; display: grid; place-items: center; color: #486169; border: 1px solid #bcc1b8; background: rgba(246,242,231,.92); font-family: var(--mono); font-size: 24px !important; cursor: pointer; }
+  .balance-guide-close:hover { color: #f5f2e8; border-color: #18343d; background: #18343d; transform: rotate(4deg); }
+  .balance-guide-visual { position: relative; min-height: 660px; overflow: hidden; color: #dce9e6; border-right: 1px solid #496169; background: linear-gradient(rgba(118,183,176,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(118,183,176,.055) 1px,transparent 1px),radial-gradient(circle at 50% 44%,rgba(88,170,161,.14),transparent 33%),#09252f; background-size: 26px 26px,26px 26px,auto,auto; }
+  .balance-guide-visual::before { content: "MASS · BALANCE · MEASUREMENT"; position: absolute; right: 15px; bottom: 150px; color: rgba(130,168,169,.24); font-family: var(--mono); font-size: 10px; font-weight: 800; letter-spacing: .16em; writing-mode: vertical-rl; }
+  .balance-guide-plate { position: absolute; z-index: 3; top: 28px; left: 27px; display: grid; gap: 4px; padding-left: 13px; border-left: 3px solid var(--guide-gold); }
+  .balance-guide-plate span { color: #68aeaa; font-family: var(--mono); font-size: 9px; font-weight: 800; letter-spacing: .14em; }
+  .balance-guide-plate strong { color: #f3f4eb; font-size: 24px; }
+  .balance-guide-plate small { color: #7e999b; font-size: 11px !important; font-weight: 700; }
+  .balance-guide-apparatus { position: absolute; top: 116px; right: 22px; left: 22px; height: 385px; }
+  .guide-dial { position: absolute; z-index: 4; top: 5px; left: 50%; width: 120px; height: 50px; border: 1px solid #687e81; border-radius: 70px 70px 7px 7px; background: #14333d; transform: translateX(-50%); }
+  .guide-dial::before { content: "−  −  −  0  +  +  +"; position: absolute; right: 10px; bottom: 7px; left: 10px; color: #739093; font-family: var(--mono); font-size: 8px; text-align: center; }
+  .guide-dial i { position: absolute; bottom: 7px; left: 50%; width: 2px; height: 34px; background: #ecd06e; box-shadow: 0 0 8px rgba(236,208,110,.55); transform-origin: bottom; animation: guide-pointer-settle 1.8s ease-in-out infinite; }
+  .guide-column { position: absolute; z-index: 1; top: 54px; bottom: 44px; left: 50%; width: 20px; border: 1px solid #536a70; background: linear-gradient(90deg,#193a43,#52666a,#17363f); transform: translateX(-50%); }
+  .guide-beam { position: absolute; z-index: 4; top: 150px; left: 50%; width: 92%; height: 17px; border: 1px solid #849596; background: linear-gradient(#78898b,#2b4b54); box-shadow: 0 5px 9px rgba(0,0,0,.28); transform: translateX(-50%); }
+  .guide-beam::after { content: ""; position: absolute; top: 50%; left: 50%; width: 25px; height: 25px; border: 5px solid #c8a94e; border-radius: 50%; background: #102d36; transform: translate(-50%,-50%); }
+  .guide-beam > i { position: absolute; top: -5px; width: 24px; height: 28px; border-radius: 4px; background: repeating-linear-gradient(90deg,#927c3e 0 3px,#cfb15b 3px 5px); }
+  .guide-beam > i:first-child { left: 20px; }
+  .guide-beam > i:last-child { right: 20px; }
+  .guide-pan { position: absolute; z-index: 3; top: 168px; width: 35%; height: 115px; border-right: 1px solid #7a9092; border-left: 1px solid #7a9092; }
+  .guide-pan::before { content: ""; position: absolute; right: -4px; bottom: 0; left: -4px; height: 46px; border: 1px solid #75898b; border-radius: 0 0 50% 50%; background: #183842; }
+  .guide-pan.left { left: 2%; }
+  .guide-pan.right { right: 2%; }
+  .guide-pan span { position: absolute; z-index: 2; right: 0; bottom: 10px; left: 0; color: #efd77e; font-size: 20px; font-weight: 700; text-align: center; }
+  .guide-base { position: absolute; z-index: 3; right: 19%; bottom: 22px; left: 19%; height: 54px; display: grid; place-items: center; color: #dabb5d; border: 1px solid #556d72; background: linear-gradient(#183a44,#0c2a34); box-shadow: 0 10px 18px rgba(0,0,0,.3); }
+  .guide-rider { position: absolute; z-index: 4; right: 24%; bottom: 82px; left: 24%; height: 20px; border-top: 2px solid #70878a; background: repeating-linear-gradient(90deg,#70878a 0 1px,transparent 1px 11px); }
+  .guide-rider i { position: absolute; top: -8px; left: 0; width: 18px; height: 18px; border: 1px solid #e1c463; background: #af9241; box-shadow: 0 0 9px rgba(225,196,99,.4); transition: left .4s ease; }
+  .guide-step-5 .guide-rider i,.guide-step-6 .guide-rider i { left: 54%; }
+  .guide-highlight { position: absolute; z-index: 8; min-height: 28px; display: flex; align-items: center; padding: 0 9px; color: #172e35; border-radius: 2px; background: #efd46f; box-shadow: 0 0 0 4px rgba(239,212,111,.12),0 6px 15px rgba(0,0,0,.28); font-size: 11px; opacity: 0; transform: translateY(5px); transition: opacity .25s ease,transform .25s ease; }
+  .guide-highlight::after { content: ""; position: absolute; width: 32px; border-top: 1px dashed #efd46f; }
+  .highlight-zero { bottom: 56px; left: 23%; }
+  .highlight-zero::after { top: -28px; left: 17px; transform: rotate(61deg); }
+  .highlight-nut { top: 106px; right: 3px; }
+  .highlight-nut::after { top: 19px; right: 100%; }
+  .highlight-object { top: 260px; left: 0; }
+  .highlight-object::after { top: -18px; left: 58%; transform: rotate(70deg); }
+  .highlight-weight { top: 260px; right: 0; }
+  .highlight-weight::after { top: -18px; right: 58%; transform: rotate(-70deg); }
+  .highlight-rider { right: 3px; bottom: 55px; }
+  .highlight-rider::after { right: 100%; }
+  .highlight-reading { top: 34px; right: 8px; }
+  .highlight-reading::after { top: 30px; right: 74%; transform: rotate(63deg); }
+  .guide-step-1 .highlight-zero,.guide-step-2 .highlight-nut,.guide-step-3 .highlight-object,.guide-step-3 .highlight-weight,.guide-step-4 .highlight-weight,.guide-step-5 .highlight-rider,.guide-step-6 .highlight-reading { opacity: 1; transform: none; }
+  .balance-guide-formula { position: absolute; right: 25px; bottom: 25px; left: 25px; display: grid; gap: 7px; padding: 16px 18px; border: 1px solid #435d65; background: rgba(4,20,27,.72); }
+  .balance-guide-formula small { color: #69aaa7; font-family: var(--mono); font-size: 9px !important; font-weight: 800; letter-spacing: .12em; }
+  .balance-guide-formula strong { color: #f1d470; font-family: var(--serif); font-size: 19px; letter-spacing: .03em; }
+  .balance-guide-formula sub { font-size: .62em; }
+
+  .balance-guide-content { min-width: 0; display: flex; flex-direction: column; padding: 50px 48px 36px; }
+  .balance-guide-heading { position: relative; padding-right: 54px; }
+  .balance-guide-heading > span { color: #98803c; font-family: var(--mono); font-size: 11px; font-weight: 800; letter-spacing: .13em; }
+  .balance-guide-heading > b { position: absolute; top: 0; right: 0; color: #c2bda9; font-family: var(--mono); font-size: 13px; }
+  .balance-guide-heading h2 { margin-top: 13px; color: #17313a; font-size: clamp(31px,3vw,42px); line-height: 1.2; }
+  .balance-guide-heading > strong { display: block; margin-top: 8px; color: #4c706e; font-size: 17px; line-height: 1.5; }
+  .balance-guide-content > p { min-height: 105px; margin-top: 24px; color: #667879; font-size: 15px !important; font-weight: 600; line-height: 1.9 !important; }
+  .balance-guide-notice { min-height: 72px; display: grid; grid-template-columns: 28px 1fr; align-items: center; gap: 11px; padding: 12px 15px; color: #594c28; border-left: 4px solid #d2a93d; background: #efe2b9; }
+  .balance-guide-notice svg { color: #ae8125; }
+  .balance-guide-notice span { display: grid; gap: 3px; }
+  .balance-guide-notice small { color: #9c782b; font-size: 10px !important; font-weight: 800; letter-spacing: .08em; }
+  .balance-guide-notice strong { font-size: 14px; line-height: 1.45; }
+  .balance-guide-stepper { display: grid; grid-template-columns: repeat(6,1fr); margin-top: 24px; border: 1px solid #cdc7b8; }
+  .balance-guide-stepper button { min-width: 0; min-height: 78px; display: grid; place-content: center; justify-items: center; gap: 7px; padding: 7px 3px; color: #8a928e; border-right: 1px solid #cdc7b8; background: rgba(255,255,255,.18); cursor: pointer; }
+  .balance-guide-stepper button:last-child { border-right: 0; }
+  .balance-guide-stepper button b { width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid #b8b4a7; font-family: var(--mono); font-size: 9px; }
+  .balance-guide-stepper button span { font-size: 10px; font-weight: 700; white-space: nowrap; }
+  .balance-guide-stepper button:hover { color: #294c4d; background: #ebe8dc; }
+  .balance-guide-stepper button.active { color: #20393e; background: #e5d49b; box-shadow: inset 0 -4px 0 #b9902d; }
+  .balance-guide-stepper button.active b { color: #f8f5ec; border-color: #17343d; background: #17343d; }
+  .balance-guide-stepper button.done { color: #3f766d; }
+  .balance-guide-stepper button.done b { color: #eff8f5; border-color: #4d9d8d; background: #4d9d8d; }
+  .balance-guide-content > footer { min-height: 58px; display: grid; grid-template-columns: 115px 1fr 170px; align-items: end; gap: 15px; margin-top: auto; }
+  .balance-guide-content > footer button { min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #3f5c60; border: 1px solid #aeb5ad; background: transparent; cursor: pointer; font-weight: 700; }
+  .balance-guide-content > footer button:hover:not(:disabled) { color: #f4f5ec; border-color: #17343d; background: #17343d; }
+  .balance-guide-content > footer button:disabled { opacity: .35; cursor: not-allowed; }
+  .balance-guide-content > footer button.primary { color: #f7f4e9; border-color: #17343d; background: #17343d; box-shadow: 4px 4px 0 #d3ae45; }
+  .balance-guide-content > footer button.primary:hover { color: #17343d; border-color: #d5b34f; background: #d5b34f; transform: translate(2px,2px); box-shadow: 2px 2px 0 #17343d; }
+  .balance-guide-content > footer > span { align-self: center; color: #929a96; font-size: 10px; font-weight: 600; text-align: center; }
+  @keyframes balance-guide-backdrop-in { from { opacity: 0; } }
+  @keyframes balance-guide-dialog-in { from { opacity: 0; transform: translateY(24px) scale(.975); } }
+  @keyframes guide-pointer-settle { 0%,100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+
+  .tray-balance-lab { --science-accent: #d9b455; }
+  .balance-lab-sim { position: relative; min-height: 980px; overflow: hidden; color: #e8efec; border-top: 1px solid #28454e; background: linear-gradient(rgba(112,188,179,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(112,188,179,.045) 1px,transparent 1px),radial-gradient(circle at 37% 36%,rgba(52,125,126,.18),transparent 29%),#071d27; background-size: 30px 30px,30px 30px,auto,auto; }
+  .balance-lab-sim::before { content: "MASS LAB · M-01"; position: absolute; top: 78px; left: 22px; color: rgba(148,183,181,.35); font-family: var(--mono); font-size: 11px; font-weight: 800; letter-spacing: .14em; writing-mode: vertical-rl; }
+  .balance-procedure-strip { min-height: 68px; display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid #2b4650; background: rgba(9,32,42,.94); }
+  .balance-procedure-strip span { position: relative; display: flex; align-items: center; gap: 10px; padding: 10px 17px; color: #6f878b; border-right: 1px solid #2b4650; font-size: 13px; font-weight: 700; }
+  .balance-procedure-strip span:last-child { border-right: 0; }
+  .balance-procedure-strip span::after { content: ""; position: absolute; right: 0; bottom: 0; left: 0; height: 3px; background: transparent; }
+  .balance-procedure-strip b { width: 27px; height: 27px; flex: 0 0 auto; display: grid; place-items: center; color: #81979a; border: 1px solid #49616a; font-size: 12px; }
+  .balance-procedure-strip span.active { color: #f4f3e9; background: rgba(217,180,85,.07); }
+  .balance-procedure-strip span.active::after { background: #d9b455; }
+  .balance-procedure-strip span.active b { color: #152c34; border-color: #d9b455; background: #d9b455; box-shadow: 0 0 16px rgba(217,180,85,.24); }
+  .balance-procedure-strip span.done { color: #80cabb; }
+  .balance-procedure-strip span.done b { color: #08231f; border-color: #61cbb7; background: #61cbb7; }
+
+  .tray-balance-workbench { min-height: 615px; display: grid; grid-template-columns: minmax(520px,1.25fr) minmax(300px,.75fr); border-bottom: 1px solid #294650; }
+  .tray-balance-apparatus { position: relative; min-width: 0; min-height: 615px; overflow: hidden; border-right: 1px solid #294650; background: radial-gradient(ellipse at 50% 95%,rgba(55,111,113,.22),transparent 48%); }
+  .tray-balance-apparatus::before { content: ""; position: absolute; right: 7%; bottom: 54px; left: 7%; height: 18px; border: 1px solid #34535d; background: #0c2732; box-shadow: 0 11px 28px rgba(0,0,0,.33); transform: perspective(260px) rotateX(46deg); }
+  .tray-balance-dial { position: absolute; z-index: 4; top: 34px; left: 50%; width: 220px; height: 70px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: end; padding: 8px 7px 10px; color: #718d91; border: 1px solid #466169; border-radius: 110px 110px 10px 10px; background: linear-gradient(#173741,#0a232e); box-shadow: inset 0 0 18px rgba(0,0,0,.28),0 9px 25px rgba(0,0,0,.2); transform: translateX(-50%); }
+  .tray-balance-dial > span { font-size: 10px; font-weight: 700; text-align: center; }
+  .tray-balance-dial > div { height: 42px; display: flex; align-items: end; justify-content: space-between; }
+  .tray-balance-dial i { width: 1px; height: 15px; display: block; background: #6d8589; transform-origin: bottom; }
+  .tray-balance-dial i:nth-child(-n+6) { transform: rotate(13deg); }
+  .tray-balance-dial i:nth-child(n+8) { transform: rotate(-13deg); }
+  .tray-balance-dial i.zero { height: 26px; background: #d9b455; box-shadow: 0 0 7px rgba(217,180,85,.55); }
+  .tray-balance-dial > b { position: absolute; z-index: 3; bottom: 8px; left: 50%; width: 3px; height: 51px; border-radius: 2px; background: #f0d477; box-shadow: 0 0 9px rgba(240,212,119,.65); transform-origin: 50% 100%; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+  .tray-balance-column { position: absolute; z-index: 1; top: 94px; bottom: 100px; left: 50%; width: 31px; border: 1px solid #446069; background: linear-gradient(90deg,#132e38,#35515a 47%,#102a34); transform: translateX(-50%); }
+  .tray-balance-column i { position: absolute; top: 116px; left: 50%; width: 16px; height: 16px; border: 4px solid #d0ad55; border-radius: 50%; background: #102933; transform: translateX(-50%); }
+  .tray-balance-beam { position: absolute; z-index: 5; top: 230px; left: 50%; width: min(84%,680px); height: 24px; border: 1px solid #6d7f80; border-radius: 4px; background: linear-gradient(#889596,#3e555c 48%,#1b353f 52%,#526970); box-shadow: 0 5px 12px rgba(0,0,0,.35); transform-origin: 50% 50%; transition: transform .4s cubic-bezier(.2,.75,.2,1); }
+  .tray-balance-beam::after { content: ""; position: absolute; inset: 7px 50px; border-top: 1px dashed rgba(234,220,171,.45); }
+  .beam-center { position: absolute; top: 50%; left: 50%; width: 34px; height: 34px; border: 6px solid #c5a44e; border-radius: 50%; background: #132d36; transform: translate(-50%,-50%); }
+  .beam-nut { position: absolute; top: -7px; width: 31px; height: 38px; border: 1px solid #8b815e; border-radius: 5px; background: repeating-linear-gradient(90deg,#8d7841 0 3px,#c7aa59 3px 5px); }
+  .beam-nut.left { left: 24px; }
+  .beam-nut.right { right: 24px; }
+  .tray-pan { position: absolute; z-index: 4; top: 255px; width: min(31%,220px); height: 182px; transition: transform .4s cubic-bezier(.2,.75,.2,1); }
+  .tray-pan.left { left: 7%; }
+  .tray-pan.right { right: 7%; }
+  .pan-cable { position: absolute; top: 0; right: 14px; left: 14px; height: 104px; border-right: 1px solid #829597; border-left: 1px solid #829597; }
+  .pan-cable::before { content: ""; position: absolute; top: -2px; right: -7px; left: -7px; height: 1px; background: #829597; }
+  .tray-pan > span { position: absolute; right: 0; bottom: 0; left: 0; height: 84px; display: flex; align-items: flex-end; justify-content: center; gap: 3px; padding: 0 14px 20px; color: #758d90; border: 1px solid #647b7f; border-radius: 0 0 50% 50% / 0 0 25px 25px; background: linear-gradient(rgba(77,101,106,.3),rgba(23,52,61,.78)); box-shadow: inset 0 -13px 17px rgba(0,0,0,.2),0 14px 18px rgba(0,0,0,.24); }
+  .tray-pan > span::before { content: ""; position: absolute; top: -5px; right: -1px; left: -1px; height: 10px; border: 1px solid #87989a; border-radius: 50%; background: #203d46; }
+  .tray-pan em { align-self: center; margin-top: 18px; font-size: 12px; font-style: normal; font-weight: 700; }
+  .unknown-sample { position: relative; z-index: 2; width: 78px; height: 59px; display: grid; place-content: center; justify-items: center; color: #243034; border: 1px solid #c8aa66; border-radius: 8px 8px 3px 3px; background: linear-gradient(135deg,#d7b875,#8c6937); box-shadow: inset 8px 8px 12px rgba(255,255,255,.14),6px 7px 10px rgba(0,0,0,.3); }
+  .unknown-sample::before { content: ""; position: absolute; top: -5px; left: 15px; width: 48px; height: 7px; border-radius: 50%; background: #d7bd82; }
+  .unknown-sample small { font-size: 10px !important; }
+  .unknown-sample strong { font-family: var(--mono); font-size: 25px; line-height: 1; }
+  .pan-weight { position: relative; z-index: 2; width: 30px; height: calc(25px + var(--weight-index,0) * 1px); display: grid; place-items: center; color: #292813; border: 1px solid #aa984f; border-radius: 4px 4px 2px 2px; background: linear-gradient(90deg,#a68938,#e0c668 48%,#8b722b); box-shadow: 2px 3px 5px rgba(0,0,0,.32); font-family: var(--mono); font-size: 9px; }
+  .pan-weight::before { content: ""; position: absolute; top: -5px; width: 15px; height: 7px; border-radius: 4px 4px 0 0; background: #c4a94b; }
+  .tray-balance-base { position: absolute; z-index: 3; right: 17%; bottom: 49px; left: 17%; height: 68px; display: grid; grid-template-columns: 34px 1fr; align-content: center; align-items: center; column-gap: 9px; padding: 8px 21px; color: #d7e1de; border: 1px solid #4b6268; background: linear-gradient(135deg,#183640,#0b2631); box-shadow: 0 12px 20px rgba(0,0,0,.33); }
+  .tray-balance-base svg { grid-row: 1 / 3; color: #d9b455; }
+  .tray-balance-base span { font-size: 14px; font-weight: 700; }
+  .tray-balance-base small { color: #789094; font-size: 10px !important; }
+
+  .balance-operation-dock { min-width: 0; display: grid; grid-template-rows: auto auto 1fr; background: #102a34; }
+  .balance-operation-dock section { min-width: 0; padding: 18px 19px; border-bottom: 1px solid #304a53; background: rgba(8,27,36,.28); transition: background .25s ease,box-shadow .25s ease; }
+  .balance-operation-dock section.active { background: rgba(217,180,85,.08); box-shadow: inset 4px 0 0 #d9b455; }
+  .balance-operation-dock section.done { background: rgba(72,183,157,.055); box-shadow: inset 4px 0 0 #55bea9; }
+  .balance-operation-dock section > header { display: flex; align-items: center; gap: 11px; }
+  .balance-operation-dock section > header > b { width: 30px; height: 30px; display: grid; place-items: center; color: #d6b65d; border: 1px solid #73683f; font-family: var(--mono); font-size: 11px; }
+  .balance-operation-dock section > header span { display: grid; gap: 2px; }
+  .balance-operation-dock section > header small { color: #67868a; font-size: 9px !important; font-weight: 800; letter-spacing: .12em; }
+  .balance-operation-dock section > header strong { color: #edf1e8; font-size: 16px; }
+  .balance-operation-dock section > p { margin-top: 10px; color: #879da0; font-size: 12px !important; font-weight: 600; line-height: 1.6 !important; }
+  .balance-nut-controls { display: grid; grid-template-columns: 1fr 104px 1fr; margin-top: 13px; border: 1px solid #405a62; }
+  .balance-nut-controls button,.balance-object-button { min-height: 40px; padding: 0 9px; color: #cadad8; background: #173944; cursor: pointer; font-size: 12px !important; font-weight: 700; }
+  .balance-nut-controls button:hover,.balance-object-button:hover { color: #172b31; background: #d9b455; }
+  .balance-nut-controls button:disabled,.balance-object-button:disabled { color: #60767a; background: #112c36; cursor: not-allowed; opacity: .7; }
+  .balance-nut-controls output { display: grid; place-items: center; color: #dfc568; border-right: 1px solid #405a62; border-left: 1px solid #405a62; background: #091f29; font-size: 11px !important; font-weight: 700; text-align: center; }
+  .balance-object-button { width: 100%; margin-top: 13px; border: 1px solid #49646b; }
+  .balance-weight-buttons { display: grid; grid-template-columns: repeat(6,1fr); gap: 5px; margin-top: 13px; }
+  .balance-weight-buttons button { min-width: 0; height: 58px; display: grid; grid-template-columns: 1fr auto; place-content: center; align-items: end; gap: 1px; color: #8ea1a3; border: 1px solid #3a555e; background: #0b232d; cursor: pointer; }
+  .balance-weight-buttons button i { grid-column: 1 / -1; width: 22px; height: 14px; justify-self: center; border: 1px solid #6e704f; border-radius: 5px 5px 2px 2px; background: linear-gradient(90deg,#776c38,#b09d52,#6b5f31); }
+  .balance-weight-buttons button strong { font-family: var(--mono); font-size: 11px; }
+  .balance-weight-buttons button small { font-size: 8px !important; }
+  .balance-weight-buttons button:hover:not(:disabled) { color: #f2e4af; border-color: #c2a950; background: #17333d; }
+  .balance-weight-buttons button.selected { color: #162b30; border-color: #e2c45e; background: #d9b455; box-shadow: inset 0 -3px 0 #8e7432; }
+  .balance-weight-buttons button:disabled { cursor: not-allowed; opacity: .35; }
+
+  .balance-rider-console { min-height: 165px; display: grid; grid-template-columns: 240px 1fr; align-items: center; gap: 24px; padding: 22px 28px; border-bottom: 1px solid #2a4750; background: #0b252f; }
+  .balance-rider-heading span { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .balance-rider-heading small { color: #65c5b4; font-size: 10px !important; font-weight: 800; letter-spacing: .1em; }
+  .balance-rider-heading strong { color: #f0d16d; font-family: var(--mono); font-size: 21px; }
+  .balance-rider-heading p { margin-top: 8px; color: #7d9699; font-size: 12px !important; font-weight: 600; line-height: 1.55 !important; }
+  .balance-rider-scale { position: relative; height: 94px; padding: 8px 12px 0; border: 1px solid #405b64; background: linear-gradient(#173640,#0d2933); box-shadow: inset 0 8px 18px rgba(0,0,0,.18); }
+  .balance-rider-scale > div { height: 35px; display: flex; align-items: start; justify-content: space-between; }
+  .balance-rider-scale i { width: 1px; height: 11px; display: block; background: #6b8588; }
+  .balance-rider-scale i.middle { height: 17px; background: #91a6a6; }
+  .balance-rider-scale i.major { height: 25px; background: #d9b455; }
+  .rider-labels { position: absolute; top: 31px; right: 11px; left: 11px; display: flex; justify-content: space-between; color: #879c9f; }
+  .rider-labels b { font-family: var(--mono); font-size: 9px; }
+  .balance-rider-scale input { position: absolute; right: 10px; bottom: 11px; left: 10px; width: calc(100% - 20px); margin: 0; accent-color: #e3c35e; cursor: ew-resize; }
+  .balance-live-guidance { min-height: 83px; display: flex; align-items: center; gap: 14px; padding: 15px 27px; color: #cad9d7; border-left: 5px solid #d9b455; background: #122f39; }
+  .balance-live-guidance > svg { flex: 0 0 auto; color: #e4c45e; }
+  .balance-live-guidance span { display: grid; gap: 5px; }
+  .balance-live-guidance small { color: #728e92; font-size: 10px !important; font-weight: 800; letter-spacing: .1em; }
+  .balance-live-guidance strong { font-size: 15px; line-height: 1.45; }
+  .balance-live-guidance.success { border-left-color: #60d0b9; background: #123b3a; }
+  .balance-live-guidance.success > svg,.balance-live-guidance.success small { color: #6ee0c7; }
+  .balance-results .science-result-cell:last-child strong { color: #d0a934; }
+  .balance-results .science-result-cell:last-child:not(.awaiting-reading) { background: #edf2e6; box-shadow: inset 0 -4px 0 #5dbba8; }
+  .balance-lab-sim.is-balanced .tray-balance-dial > b { background: #70e1c9; box-shadow: 0 0 11px rgba(112,225,201,.75); }
+
+  @media (max-width: 1000px) {
+    .balance-guide-dialog { grid-template-columns: minmax(300px,.7fr) minmax(450px,1.3fr); }
+    .balance-guide-content { padding-inline: 32px; }
+    .tray-balance-workbench { grid-template-columns: 1fr; }
+    .tray-balance-apparatus { min-height: 580px; border-right: 0; border-bottom: 1px solid #294650; }
+    .balance-operation-dock { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+    .balance-operation-dock section:last-child { grid-column: 1 / -1; }
+    .balance-rider-console { grid-template-columns: 1fr; gap: 13px; }
+  }
+  @media (max-width: 650px) {
+    .balance-guide-backdrop { align-items: end; padding: 12px; }
+    .balance-guide-dialog { width: calc(100vw - 24px); min-height: 0; max-height: calc(100dvh - 24px); grid-template-columns: 1fr; overflow-y: auto; box-shadow: 7px 7px 0 rgba(216,183,86,.76); }
+    .balance-guide-close { position: fixed; top: 22px; right: 22px; color: #edf5f2; border-color: rgba(237,245,242,.4); background: rgba(9,37,47,.86); }
+    .balance-guide-visual { min-height: 250px; border-right: 0; border-bottom: 1px solid #496169; }
+    .balance-guide-plate { top: 18px; left: 18px; }
+    .balance-guide-plate strong { font-size: 20px; }
+    .balance-guide-apparatus { top: 65px; right: 14px; left: 14px; height: 180px; transform: scale(.62); transform-origin: center top; }
+    .balance-guide-formula { right: 15px; bottom: 13px; left: auto; width: 220px; padding: 9px 11px; }
+    .balance-guide-formula small { display: none; }
+    .balance-guide-formula strong { font-size: 14px; }
+    .balance-guide-content { padding: 24px 19px 21px; }
+    .balance-guide-heading h2 { margin-top: 8px; font-size: 28px; }
+    .balance-guide-heading > strong { font-size: 14px; }
+    .balance-guide-content > p { min-height: 0; margin-top: 15px; font-size: 13px !important; line-height: 1.72 !important; }
+    .balance-guide-notice { min-height: 60px; margin-top: 15px; }
+    .balance-guide-stepper { grid-template-columns: repeat(3,1fr); margin-top: 17px; }
+    .balance-guide-stepper button { min-height: 58px; border-bottom: 1px solid #cdc7b8; }
+    .balance-guide-stepper button:nth-child(3) { border-right: 0; }
+    .balance-guide-stepper button:nth-child(n+4) { border-bottom: 0; }
+    .balance-guide-stepper button span { display: none; }
+    .balance-guide-content > footer { grid-template-columns: 92px 1fr; margin-top: 17px; }
+    .balance-guide-content > footer > span { display: none; }
+    .balance-guide-content > footer button.primary { min-width: 0; }
+    .balance-procedure-strip { grid-template-columns: 1fr 1fr; }
+    .balance-procedure-strip span { min-height: 52px; padding: 8px 10px; font-size: 11px; }
+    .tray-balance-apparatus { min-height: 520px; }
+    .tray-balance-beam { top: 213px; width: 90%; }
+    .tray-pan { top: 238px; width: 36%; }
+    .tray-pan.left { left: 3%; }
+    .tray-pan.right { right: 3%; }
+    .tray-balance-base { right: 10%; left: 10%; }
+    .balance-operation-dock { grid-template-columns: 1fr; }
+    .balance-operation-dock section:last-child { grid-column: auto; }
+    .balance-nut-controls { grid-template-columns: 1fr; }
+    .balance-nut-controls output { min-height: 35px; border: 0; border-top: 1px solid #405a62; border-bottom: 1px solid #405a62; }
+    .balance-weight-buttons { grid-template-columns: repeat(3,1fr); }
+    .balance-rider-console { padding: 18px 15px; }
+  }
+}
+
 @layer responsive {
   @media (max-width: 1180px) {
     .discovery-home-hero,.discovery-field-section,.discovery-tool-note { margin-right: 22px; margin-left: 22px; }
@@ -3255,7 +3490,7 @@
     font-size: 13px;
   }
   .science-lab:fullscreen .science-fullscreen-button { display: none; }
-  .science-lab:fullscreen > :is(.concept-sim,.sound-sim,.lever-sim,.circuit-sim,.thermal-sim,.density-sim) {
+  .science-lab:fullscreen > :is(.concept-sim,.sound-sim,.lever-sim,.circuit-sim,.thermal-sim,.density-sim,.balance-lab-sim) {
     flex: 1 1 auto;
     width: 100%;
     height: auto !important;
@@ -3285,6 +3520,17 @@
   .science-lab:fullscreen .science-range output,
   .science-lab:fullscreen .science-result-cell strong { font-size: 17px; }
   .science-lab:fullscreen .experiment-fullscreen-exit { position: absolute; top: 18px; right: 18px; }
+  .tray-balance-lab:fullscreen > .balance-lab-sim { display: grid; grid-template-rows: 50px minmax(0,1fr) 116px 66px; }
+  .tray-balance-lab:fullscreen .balance-procedure-strip { min-height: 50px; }
+  .tray-balance-lab:fullscreen .tray-balance-workbench { min-height: 0; grid-template-columns: minmax(500px,1.3fr) minmax(300px,.7fr); overflow: hidden; }
+  .tray-balance-lab:fullscreen .tray-balance-apparatus { min-height: 0; }
+  .tray-balance-lab:fullscreen .balance-operation-dock { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; overflow-y: auto; }
+  .tray-balance-lab:fullscreen .balance-operation-dock section { padding: 10px 14px; }
+  .tray-balance-lab:fullscreen .balance-operation-dock section > p { display: none; }
+  .tray-balance-lab:fullscreen .balance-nut-controls,.tray-balance-lab:fullscreen .balance-object-button,.tray-balance-lab:fullscreen .balance-weight-buttons { margin-top: 8px; }
+  .tray-balance-lab:fullscreen .balance-rider-console { min-height: 116px; grid-template-columns: 220px 1fr; gap: 18px; padding: 12px 22px; }
+  .tray-balance-lab:fullscreen .balance-rider-scale { height: 78px; }
+  .tray-balance-lab:fullscreen .balance-live-guidance { min-height: 66px; padding-block: 10px; }
 
   .workbench-page:fullscreen {
     width: 100vw;
