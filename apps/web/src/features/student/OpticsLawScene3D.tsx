@@ -397,7 +397,7 @@ export function CurvedMirrorScene3D({ mirror, objectDistance, imageDistance, mag
   const focusX = mirror === "concave" ? mirrorX - focalLength : mirrorX + focalLength;
   const centerX = mirror === "concave" ? mirrorX - focalLength * 2 : mirrorX + focalLength * 2;
   const reflectedEnds = mirrorPoints.map((point): Point3 => {
-    if (atFocus) return [point[0] - 5.2, point[1], point[2]];
+    if (atFocus) return [point[0] - 5.2, point[1] - 5.2 * objectHeight / focalLength, point[2]];
     return real ? imageTop : rayAwayFrom(point, imageTop);
   });
   const badges = [mirror === "concave" ? "凹面镜 · 会聚镜" : "凸面镜 · 发散镜", `物距 ${objectDistance} 格`, interacted ? nature : "移动物体后显示成像"];
@@ -464,10 +464,15 @@ export function LensSystemScene3D({ apparatus, objectDistance, focalLength, imag
   const objectTop: Point3 = [objectX, axisY + objectHeight, 0];
   const imageTop: Point3 = [imageX, axisY + imageHeight, 0];
   const lensPoints: Point3[] = [[0, axisY + .92, -.32], [0, axisY + .2, .32]];
-  const rayEnds = lensPoints.map((point) => real && finiteImage ? imageTop : rayAwayFrom(point, imageTop));
+  const focusOutputSlope = -objectHeight / Math.max(.01, -objectX);
+  const rayEnds = lensPoints.map((point): Point3 => {
+    if (!finiteImage) return [5, point[1] + focusOutputSlope * (5 - point[0]), point[2]];
+    return real ? imageTop : rayAwayFrom(point, imageTop);
+  });
   const normalizedScreenX = screenDistance == null ? 0 : Math.max(.75, Math.min(4.75, screenDistance / Math.max(.01, focalLength) * focalScale));
   const screenFocused = real && finiteImage && screenDistance != null && Math.abs(screenDistance - imageDistance) <= Math.max(.3, focalLength * .04);
   const secondLensX = apparatus === "telescope" || apparatus === "microscope" ? 2.25 : 0;
+  const correctionImageX = Math.max(2.35, Math.min(4.5, 3.34 + (imageDistance - 17) * .15));
   const apparatusName = apparatus === "magnifier" ? "放大镜" : apparatus === "bench" ? "自由光具座" : apparatus === "camera" ? "照相机" : apparatus === "eye" ? "人的眼睛" : apparatus === "correction" ? "视力矫正" : apparatus === "telescope" ? "望远镜" : "显微镜";
   const displayNature = apparatus === "correction" ? correctionLens === "none" ? "尚未佩戴矫正镜片" : correctionEffective ? "像点回到视网膜" : "像点仍未落在视网膜" : nature;
   const badges = [apparatusName, `f = ${focalLength.toFixed(1)}`, interacted ? displayNature : "调节后显示光路"];
@@ -511,7 +516,7 @@ export function LensSystemScene3D({ apparatus, objectDistance, focalLength, imag
       {lensPoints.map((point, index) => <group key={index}>
         <PhotonBeam start={objectTop} end={apparatus === "correction" && correctionLens !== "none" ? [-1.35, point[1], point[2]] : point} color="#ffd169" delay={index * .2} />
         {apparatus === "correction" && correctionLens !== "none" && <PhotonBeam start={[-1.35, point[1], point[2]]} end={[.55, point[1] + (correctionLens === "concave" ? -.12 : .12), point[2]]} color="#61e5c9" delay={.25 + index * .2} />}
-        <PhotonBeam start={apparatus === "correction" ? [.55, point[1] + (correctionLens === "concave" ? -.12 : .12), point[2]] : point} end={apparatus === "correction" ? [correctionEffective ? 3.34 : correctionLens === "none" ? 2.86 : 3.72, axisY + (index === 0 ? .08 : -.08), 0] : rayEnds[index]} color="#61e5c9" delay={.45 + index * .2} />
+        <PhotonBeam start={apparatus === "correction" ? [.55, point[1] + (correctionLens === "concave" ? -.12 : .12), point[2]] : point} end={apparatus === "correction" ? [correctionImageX, axisY, 0] : rayEnds[index]} color="#61e5c9" delay={.45 + index * .2} />
         {!real && finiteImage && apparatus !== "correction" && <PhotonBeam start={point} end={imageTop} color="#69dce7" dashed opacity={.52} />}
       </group>)}
     </>}

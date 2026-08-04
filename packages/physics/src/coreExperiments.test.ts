@@ -18,7 +18,10 @@ describe("core experiment calculations", () => {
     expect(result.totalCurrent).toBeCloseTo(0.9);
   });
   it("判断杠杆力矩平衡", () => expect(calculateLever(3, 4, 2, 6).balanced).toBe(true));
-  it("沸腾后温度保持在沸点", () => expect(calculateHeatingTemperature(100, 10, 100)).toBe(100));
+  it("按 Q=ηPt=cmΔT 计算水温，并在沸点封顶", () => {
+    expect(calculateHeatingTemperature(42, 1000, 200, 25, 100, 1)).toBeCloseTo(75);
+    expect(calculateHeatingTemperature(100, 1000, 200, 25, 100, 1)).toBe(100);
+  });
   it("根据质量和体积计算密度", () => expect(calculateDensity(54, 20)).toBeCloseTo(2.7));
   it("反射角等于入射角", () => expect(calculateReflection(37).reflectionAngle).toBe(37));
   it("空气斜射入水时折射光偏向法线", () => {

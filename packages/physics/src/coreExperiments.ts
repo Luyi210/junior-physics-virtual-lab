@@ -70,9 +70,20 @@ export function calculateLever(leftForce: number, leftArm: number, rightForce: n
   return { leftMoment, rightMoment, difference, balanced: Math.abs(difference) < 0.05 };
 }
 
-export function calculateHeatingTemperature(time: number, power: number, waterMass: number, initialTemperature = 25, boilingPoint = 100) {
-  if (waterMass <= 0) throw new RangeError("水的质量必须大于零");
-  return Math.min(boilingPoint, initialTemperature + time * power * 160 / waterMass);
+export function calculateHeatingTemperature(
+  timeSeconds: number,
+  powerWatts: number,
+  waterMassGrams: number,
+  initialTemperature = 25,
+  boilingPoint = 100,
+  efficiency = 0.85
+) {
+  if (timeSeconds < 0 || powerWatts < 0) throw new RangeError("加热时间和功率不能为负");
+  if (waterMassGrams <= 0) throw new RangeError("水的质量必须大于零");
+  if (efficiency <= 0 || efficiency > 1) throw new RangeError("加热效率应大于 0 且不超过 1");
+  // Q = ηPt = cmΔT.  Water's specific heat capacity is 4.2 J/(g·℃).
+  const temperatureRise = efficiency * powerWatts * timeSeconds / (4.2 * waterMassGrams);
+  return Math.min(boilingPoint, initialTemperature + temperatureRise);
 }
 
 export function calculateDensity(mass: number, volume: number) {

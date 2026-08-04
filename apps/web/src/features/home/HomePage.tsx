@@ -5,6 +5,8 @@ import {
   CircuitBoard,
   Flame,
   Focus,
+  GraduationCap,
+  Presentation,
   Ruler,
   Sparkles,
   Waves
@@ -40,8 +42,8 @@ export function HomePage() {
       <header className="home-nav">
         <BrandMark />
         <nav aria-label="主导航">
-          <Link to="/student">学生探索空间</Link>
-          <Link to="/lab/lens">精密实验工作台</Link>
+          <Link to="/student">学生端</Link>
+          <Link to="/teacher">教师端</Link>
           <a href="#labs">领域目录</a>
           <a href="#architecture">平台能力</a>
           <span className="version-chip"><span /> 本地演算核心已就绪</span>
@@ -56,16 +58,22 @@ export function HomePage() {
             <p className="hero-description">
               拖动、连接、测量、记录。把每一个抽象公式，变成学生可以亲手改变的实验现场。
             </p>
-            <div className="hero-actions">
-              <Link className="button button-primary" to="/student">
-                进入学生探索空间 <ArrowRight size={18} />
+            <div className="portal-entry-grid" aria-label="选择使用端口">
+              <Link className="portal-entry student-entry" to="/student">
+                <i><GraduationCap size={22} /></i>
+                <span><small>PORT 01 / STUDENT</small><strong>进入学生探究端</strong><em>自由选择领域和实验</em></span>
+                <ArrowRight size={19} />
               </Link>
-              <Link className="button button-quiet" to="/lab/lens">打开凸透镜精密实验台</Link>
+              <Link className="portal-entry teacher-entry" to="/teacher">
+                <i><Presentation size={22} /></i>
+                <span><small>PORT 02 / TEACHER</small><strong>进入教师端</strong><em>课程组织与数据功能规划中</em></span>
+                <ArrowRight size={19} />
+              </Link>
             </div>
-            <p className="entry-model-note"><strong>一个总入口，两个使用空间：</strong>学生空间负责按领域自由探索；精密实验台负责器材调节、准确读数与数据记录。</p>
+            <p className="entry-model-note"><strong>一个平台，两个端口：</strong>学生端负责开放实验与自主探究；教师端负责未来的课程组织、课堂演示和学习数据。凸透镜精密实验台属于学生端的光学工具，不再单独占用平台入口。</p>
             <dl className="hero-stats">
+              <div><dt>02</dt><dd>学生端与教师端</dd></div>
               <div><dt>06</dt><dd>已开放实验领域</dd></div>
-              <div><dt>19</dt><dd>动态实验情境</dd></div>
               <div><dt>100%</dt><dd>网页端本地计算</dd></div>
             </dl>
             <PhysicsFieldMotif field="mixed" className="home-field-atlas" />

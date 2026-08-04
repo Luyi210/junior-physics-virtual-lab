@@ -4,10 +4,10 @@ const spectrum = ["#ff6c5d", "#ffa552", "#f1cf57", "#60d58a", "#54c8e8", "#6387e
 const scenes = [
   { key: "light", title: "光现象 · 三棱镜色散", note: "白光进入棱镜，不同色光沿不同方向传播" },
   { key: "sound", title: "声现象 · 振动与波", note: "声源振动，波形向前传播" },
-  { key: "mechanics", title: "运动与力 · 单摆", note: "重力作用下，摆球周期性往复运动" },
+  { key: "mechanics", title: "运动与力 · 杠杆平衡", note: "比较力与力臂共同产生的转动效果" },
   { key: "circuit", title: "电与磁 · 闭合电路", note: "开关闭合后，电流沿完整路径运动" },
   { key: "thermal", title: "热与物态 · 分子运动", note: "温度升高，微观粒子运动更加剧烈" },
-  { key: "matter", title: "质量与密度 · 物质结构", note: "从微观结构出发认识不同物质" },
+  { key: "density", title: "质量与密度 · 排水法测量", note: "用天平测质量，用量筒示数差测体积" },
   { key: "lens", title: "光学应用 · 凸透镜成像", note: "改变物距，观察会聚光线与倒立实像的位置" },
   { key: "lever", title: "简单机械 · 杠杆平衡", note: "动力乘动力臂等于阻力乘阻力臂" },
   { key: "buoyancy", title: "力与运动 · 浮力与浮沉", note: "比较浮力与重力，判断物体的浮沉状态" },
@@ -94,26 +94,7 @@ function drawSound(ctx: CanvasRenderingContext2D, width: number, height: number,
 }
 
 function drawMechanics(ctx: CanvasRenderingContext2D, width: number, height: number, phase: number) {
-  const pivotX = width * .5;
-  const pivotY = height * .17;
-  const length = height * .53;
-  const angle = Math.sin(phase * 1.15) * .62;
-  const bobX = pivotX + Math.sin(angle) * length;
-  const bobY = pivotY + Math.cos(angle) * length;
-  ctx.save();
-  ctx.setLineDash([5, 7]);
-  line(ctx, pivotX, pivotY, pivotX, pivotY + length, "rgba(226,236,231,.24)", 1);
-  ctx.beginPath();
-  ctx.arc(pivotX, pivotY, length, Math.PI * .31, Math.PI * .69);
-  ctx.strokeStyle = "rgba(229,178,77,.28)";
-  ctx.stroke();
-  ctx.restore();
-  line(ctx, pivotX - 55, pivotY, pivotX + 55, pivotY, "rgba(221,234,229,.72)", 4);
-  line(ctx, pivotX, pivotY, bobX, bobY, "rgba(236,241,232,.9)", 2);
-  glowDot(ctx, bobX, bobY, 18, "#e5b24d");
-  ctx.fillStyle = "rgba(229,178,77,.85)";
-  ctx.font = "700 13px serif";
-  ctx.fillText(`θ = ${(angle * 180 / Math.PI).toFixed(0)}°`, width * .72, height * .31);
+  drawLever(ctx, width, height, phase);
 }
 
 function pointOnCircuit(progress: number, left: number, top: number, right: number, bottom: number) {
@@ -186,27 +167,53 @@ function drawThermal(ctx: CanvasRenderingContext2D, width: number, height: numbe
   glowDot(ctx, tx, bottom, 12, "#e87955");
 }
 
-function drawMatter(ctx: CanvasRenderingContext2D, width: number, height: number, phase: number) {
-  const cx = width * .5;
-  const cy = height * .51;
-  const rx = Math.min(width * .27, height * .36);
-  const ry = rx * .42;
-  [-.58, .58, Math.PI / 2].forEach((rotation, index) => {
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(rotation);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
-    ctx.strokeStyle = index === 2 ? "rgba(164,133,222,.54)" : "rgba(103,224,202,.48)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    const angle = phase * (index % 2 ? -1.3 : 1.18) + index * 2.1;
-    glowDot(ctx, Math.cos(angle) * rx, Math.sin(angle) * ry, 6, index === 2 ? "#aa86df" : "#6de0cb");
-    ctx.restore();
-  });
-  glowDot(ctx, cx - 7, cy, 14, "#efb957");
-  glowDot(ctx, cx + 11, cy + 5, 11, "#e46d55");
-  glowDot(ctx, cx + 4, cy - 12, 9, "#65cfe0");
+function drawDensity(ctx: CanvasRenderingContext2D, width: number, height: number, phase: number) {
+  const progress = (Math.sin(phase * .72) + 1) / 2;
+  const balanceX = width * .25;
+  const baseY = height * .73;
+  line(ctx, balanceX - width * .14, baseY, balanceX + width * .14, baseY, "rgba(218,232,228,.82)", 5);
+  line(ctx, balanceX, baseY - height * .28, balanceX, baseY + 2, "rgba(218,232,228,.65)", 4);
+  line(ctx, balanceX - width * .13, baseY - height * .24, balanceX + width * .13, baseY - height * .24, "#f0bd55", 5);
+  ctx.beginPath();
+  ctx.arc(balanceX - width * .105, baseY - height * .16, width * .048, 0, Math.PI * 2);
+  ctx.arc(balanceX + width * .105, baseY - height * .16, width * .048, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(143,216,207,.82)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = "#a88ae2";
+  ctx.fillRect(balanceX - width * .125, baseY - height * .21, width * .04, height * .09);
+  ctx.fillStyle = "rgba(236,244,239,.9)";
+  ctx.font = "800 12px KaiTi, STKaiti, serif";
+  ctx.fillText("m = 62.5 g", balanceX - width * .075, baseY + height * .09);
+
+  const cylinderLeft = width * .61;
+  const cylinderRight = width * .82;
+  const cylinderTop = height * .18;
+  const cylinderBottom = height * .82;
+  const waterY = height * (.66 - progress * .14);
+  ctx.beginPath();
+  ctx.moveTo(cylinderLeft, cylinderTop);
+  ctx.lineTo(cylinderLeft, cylinderBottom);
+  ctx.lineTo(cylinderRight, cylinderBottom);
+  ctx.lineTo(cylinderRight, cylinderTop);
+  ctx.strokeStyle = "rgba(195,229,234,.78)";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.fillStyle = "rgba(66,170,220,.26)";
+  ctx.fillRect(cylinderLeft + 2, waterY, cylinderRight - cylinderLeft - 4, cylinderBottom - waterY - 2);
+  for (let index = 0; index <= 5; index += 1) {
+    const y = cylinderBottom - index * (cylinderBottom - cylinderTop) / 6;
+    line(ctx, cylinderLeft, y, cylinderLeft + width * .025, y, "rgba(223,240,238,.58)", 1);
+  }
+  const sampleY = cylinderTop + height * .07 + progress * height * .42;
+  ctx.fillStyle = "#a88ae2";
+  ctx.fillRect((cylinderLeft + cylinderRight) / 2 - width * .024, sampleY, width * .048, height * .09);
+  ctx.fillStyle = "rgba(236,244,239,.9)";
+  ctx.font = "800 11px KaiTi, STKaiti, serif";
+  ctx.fillText(progress > .52 ? "V₂ = 75 mL" : "V₁ = 50 mL", cylinderLeft - width * .015, cylinderTop - 11);
+  ctx.fillStyle = "#67ddcb";
+  ctx.font = "900 13px KaiTi, STKaiti, serif";
+  ctx.fillText("ρ = m ÷ (V₂−V₁)", width * .39, height * .91);
 }
 
 function arrow(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, color: string, label?: string) {
@@ -398,18 +405,30 @@ function drawMagnet(ctx: CanvasRenderingContext2D, width: number, height: number
   ctx.fillText("线圈中的电流", cx - 42, cy - height * .25);
 }
 
-const drawers = [drawLight, drawSound, drawMechanics, drawCircuit, drawThermal, drawMatter, drawLens, drawLever, drawBuoyancy, drawMagnet];
+const drawers = [drawLight, drawSound, drawMechanics, drawCircuit, drawThermal, drawDensity, drawLens, drawLever, drawBuoyancy, drawMagnet];
 
-export function DashboardPhysicsCanvas() {
+export type DashboardPhysicsScene = typeof scenes[number]["key"];
+
+interface DashboardPhysicsCanvasProps {
+  sceneKey?: DashboardPhysicsScene;
+  compact?: boolean;
+}
+
+export function DashboardPhysicsCanvas({ sceneKey, compact = false }: DashboardPhysicsCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [paused, setPaused] = useState(false);
-  const [sceneIndex, setSceneIndex] = useState(0);
+  const fixedSceneIndex = sceneKey ? scenes.findIndex((scene) => scene.key === sceneKey) : -1;
+  const [sceneIndex, setSceneIndex] = useState(fixedSceneIndex >= 0 ? fixedSceneIndex : 0);
 
   useEffect(() => {
-    if (paused) return;
+    if (fixedSceneIndex >= 0) setSceneIndex(fixedSceneIndex);
+  }, [fixedSceneIndex]);
+
+  useEffect(() => {
+    if (paused || fixedSceneIndex >= 0) return;
     const timer = window.setInterval(() => setSceneIndex((value) => (value + 1) % scenes.length), 5200);
     return () => window.clearInterval(timer);
-  }, [paused]);
+  }, [fixedSceneIndex, paused]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -441,7 +460,7 @@ export function DashboardPhysicsCanvas() {
       context.restore();
     };
     const animate = (time: number) => {
-      if (time - lastTime >= 1000 / 45) {
+      if (time - lastTime >= 1000 / (compact ? 24 : 45)) {
         draw(time);
         lastTime = time;
       }
@@ -462,9 +481,14 @@ export function DashboardPhysicsCanvas() {
       reducedMotion.removeEventListener("change", restart);
       window.cancelAnimationFrame(frame);
     };
-  }, [paused, sceneIndex]);
+  }, [compact, paused, sceneIndex]);
 
   const scene = scenes[sceneIndex];
+  if (compact) return <>
+    <canvas ref={canvasRef} className="dashboard-physics-canvas field-preview-canvas" aria-hidden="true" />
+    <span className="field-preview-live"><i />动态预览</span>
+  </>;
+
   return <>
     <canvas ref={canvasRef} className="dashboard-physics-canvas" aria-hidden="true" />
     <div className="canvas-scene-caption" aria-live="polite"><small>{String(sceneIndex + 1).padStart(2, "0")} / {String(scenes.length).padStart(2, "0")} · AUTO SCENE</small><strong>{scene.title}</strong><span>{scene.note}</span></div>

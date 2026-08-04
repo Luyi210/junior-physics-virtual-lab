@@ -1,11 +1,14 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { calculateLens, calculateReflection, calculateRefraction, calculateSphericalMirror } from "@physics-lab/physics";
 import { Atom, Beaker, Camera, CircuitBoard, Eye, Flame, Focus, Glasses, Home, Info, Microscope, NotebookPen, Pause, Play, Repeat2, RotateCcw, Ruler, ScanLine, Search, ShieldCheck, Sparkles, Sun, Telescope, ThermometerSun, WandSparkles, Waves } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { BrandMark } from "../../components/BrandMark";
 import { ExperimentFullscreenButton } from "../../components/ExperimentFullscreenButton";
+import { getOpticsInquiryProfile, PhysicsInquiryRibbon } from "../../components/PhysicsInquiryRibbon";
 import { useHarnessStore } from "../harness/harnessStore";
+import { publishExperimentSnapshot, subscribeTutorialCommands } from "../harness/tutorialBridge";
+import type { TutorialTarget } from "../harness/tutorialBridge";
 import { LensCanvas } from "../lens/LensCanvas";
 import { initialLensScene, useLensStore } from "../lens/lensStore";
 import { BlackHoleLightExtension } from "./BlackHoleLightExtension";
@@ -74,6 +77,7 @@ export function StudentLensExplore() {
   const replace = useLensStore((state) => state.replace);
   const result = useMemo(() => calculateLens(scene), [scene]);
   const current = modules.find((item) => item.key === mode)!;
+  const inquiryProfile = getOpticsInquiryProfile(mode);
 
   useEffect(() => {
     if (mode === "magnifier") replace({ ...initialLensScene, objectX: -10, screenX: 38 });
@@ -109,6 +113,7 @@ export function StudentLensExplore() {
               {modules.map((module, index) => { const ModuleIcon = module.icon; return <button className={mode === module.key ? "active" : ""} onClick={() => selectMode(module.key)} title={module.note} key={module.key}><b>{module.key === "overview" ? "" : String(index).padStart(2, "0")}</b><ModuleIcon size={15} /><span>{module.title}</span></button>; })}
             </nav>
           </div>
+          {mode !== "overview" && inquiryProfile && <PhysicsInquiryRibbon title={current.title} {...inquiryProfile} />}
           <main className="explore-module-content">
           {mode !== "overview" && !lensDimensionModes.has(mode) && <ExperimentFullscreenButton targetSelector=".open-experience" experiment={mode} />}
           {mode === "overview" && <ExploreOverview onSelect={selectMode} />}
@@ -165,6 +170,8 @@ function DispersionModule() {
   const [lightMode, setLightMode] = useState<DispersionLightMode>("white");
   const [sourceOn, setSourceOn] = useState(false);
   const [interacted, setInteracted] = useState(false);
+  const [tutorialFocus, setTutorialFocus] = useState<TutorialTarget>();
+  const changeOrigin = useRef<"learner" | "tutorial">("learner");
   const recordHarness = useHarnessStore((state) => state.record);
   const distanceRatio = (screenDistance - 120) / 260;
   const screenX = 610 + distanceRatio * 190;
@@ -186,8 +193,9 @@ function DispersionModule() {
   const screenBandTop = lightMode === "white" ? spectrumTop : Math.min(...landingPoints) - bandThickness / 2;
   const screenBandBottom = lightMode === "white" ? spectrumTop + spectrumHeight : Math.max(...landingPoints) + bandThickness / 2;
   const active = interacted && sourceOn;
-  const interact = () => { setInteracted(true); setSourceOn(true); };
+  const interact = () => { changeOrigin.current = "learner"; setInteracted(true); setSourceOn(true); };
   const toggleSource = () => {
+    changeOrigin.current = "learner";
     setInteracted(true);
     setSourceOn((value) => {
       recordHarness("simulation.toggled", { running: !value, action: `${selectedLight.label}光源` });
@@ -195,12 +203,14 @@ function DispersionModule() {
     });
   };
   const selectLight = (next: DispersionLightMode) => {
+    changeOrigin.current = "learner";
     setLightMode(next);
     setSourceOn(true);
     setInteracted(true);
     recordHarness("configuration.changed", { experiment: "dispersion", light: next });
   };
   const reset = () => {
+    changeOrigin.current = "learner";
     setPrismAngle(0);
     setScreenDistance(250);
     setSlitWidth(3);
@@ -209,35 +219,66 @@ function DispersionModule() {
     setInteracted(false);
     recordHarness("configuration.changed", { experiment: "dispersion", action: "reset" });
   };
+
+  useEffect(() => subscribeTutorialCommands((command) => {
+    if (command.module !== "dispersion") return;
+    if (command.type === "widget_clearHighlight") {
+      setTutorialFocus(undefined);
+      return;
+    }
+    if (command.type === "widget_highlight") {
+      setTutorialFocus(command.target);
+      window.setTimeout(() => (document.querySelector(`[data-tutorial-spotlight="${command.target}"]`) ?? document.querySelector(`[data-tutorial-target="${command.target}"]`))?.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
+      return;
+    }
+    changeOrigin.current = "tutorial";
+    if (command.state.prismAngle !== undefined) setPrismAngle(command.state.prismAngle);
+    if (command.state.screenDistance !== undefined) setScreenDistance(command.state.screenDistance);
+    if (command.state.slitWidth !== undefined) setSlitWidth(command.state.slitWidth);
+    if (command.state.lightMode !== undefined) setLightMode(command.state.lightMode);
+    if (command.state.sourceOn !== undefined) {
+      setSourceOn(command.state.sourceOn);
+      setInteracted(command.state.sourceOn);
+    }
+  }), []);
+
+  useEffect(() => {
+    publishExperimentSnapshot({
+      module: "dispersion",
+      origin: changeOrigin.current,
+      state: { prismAngle, screenDistance, slitWidth, lightMode, sourceOn }
+    });
+    changeOrigin.current = "learner";
+  }, [lightMode, prismAngle, screenDistance, slitWidth, sourceOn]);
   const resultTitle = lightMode === "white" ? "白光展开成连续的七色光谱" : lightMode === "rgb" ? "RGB混合光分离成三条色光" : `${selectedLight.label}发生折射，但没有分解出新颜色`;
   const resultDetail = lightMode === "white" ? "不同色光的偏折程度不同，红光偏折较小，紫光偏折较大" : lightMode === "rgb" ? "混合光中原本包含的红、绿、蓝重新分开" : "单色光只有一种主要波长，因此光屏上只出现一条同色光带";
 
-  return <div className="open-experience">
+  return <div className={`open-experience dispersion-tutorial-connected ${tutorialFocus ? `tutorial-focus-${tutorialFocus}` : ""}`} data-tutorial-target="experiment">
     <ModuleIntro eyebrow="活动 2.1 / 三棱镜色散" title="让白光和彩色光，穿过同一块三棱镜" text="色散实验不一定只能使用白光。切换白光、单色光或 RGB 混合光，再比较它们经过三棱镜后的光路和光屏结果：复色光会分开，单色光只发生偏折。" />
-    <div className="dispersion-toolbar" aria-label="色散实验快捷操作">
+    <div className={`dispersion-toolbar ${tutorialFocus === "source" ? "tutorial-target-active" : ""}`} data-tutorial-target="source" data-tutorial-spotlight="source" aria-label="色散实验快捷操作">
       <button className={sourceOn ? "source-active" : ""} onClick={toggleSource}><Sun size={16} />{sourceOn ? "关闭光源" : "打开光源"}</button>
       <span><i className={sourceOn ? "on" : ""} />{sourceOn ? `${selectedLight.label}已开启，观察光屏` : `${selectedLight.label}已选择，光源关闭`}</span>
       <button onClick={reset}><RotateCcw size={15} />恢复初始位置</button>
     </div>
-    <section className="dispersion-light-picker" aria-label="选择入射光颜色">
+    <section className={`dispersion-light-picker ${tutorialFocus === "light-picker" ? "tutorial-target-active" : ""}`} data-tutorial-target="light-picker" data-tutorial-spotlight="light-picker" aria-label="选择入射光颜色">
       <div><small>LIGHT SOURCE / 选择入射光</small><strong>光的色散一定要用白光吗？</strong><p>不一定。任何颜色的光都能发生折射；但只有包含多种颜色的复色光，经过三棱镜后才会分离出多条色光。</p></div>
       <nav>{dispersionLightOptions.map((option) => <button className={lightMode === option.key ? "active" : ""} onClick={() => selectLight(option.key)} key={option.key}><i className={`light-swatch swatch-${option.key}`} style={{ "--swatch": option.color } as React.CSSProperties} /><span><b>{option.label}</b><small>{option.note}</small></span></button>)}</nav>
     </section>
-    <div className="ray-law-lab dispersion-lab">
+    <div className={`ray-law-lab dispersion-lab ${tutorialFocus === "prism" || tutorialFocus === "screen" || tutorialFocus === "result" ? "tutorial-target-active" : ""}`} data-tutorial-target="experiment-visual" data-tutorial-spotlight="experiment">
       <svg viewBox="0 0 900 430" preserveAspectRatio="xMidYMid meet" aria-label="三棱镜色散动态实验">
         <defs><linearGradient id="spectrumScreen" x1="0" y1="0" x2="0" y2="1">{dispersionColors.map((color, index) => <stop offset={`${index / 6 * 100}%`} stopColor={color} key={color} />)}</linearGradient><linearGradient id="rgbSourceFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#ff5d56" /><stop offset="50%" stopColor="#69d56e" /><stop offset="100%" stopColor="#4bb9f1" /></linearGradient><filter id="spectrumGlow"><feGaussianBlur stdDeviation={Math.max(.35, slitWidth * .17)} result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs>
         <g className="ray-grid">{Array.from({ length: 17 }, (_, index) => <line x1={50 + index * 50} x2={50 + index * 50} y1="35" y2="390" key={`dv-${index}`} />)}{Array.from({ length: 8 }, (_, index) => <line x1="40" x2="860" y1={40 + index * 50} y2={40 + index * 50} key={`dh-${index}`} />)}</g>
         <g className={`white-light-source ${sourceOn ? "source-on" : "source-off"}`}><rect x="65" y="155" width="82" height="140" rx="4" /><circle cx="105" cy="225" r="23" style={{ fill: sourceOn ? lightMode === "rgb" ? "url(#rgbSourceFill)" : selectedLight.color : "#596b6d", filter: sourceOn ? `drop-shadow(0 0 13px ${selectedLight.color})` : "none" }} /><path d={`M128 225 L${prismEntry.x} ${prismEntry.y}`} style={{ stroke: selectedLight.beam, strokeWidth: Math.max(2.4, 2.4 + slitWidth * .32), filter: sourceOn ? `drop-shadow(0 0 5px ${selectedLight.color})` : "none" }} /><text x="64" y="320">{selectedLight.label}光源 + 狭缝</text><text className="device-state" x="82" y="341">{sourceOn ? "ON" : "OFF"}</text></g>
-        <g className="prism-optic" transform={`rotate(${prismAngle} 410 225)`}><path d="M410 115 L500 305 L320 305 Z" /><text x="383" y="285">三棱镜</text></g>
+        <g className={`prism-optic ${tutorialFocus === "prism" ? "tutorial-svg-focus" : ""}`} data-tutorial-spotlight="prism" transform={`rotate(${prismAngle} 410 225)`}><path d="M410 115 L500 305 L320 305 Z" /><text x="383" y="285">三棱镜</text></g>
         {active && <path className="in-prism-ray" d={`M${prismEntry.x} ${prismEntry.y} L${prismExit.x} ${prismExit.y}`} style={{ stroke: selectedLight.beam }} />}
-        <g className="spectrum-screen"><rect x={screenX} y="62" width="26" height="326" rx="2" /><line className="screen-ruler" x1={screenX + 31} x2={screenX + 31} y1={screenBandTop} y2={screenBandBottom} /><text x={screenX - 2} y="411">光屏</text>{active && <>{lightMode === "white" ? <rect className="spectrum-patch" x={screenX + 3} y={spectrumTop} width="17" height={spectrumHeight} rx="3" fill="url(#spectrumScreen)" style={{ opacity: .66 + slitWidth * .025, filter: `blur(${Math.max(0, slitWidth - 3) * .12}px)` }} /> : selectedLight.components.map((component, index) => <rect className="spectrum-patch spectrum-line" x={screenX + 3} y={landingY(component.factor) - bandThickness / 2} width="17" height={bandThickness} rx="2" fill={component.color} style={{ filter: `blur(${Math.max(0, slitWidth - 3) * .1}px)` }} key={`${component.color}-${index}`} />)}<text className="screen-hit-label" x={screenX - 104} y={screenBandTop - 13}>{lightMode === "white" ? "连续七色光谱" : lightMode === "rgb" ? "三条色光落在这里" : `${selectedLight.label}落在这里`}</text><path className="screen-hit-arrow" d={`M${screenX - 18} ${screenBandTop - 16} L${screenX + 2} ${screenBandTop + 2}`} /></>}</g>
+        <g className={`spectrum-screen ${tutorialFocus === "screen" || tutorialFocus === "result" ? "tutorial-svg-focus" : ""}`} data-tutorial-spotlight="screen"><rect x={screenX} y="62" width="26" height="326" rx="2" /><line className="screen-ruler" x1={screenX + 31} x2={screenX + 31} y1={screenBandTop} y2={screenBandBottom} /><text x={screenX - 2} y="411">光屏</text>{active && <>{lightMode === "white" ? <rect className="spectrum-patch" x={screenX + 3} y={spectrumTop} width="17" height={spectrumHeight} rx="3" fill="url(#spectrumScreen)" style={{ opacity: .66 + slitWidth * .025, filter: `blur(${Math.max(0, slitWidth - 3) * .12}px)` }} /> : selectedLight.components.map((component, index) => <rect className="spectrum-patch spectrum-line" x={screenX + 3} y={landingY(component.factor) - bandThickness / 2} width="17" height={bandThickness} rx="2" fill={component.color} style={{ filter: `blur(${Math.max(0, slitWidth - 3) * .1}px)` }} key={`${component.color}-${index}`} />)}<text className="screen-hit-label" x={screenX - 104} y={screenBandTop - 13}>{lightMode === "white" ? "连续七色光谱" : lightMode === "rgb" ? "三条色光落在这里" : `${selectedLight.label}落在这里`}</text><path className="screen-hit-arrow" d={`M${screenX - 18} ${screenBandTop - 16} L${screenX + 2} ${screenBandTop + 2}`} /></>}</g>
         {active && <g className="spectrum-rays" filter="url(#spectrumGlow)">{selectedLight.components.map((component, index) => { const y = landingY(component.factor); return <g key={`${component.color}-${index}`}><path d={`M${prismExit.x} ${prismExit.y} L${screenX + 3} ${y}`} stroke={component.color} style={{ opacity: .58 + slitWidth * .035 }} /><circle className="spectrum-impact" cx={screenX + 3} cy={y} r={2.5 + slitWidth * .08} fill={component.color} /></g>; })}</g>}
         <g className="distance-measure"><line x1="500" x2={screenX} y1="374" y2="374" /><line x1="500" x2="500" y1="367" y2="381" /><line x1={screenX} x2={screenX} y1="367" y2="381" /><text x={(500 + screenX) / 2 - 35} y="365">棱镜—光屏 {screenDistance} mm</text></g>
       </svg>
       {!interacted && <OpticsInteractionCue text="选择一种入射光，开始比较光屏结果" />}
-      <div className={`law-readout ${active ? "" : "awaiting-reading"}`}><span>{active ? lightMode === "white" ? "CONTINUOUS SPECTRUM" : lightMode === "rgb" ? "THREE-COLOR SPECTRUM" : "MONOCHROMATIC LIGHT" : "LIGHT SOURCE STANDBY"}</span><strong>{active ? resultTitle : `等待开启${selectedLight.label}`}</strong><small>{active ? resultDetail : "先选择一种光源，再沿光路观察最终落点"}</small></div>
+      <div className={`law-readout ${active ? "" : "awaiting-reading"} ${tutorialFocus === "result" ? "tutorial-target-active" : ""}`} data-tutorial-spotlight="result"><span>{active ? lightMode === "white" ? "CONTINUOUS SPECTRUM" : lightMode === "rgb" ? "THREE-COLOR SPECTRUM" : "MONOCHROMATIC LIGHT" : "LIGHT SOURCE STANDBY"}</span><strong>{active ? resultTitle : `等待开启${selectedLight.label}`}</strong><small>{active ? resultDetail : "先选择一种光源，再沿光路观察最终落点"}</small></div>
     </div>
-    <div className="open-control-deck dispersion-controls"><RangeControl label="三棱镜转角" value={prismAngle} min={-16} max={16} step={1} unit="°" onChange={setPrismAngle} onInteract={interact} /><RangeControl label="棱镜到光屏距离" value={screenDistance} min={120} max={380} step={10} unit="mm" onChange={setScreenDistance} onInteract={interact} /><RangeControl label="狭缝宽度" value={slitWidth} min={1} max={10} step={1} unit="mm" onChange={setSlitWidth} onInteract={interact} /><div className={`observation-output ${active ? "" : "awaiting-reading"}`}><span>{active ? `当前光源 · ${selectedLight.label}` : "实验尚未开始"}</span><strong>{active ? lightMode === "white" ? "复色光形成连续光谱" : lightMode === "rgb" ? "三种成分光重新分离" : "单色光不会产生新的颜色" : "选择一种光源开始比较"}</strong><p>{active ? "保持其他条件不变，只切换入射光，比较光屏上色带的数量和位置。" : "实验结果会在你的操作之后出现。"}</p></div></div>
+    <div className="open-control-deck dispersion-controls"><RangeControl label="三棱镜转角" value={prismAngle} min={-16} max={16} step={1} unit="°" onChange={setPrismAngle} onInteract={interact} tutorialTarget="prism" highlighted={tutorialFocus === "prism"} /><RangeControl label="棱镜到光屏距离" value={screenDistance} min={120} max={380} step={10} unit="mm" onChange={setScreenDistance} onInteract={interact} tutorialTarget="screen-distance" highlighted={tutorialFocus === "screen-distance"} /><RangeControl label="狭缝宽度" value={slitWidth} min={1} max={10} step={1} unit="mm" onChange={setSlitWidth} onInteract={interact} /><div className={`observation-output ${active ? "" : "awaiting-reading"} ${tutorialFocus === "result" ? "tutorial-target-active" : ""}`} data-tutorial-spotlight="result"><span>{active ? `当前光源 · ${selectedLight.label}` : "实验尚未开始"}</span><strong>{active ? lightMode === "white" ? "复色光形成连续光谱" : lightMode === "rgb" ? "三种成分光重新分离" : "单色光不会产生新的颜色" : "选择一种光源开始比较"}</strong><p>{active ? "保持其他条件不变，只切换入射光，比较光屏上色带的数量和位置。" : "实验结果会在你的操作之后出现。"}</p></div></div>
     <section className="dispersion-guide" aria-label="三棱镜色散实验说明">
       <header><span>EXPERIMENT GUIDE / 实验说明</span><h2>这是什么实验？应该怎样操作？</h2><p>这是一套可更换光源的三棱镜色散实验。它用白光、单色光和 RGB 混合光进行对照，把“复色光会分离、单色光只偏折”变成可以直接观察的光屏现象。</p></header>
       <div>
@@ -556,6 +597,7 @@ function StraightPropagationModule() {
   const imageHeight = Math.abs(imageFromTop - imageFromBottom);
   const brightness = Math.min(100, 20 + aperture * 4);
   const imageFitsScreen = imageFromBottom >= 72 && imageFromTop <= 378;
+  const imageClarity = aperture <= 4 ? "边缘较清晰" : aperture <= 10 ? "边缘略显模糊" : "边缘明显模糊";
   const interact = () => setInteracted(true);
   const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
   const startDrag = (kind: "object" | "screen") => (event: React.PointerEvent<SVGGElement>) => {
@@ -614,7 +656,7 @@ function StraightPropagationModule() {
       {!interacted && <OpticsInteractionCue text="直接拖动烛焰或光屏，开始实验" />}
       <div className={`law-readout ${interacted ? "" : "awaiting-reading"}`}><span>{interacted ? imageFitsScreen ? "SCREEN OBSERVATION" : "IMAGE EXCEEDS SCREEN" : "OPTICAL PATH STANDBY"}</span><strong>{interacted ? imageFitsScreen ? "光屏上出现完整的倒立实像" : "像的一部分超出了光屏" : "等待第一次拖动"}</strong><small>{interacted ? `像高约 ${imageHeight.toFixed(0)} 个示意单位 · 小孔越大，像越亮但边缘更模糊` : "画面中的烛焰和光屏都可以左右拖动"}</small></div>
     </div>
-    <div className="open-control-deck straight-controls"><RangeControl label="物体到小孔距离" value={objectDistance} min={180} max={330} step={5} unit="cm" onChange={setObjectDistance} onInteract={interact} /><RangeControl label="小孔到光屏距离" value={screenX - holeX} min={170} max={400} step={5} unit="cm" onChange={(distance) => setScreenX(holeX + distance)} onInteract={interact} /><RangeControl label="小孔直径" value={aperture} min={2} max={20} step={1} unit="mm" onChange={setAperture} onInteract={interact} /><div className={`observation-output ${interacted ? "" : "awaiting-reading"}`}><span>{interacted ? "来自你的直接操作" : "现象尚未生成"}</span><strong>{interacted ? imageFitsScreen ? "小孔也能形成清晰的实像" : "移动光屏，让完整像回到屏内" : "拖动一个器材开始实验"}</strong><p>{interacted ? "分别改变物距和屏距比较像的大小，再改变孔径比较亮度与清晰度。" : "拖动与滑杆会同步更新。"}</p></div></div>
+    <div className="open-control-deck straight-controls"><RangeControl label="物体到小孔距离" value={objectDistance} min={180} max={330} step={5} unit="cm" onChange={setObjectDistance} onInteract={interact} /><RangeControl label="小孔到光屏距离" value={screenX - holeX} min={170} max={400} step={5} unit="cm" onChange={(distance) => setScreenX(holeX + distance)} onInteract={interact} /><RangeControl label="小孔直径（示意）" value={aperture} min={2} max={20} step={1} unit="mm" onChange={setAperture} onInteract={interact} /><div className={`observation-output ${interacted ? "" : "awaiting-reading"}`}><span>{interacted ? "来自你的直接操作" : "现象尚未生成"}</span><strong>{interacted ? imageFitsScreen ? `光屏得到倒立实像 · ${imageClarity}` : "像的一部分超出光屏" : "拖动一个器材开始实验"}</strong><p>{interacted ? "孔径变大时通光量增多，但每个物点形成的光斑也变大，所以不能一概称为清晰成像。" : "拖动与滑杆会同步更新。"}</p></div></div>
     <section className="dispersion-guide straight-guide" aria-label="小孔成像实验说明">
       <header><span>EXPERIMENT GUIDE / 实验说明</span><h2>这是什么实验？应该怎样操作？</h2><p>这是小孔成像实验。装置不使用透镜，只让烛焰各点发出的部分光线穿过同一个小孔，在另一侧光屏上重新排列成像，用来验证光在均匀介质中沿直线传播。</p></header>
       <div>
@@ -800,24 +842,24 @@ function CelestialModule() {
   const perspectiveFactor = view === "perspective" ? .58 : view === "top" ? .82 : 1;
   const blockerY = centerY + offset * perspectiveFactor;
   const alignment = Math.abs(offset);
-  const status = alignment < 16 ? mode === "solar" ? "日全食条件" : mode === "lunar" ? "月全食条件" : "行星凌日进行中" : alignment < 52 ? mode === "solar" ? "日偏食条件" : mode === "lunar" ? "月偏食条件" : "行星擦过日面" : "三个天体未形成有效遮挡";
+  const status = alignment < 16 ? mode === "solar" ? "地球上出现日全食带（示意）" : mode === "lunar" ? "月全食条件（示意）" : "行星凌日进行中" : alignment < 52 ? mode === "solar" ? "地球上部分地区可见日偏食" : mode === "lunar" ? "月偏食条件（示意）" : "行星擦过日面" : "三个天体未形成有效遮挡";
   const blockerName = mode === "lunar" ? "地球" : mode === "solar" ? "月球" : "内行星";
   const targetName = mode === "solar" ? "地球" : mode === "lunar" ? "月球" : "地球观测端";
   const changeMode = (next: CelestialMode) => { setMode(next); setOffset(62); setInteracted(false); recordHarness("configuration.changed", { control: "天体现象", value: next }); };
   const changeView = (next: CelestialView) => { setView(next); recordHarness("view.changed", { experiment: "celestial", view: next }); };
 
   return <div className="open-experience">
-    <ModuleIntro eyebrow="生活·物理·社会 / 日食和月食" title="沿着太阳光，搭建一次三维天体遮挡" text="画面先突出一束束彼此平行的太阳光：每一束都沿直线传播。移动中间天体靠近光轴，观察它怎样截断部分直线光，并在后方形成具有空间深度的本影与半影。" />
+    <ModuleIntro eyebrow="生活·物理·社会 / 日食和月食" title="沿着太阳光，搭建一次三维天体遮挡" text="每一束太阳光在均匀介质中沿直线传播；但太阳具有一定大小，从太阳表面不同位置出发的边界光线方向略有不同，因此遮挡天体后方会形成本影和半影。图中距离与大小均为示意。" />
     <div className="medium-tabs celestial-tabs"><button className={mode === "solar" ? "active" : ""} onClick={() => changeMode("solar")}>日食</button><button className={mode === "lunar" ? "active" : ""} onClick={() => changeMode("lunar")}>月食</button><button className={mode === "transit" ? "active" : ""} onClick={() => changeMode("transit")}>水星/金星凌日</button></div>
     <div className={`celestial-lab celestial-space-view view-${view}`}>
       <div className="celestial-view-toolbar"><span><b>3D VIEW</b>切换观察方向</span><div><button className={view === "perspective" ? "active" : ""} onClick={() => changeView("perspective")}>空间透视</button><button className={view === "side" ? "active" : ""} onClick={() => changeView("side")}>光路侧视</button><button className={view === "top" ? "active" : ""} onClick={() => changeView("top")}>轨道俯视</button></div></div>
       <CelestialSpaceDiagram mode={mode} view={view} offset={offset} interacted={interacted} blockerX={blockerX} blockerY={blockerY} blockerRadius={blockerRadius} blockerName={blockerName} targetX={targetX} targetRadius={targetRadius} targetName={targetName} centerY={centerY} alignment={alignment} />
-      <div className="celestial-light-legend"><span><i className="legend-ray" />平行直线光</span><span><i className="legend-penumbra" />半影空间</span><span><i className="legend-umbra" />本影空间</span></div>
-      {!interacted && <OpticsInteractionCue text="移动中间天体，让它逐渐进入平行光束中心" />}
-      <div className={`law-readout ${interacted ? "" : "awaiting-reading"}`}><span>{interacted ? "SHADOW GEOMETRY" : "STRAIGHT LIGHT PATH READY"}</span><strong>{interacted ? status : "先沿着七束直线光观察传播方向"}</strong><small>{interacted ? "光不会绕过天体；被挡住的直线光在后方留下本影和半影" : "再移动中间天体，观察哪些直线光被截断"}</small></div>
+      <div className="celestial-light-legend"><span><i className="legend-ray" />代表性直线光</span><span><i className="legend-penumbra" />半影空间</span><span><i className="legend-umbra" />本影空间</span></div>
+      {!interacted && <OpticsInteractionCue text="移动中间天体，让它逐渐进入太阳与目标天体的连线附近" />}
+      <div className={`law-readout ${interacted ? "" : "awaiting-reading"}`}><span>{interacted ? "SHADOW GEOMETRY" : "STRAIGHT LIGHT PATH READY"}</span><strong>{interacted ? status : "先沿着代表光线观察传播方向"}</strong><small>{interacted ? "在几何光学尺度下，边界光线被遮挡后划分出本影与半影" : "再移动中间天体，观察哪些直线光被截断"}</small></div>
     </div>
     <div className="open-control-deck celestial-controls"><RangeControl label="中间天体偏离光轴" value={offset} min={-110} max={110} step={2} unit="格" onChange={setOffset} onInteract={() => setInteracted(true)} /><div className="index-comparison"><span>当前空间顺序</span><strong>太阳 → {blockerName} → {targetName}</strong><p>遮挡天体进入太阳和目标天体之间，才可能形成对应天象。</p></div><div className={`observation-output ${interacted ? "" : "awaiting-reading"}`}><span>对应基础规律 · 光的直线传播</span><strong>{interacted ? status : "移动中间天体开始实验"}</strong><p>保持太阳和目标天体不动，只改变中间天体的位置，观察阴影落点。</p></div></div>
-    <section className="celestial-principle-strip"><article><b>01</b><span><strong>为什么要画多束直线光？</strong><p>太阳不是只发出一条光线。画出多束平行光，才能看清哪些光被天体挡住、哪些仍能到达目标。</p></span></article><article><b>02</b><span><strong>本影和半影从哪里来？</strong><p>直射太阳光全部被挡住的区域是本影；只挡住一部分太阳光的区域是半影。</p></span></article><article><b>03</b><span><strong>日食和月食差在哪里？</strong><p>日食由月球挡住到达地球的太阳光；月食由地球挡住原本能够到达月球的太阳光。</p></span></article></section>
+    <section className="celestial-principle-strip"><article><b>01</b><span><strong>为什么要画多束直线光？</strong><p>太阳不是点光源。每一束光都沿直线传播，但太阳表面不同位置发出的边界光线方向并不完全相同。</p></span></article><article><b>02</b><span><strong>本影和半影从哪里来？</strong><p>太阳各处的直射光全部被挡住的区域是本影；只有部分太阳表面发出的光被挡住的区域是半影。</p></span></article><article><b>03</b><span><strong>日食和月食差在哪里？</strong><p>日食由月球挡住到达地球的太阳光；月食由地球挡住原本能够到达月球的太阳光。</p></span></article></section>
     <BlackHoleLightExtension />
   </div>;
 }
@@ -837,7 +879,7 @@ function CelestialSpaceDiagram({ mode, view, offset, interacted, blockerX, block
     <g className="space-stars">{Array.from({ length: 44 }, (_, index) => <circle cx={25 + (index * 149) % 950} cy={34 + (index * 83) % 440} r={index % 4 === 0 ? 1.8 : .9} key={index} />)}</g>
     <g className="celestial-depth-grid"><path d="M220 405 L945 405 L820 500 L70 500 Z" />{Array.from({ length: 8 }, (_, index) => <line x1={180 + index * 93} y1="405" x2={40 + index * 115} y2="500" key={`depth-v-${index}`} />)}{Array.from({ length: 4 }, (_, index) => <line x1={180 - index * 31} y1={425 + index * 22} x2={920 + index * 7} y2={425 + index * 22} key={`depth-h-${index}`} />)}</g>
     <g className="celestial-orbits"><ellipse cx={targetX} cy={centerY} rx="118" ry={view === "top" ? 72 : 34} /><ellipse cx={blockerX} cy={centerY} rx="92" ry={view === "top" ? 58 : 26} /></g>
-    <g className="sun-straight-rays">{Array.from({ length: 7 }, (_, index) => { const y = 140 + index * 39; return <line x1="170" y1={y} x2="965" y2={y} markerEnd="url(#sunRayArrow)" style={{ animationDelay: `${index * -.16}s` }} key={index} />; })}<text x="215" y="108">太阳光近似平行传播 · 每一束都是直线</text></g>
+    <g className="sun-straight-rays">{Array.from({ length: 7 }, (_, index) => { const y = 140 + index * 39; return <line x1="170" y1={y} x2="965" y2={y} markerEnd="url(#sunRayArrow)" style={{ animationDelay: `${index * -.16}s` }} key={index} />; })}<text x="215" y="108">中央代表光近似平行 · 本影半影由太阳边缘光线确定</text></g>
     <g className="shadow-volume">
       <path className="penumbra-volume" d={`M${blockerX} ${blockerY - blockerRadius} L975 ${blockerY - blockerRadius - 88} L975 ${blockerY + blockerRadius + 88} L${blockerX} ${blockerY + blockerRadius} Z`} />
       <path className="umbra-volume" d={`M${blockerX} ${blockerY - blockerRadius} L930 ${blockerY - 12} L930 ${blockerY + 12} L${blockerX} ${blockerY + blockerRadius} Z`} />
@@ -1288,6 +1330,10 @@ function MagnifierModule({ scene, result, update }: SceneProps) {
   const [viewMode, setViewMode] = useState<LensViewMode>("3d");
   const interact = () => setInteracted(true);
   const distance = Math.abs(scene.objectX);
+  const atFocus = !Number.isFinite(result.imageDistance);
+  const positionNote = atFocus ? "物体恰好位于焦点" : distance < scene.focalLength ? "物体位于焦点以内" : "物体位于焦点以外";
+  const imageSideNote = atFocus ? "出射光近似平行，像在无穷远" : result.real ? "像在透镜另一侧" : "像与物体同侧";
+  const magnificationNote = atFocus ? "有限距离内不能得到清晰像" : `放大率约 ${Math.abs(result.magnification).toFixed(2)}×`;
   useEffect(() => {
     if (!playing) return;
     let frame = 0;
@@ -1307,8 +1353,8 @@ function MagnifierModule({ scene, result, update }: SceneProps) {
     <ModuleIntro eyebrow="MAGNIFIER / 生活观察" title="移动放大镜，看看像什么时候不再“放大”" text="装置不会预先告诉你焦点两侧的答案。移动物体跨过黄色焦点，比较画面方向、大小和光屏状态。" action={<MotionButton running={playing} onClick={() => setPlaying((value) => !value)} label="自动跨越焦点" onInteract={interact} />} />
     <LensDimensionSwitch mode={viewMode} apparatus="magnifier" onChange={(next) => { setViewMode(next); interact(); }} />
     {viewMode === "3d" ? <LensSystem3DView apparatus="magnifier" objectDistance={distance} focalLength={scene.focalLength} imageDistance={result.imageDistance} magnification={result.magnification} real={result.real} nature={result.nature} interacted={interacted} screenDistance={scene.screenX} onInteract={interact} /> : <div className="experience-canvas"><LensCanvas scene={scene} result={result} onInteract={interact} revealResult={interacted} />{!interacted && <OpticsInteractionCue text="拖动物体，或调节下方距离" />}</div>}
-    <LensReadingStrip active={interacted} entries={[{ label: "物距 u", value: `${distance.toFixed(1)} cm`, note: distance < scene.focalLength ? "物体位于焦点以内" : "物体位于焦点以外" }, { label: "焦距 f", value: `${scene.focalLength.toFixed(1)} cm`, note: "黄色标记为焦点 F" }, { label: "像距 v", value: Number.isFinite(result.imageDistance) ? `${result.imageDistance.toFixed(1)} cm` : "∞", note: result.real ? "像在透镜另一侧" : "像与物体同侧" }, { label: "成像结果", value: result.nature, note: `放大率约 ${Math.abs(result.magnification).toFixed(2)}×`, tone: "accent" }]} />
-    <div className="open-control-deck"><RangeControl label="物体离透镜" value={distance} min={4} max={28} step={0.5} unit="cm" onChange={(value) => { setPlaying(false); update({ objectX: -value }); }} onInteract={interact} /><RangeControl label="放大镜焦距" value={scene.focalLength} min={8} max={22} step={0.5} unit="cm" onChange={(focalLength) => { setPlaying(false); update({ focalLength }); }} onInteract={interact} /><div className={`observation-output ${interacted ? "" : "awaiting-reading"}`}><span>{interacted ? "当前观察 · 来自你的操作" : "观察结果尚未生成"}</span><strong>{interacted ? result.nature : "先移动一个器材"}</strong><p>{interacted ? result.real ? "现在可以尝试用光屏承接，并继续改变距离。" : `当前像的大小约为物体的 ${Math.abs(result.magnification).toFixed(1)} 倍。` : "改变物距或焦距后，这里才显示测量结果。"}</p></div></div>
+    <LensReadingStrip active={interacted} entries={[{ label: "物距 u", value: `${distance.toFixed(1)} cm`, note: positionNote }, { label: "焦距 f", value: `${scene.focalLength.toFixed(1)} cm`, note: "黄色标记为焦点 F" }, { label: "像距 v", value: Number.isFinite(result.imageDistance) ? `${result.imageDistance.toFixed(1)} cm` : "∞", note: imageSideNote }, { label: "成像结果", value: result.nature, note: magnificationNote, tone: "accent" }]} />
+    <div className="open-control-deck"><RangeControl label="物体离透镜" value={distance} min={4} max={28} step={0.5} unit="cm" onChange={(value) => { setPlaying(false); update({ objectX: -value }); }} onInteract={interact} /><RangeControl label="放大镜焦距" value={scene.focalLength} min={8} max={22} step={0.5} unit="cm" onChange={(focalLength) => { setPlaying(false); update({ focalLength }); }} onInteract={interact} /><div className={`observation-output ${interacted ? "" : "awaiting-reading"}`}><span>{interacted ? "当前观察 · 来自你的操作" : "观察结果尚未生成"}</span><strong>{interacted ? result.nature : "先移动一个器材"}</strong><p>{interacted ? atFocus ? "物体恰好位于焦点，出射光近似平行，有限距离内不能承接清晰像。" : result.real ? "现在可以尝试用光屏承接，并继续改变距离。" : `当前像的大小约为物体的 ${Math.abs(result.magnification).toFixed(1)} 倍。` : "改变物距或焦距后，这里才显示测量结果。"}</p></div></div>
     <LensModuleGuide apparatus="magnifier" />
   </div>;
 }
@@ -1363,6 +1409,7 @@ function CameraModule() {
 }
 
 function EyeModule() {
+  const recordHarness = useHarnessStore((state) => state.record);
   const [target, setTarget] = useState<"near" | "far">("far");
   const [focalLength, setFocalLength] = useState(16.9);
   const objectDistance = target === "far" ? 3000 : 300;
@@ -1373,6 +1420,7 @@ function EyeModule() {
   const [interacted, setInteracted] = useState(false);
   const [viewMode, setViewMode] = useState<LensViewMode>("3d");
   const interact = () => setInteracted(true);
+  const changeTarget = (next: "near" | "far") => { setTarget(next); setAccommodating(false); interact(); recordHarness("configuration.changed", { experiment: "eye", control: "观察目标", value: next }); };
   const targetFocalLength = objectDistance * retinaDistance / (objectDistance + retinaDistance);
   useEffect(() => {
     if (!accommodating) return;
@@ -1390,7 +1438,7 @@ function EyeModule() {
   }, [accommodating, targetFocalLength]);
   return <div className="open-experience">
     <ModuleIntro eyebrow="EYE LAB / 人体中的物理" title="视网膜不能移动，眼睛怎样看清远近？" text="先切换观察目标，再尝试改变晶状体。只有操作以后，平台才显示像距与清晰状态。" action={<MotionButton running={accommodating} onClick={() => setAccommodating((value) => !value)} label="模拟晶状体调节" auto onInteract={interact} />} />
-    <div className="medium-tabs lens-context-tabs eye-target-tabs"><button className={target === "far" ? "active" : ""} onClick={() => { setTarget("far"); setAccommodating(false); interact(); }}>看远处 · 山</button><button className={target === "near" ? "active" : ""} onClick={() => { setTarget("near"); setAccommodating(false); interact(); }}>看近处 · 书</button></div>
+    <div className="medium-tabs lens-context-tabs eye-target-tabs"><button className={target === "far" ? "active" : ""} onClick={() => changeTarget("far")}>看远处 · 山</button><button className={target === "near" ? "active" : ""} onClick={() => changeTarget("near")}>看近处 · 书</button></div>
     <LensDimensionSwitch mode={viewMode} apparatus="eye" onChange={(next) => { setViewMode(next); interact(); }} />
     {viewMode === "3d" ? <LensSystem3DView apparatus="eye" objectDistance={objectDistance} focalLength={focalLength} imageDistance={result.imageDistance} magnification={result.magnification} real={result.real} nature={clarity < .15 ? "视网膜成像清晰" : "像点尚未落在视网膜"} interacted={interacted} screenDistance={retinaDistance} onInteract={interact} /> : <div className="eye-lab"><div className={`eyeball ${accommodating ? "accommodating" : ""} ${interacted ? "" : "optics-dormant"}`}><div className="crystalline-lens" style={{ transform: `scaleX(${.75 + (17.2 - focalLength) * .18})` }} /><div className="retina"><span style={{ filter: `blur(${interacted ? Math.min(9, clarity * 7) : 8}px)` }}>A</span></div><i className="eye-ray one" /><i className="eye-ray two" /><b className="eye-photon one" /><b className="eye-photon two" /></div><div className={`eye-status ${interacted && clarity < .15 ? "clear" : ""} ${interacted ? "" : "awaiting-reading"}`}><Eye size={21} /><strong>{interacted ? accommodating ? "晶状体正在调节" : clarity < .15 ? "视网膜成像清晰" : "晶状体还需调节" : "视网膜读数待测"}</strong><span>{interacted ? `像距 ${result.imageDistance.toFixed(2)} mm / 视网膜 17 mm` : "先切换远近目标或调节焦距"}</span></div>{!interacted && <OpticsInteractionCue text="选择看远处或看近处" />}</div>}
     <LensReadingStrip active={interacted} entries={[{ label: "观察目标", value: target === "far" ? "远处的山" : "手中的书", note: `等效物距 ${objectDistance} mm` }, { label: "晶状体焦距", value: `${focalLength.toFixed(2)} mm`, note: accommodating ? "晶状体正在连续调节" : "当前等效焦距" }, { label: "像距", value: `${result.imageDistance.toFixed(2)} mm`, note: "视网膜固定在 17.00 mm" }, { label: "清晰状态", value: clarity < .15 ? "清晰" : "仍需调节", note: `像面偏差 ${clarity.toFixed(2)} mm`, tone: clarity < .15 ? "accent" : "warning" }]} />
@@ -1400,6 +1448,7 @@ function EyeModule() {
 }
 
 function CorrectionModule() {
+  const recordHarness = useHarnessStore((state) => state.record);
   const [condition, setCondition] = useState<"myopia" | "hyperopia">("myopia");
   const [lens, setLens] = useState<"none" | "convex" | "concave">("none");
   const [playing, setPlaying] = useState(false);
@@ -1407,6 +1456,8 @@ function CorrectionModule() {
   const correct = (condition === "myopia" && lens === "concave") || (condition === "hyperopia" && lens === "convex");
   const tried = lens !== "none";
   const imageDistance = correct ? 17 : condition === "myopia" ? lens === "convex" ? 12.8 : 14.4 : lens === "concave" ? 22.2 : 20.4;
+  const changeCondition = (next: "myopia" | "hyperopia") => { setPlaying(false); setCondition(next); setLens("none"); recordHarness("configuration.changed", { experiment: "correction", control: "眼睛状态", value: next }); };
+  const changeLens = (next: "none" | "convex" | "concave") => { setPlaying(false); setLens(next); recordHarness("configuration.changed", { experiment: "correction", control: "矫正镜片", value: next }); };
   useEffect(() => {
     if (!playing) return;
     const sequence: Array<"none" | "concave" | "convex"> = ["none", "concave", "convex"];
@@ -1420,17 +1471,18 @@ function CorrectionModule() {
   }, [playing]);
   return <div className="open-experience">
     <ModuleIntro eyebrow="VISION CORRECTION / 选择与验证" title="给这只眼睛选择一副合适的镜片" text="可以随意切换眼睛状态和镜片，不扣分。观察镜片怎样让像向前或向后移动。" action={<MotionButton running={playing} onClick={() => setPlaying((value) => !value)} label="自动比较镜片" />} />
-    <div className="medium-tabs lens-context-tabs correction-condition-tabs"><button className={condition === "myopia" ? "active" : ""} onClick={() => { setPlaying(false); setCondition("myopia"); setLens("none"); }}>近视眼 · 像在视网膜前</button><button className={condition === "hyperopia" ? "active" : ""} onClick={() => { setPlaying(false); setCondition("hyperopia"); setLens("none"); }}>远视眼 · 像在视网膜后</button></div>
+    <div className="medium-tabs lens-context-tabs correction-condition-tabs"><button className={condition === "myopia" ? "active" : ""} onClick={() => changeCondition("myopia")}>近视眼 · 像在视网膜前</button><button className={condition === "hyperopia" ? "active" : ""} onClick={() => changeCondition("hyperopia")}>远视眼 · 像在视网膜后</button></div>
     <LensDimensionSwitch mode={viewMode} apparatus="correction" onChange={setViewMode} />
-    {viewMode === "3d" ? <LensSystem3DView apparatus="correction" objectDistance={3000} focalLength={16.9} imageDistance={imageDistance} magnification={-.18} real nature={condition === "myopia" ? "近视眼成像与矫正" : "远视眼成像与矫正"} interacted={tried} screenDistance={17} correctionLens={lens} correctionEffective={correct} onInteract={() => undefined} /> : <div className="correction-lab"><div className="correction-scene"><div className={`trial-lens ${lens}`}><span>{lens === "none" ? "未佩戴" : lens === "convex" ? ")(" : "()"}</span></div><div className={`correction-rays moving-beams ${tried ? "" : "paused-beams"}`}><i /><i /><b className="beam-pulse p1" /><b className="beam-pulse p2" /></div><div className="correction-eye"><b /><span className={`fault-image ${correct ? "correct" : condition}`} /></div><p>{tried ? correct ? "像已经回到视网膜" : "像的位置仍然不合适" : "选择一块镜片，再观察像怎样移动"}</p></div></div>}
+    {viewMode === "3d" ? <LensSystem3DView apparatus="correction" objectDistance={3000} focalLength={16.9} imageDistance={imageDistance} magnification={-.18} real nature={condition === "myopia" ? "近视眼成像与矫正" : "远视眼成像与矫正"} interacted={tried} screenDistance={17} correctionLens={lens} correctionEffective={correct} onInteract={() => undefined} /> : <div className="correction-lab"><div className="correction-scene"><div className={`trial-lens ${lens}`}><span>{lens === "none" ? "未佩戴" : lens === "convex" ? "()" : ")("}</span></div><div className={`correction-rays moving-beams ${tried ? "" : "paused-beams"}`}><i /><i /><b className="beam-pulse p1" /><b className="beam-pulse p2" /></div><div className="correction-eye"><b /><span className={`fault-image ${correct ? "correct" : condition}`} /></div><p>{tried ? correct ? "像已经回到视网膜" : "像的位置仍然不合适" : "选择一块镜片，再观察像怎样移动"}</p></div></div>}
     <LensReadingStrip active={tried} entries={[{ label: "眼睛状态", value: condition === "myopia" ? "近视眼" : "远视眼", note: condition === "myopia" ? "未矫正像在视网膜前" : "未矫正像在视网膜后" }, { label: "试戴镜片", value: lens === "concave" ? "凹透镜" : lens === "convex" ? "凸透镜" : "未佩戴", note: lens === "concave" ? "先使光线发散" : "先使光线会聚" }, { label: "简化像点", value: `${imageDistance.toFixed(1)} mm`, note: "视网膜位置为 17.0 mm" }, { label: "矫正判断", value: correct ? "像点回到视网膜" : "尚未完成矫正", note: correct ? "选择与眼睛状态匹配" : "换另一块镜片继续比较", tone: correct ? "accent" : "warning" }]} />
-    <div className="correction-lens-deck"><span>选择矫正镜片</span><div className="lens-choices correction-lens-choices"><button className={lens === "none" ? "active" : ""} onClick={() => { setPlaying(false); setLens("none"); }}>不戴镜片</button><button className={lens === "concave" ? "active" : ""} onClick={() => { setPlaying(false); setLens("concave"); }}>凹透镜</button><button className={lens === "convex" ? "active" : ""} onClick={() => { setPlaying(false); setLens("convex"); }}>凸透镜</button></div></div>
+    <div className="correction-lens-deck"><span>选择矫正镜片</span><div className="lens-choices correction-lens-choices"><button className={lens === "none" ? "active" : ""} onClick={() => changeLens("none")}>不戴镜片</button><button className={lens === "concave" ? "active" : ""} onClick={() => changeLens("concave")}>凹透镜</button><button className={lens === "convex" ? "active" : ""} onClick={() => changeLens("convex")}>凸透镜</button></div></div>
     <div className={`correction-feedback correction-feedback-docked ${tried && correct ? "correct" : ""} ${tried ? "" : "awaiting-reading"}`}><Glasses size={22} /><div><strong>{tried ? correct ? "矫正有效" : "这块镜片没有完成矫正" : "等待你的镜片选择"}</strong><p>{tried ? correct ? condition === "myopia" ? "凹透镜先使光发散，让像点后移到视网膜。" : "凸透镜先使光会聚，让像点前移到视网膜。" : "比较像点相对视网膜的位置，再换另一块镜片。" : "平台不会提前标出正确选项。"}</p></div></div>
     <LensModuleGuide apparatus="correction" />
   </div>;
 }
 
 function InstrumentsModule() {
+  const recordHarness = useHarnessStore((state) => state.record);
   const [instrument, setInstrument] = useState<"telescope" | "microscope">("telescope");
   const [objectiveF, setObjectiveF] = useState(60);
   const [eyepieceF, setEyepieceF] = useState(10);
@@ -1438,7 +1490,8 @@ function InstrumentsModule() {
   const [interacted, setInteracted] = useState(false);
   const [viewMode, setViewMode] = useState<LensViewMode>("3d");
   const interact = () => setInteracted(true);
-  const magnification = instrument === "telescope" ? objectiveF / eyepieceF : (160 / Math.max(8, objectiveF)) * (25 / eyepieceF);
+  const changeInstrument = (next: "telescope" | "microscope") => { setPlaying(false); setInstrument(next); setObjectiveF(next === "telescope" ? 60 : 16); setEyepieceF(next === "telescope" ? 10 : 8); interact(); recordHarness("configuration.changed", { experiment: "instruments", control: "光学仪器", value: next }); };
+  const magnification = instrument === "telescope" ? objectiveF / eyepieceF : (160 / Math.max(8, objectiveF)) * (250 / eyepieceF);
   useEffect(() => {
     if (!playing) return;
     let frame = 0;
@@ -1461,7 +1514,7 @@ function InstrumentsModule() {
   }, [instrument, playing]);
   return <div className="open-experience">
     <ModuleIntro eyebrow="TWO-LENS SYSTEM / 组合实验" title="把两块透镜组合，视野会延伸到哪里？" text="初始视野与放大读数保持关闭。选择仪器并改变两块透镜的焦距，结果才随操作显现。" action={<MotionButton running={playing} onClick={() => setPlaying((value) => !value)} label="自动比较焦距" onInteract={interact} />} />
-    <div className="instrument-switch"><button className={instrument === "telescope" ? "active" : ""} onClick={() => { setPlaying(false); setInstrument("telescope"); setObjectiveF(60); setEyepieceF(10); interact(); }}><Telescope size={23} /><span>望远镜</span></button><button className={instrument === "microscope" ? "active" : ""} onClick={() => { setPlaying(false); setInstrument("microscope"); setObjectiveF(16); setEyepieceF(8); interact(); }}><Microscope size={23} /><span>显微镜</span></button></div>
+    <div className="instrument-switch"><button className={instrument === "telescope" ? "active" : ""} onClick={() => changeInstrument("telescope")}><Telescope size={23} /><span>望远镜</span></button><button className={instrument === "microscope" ? "active" : ""} onClick={() => changeInstrument("microscope")}><Microscope size={23} /><span>显微镜</span></button></div>
     <LensDimensionSwitch mode={viewMode} apparatus="instruments" onChange={(next) => { setViewMode(next); interact(); }} />
     {viewMode === "3d" ? <LensSystem3DView apparatus={instrument} objectDistance={instrument === "telescope" ? 1200 : 28} focalLength={objectiveF} imageDistance={objectiveF * 1.25} magnification={-Math.min(2.2, magnification / 8)} real nature={instrument === "telescope" ? "物镜先成中间像，目镜放大视角" : "物镜先成放大实像，目镜再次放大"} interacted={interacted} secondFocalLength={eyepieceF} onInteract={interact} /> : <div className={`instrument-lab ${instrument}`}><div className="instrument-object">{instrument === "telescope" ? "🌙" : "🦠"}<span>{instrument === "telescope" ? "遥远的月球" : "微小的细胞"}</span></div><div className={`double-lens moving-beams ${interacted ? "" : "paused-beams"}`}><i /><b /><i /><b /><span className="instrument-photon first" /><span className="instrument-photon second" /></div><div className={`instrument-view ${interacted ? "" : "awaiting-reading"}`}><span style={{ transform: `scale(${interacted ? Math.min(2.4, .65 + magnification / 10) : .7})`, filter: interacted ? "none" : "blur(7px)" }}>{instrument === "telescope" ? "🌙" : "🦠"}</span></div><div className={`magnification-readout ${interacted ? "" : "awaiting-reading"}`}><small>{interacted ? playing ? "正在动态比较" : "本次简化读数" : "等待透镜调节"}</small><strong>{interacted ? `${magnification.toFixed(1)}×` : "— —"}</strong></div>{!interacted && <OpticsInteractionCue text="选择仪器或改变任一焦距" />}</div>}
     <LensReadingStrip active={interacted} entries={[{ label: "当前仪器", value: instrument === "telescope" ? "望远镜" : "显微镜", note: instrument === "telescope" ? "观察遥远目标" : "观察微小近物" }, { label: "物镜焦距", value: `${objectiveF.toFixed(1)} mm`, note: "物镜首先形成中间像" }, { label: "目镜焦距", value: `${eyepieceF.toFixed(1)} mm`, note: "目镜继续放大观察视角" }, { label: "简化放大率", value: `${magnification.toFixed(1)}×`, note: playing ? "正在连续比较焦距组合" : "调节两块透镜继续比较", tone: "accent" }]} />
@@ -1516,10 +1569,10 @@ function MotionButton({ running, onClick, label, auto = false, onInteract }: { r
   return <button className={`motion-button ${running ? "running" : ""}`} onClick={toggle}>{running ? <Pause size={15} /> : auto ? <WandSparkles size={15} /> : <Play size={15} />}{running ? "暂停动态" : label}</button>;
 }
 
-function RangeControl({ label, value, min, max, step, unit, onChange, onInteract }: { label: string; value: number; min: number; max: number; step: number; unit: string; onChange: (value: number) => void; onInteract?: () => void }) {
+function RangeControl({ label, value, min, max, step, unit, onChange, onInteract, tutorialTarget, highlighted = false }: { label: string; value: number; min: number; max: number; step: number; unit: string; onChange: (value: number) => void; onInteract?: () => void; tutorialTarget?: string; highlighted?: boolean }) {
   const recordHarness = useHarnessStore((state) => state.record);
   const change = (next: number) => { onChange(next); onInteract?.(); recordHarness("control.changed", { control: label, value: next, unit }); };
-  return <label className="open-range"><span><b>{label}</b><output>{value.toFixed(step < .1 ? 2 : 1)} {unit}</output></span><input type="range" value={value} min={min} max={max} step={step} onChange={(event) => change(Number(event.target.value))} /></label>;
+  return <label className={`open-range ${highlighted ? "tutorial-target-active" : ""}`} data-tutorial-target={tutorialTarget} data-tutorial-spotlight={tutorialTarget}><span><b>{label}</b><output>{value.toFixed(step < .1 ? 2 : 1)} {unit}</output></span><input type="range" value={value} min={min} max={max} step={step} onChange={(event) => change(Number(event.target.value))} /></label>;
 }
 
 function OpticsInteractionCue({ text }: { text: string }) {

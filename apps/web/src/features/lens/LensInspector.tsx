@@ -56,7 +56,7 @@ export function LensInspector({ scene, result, revealed = true, onInteract }: Le
       </section>
 
       <section className={`result-console ${revealed ? "" : "result-standby"}`}>
-        <div className="console-head"><span>{revealed ? "LIVE RESULT" : "MEASUREMENT STANDBY"}</span><i className={revealed ? result.real ? "real" : "virtual" : ""}>{revealed ? result.real ? "REAL" : "VIRTUAL" : "WAIT"}</i></div>
+        <div className="console-head"><span>{revealed ? "LIVE RESULT" : "MEASUREMENT STANDBY"}</span><i className={revealed ? result.case === "focus" ? "" : result.real ? "real" : "virtual" : ""}>{revealed ? result.case === "focus" ? "PARALLEL" : result.real ? "REAL" : "VIRTUAL" : "WAIT"}</i></div>
         <div className="result-equation">1/f = 1/u + 1/v</div>
         <dl>
           <div><dt>物距 u</dt><dd>{revealed ? `${result.objectDistance.toFixed(1)} cm` : "— —"}</dd></div>

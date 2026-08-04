@@ -1,8 +1,11 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { HarnessRuntime } from "./features/harness/HarnessRuntime";
+import { PhysicsContextLayer } from "./components/PhysicsContextLayer";
 import { HomePage } from "./features/home/HomePage";
 import { StudentDashboard } from "./features/student/StudentDashboard";
+import { StudentExperimentNotebook } from "./features/student/StudentExperimentNotebook";
+import { TeacherDashboard } from "./features/teacher/TeacherDashboard";
 
 const LensWorkbench = lazy(async () => {
   const module = await import("./features/lens/LensWorkbench");
@@ -30,6 +33,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/student" element={<StudentDashboard />} />
+        <Route path="/student/notebook" element={<StudentExperimentNotebook />} />
+        <Route path="/teacher" element={<TeacherDashboard />} />
         <Route
           path="/student/explore/light"
           element={
@@ -57,6 +62,7 @@ export default function App() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <PhysicsContextLayer />
       <HarnessRuntime />
     </>
   );

@@ -57,8 +57,8 @@ export function LensCanvas({ scene, result, onInteract, revealResult = true }: L
   const objectTop = sy(scene.objectHeight);
   const screenX = sx(scene.screenX);
   const imageVisible = result.finite && result.imageX >= WORLD.minX && result.imageX <= WORLD.maxX;
-  const imageX = imageVisible ? sx(result.imageX) : 0;
-  const imageY = imageVisible ? sy(result.imageHeight) : 0;
+  const imageX = result.finite ? sx(result.imageX) : 0;
+  const imageY = result.finite ? sy(result.imageHeight) : 0;
   const nearFocus = sx(scene.lensX - scene.focalLength);
   const farFocus = sx(scene.lensX + scene.focalLength);
 
@@ -86,7 +86,7 @@ export function LensCanvas({ scene, result, onInteract, revealResult = true }: L
   const rays = [];
   const photonPaths: number[][] = [];
   if (scene.showRays && revealResult) {
-    if (result.finite && result.real && imageVisible) {
+    if (result.finite && result.real) {
       photonPaths.push(
         [objectX, objectTop, lensX, objectTop, imageX, imageY],
         [objectX, objectTop, lensX, axisY, imageX, imageY],
@@ -97,7 +97,7 @@ export function LensCanvas({ scene, result, onInteract, revealResult = true }: L
         <Line key="r2" points={[objectX, objectTop, lensX, axisY, imageX, imageY]} stroke="#f2c96d" strokeWidth={2} opacity={0.95} lineCap="round" />,
         <Line key="r3" points={[objectX, objectTop, lensX, imageY, imageX, imageY]} stroke="#ff8f70" strokeWidth={2} opacity={0.92} lineCap="round" />
       );
-    } else if (result.finite && !result.real && imageVisible) {
+    } else if (result.finite && !result.real) {
       const slopeToFarFocus = (axisY - objectTop) / (farFocus - lensX);
       const refractedEndY = objectTop + slopeToFarFocus * (rayEndX - lensX);
       const centerSlope = (axisY - objectTop) / (lensX - objectX);
@@ -112,14 +112,17 @@ export function LensCanvas({ scene, result, onInteract, revealResult = true }: L
         <Line key="vr2" points={[objectX, objectTop, lensX, axisY, rayEndX, centerEndY]} stroke="#f2c96d" strokeWidth={2} />,
         <Line key="vr2g" points={[lensX, axisY, imageX, imageY]} stroke="#f2c96d" strokeWidth={1.5} dash={[7, 6]} opacity={0.65} />
       );
-    } else {
+    } else if (result.case === "focus") {
+      const parallelRayEndY = sy(scene.objectHeight - (WORLD.maxX - scene.lensX) * scene.objectHeight / scene.focalLength);
+      const centerSlope = -scene.objectHeight / (scene.lensX - scene.objectX);
+      const centerRayEndY = sy(centerSlope * (WORLD.maxX - scene.lensX));
       photonPaths.push(
-        [objectX, objectTop, lensX, objectTop, rayEndX, sy(-scene.objectHeight * 1.2)],
-        [objectX, objectTop, lensX, axisY, rayEndX, axisY + (axisY - objectTop) * 1.5]
+        [objectX, objectTop, lensX, objectTop, rayEndX, parallelRayEndY],
+        [objectX, objectTop, lensX, axisY, rayEndX, centerRayEndY]
       );
       rays.push(
-        <Line key="focus1" points={[objectX, objectTop, lensX, objectTop, rayEndX, sy(-scene.objectHeight * 1.2)]} stroke={rayColor} strokeWidth={2.1} />,
-        <Line key="focus2" points={[objectX, objectTop, lensX, axisY, rayEndX, axisY + (axisY - objectTop) * 1.5]} stroke="#f2c96d" strokeWidth={2} />
+        <Line key="focus1" points={[objectX, objectTop, lensX, objectTop, rayEndX, parallelRayEndY]} stroke={rayColor} strokeWidth={2.1} />,
+        <Line key="focus2" points={[objectX, objectTop, lensX, axisY, rayEndX, centerRayEndY]} stroke="#f2c96d" strokeWidth={2} />
       );
     }
   }

@@ -1,9 +1,11 @@
+import { parseHarnessSession } from "@physics-lab/harness";
 import type { HarnessSession } from "@physics-lab/harness";
 import { localStores, openLocalDatabase } from "./localDatabase";
 
 export interface HarnessSessionGateway {
   save(session: HarnessSession): Promise<void>;
   find(id: string): Promise<HarnessSession | undefined>;
+  findAll(): Promise<HarnessSession[]>;
 }
 
 export const localHarnessSessionRepository: HarnessSessionGateway = {
@@ -20,12 +22,23 @@ export const localHarnessSessionRepository: HarnessSessionGateway = {
 
   async find(id) {
     const database = await openLocalDatabase();
-    const session = await new Promise<HarnessSession | undefined>((resolve, reject) => {
+    const rawSession = await new Promise<unknown>((resolve, reject) => {
       const request = database.transaction(localStores.harnessSessions, "readonly").objectStore(localStores.harnessSessions).get(id);
-      request.onsuccess = () => resolve(request.result as HarnessSession | undefined);
+      request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
     database.close();
-    return session;
+    return parseHarnessSession(rawSession);
+  },
+
+  async findAll() {
+    const database = await openLocalDatabase();
+    const rawSessions = await new Promise<unknown[]>((resolve, reject) => {
+      const request = database.transaction(localStores.harnessSessions, "readonly").objectStore(localStores.harnessSessions).getAll();
+      request.onsuccess = () => resolve(request.result as unknown[]);
+      request.onerror = () => reject(request.error);
+    });
+    database.close();
+    return rawSessions.map(parseHarnessSession).filter((session): session is HarnessSession => Boolean(session));
   }
 };
