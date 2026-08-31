@@ -1,86 +1,240 @@
-import { ArrowLeft, ArrowRight, BarChart3, BookOpenCheck, Construction, Database, MonitorPlay, SlidersHorizontal } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { PlatformUser, TeachingClass, TeachingLesson, TeachingTask } from "@physics-lab/contracts";
+import { ArrowLeft, BarChart3, BookOpenCheck, Boxes, FlaskConical, Home, Menu, Radio, UserCog, Users, X } from "lucide-react";
+import { Link, Navigate, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import { BrandMark } from "../../components/BrandMark";
-import { PhysicsFieldMotif } from "../../components/PhysicsFieldMotif";
+import { PageIntroduction } from "../../components/PageIntroduction";
+import {
+  createClassReport,
+  createLiveSession,
+  loadTeacherWorkspace,
+  saveTeacherWorkspace,
+  TeacherClass,
+  TeacherLesson,
+  TeacherWorkspace
+} from "./teacherWorkspace";
+import { TeacherGuangguang } from "./TeacherGuangguang";
+import { TeacherCommandCenter } from "./TeacherCommandCenter";
+import { TeacherBackendStatus } from "./TeacherBackendStatus";
+import { TeacherAccountCenter } from "./TeacherAccountCenter";
+import { TeacherLoginPortal } from "./TeacherLoginPortal";
+import { TeacherRealClasses } from "./TeacherRealClasses";
+import { TeacherTeachingFlow } from "./TeacherTeachingFlow";
+import { TeacherClasses, TeacherLessons, TeacherLiveClassroom, TeacherOverview, TeacherReports } from "./TeacherSections";
+import { teacherApi } from "../../services/teacherApi";
 
-const teacherPlans = [
-  {
-    number: "01",
-    icon: BookOpenCheck,
-    title: "课程与实验编排",
-    text: "从六个物理领域选择实验，组合成课堂演示、课前探究或课后开放活动。"
-  },
-  {
-    number: "02",
-    icon: SlidersHorizontal,
-    title: "课堂参数控制",
-    text: "教师可以预设初始条件、控制演示节奏，并在关键现象处暂停、比较和讲解。"
-  },
-  {
-    number: "03",
-    icon: BarChart3,
-    title: "学习过程观察",
-    text: "后续接入账号与后台后，汇总学生的实验操作、观察记录和常见探究问题。"
-  }
+const navigation = [
+  { to: "/teacher", label: "教学总览", eyebrow: "OVERVIEW", icon: Home, end: true },
+  { to: "/teacher/accounts", label: "账号与成员", eyebrow: "IDENTITIES", icon: UserCog },
+  { to: "/teacher/classes", label: "班级管理", eyebrow: "CLASSES", icon: Users },
+  { to: "/teacher/lessons", label: "实验备课", eyebrow: "LESSON LAB", icon: BookOpenCheck },
+  { to: "/teacher/live", label: "课堂控制台", eyebrow: "LIVE CONSOLE", icon: Radio },
+  { to: "/teacher/reports", label: "学情报告", eyebrow: "EVIDENCE", icon: BarChart3 }
 ];
 
-export function TeacherDashboard() {
-  return (
-    <div className="teacher-page">
-      <header className="teacher-nav">
-        <Link to="/"><BrandMark /></Link>
-        <nav aria-label="教师端导航">
-          <Link to="/"><ArrowLeft size={15} />平台总入口</Link>
-          <Link to="/student">查看学生端</Link>
-          <a href="#teacher-plan">教师端规划</a>
-        </nav>
-        <span><i />框架预留中</span>
-      </header>
+const routeTitles: Record<string, { eyebrow: string; title: string; description: string }> = {
+  "/teacher": { eyebrow: "TEACHING OBSERVATORY", title: "教学总览", description: "从备课到课堂证据，一屏掌握今天的实验教学。" },
+  "/teacher/accounts": { eyebrow: "IDENTITY NETWORK", title: "账号与成员", description: "管理真实学生账号、登录权限与班级归属。" },
+  "/teacher/classes": { eyebrow: "CLASS COORDINATES", title: "班级管理", description: "组织班级与入口码，为实验课建立清晰边界。" },
+  "/teacher/lessons": { eyebrow: "LESSON ENGINEERING", title: "实验备课", description: "从物理现象出发，设计问题、变量与课堂节奏。" },
+  "/teacher/live": { eyebrow: "LIVE SIGNAL", title: "课堂控制台", description: "观察学习进程，在关键时刻向全班发布追问。" },
+  "/teacher/reports": { eyebrow: "LEARNING EVIDENCE", title: "学情报告", description: "用操作和观察证据复盘课堂，不做简单排名。" }
+};
 
-      <main className="teacher-main">
-        <section className="teacher-hero">
-          <div className="teacher-hero-copy">
-            <p><MonitorPlay size={17} /> TEACHER PORT / 教师端</p>
-            <h1>把实验带进课堂，<br />也看见学生<em>怎样探究</em>。</h1>
-            <span>教师端是平台的第二个正式端口。当前先建立清晰入口与功能边界，课程管理、班级数据和云端记录将在后端接入后逐步开放。</span>
-            <div>
-              <Link className="button button-primary" to="/student">查看现有学生实验 <ArrowRight size={17} /></Link>
-              <a className="button button-quiet" href="#teacher-plan">查看建设规划</a>
+export function TeacherDashboard() {
+  const [workspace, setWorkspace] = useState<TeacherWorkspace>(() => loadTeacherWorkspace());
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [connection, setConnection] = useState<"checking" | "online" | "offline">("checking");
+  const [apiUser, setApiUser] = useState<PlatformUser | null>(null);
+  const [localMode, setLocalMode] = useState(false);
+  const [remoteData, setRemoteData] = useState<{ students: PlatformUser[]; teachers: PlatformUser[]; classes: TeachingClass[]; lessons: TeachingLesson[]; tasks: TeachingTask[] }>({ students: [], teachers: [], classes: [], lessons: [], tasks: [] });
+  const location = useLocation();
+  const page = routeTitles[location.pathname] ?? routeTitles["/teacher"];
+
+  const refreshRemoteData = useCallback(async (role: PlatformUser["role"] = "teacher") => {
+    const [students, teachers, classes, lessons, tasks] = await Promise.all([
+      teacherApi.users("student"),
+      role === "admin" ? teacherApi.users("teacher") : Promise.resolve([]),
+      teacherApi.classes(), teacherApi.lessons(), teacherApi.tasks()
+    ]);
+    setRemoteData({ students, teachers, classes, lessons, tasks });
+  }, []);
+  const refreshCurrentRemoteData = useCallback(() => refreshRemoteData(apiUser?.role ?? "teacher"), [apiUser?.role, refreshRemoteData]);
+
+  const checkBackend = useCallback(async () => {
+    setConnection("checking");
+    try {
+      await teacherApi.health();
+      setConnection("online");
+      if (!teacherApi.hasSession()) return;
+      try {
+        const current = await teacherApi.me();
+        if (current.role !== "teacher" && current.role !== "admin") throw new Error("教师端仅允许教师或管理员登录");
+        setApiUser(current);
+        setLocalMode(false);
+        await refreshRemoteData(current.role);
+      } catch {
+        teacherApi.logout();
+        setApiUser(null);
+      }
+    } catch {
+      setConnection("offline");
+      setApiUser(null);
+    }
+  }, [refreshRemoteData]);
+
+  useEffect(() => { void checkBackend(); }, [checkBackend]);
+
+  useEffect(() => saveTeacherWorkspace(workspace), [workspace]);
+  useEffect(() => setMobileOpen(false), [location.pathname]);
+
+  const activeLesson = useMemo(() => workspace.lessons.find((lesson) => lesson.id === workspace.liveSession?.lessonId), [workspace.lessons, workspace.liveSession]);
+
+  async function login(email: string, password: string) {
+    const session = await teacherApi.login(email, password);
+    if (session.user.role !== "teacher" && session.user.role !== "admin") {
+      teacherApi.logout();
+      throw new Error("该账号不是教师或管理员账号，请从学生端进入");
+    }
+    setApiUser(session.user);
+    setLocalMode(false);
+    setConnection("online");
+    await refreshRemoteData(session.user.role);
+  }
+
+  function logout() {
+    teacherApi.logout();
+    setApiUser(null);
+    setLocalMode(false);
+    setRemoteData({ students: [], teachers: [], classes: [], lessons: [], tasks: [] });
+    setConnection((current) => current === "offline" ? "offline" : "online");
+  }
+
+  function addClass(classItem: TeacherClass) {
+    setWorkspace((current) => ({ ...current, classes: [classItem, ...current.classes] }));
+  }
+
+  function addLesson(lesson: TeacherLesson) {
+    setWorkspace((current) => ({ ...current, lessons: [lesson, ...current.lessons] }));
+  }
+
+  function launchLesson(lessonId: string) {
+    setWorkspace((current) => {
+      const lesson = current.lessons.find((item) => item.id === lessonId);
+      if (!lesson) return current;
+      return { ...current, liveSession: createLiveSession(lesson), lessons: current.lessons.map((item) => item.id === lessonId ? { ...item, status: "ready" } : item) };
+    });
+  }
+
+  function updateLiveSession(liveSession: TeacherWorkspace["liveSession"]) {
+    setWorkspace((current) => ({ ...current, liveSession }));
+  }
+
+  function endLiveSession() {
+    setWorkspace((current) => {
+      if (!current.liveSession) return current;
+      const report = createClassReport(current, current.liveSession);
+      return {
+        ...current,
+        liveSession: null,
+        reports: [report, ...current.reports],
+        lessons: current.lessons.map((lesson) => lesson.id === current.liveSession?.lessonId ? { ...lesson, status: "completed" } : lesson)
+      };
+    });
+  }
+
+  function broadcastGuangguangPrompt(text: string) {
+    if (!workspace.liveSession) return false;
+    setWorkspace((current) => current.liveSession ? {
+      ...current,
+      liveSession: {
+        ...current.liveSession,
+        prompts: [{ id: `guangguang-prompt-${Date.now()}`, text, createdAt: new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }) }, ...current.liveSession.prompts]
+      }
+    } : current);
+    return true;
+  }
+
+  if (!apiUser && !localMode) return <TeacherLoginPortal connection={connection} onLogin={login} onRetry={checkBackend} onOffline={() => setLocalMode(true)} />;
+
+  return (
+    <div className="teacher-console">
+      {apiUser && <PageIntroduction
+        pageKey="teacher-authenticated-workflow"
+        eyebrow="TEACHER WORKFLOW / 教师教学闭环"
+        title={apiUser.role === "admin" ? "先建立可信账号体系，再组织学校实验教学。" : "从真实学生账号开始，组织一堂实验课。"}
+        description={apiUser.role === "admin" ? "管理员可以创建教师与学生身份，并维护账号状态、密码和班级关系；教学工作仍由教师端课例与任务流程承接。" : "教师端已经连接学校后台。按照账号、班级、课例、任务和课堂证据的顺序工作，可以让学生的真实操作进入教学观察。"}
+        points={apiUser.role === "admin" ? ["创建教师与学生账号", "管理登录权限与临时密码", "建立班级并确认学生归属", "监督课例、任务与教学数据"] : ["管理学生账号与登录权限", "建立班级并确认成员", "创建课例并向班级发布任务", "从课堂信号和报告中复盘证据"]}
+        icon={BookOpenCheck}
+        accent="#78ddff"
+        variant="teacher"
+        persistence="local"
+        triggerLabel="教师向导"
+        enterLabel="进入教学总览"
+        steps={[
+          apiUser.role === "admin"
+            ? { eyebrow: "01 / IDENTITY NETWORK", title: "先建立学校师生身份网络。", description: "在“账号与成员”中分别创建教师和学生，维护登录状态与临时密码，再为学生确认班级归属。", points: ["管理员可新增并管理教师与学生", "教师只能管理学生，不能操作其他教师", "账号密码只以散列写入数据库"], icon: UserCog }
+            : { eyebrow: "01 / IDENTITY NETWORK", title: "先建立真实学生身份。", description: "在“账号与成员”中创建学生、重置临时密码、停用异常账号，并确认每名学生的班级归属。", points: ["学生和教师使用独立登录会话", "停用后已有访问令牌立即失效", "账号密码只以散列写入数据库"], icon: UserCog },
+          { eyebrow: "02 / CLASS COORDINATES", title: "用真实班级建立教学边界。", description: "班级页显示数据库中的入口码、学生人数和真实成员。创建新班级后，可回到账号中心为学生分班。", points: ["入口码由后台自动生成", "成员状态与账号中心保持一致"], icon: Users },
+          { eyebrow: "03 / LESSON DELIVERY", title: "把实验模板变成可发布的探究课例。", description: "在实验备课中设置核心问题、预测、变量控制和证据要求，然后发布为课前、课堂或课后任务。", points: ["学生只看到本班已发布任务", "可设置开放时间和截止时间", "任务关闭后不能再创建新会话"], icon: BookOpenCheck },
+          { eyebrow: "04 / LEARNING EVIDENCE", title: "依据实验过程追问，不做简单排名。", description: "学生从任务启动实验后，关键操作与观察会进入后台。实时课堂和报告将继续围绕证据密度、停滞信号和解释过程升级。", points: ["光光建议需教师确认后发布", "课堂证据不自动等同于能力评价"], icon: BarChart3 }
+        ]}
+      />}
+      <div className="teacher-console-grid" aria-hidden="true" />
+      <button className="teacher-mobile-menu" type="button" onClick={() => setMobileOpen((value) => !value)} aria-label="打开教师端导航">
+        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      <aside className={`teacher-sidebar ${mobileOpen ? "is-open" : ""}`}>
+        <Link className="teacher-brand" to="/"><BrandMark /></Link>
+        <div className="teacher-system-id"><span>PHY EDU / {apiUser?.role === "admin" ? "A-01" : "T-01"}</span><b>{apiUser?.role === "admin" ? "平台综合管理站" : "教师教学观测站"}</b></div>
+        <nav aria-label="教师工作台导航">
+          {navigation.map(({ to, label, eyebrow, icon: Icon, end }) => (
+            <NavLink key={to} to={to} end={end}>
+              <i><Icon size={18} /></i><span><small>{eyebrow}</small><b>{label}</b></span><em>→</em>
+            </NavLink>
+          ))}
+        </nav>
+        <TeacherBackendStatus mode={apiUser ? "api" : "local"} user={apiUser} summary={{ students: remoteData.students.length, teachers: remoteData.teachers.length, classes: remoteData.classes.length, tasks: remoteData.tasks.length }} onLogout={logout} />
+        <Link className="teacher-back-home" to="/"><ArrowLeft size={15} />返回平台首页</Link>
+      </aside>
+
+      <main className="teacher-workspace">
+        <header className="teacher-workspace-header">
+          <div><span>{page.eyebrow}</span><h1>{page.title}</h1><p>{page.description}</p></div>
+          <div className="teacher-header-actions">
+            <TeacherCommandCenter workspace={workspace} />
+            <div className="teacher-header-status">
+              <span><i />教学空间已就绪</span>
+              <b>{apiUser?.name ?? workspace.teacherName}</b>
+              <small>{apiUser ? apiUser.role === "admin" ? "已认证管理员 · 真实后台" : "已认证教师 · 真实后台" : "演示身份 · 本地模式"}</small>
             </div>
           </div>
+        </header>
 
-          <aside className="teacher-status-board" aria-label="教师端当前建设状态">
-            <PhysicsFieldMotif field="mixed" className="teacher-physics-blueprint" />
-            <header><span>TEACHER CONSOLE</span><b>建设状态</b><Construction size={24} /></header>
-            <dl>
-              <div><dt>平台入口与页面框架</dt><dd className="ready">已建立</dd></div>
-              <div><dt>学生实验内容调用</dt><dd className="ready">可查看</dd></div>
-              <div><dt>教师课程编排</dt><dd>待开发</dd></div>
-              <div><dt>账号、班级与云端数据</dt><dd>待后端</dd></div>
-            </dl>
-            <p><Database size={16} />当前不会虚构学生数据，也不会把本地浏览记录冒充为班级统计。</p>
-          </aside>
+        <section className="teacher-route-stage">
+          <Routes>
+            <Route index element={<TeacherOverview workspace={workspace} onLaunch={launchLesson} remote={apiUser ? remoteData : undefined} />} />
+            <Route path="accounts" element={apiUser ? <TeacherAccountCenter currentUser={apiUser} students={remoteData.students} teachers={remoteData.teachers} classes={remoteData.classes} onRefresh={refreshCurrentRemoteData} /> : <TeacherAccountOffline />} />
+            <Route path="classes" element={apiUser ? <TeacherRealClasses classes={remoteData.classes} students={remoteData.students} onRefresh={refreshCurrentRemoteData} /> : <TeacherClasses classes={workspace.classes} onAdd={addClass} />} />
+            <Route path="lessons" element={apiUser ? <TeacherTeachingFlow classes={remoteData.classes} lessons={remoteData.lessons} tasks={remoteData.tasks} onRefresh={refreshCurrentRemoteData} /> : <TeacherLessons workspace={workspace} onAdd={addLesson} onLaunch={launchLesson} />} />
+            <Route path="live" element={<TeacherLiveClassroom workspace={workspace} activeLesson={activeLesson} onLaunch={launchLesson} onUpdate={updateLiveSession} onEnd={endLiveSession} />} />
+            <Route path="reports" element={<TeacherReports reports={workspace.reports} />} />
+            <Route path="*" element={<Navigate to="/teacher" replace />} />
+          </Routes>
         </section>
 
-        <section className="teacher-plan" id="teacher-plan">
-          <header>
-            <div><span>DEVELOPMENT BLUEPRINT / 01—03</span><h2>教师端将围绕三个真实课堂需求建设</h2></div>
-            <p>先复用已经完成的学生实验，再连接教师操作、学习记录和后台数据。</p>
-          </header>
-          <div>
-            {teacherPlans.map((plan) => {
-              const Icon = plan.icon;
-              return <article key={plan.number}><b>{plan.number}</b><i><Icon size={25} /></i><h3>{plan.title}</h3><p>{plan.text}</p><span>功能规划中</span></article>;
-            })}
-          </div>
-        </section>
-
-        <section className="teacher-boundary">
-          <strong>当前边界</strong>
-          <p>教师端现阶段是结构入口，不包含真实账号、班级、作业和统计数据。等后端建设时，再把这些能力接入同一个端口。</p>
-          <Link to="/">返回平台总入口 <ArrowRight size={15} /></Link>
-        </section>
+        <footer className="teacher-console-footer">
+          <span><Boxes size={14} />教师实验教学工作台</span>
+          <span><FlaskConical size={14} />依据实验过程生成学习证据</span>
+          <Link to="/student">进入学生实验端 →</Link>
+        </footer>
       </main>
+      <TeacherGuangguang workspace={workspace} pathname={location.pathname} onBroadcast={broadcastGuangguangPrompt} />
     </div>
   );
+}
+
+function TeacherAccountOffline() {
+  return <div className="teacher-account-offline"><UserCog size={34} /><span>IDENTITY NETWORK OFFLINE</span><h2>账号管理需要连接真实后台</h2><p>退出本地演示模式并登录教师账号后，可管理学生账号、密码和班级归属。</p></div>;
 }

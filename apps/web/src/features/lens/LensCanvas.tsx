@@ -5,6 +5,7 @@ import type { LensResult } from "@physics-lab/physics";
 import type { LensSceneState } from "./lensStore";
 import { useLensStore } from "./lensStore";
 import { useElementSize } from "./useElementSize";
+import { useElementActivity } from "../../hooks/useElementActivity";
 
 const WORLD = { minX: -80, maxX: 100, minY: -30, maxY: 34 };
 
@@ -17,6 +18,7 @@ interface LensCanvasProps {
 
 export function LensCanvas({ scene, result, onInteract, revealResult = true }: LensCanvasProps) {
   const { ref, size } = useElementSize<HTMLDivElement>();
+  const active = useElementActivity(ref, "220px");
   const preview = useLensStore((state) => state.preview);
   const remember = useLensStore((state) => state.remember);
   const dragStart = useRef<LensSceneState | null>(null);
@@ -24,11 +26,11 @@ export function LensCanvas({ scene, result, onInteract, revealResult = true }: L
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
-    if (!running || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!running || !active || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let frame = 0;
     let previous = performance.now();
     const animate = (now: number) => {
-      if (now - previous > 32) {
+      if (now - previous > 50) {
         setPhase((value) => (value + (now - previous) / 2600) % 1);
         previous = now;
       }
@@ -36,7 +38,7 @@ export function LensCanvas({ scene, result, onInteract, revealResult = true }: L
     };
     frame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frame);
-  }, [running]);
+  }, [active, running]);
 
   const width = Math.max(540, size.width);
   const height = Math.max(420, size.height);
@@ -93,9 +95,9 @@ export function LensCanvas({ scene, result, onInteract, revealResult = true }: L
         [objectX, objectTop, lensX, imageY, imageX, imageY]
       );
       rays.push(
-        <Line key="r1a" points={[objectX, objectTop, lensX, objectTop, imageX, imageY]} stroke={rayColor} strokeWidth={2.2} shadowColor={rayColor} shadowBlur={7} lineCap="round" lineJoin="round" />,
-        <Line key="r2" points={[objectX, objectTop, lensX, axisY, imageX, imageY]} stroke="#f2c96d" strokeWidth={2} opacity={0.95} lineCap="round" />,
-        <Line key="r3" points={[objectX, objectTop, lensX, imageY, imageX, imageY]} stroke="#ff8f70" strokeWidth={2} opacity={0.92} lineCap="round" />
+        <Arrow key="r1a" points={[objectX, objectTop, lensX, objectTop, imageX, imageY]} stroke={rayColor} fill={rayColor} strokeWidth={2.2} shadowColor={rayColor} shadowBlur={7} lineCap="round" lineJoin="round" pointerLength={9} pointerWidth={8} />,
+        <Arrow key="r2" points={[objectX, objectTop, lensX, axisY, imageX, imageY]} stroke="#f2c96d" fill="#f2c96d" strokeWidth={2} opacity={0.95} lineCap="round" pointerLength={9} pointerWidth={8} />,
+        <Arrow key="r3" points={[objectX, objectTop, lensX, imageY, imageX, imageY]} stroke="#ff8f70" fill="#ff8f70" strokeWidth={2} opacity={0.92} lineCap="round" pointerLength={9} pointerWidth={8} />
       );
     } else if (result.finite && !result.real) {
       const slopeToFarFocus = (axisY - objectTop) / (farFocus - lensX);
@@ -107,10 +109,10 @@ export function LensCanvas({ scene, result, onInteract, revealResult = true }: L
         [objectX, objectTop, lensX, axisY, rayEndX, centerEndY]
       );
       rays.push(
-        <Line key="vr1" points={[objectX, objectTop, lensX, objectTop, rayEndX, refractedEndY]} stroke={rayColor} strokeWidth={2.2} shadowColor={rayColor} shadowBlur={6} />,
-        <Line key="vr1g" points={[lensX, objectTop, imageX, imageY]} stroke={ghostColor} strokeWidth={1.5} dash={[7, 6]} opacity={0.65} />,
-        <Line key="vr2" points={[objectX, objectTop, lensX, axisY, rayEndX, centerEndY]} stroke="#f2c96d" strokeWidth={2} />,
-        <Line key="vr2g" points={[lensX, axisY, imageX, imageY]} stroke="#f2c96d" strokeWidth={1.5} dash={[7, 6]} opacity={0.65} />
+        <Arrow key="vr1" points={[objectX, objectTop, lensX, objectTop, rayEndX, refractedEndY]} stroke={rayColor} fill={rayColor} strokeWidth={2.2} shadowColor={rayColor} shadowBlur={6} pointerLength={9} pointerWidth={8} />,
+        <Arrow key="vr1g" points={[lensX, objectTop, imageX, imageY]} stroke={ghostColor} fill={ghostColor} strokeWidth={1.5} dash={[7, 6]} opacity={0.65} pointerLength={7} pointerWidth={6} />,
+        <Arrow key="vr2" points={[objectX, objectTop, lensX, axisY, rayEndX, centerEndY]} stroke="#f2c96d" fill="#f2c96d" strokeWidth={2} pointerLength={9} pointerWidth={8} />,
+        <Arrow key="vr2g" points={[lensX, axisY, imageX, imageY]} stroke="#f2c96d" fill="#f2c96d" strokeWidth={1.5} dash={[7, 6]} opacity={0.65} pointerLength={7} pointerWidth={6} />
       );
     } else if (result.case === "focus") {
       const parallelRayEndY = sy(scene.objectHeight - (WORLD.maxX - scene.lensX) * scene.objectHeight / scene.focalLength);
@@ -121,8 +123,8 @@ export function LensCanvas({ scene, result, onInteract, revealResult = true }: L
         [objectX, objectTop, lensX, axisY, rayEndX, centerRayEndY]
       );
       rays.push(
-        <Line key="focus1" points={[objectX, objectTop, lensX, objectTop, rayEndX, parallelRayEndY]} stroke={rayColor} strokeWidth={2.1} />,
-        <Line key="focus2" points={[objectX, objectTop, lensX, axisY, rayEndX, centerRayEndY]} stroke="#f2c96d" strokeWidth={2} />
+        <Arrow key="focus1" points={[objectX, objectTop, lensX, objectTop, rayEndX, parallelRayEndY]} stroke={rayColor} fill={rayColor} strokeWidth={2.1} pointerLength={9} pointerWidth={8} />,
+        <Arrow key="focus2" points={[objectX, objectTop, lensX, axisY, rayEndX, centerRayEndY]} stroke="#f2c96d" fill="#f2c96d" strokeWidth={2} pointerLength={9} pointerWidth={8} />
       );
     }
   }

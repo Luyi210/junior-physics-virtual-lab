@@ -5,3 +5,8 @@ export * from "./runtime";
 export * from "./dialogue";
 export * from "./schema";
 export * from "./xapi";
+export * from "./conceptGraph";
+export * from "./tutorialScript";
+export * from "./understanding";
+export * from "./apparatusState";
+export * from "./coach";

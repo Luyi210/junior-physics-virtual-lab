@@ -10,12 +10,17 @@ import {
 import type { HarnessArea, HarnessEventType, HarnessSession, HarnessValue } from "@physics-lab/harness";
 import { create } from "zustand";
 import { localHarnessSessionRepository } from "../../services/harnessSessionRepository";
+import { syncHarnessEvent, syncHarnessObservation } from "../../services/studentSessionSync";
+import { getApparatusContext } from "./tutorialBridge";
 
 const assistant = new RuleBasedLearningAssistant();
 const dialogueAssistant = new RuleBasedDialogueAssistant();
 let entryVersion = 0;
 const saveTimers = new Map<string, number>();
 const pendingSessions = new Map<string, HarnessSession>();
+const controlRecordTimes = new Map<string, number>();
+const controlRecordTimers = new Map<string, number>();
+const CONTROL_RECORD_INTERVAL = 140;
 
 function scheduleSave(session: HarnessSession) {
   pendingSessions.set(session.id, session);
@@ -26,7 +31,7 @@ function scheduleSave(session: HarnessSession) {
     if (pending) void localHarnessSessionRepository.save(pending);
     pendingSessions.delete(session.id);
     saveTimers.delete(session.id);
-  }, 140);
+  }, 360);
   saveTimers.set(session.id, timer);
 }
 
@@ -67,9 +72,29 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
   record(type, payload = {}) {
     const current = get().session;
     if (!current) return;
+    if (type === "control.changed") {
+      const module = get().activeModule ?? "unknown";
+      const sessionId = current.id;
+      const controlKey = `${sessionId}:${module}:${String(payload.experiment ?? "")}:${String(payload.control ?? "control")}`;
+      const elapsed = performance.now() - (controlRecordTimes.get(controlKey) ?? -Infinity);
+      if (elapsed < CONTROL_RECORD_INTERVAL) {
+        const previousTimer = controlRecordTimers.get(controlKey);
+        if (previousTimer) window.clearTimeout(previousTimer);
+        const timer = window.setTimeout(() => {
+          controlRecordTimers.delete(controlKey);
+          if (get().session?.id !== sessionId || (get().activeModule ?? "unknown") !== module) return;
+          get().record(type, payload);
+        }, CONTROL_RECORD_INTERVAL - elapsed + 8);
+        controlRecordTimers.set(controlKey, timer);
+        return;
+      }
+      controlRecordTimes.set(controlKey, performance.now());
+    }
     const session = processHarnessEvent(current, { type, payload }, assistant);
     set({ session });
     scheduleSave(session);
+    const recordedEvent = session.events.at(-1);
+    if (recordedEvent) void syncHarnessEvent(recordedEvent);
   },
 
   saveObservation(text) {
@@ -78,6 +103,9 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
     const session = createHarnessObservation(current, text, assistant);
     set({ session });
     scheduleSave(session);
+    void syncHarnessObservation(text);
+    const observationEvent = session.events.at(-1);
+    if (observationEvent?.type === "observation.created") void syncHarnessEvent(observationEvent);
     return true;
   },
 
@@ -85,7 +113,7 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
     const current = get().session;
     const module = get().activeModule;
     if (!current || !module || !text.trim()) return false;
-    const reply = dialogueAssistant.respondToQuestion(current, module, text);
+    const reply = dialogueAssistant.respondToQuestion(current, module, text, getApparatusContext(module));
     const session = appendDialogueExchange(current, module, text, reply);
     set({ session });
     scheduleSave(session);

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useElementActivity } from "../../hooks/useElementActivity";
 
 const spectrum = ["#ff6c5d", "#ffa552", "#f1cf57", "#60d58a", "#54c8e8", "#6387ee", "#aa72dc"];
 const scenes = [
@@ -416,6 +417,7 @@ interface DashboardPhysicsCanvasProps {
 
 export function DashboardPhysicsCanvas({ sceneKey, compact = false }: DashboardPhysicsCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const active = useElementActivity(canvasRef, compact ? "120px" : "240px");
   const [paused, setPaused] = useState(false);
   const fixedSceneIndex = sceneKey ? scenes.findIndex((scene) => scene.key === sceneKey) : -1;
   const [sceneIndex, setSceneIndex] = useState(fixedSceneIndex >= 0 ? fixedSceneIndex : 0);
@@ -425,10 +427,10 @@ export function DashboardPhysicsCanvas({ sceneKey, compact = false }: DashboardP
   }, [fixedSceneIndex]);
 
   useEffect(() => {
-    if (paused || fixedSceneIndex >= 0) return;
+    if (paused || !active || fixedSceneIndex >= 0) return;
     const timer = window.setInterval(() => setSceneIndex((value) => (value + 1) % scenes.length), 5200);
     return () => window.clearInterval(timer);
-  }, [fixedSceneIndex, paused]);
+  }, [active, fixedSceneIndex, paused]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -444,7 +446,7 @@ export function DashboardPhysicsCanvas({ sceneKey, compact = false }: DashboardP
 
     const resize = () => {
       const bounds = canvas.getBoundingClientRect();
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const dpr = Math.min(compact ? 1.25 : 1.5, window.devicePixelRatio || 1);
       width = Math.max(1, bounds.width);
       height = Math.max(1, bounds.height);
       canvas.width = Math.round(width * dpr);
@@ -460,7 +462,7 @@ export function DashboardPhysicsCanvas({ sceneKey, compact = false }: DashboardP
       context.restore();
     };
     const animate = (time: number) => {
-      if (time - lastTime >= 1000 / (compact ? 24 : 45)) {
+      if (time - lastTime >= 1000 / (compact ? 18 : 30)) {
         draw(time);
         lastTime = time;
       }
@@ -468,10 +470,14 @@ export function DashboardPhysicsCanvas({ sceneKey, compact = false }: DashboardP
     };
     const restart = () => {
       window.cancelAnimationFrame(frame);
-      if (paused) draw(performance.now());
+      if (paused || !active || reducedMotion.matches) draw(performance.now());
       else frame = window.requestAnimationFrame(animate);
     };
-    const observer = new ResizeObserver(() => { resize(); draw(performance.now()); });
+    let resizeFrame = 0;
+    const observer = new ResizeObserver(() => {
+      window.cancelAnimationFrame(resizeFrame);
+      resizeFrame = window.requestAnimationFrame(() => { resize(); draw(performance.now()); });
+    });
     observer.observe(canvas);
     reducedMotion.addEventListener("change", restart);
     resize();
@@ -479,9 +485,10 @@ export function DashboardPhysicsCanvas({ sceneKey, compact = false }: DashboardP
     return () => {
       observer.disconnect();
       reducedMotion.removeEventListener("change", restart);
+      window.cancelAnimationFrame(resizeFrame);
       window.cancelAnimationFrame(frame);
     };
-  }, [compact, paused, sceneIndex]);
+  }, [active, compact, paused, sceneIndex]);
 
   const scene = scenes[sceneIndex];
   if (compact) return <>

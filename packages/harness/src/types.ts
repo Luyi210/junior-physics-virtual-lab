@@ -13,6 +13,35 @@ export type HarnessEventType =
 
 export type HarnessValue = string | number | boolean | null;
 
+export type HarnessApparatusValue = HarnessValue;
+
+export interface HarnessApparatusDatum {
+  id: string;
+  label: string;
+  value: HarnessApparatusValue;
+  unit?: string;
+  source: "control" | "apparatus" | "reading" | "model";
+}
+
+export interface HarnessApparatusSnapshot {
+  module: string;
+  capturedAt: string;
+  origin: "learner" | "tutorial" | "system";
+  controls: HarnessApparatusDatum[];
+  apparatus: HarnessApparatusDatum[];
+  readings: HarnessApparatusDatum[];
+  derived: HarnessApparatusDatum[];
+  validity: {
+    ready: boolean;
+    issues: string[];
+  };
+}
+
+export interface HarnessApparatusContext {
+  previous?: HarnessApparatusSnapshot;
+  current: HarnessApparatusSnapshot;
+}
+
 export interface HarnessEvent {
   id: string;
   sessionId: string;
@@ -104,5 +133,5 @@ export interface LearningAssistant {
 
 export interface DialogueAssistant {
   readonly provider: "rules" | "llm";
-  respondToQuestion(session: HarnessSession, module: string, question: string): HarnessDialogueReply;
+  respondToQuestion(session: HarnessSession, module: string, question: string, apparatus?: HarnessApparatusContext): HarnessDialogueReply;
 }

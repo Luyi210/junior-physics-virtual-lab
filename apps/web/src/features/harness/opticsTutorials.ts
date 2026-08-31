@@ -1,4 +1,5 @@
-import type { HarnessEventType } from "@physics-lab/harness";
+import { buildHarnessTutorialActions } from "@physics-lab/harness";
+import type { HarnessEventType, HarnessTutorialAction } from "@physics-lab/harness";
 
 export type GuidedTutorialTarget = "module" | "visual" | "controls" | "explanation" | "application";
 
@@ -19,6 +20,7 @@ export interface GuidedTutorialStep {
   requiresInteraction?: boolean;
   acceptedEvents?: HarnessEventType[];
   question?: GuidedTutorialQuestion;
+  actions?: HarnessTutorialAction[];
 }
 
 export interface GuidedTutorialProfile {
@@ -49,7 +51,7 @@ function makeProfile(source: ProfileSource): GuidedTutorialProfile {
     summary: source.summary,
     duration: "约 3 分钟",
     highlights: ["6 个专属讲解镜头", "1 次真实操作检测", "1 次预测互动"],
-    steps: [
+    steps: ([
       {
         id: `${source.module}-apparatus`,
         eyebrow: "镜头 01 · 认识装置",
@@ -101,7 +103,18 @@ function makeProfile(source: ProfileSource): GuidedTutorialProfile {
         hint: "阅读应用案例时，试着在真实装置中重新指出光源、光学元件和接收位置。",
         target: "application"
       }
-    ]
+    ] as GuidedTutorialStep[]).map((step) => ({
+      ...step,
+      actions: buildHarnessTutorialActions({
+        narration: step.narration,
+        target: step.target,
+        hint: step.hint,
+        requiresInteraction: step.requiresInteraction,
+        acceptedEvents: step.acceptedEvents,
+        question: step.question,
+        promptRecord: step.id.endsWith("-evidence")
+      })
+    }))
   };
 }
 

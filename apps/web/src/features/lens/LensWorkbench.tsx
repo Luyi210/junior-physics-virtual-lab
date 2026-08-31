@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { calculateLens } from "@physics-lab/physics";
 import type { ExperimentProject } from "@physics-lab/contracts";
 import { ArrowLeft, Check, Download, FlaskConical, Home, Redo2, RotateCcw, Save, Undo2 } from "lucide-react";
@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { BrandMark } from "../../components/BrandMark";
 import { ExperimentFullscreenButton } from "../../components/ExperimentFullscreenButton";
 import { localProjectRepository } from "../../services/projectRepository";
+import { publishApparatusSnapshot } from "../harness/tutorialBridge";
 import { LensCanvas } from "./LensCanvas";
 import { LensInspector } from "./LensInspector";
 import { useLensStore } from "./lensStore";
@@ -31,6 +32,29 @@ export function LensWorkbench() {
   const [saved, setSaved] = useState(false);
   const [activated, setActivated] = useState(false);
   const result = useMemo(() => calculateLens(scene), [scene]);
+
+  useEffect(() => {
+    publishApparatusSnapshot({
+      module: "bench", capturedAt: new Date().toISOString(), origin: activated ? "learner" : "system",
+      controls: [
+        { id: "focal-length", label: "焦距", value: scene.focalLength, unit: "cm", source: "control" },
+        { id: "object-position", label: "物体位置", value: scene.objectX, unit: "cm", source: "control" },
+        { id: "screen-position", label: "光屏位置", value: scene.screenX, unit: "cm", source: "control" }
+      ],
+      apparatus: [
+        { id: "object-distance", label: "物距u", value: result.objectDistance, unit: "cm", source: "apparatus" },
+        { id: "screen-focused", label: "光屏对焦", value: result.screenFocused, source: "apparatus" }
+      ],
+      readings: [
+        { id: "image-distance", label: "理论像距v", value: result.finite ? result.imageDistance : "∞", unit: "cm", source: "reading" },
+        { id: "magnification", label: "放大率m", value: result.finite ? result.magnification : "∞", source: "reading" },
+        { id: "image-nature", label: "成像性质", value: activated ? result.nature : "等待操作", source: "reading" },
+        { id: "screen-error", label: "光屏离清晰像面", value: result.real ? result.screenError : "虚像不可承接", unit: result.real ? "cm" : undefined, source: "reading" }
+      ],
+      derived: [{ id: "conclusion", label: "薄透镜模型解释", value: result.conclusion, source: "model" }],
+      validity: { ready: activated, issues: activated ? result.real && !result.screenFocused ? ["当前能形成实像，但光屏还没有移到清晰像面。"] : [] : ["先拖动物体、光屏或调节焦距。"] }
+    });
+  }, [activated, result.conclusion, result.finite, result.imageDistance, result.magnification, result.nature, result.objectDistance, result.real, result.screenError, result.screenFocused, scene.focalLength, scene.objectX, scene.screenX]);
 
   const focusScreen = () => {
     if (result.real && result.finite) {

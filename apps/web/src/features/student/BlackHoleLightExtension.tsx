@@ -115,7 +115,7 @@ export function BlackHoleLightExtension() {
           </defs>
           <g className="black-hole-stars">{Array.from({ length: 70 }, (_, index) => <circle cx={18 + (index * 137) % 970} cy={18 + (index * 79) % 484} r={index % 9 === 0 ? 1.7 : index % 4 === 0 ? 1.1 : .65} key={index} />)}</g>
           <g className="spacetime-grid">{Array.from({ length: 11 }, (_, index) => { const y = 28 + index * 46; return <path d={model === "flat" ? `M20 ${y} L980 ${y}` : `M20 ${y} C350 ${y} 460 ${CENTER_Y + (index - 5) * 25} 610 ${CENTER_Y + (index - 5) * 11} C760 ${CENTER_Y + (index - 5) * 25} 850 ${y} 980 ${y}`} key={`h-${index}`} />; })}{Array.from({ length: 13 }, (_, index) => { const x = 35 + index * 78; return <path d={model === "flat" ? `M${x} 18 L${x} 502` : `M${x} 18 C${x} 155 ${CENTER_X + (index - 7) * 29} 190 ${CENTER_X + (index - 7) * 17} ${CENTER_Y} C${CENTER_X + (index - 7) * 29} 335 ${x} 382 ${x} 502`} key={`v-${index}`} />; })}</g>
-          <g className="background-gravity-rays">{backgroundOffsets.map((offset) => <path d={rayPath(offset, mass, model)} key={offset} />)}</g>
+          <g className="background-gravity-rays">{backgroundOffsets.map((offset) => <path d={rayPath(offset, mass, model)} markerEnd="url(#rayArrowBlackHole)" key={offset} />)}</g>
           <g className="black-hole-system">
             <ellipse className="disk-halo" cx={CENTER_X} cy={CENTER_Y} rx={shadow * 2.85} ry={shadow * .65} />
             <ellipse className="accretion-disk back" cx={CENTER_X} cy={CENTER_Y} rx={shadow * 2.45} ry={shadow * .49} />
@@ -125,7 +125,7 @@ export function BlackHoleLightExtension() {
             <text className="horizon-label" x={CENTER_X + shadow + 13} y={CENTER_Y - 22}>黑洞阴影</text>
             <text className="horizon-label minor" x={CENTER_X + horizon + 10} y={CENTER_Y + 9}>事件视界</text>
           </g>
-          <path className={`selected-gravity-ray outcome-${outcome}`} d={selectedPath} markerEnd={outcome === "captured" ? undefined : "url(#rayArrowBlackHole)"} />
+          <path className={`selected-gravity-ray outcome-${outcome}`} d={selectedPath} markerEnd="url(#rayArrowBlackHole)" />
           <g className="ray-drag-handle" transform={`translate(54 ${CENTER_Y + rayOffset})`}><circle r="13" /><path d="M-4 -4 L0 -8 L4 -4 M-4 4 L0 8 L4 4" /><text x="21" y="5">拖动这束光</text></g>
           <g className="observer-station" transform="translate(930 260)"><path d="M0 -28 L12 0 L0 28 L-12 0 Z" /><circle r="7" /><text x="-30" y="49">远方观察者</text></g>
           <text className="space-model-label" x="34" y="41">{model === "flat" ? "参照组：忽略强引力" : `弯曲时空：质量等级 ${mass}`}</text>

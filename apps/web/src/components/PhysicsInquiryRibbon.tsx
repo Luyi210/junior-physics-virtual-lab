@@ -1,4 +1,4 @@
-import { ArrowRight, Eye, FlaskConical, GraduationCap, HelpCircle, Lightbulb, PencilRuler, RadioTower } from "lucide-react";
+import { ArrowRight, Eye, FlaskConical, HelpCircle, Lightbulb, PencilRuler, RadioTower } from "lucide-react";
 
 export interface PhysicsInquiryProfile {
   question: string;
@@ -49,7 +49,6 @@ export function PhysicsInquiryRibbon({ title, question, variable, evidence, law,
     <header>
       <span>PHYSICS INQUIRY / 物理探究链</span>
       <strong>不是先看答案，而是让证据一步步出现。</strong>
-      <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("physics-harness:open-tutorial"))} aria-label={`让光光带我完成${title}实验`}><GraduationCap size={16} /><span>让光光带我做</span></button>
       <code>{formula}</code>
     </header>
     <div>{steps.map((step, index) => { const Icon = step.icon; return <article key={step.number}><b>{step.number}</b><i><Icon size={17} /></i><span><small>{step.label}</small><strong>{step.value}</strong></span>{index < steps.length - 1 && <ArrowRight size={13} />}</article>; })}</div>

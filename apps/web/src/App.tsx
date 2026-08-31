@@ -1,11 +1,37 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { HarnessRuntime } from "./features/harness/HarnessRuntime";
 import { PhysicsContextLayer } from "./components/PhysicsContextLayer";
 import { HomePage } from "./features/home/HomePage";
-import { StudentDashboard } from "./features/student/StudentDashboard";
-import { StudentExperimentNotebook } from "./features/student/StudentExperimentNotebook";
-import { TeacherDashboard } from "./features/teacher/TeacherDashboard";
+
+const ExperimentTaskContextBar = lazy(async () => {
+  const module = await import("./components/ExperimentTaskContextBar");
+  return { default: module.ExperimentTaskContextBar };
+});
+
+const HarnessRuntime = lazy(async () => {
+  const module = await import("./features/harness/HarnessRuntime");
+  return { default: module.HarnessRuntime };
+});
+
+const StudentDashboard = lazy(async () => {
+  const module = await import("./features/student/StudentDashboard");
+  return { default: module.StudentDashboard };
+});
+
+const StudentExperimentNotebook = lazy(async () => {
+  const module = await import("./features/student/StudentExperimentNotebook");
+  return { default: module.StudentExperimentNotebook };
+});
+
+const StudentTextbookLibrary = lazy(async () => {
+  const module = await import("./features/student/StudentTextbookLibrary");
+  return { default: module.StudentTextbookLibrary };
+});
+
+const TeacherDashboard = lazy(async () => {
+  const module = await import("./features/teacher/TeacherDashboard");
+  return { default: module.TeacherDashboard };
+});
 
 const LensWorkbench = lazy(async () => {
   const module = await import("./features/lens/LensWorkbench");
@@ -28,13 +54,16 @@ function LegacyLensRedirect() {
 }
 
 export default function App() {
+  const location = useLocation();
+  const harnessEnabled = location.pathname === "/lab/lens" || location.pathname.startsWith("/student/explore/");
   return (
     <>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/student" element={<StudentDashboard />} />
-        <Route path="/student/notebook" element={<StudentExperimentNotebook />} />
-        <Route path="/teacher" element={<TeacherDashboard />} />
+        <Route path="/student" element={<Suspense fallback={<PageRouteLoading title="正在进入学生探索空间" />}><StudentDashboard /></Suspense>} />
+        <Route path="/student/notebook" element={<Suspense fallback={<PageRouteLoading title="正在打开实验记录本" />}><StudentExperimentNotebook /></Suspense>} />
+        <Route path="/student/textbook" element={<Suspense fallback={<PageRouteLoading title="正在编排课本知识图鉴" />}><StudentTextbookLibrary /></Suspense>} />
+        <Route path="/teacher/*" element={<Suspense fallback={<PageRouteLoading title="正在进入教师端" />}><TeacherDashboard /></Suspense>} />
         <Route
           path="/student/explore/light"
           element={
@@ -63,7 +92,11 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <PhysicsContextLayer />
-      <HarnessRuntime />
+      {harnessEnabled && <Suspense fallback={null}><ExperimentTaskContextBar /><HarnessRuntime /></Suspense>}
     </>
   );
+}
+
+function PageRouteLoading({ title }: { title: string }) {
+  return <div className="route-loading student-loading"><span /><strong>{title}</strong><small>LOADING PHYSICS SPACE</small></div>;
 }

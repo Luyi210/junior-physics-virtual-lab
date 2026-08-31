@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { Atom, X } from "lucide-react";
 import type { PhysicsField } from "./PhysicsFieldMotif";
 
 interface ContextSpec {
@@ -91,17 +92,22 @@ function ContextSketch({ field }: { field: PhysicsField }) {
 export function PhysicsContextLayer() {
   const location = useLocation();
   const context = useMemo(() => resolveContext(location.pathname, location.search), [location.pathname, location.search]);
+  const [expanded, setExpanded] = useState(false);
 
-  return <aside className={`physics-context-layer context-${context.field}`} aria-hidden="true">
-    <div className="physics-context-rail">{Array.from({ length: 23 }, (_, index) => <i className={index % 5 === 0 ? "major" : ""} key={index}><b>{index % 5 === 0 ? index * 5 : ""}</b></i>)}</div>
-    <div className="physics-context-plate">
-      <span><i />LIVE PHYSICS CONTEXT</span>
-      <strong>{context.title}</strong>
-      <code>{context.formula}</code>
-      <small>{context.note}</small>
-      <div>{context.symbols.map((symbol) => <b key={symbol}>{symbol}</b>)}</div>
+  return <aside className={`physics-context-layer context-${context.field}`}>
+    <div className="physics-context-rail" aria-hidden="true">{Array.from({ length: 23 }, (_, index) => <i className={index % 5 === 0 ? "major" : ""} key={index}><b>{index % 5 === 0 ? index * 5 : ""}</b></i>)}</div>
+    <div className={`physics-context-plate ${expanded ? "is-expanded" : "is-collapsed"}`}>
+      <button className="physics-context-toggle" type="button" onClick={() => setExpanded((value) => !value)} aria-expanded={expanded} aria-label={expanded ? "收起物理情境提示" : `展开物理情境提示：${context.title}`} title={expanded ? "收起物理提示" : `${context.title} · ${context.formula}`}>
+        {expanded ? <X size={15} /> : <Atom size={20} />}
+      </button>
+      <div className="physics-context-plate-body">
+        <span><i />LIVE PHYSICS CONTEXT</span>
+        <strong>{context.title}</strong>
+        <code>{context.formula}</code>
+        <small>{context.note}</small>
+        <div>{context.symbols.map((symbol) => <b key={symbol}>{symbol}</b>)}</div>
+      </div>
     </div>
-    <ContextSketch field={context.field} />
-    <div className="physics-context-scan" />
+    <div aria-hidden="true"><ContextSketch field={context.field} /><div className="physics-context-scan" /></div>
   </aside>;
 }

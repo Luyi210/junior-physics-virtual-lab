@@ -1,12 +1,14 @@
 import { harnessSessionsToXAPIStatements } from "@physics-lab/harness";
 import type { HarnessArea, HarnessEvent, HarnessEventType, HarnessSession } from "@physics-lab/harness";
-import { ArrowLeft, ArrowRight, BookOpenText, Check, ChevronRight, ClipboardList, Clock3, Database, Download, Eye, FileJson, FlaskConical, HelpCircle, Lightbulb, PencilLine, RotateCcw, Save, ShieldCheck, Sparkles, Trash2 } from "lucide-react";
+import type { StudentExperimentSession } from "@physics-lab/contracts";
+import { Activity, ArrowLeft, ArrowRight, BookOpenText, Check, ChevronRight, CircleCheck, ClipboardList, Clock3, Cloud, Database, Download, Eye, FileJson, FlaskConical, HelpCircle, Lightbulb, PencilLine, Radio, RotateCcw, Save, ShieldCheck, Sparkles, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { BrandMark } from "../../components/BrandMark";
 import { experimentNotebookRepository } from "../../services/experimentNotebookRepository";
 import type { ExperimentNotebookEntry } from "../../services/experimentNotebookRepository";
 import { localHarnessSessionRepository } from "../../services/harnessSessionRepository";
+import { studentApi } from "../../services/teacherApi";
 
 interface ExperimentActivity {
   id: string;
@@ -143,9 +145,11 @@ export function StudentExperimentNotebook() {
   const [saved, setSaved] = useState(false);
   const [exported, setExported] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [cloudSessions, setCloudSessions] = useState<StudentExperimentSession[]>([]);
 
   useEffect(() => {
     localHarnessSessionRepository.findAll().then(setSessions).catch(() => setSessions([])).finally(() => setLoading(false));
+    if (studentApi.hasSession()) studentApi.sessions().then(setCloudSessions).catch(() => setCloudSessions([]));
   }, []);
 
   const activities = useMemo(() => {
@@ -261,6 +265,12 @@ export function StudentExperimentNotebook() {
           <small>当前保存在本机；导出文件可供未来教师端或后端读取</small>
         </aside>
       </section>
+
+      {studentApi.hasSession() && <section className="notebook-cloud-strip">
+        <header><i><Cloud size={19} /></i><span><small>SCHOOL CLOUD EVIDENCE / 学校云端实验档案</small><b>任务过程与个人反思，分别保存、相互补充</b><p>上方记录本保存你写下的原话；这里显示已同步到班级后台的实验操作与观察。</p></span></header>
+        <div><article><CircleCheck size={17} /><strong>{cloudSessions.filter((session) => session.status === "completed").length}</strong><span>已完成会话</span></article><article><Activity size={17} /><strong>{cloudSessions.reduce((sum, session) => sum + session.eventCount, 0)}</strong><span>同步操作</span></article><article><BookOpenText size={17} /><strong>{cloudSessions.reduce((sum, session) => sum + session.observationCount, 0)}</strong><span>同步观察</span></article></div>
+        {cloudSessions.find((session) => session.status === "active") ? <Link to="/student#my-tasks"><Radio size={14} />有实验正在进行，返回航行台继续 <ArrowRight size={14} /></Link> : <Link to="/student#my-tasks">查看全部实验档案 <ArrowRight size={14} /></Link>}
+      </section>}
 
       <section className="notebook-workspace">
         <aside className="notebook-activity-rail">

@@ -1,7 +1,8 @@
 import { Grid, Line, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BufferGeometry, DoubleSide, Float32BufferAttribute, type Mesh } from "three";
+import { BufferGeometry, DoubleSide, Float32BufferAttribute, Quaternion, Vector3, type Mesh } from "three";
+import { useElementActivity } from "../../hooks/useElementActivity";
 
 type ViewPreset = "perspective" | "front" | "top";
 type SceneNavigation = "rotate" | "zoom";
@@ -116,9 +117,25 @@ function BeamPulse({ start, end, color, delay = 0 }: { start: Point3; end: Point
   </mesh>;
 }
 
+function BeamDirectionArrow({ start, end, color, virtual = false, opacity = 1 }: { start: Point3; end: Point3; color: string; virtual?: boolean; opacity?: number }) {
+  const transform = useMemo(() => {
+    const startVector = new Vector3(...start);
+    const endVector = new Vector3(...end);
+    const direction = endVector.clone().sub(startVector).normalize();
+    const position = startVector.clone().lerp(endVector, .68);
+    const quaternion = new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), direction);
+    return { position, quaternion };
+  }, [end, start]);
+  return <mesh position={transform.position} quaternion={transform.quaternion} renderOrder={4}>
+    <coneGeometry args={[virtual ? .105 : .13, virtual ? .3 : .38, 18]} />
+    <meshBasicMaterial color={color} transparent opacity={virtual ? opacity * .72 : opacity} wireframe={virtual} depthWrite={!virtual} toneMapped={false} />
+  </mesh>;
+}
+
 function PhotonBeam({ start, end, color, delay = 0, dashed = false, opacity = 1 }: { start: Point3; end: Point3; color: string; delay?: number; dashed?: boolean; opacity?: number }) {
   return <>
     <Line points={[start, end]} color={color} lineWidth={3.2} transparent opacity={opacity} dashed={dashed} dashScale={7} dashSize={.35} gapSize={.2} />
+    <BeamDirectionArrow start={start} end={end} color={color} virtual={dashed} opacity={opacity} />
     {!dashed && <BeamPulse start={start} end={end} color={color} delay={delay} />}
   </>;
 }
@@ -137,6 +154,8 @@ function AngleArc({ angle, side, color, lower = false }: { angle: number; side: 
 }
 
 function SceneFrame({ ariaLabel, children, onInteract, onNavigate, onViewChange, badges }: SceneFrameProps) {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const active = useElementActivity(stageRef, "260px");
   const [view, setView] = useState<ViewPreset>("perspective");
   const lastNavigation = useRef<Record<SceneNavigation, number>>({ rotate: 0, zoom: 0 });
   const reportNavigation = (action: SceneNavigation) => {
@@ -152,8 +171,8 @@ function SceneFrame({ ariaLabel, children, onInteract, onNavigate, onViewChange,
     onInteract?.();
     onViewChange?.(preset);
   };
-  return <div className="optics-3d-stage" role="img" aria-label={ariaLabel} onPointerDown={() => reportNavigation("rotate")} onWheel={() => reportNavigation("zoom")}>
-    <Canvas shadows dpr={[1, 1.75]} camera={{ position: viewPositions.perspective, fov: 43, near: .1, far: 100 }} gl={{ antialias: true }}>
+  return <div ref={stageRef} className="optics-3d-stage" role="img" aria-label={ariaLabel} onPointerDown={() => reportNavigation("rotate")} onWheel={() => reportNavigation("zoom")}>
+    <Canvas shadows dpr={[1, 1.45]} frameloop={active ? "always" : "never"} camera={{ position: viewPositions.perspective, fov: 43, near: .1, far: 100 }} gl={{ antialias: true, powerPreference: "high-performance" }}>
       <color attach="background" args={["#06171f"]} />
       <fog attach="fog" args={["#06171f", 12, 25]} />
       <ambientLight intensity={.7} />
@@ -185,10 +204,10 @@ export function ReflectionScene3D({ angle, roughness, interacted, onInteract, on
   const origin: Point3 = [0, 0, 0];
   const incident: Point3 = [-Math.sin(radians) * length, Math.cos(radians) * length, 0];
   const reflected: Point3 = [Math.sin(radians) * length, Math.cos(radians) * length, 0];
-  const scattered = roughness > 10 ? [-2, -1, 1, 2].map((offset): Point3 => {
-    const scatterAngle = Math.max(3, Math.min(84, angle + offset * roughness / 10));
+  const scattered = roughness > 10 ? [-3, -2, -1, 1, 2, 3].map((offset): Point3 => {
+    const scatterAngle = Math.max(-84, Math.min(84, angle + offset * roughness / 16));
     const scatterRadians = scatterAngle * Math.PI / 180;
-    return [Math.sin(scatterRadians) * length, Math.cos(scatterRadians) * length, offset * roughness / 95];
+    return [Math.sin(scatterRadians) * length, Math.cos(scatterRadians) * length, offset * roughness / 145];
   }) : [];
 
   return <SceneFrame ariaLabel="可旋转缩放的光反射三维实验场景" onInteract={onInteract} onNavigate={onNavigate} onViewChange={onViewChange} badges={[`入射角 ${angle.toFixed(0)}°`, `反射角 ${angle.toFixed(0)}°`, roughness < 12 ? "镜面反射" : "漫反射"]}>
@@ -201,8 +220,8 @@ export function ReflectionScene3D({ angle, roughness, interacted, onInteract, on
     <mesh position={origin}><sphereGeometry args={[.11, 18, 18]} /><meshBasicMaterial color="#ffffff" toneMapped={false} /></mesh>
     {interacted && <>
       <PhotonBeam start={incident} end={origin} color="#ffd36b" delay={0} />
-      <PhotonBeam start={origin} end={reflected} color="#62f0c9" delay={.5} opacity={roughness > 10 ? .72 : 1} />
-      {scattered.map((end, index) => <PhotonBeam start={origin} end={end} color="#70d6bd" delay={index * .17} opacity={.34} key={index} />)}
+      <PhotonBeam start={origin} end={reflected} color="#62f0c9" delay={.5} opacity={Math.max(.16, 1 - roughness / 108)} />
+      {scattered.map((end, index) => <PhotonBeam start={origin} end={end} color="#70d6bd" delay={index * .12} opacity={.22 + roughness / 420} key={index} />)}
       <AngleArc angle={angle} side="left" color="#ffd36b" />
       <AngleArc angle={angle} side="right" color="#62f0c9" />
     </>}

@@ -6,12 +6,21 @@ export function useElementSize<T extends HTMLElement>() {
 
   useEffect(() => {
     if (!ref.current) return;
+    let frame = 0;
     const observer = new ResizeObserver(([entry]) => {
       if (!entry) return;
-      setSize({ width: entry.contentRect.width, height: entry.contentRect.height });
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const width = Math.round(entry.contentRect.width);
+        const height = Math.round(entry.contentRect.height);
+        setSize((current) => current.width === width && current.height === height ? current : { width, height });
+      });
     });
     observer.observe(ref.current);
-    return () => observer.disconnect();
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, []);
 
   return { ref, size };

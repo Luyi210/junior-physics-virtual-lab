@@ -1,4 +1,4 @@
-import { useEffect, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 
 interface OrangeCatAvatarProps {
   mood?: "idle" | "listening" | "speaking" | "celebrating";
@@ -6,12 +6,12 @@ interface OrangeCatAvatarProps {
 }
 
 const avatarVariants = [
-  { id: "original", label: "好奇光光", file: "orange-cat.png" },
-  { id: "sitting", label: "端坐光光", file: "orange-cat-2.png" },
-  { id: "loaf", label: "趴趴光光", file: "orange-cat-3.png" },
-  { id: "tilt-white", label: "歪头光光", file: "orange-cat-4.png" },
-  { id: "focused", label: "专注光光", file: "orange-cat-5.png" },
-  { id: "tilt-orange", label: "好奇歪头光光", file: "orange-cat-6.png" }
+  { id: "original", label: "好奇光光", file: "orange-cat.webp" },
+  { id: "sitting", label: "端坐光光", file: "orange-cat-2.webp" },
+  { id: "loaf", label: "趴趴光光", file: "orange-cat-3.webp" },
+  { id: "tilt-white", label: "歪头光光", file: "orange-cat-4.webp" },
+  { id: "focused", label: "专注光光", file: "orange-cat-5.webp" },
+  { id: "tilt-orange", label: "好奇歪头光光", file: "orange-cat-6.webp" }
 ] as const;
 
 const avatarSessionKey = "physics-lab-orange-cat-avatar-v1";
@@ -31,8 +31,6 @@ function initialAvatarIndex() {
 }
 
 let activeAvatarIndex = initialAvatarIndex();
-let avatarsPreloaded = false;
-
 function subscribeAvatar(listener: () => void) {
   avatarListeners.add(listener);
   return () => {
@@ -61,18 +59,9 @@ export function OrangeCatAvatar({ mood = "idle", compact = false }: OrangeCatAva
   const avatar = avatarVariants[avatarIndex];
   const catImage = `${import.meta.env.BASE_URL}images/cat-assistant/${avatar.file}`;
 
-  useEffect(() => {
-    if (avatarsPreloaded || typeof window === "undefined") return;
-    avatarsPreloaded = true;
-    avatarVariants.forEach(({ file }) => {
-      const image = new Image();
-      image.src = `${import.meta.env.BASE_URL}images/cat-assistant/${file}`;
-    });
-  }, []);
-
   return (
     <span className={`orange-cat-avatar photo-cat avatar-${avatar.id} mood-${mood} ${compact ? "is-compact" : ""}`} aria-hidden="true" data-avatar-name={avatar.label}>
-      <img src={catImage} alt="" draggable={false} />
+      <img src={catImage} alt="" draggable={false} decoding="async" loading="lazy" />
       <i className="photo-cat-aura" />
       <i className="photo-cat-spark spark-one" />
       <i className="photo-cat-spark spark-two" />
