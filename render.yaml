@@ -3,7 +3,7 @@ services:
     name: gewu-physics-lab
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build --workspace @physics-lab/web
+    buildCommand: npm ci --include=dev && npm run build --workspace @physics-lab/web
     startCommand: npm run start:render
     healthCheckPath: /api/health
     envVars:
