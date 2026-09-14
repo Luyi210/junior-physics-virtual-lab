@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: gewu-physics-lab
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build --workspace @physics-lab/web
+    startCommand: npm run start:render
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.14.0
+      - key: DATABASE_URL
+        sync: false
+      - key: PHYSICS_API_SEED_DEMO
+        value: "false"
+      - key: PHYSICS_API_ALLOWED_ORIGINS
+        value: https://luyi210.github.io
+      - key: PHYSICS_API_TOKEN_SECRET
+        generateValue: true
+      - key: PHYSICS_BOOTSTRAP_SCHOOL_NAME
+        sync: false
+      - key: PHYSICS_BOOTSTRAP_ADMIN_NAME
+        sync: false
+      - key: PHYSICS_BOOTSTRAP_ADMIN_EMAIL
+        sync: false
+      - key: PHYSICS_BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: PHYSICS_GUANGGUANG_AI_ENABLED
+        value: "true"
+      - key: PHYSICS_GUANGGUANG_MODEL
+        value: deepseek-v4-flash

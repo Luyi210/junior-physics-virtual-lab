@@ -93,6 +93,9 @@ export function PhysicsContextLayer() {
   const location = useLocation();
   const context = useMemo(() => resolveContext(location.pathname, location.search), [location.pathname, location.search]);
   const [expanded, setExpanded] = useState(false);
+  const isExperimentPage = location.pathname === "/lab/lens" || location.pathname.startsWith("/student/explore/");
+
+  if (!isExperimentPage) return null;
 
   return <aside className={`physics-context-layer context-${context.field}`}>
     <div className="physics-context-rail" aria-hidden="true">{Array.from({ length: 23 }, (_, index) => <i className={index % 5 === 0 ? "major" : ""} key={index}><b>{index % 5 === 0 ? index * 5 : ""}</b></i>)}</div>

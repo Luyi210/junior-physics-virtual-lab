@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const publicRoot = resolve(projectRoot, "apps/web/dist");
 const host = process.env.PHYSICS_WEB_HOST ?? "127.0.0.1";
-const port = Number(process.env.PHYSICS_WEB_PORT ?? 5173);
+const port = Number(process.env.PHYSICS_WEB_PORT ?? process.env.PORT ?? 5173);
 const apiUpstream = new URL(process.env.PHYSICS_API_UPSTREAM ?? "http://127.0.0.1:8787");
 
 const contentTypes = {

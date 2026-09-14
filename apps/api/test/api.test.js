@@ -4,18 +4,30 @@ import { Readable } from "node:stream";
 import { loadConfig } from "../src/config.js";
 import { openDatabase } from "../src/database.js";
 import { createApiHandler } from "../src/app.js";
+import { guangguangRoutingHints } from "../src/guangguang.js";
 
 let db;
 let handler;
+const guangguangRequests = [];
 
 before(async () => {
   const config = loadConfig({ databasePath: ":memory:", tokenSecret: "test-secret", allowedOrigins: ["http://127.0.0.1:5173"] });
-  db = openDatabase(config);
-  handler = createApiHandler({ db, config });
+  db = await openDatabase(config);
+  handler = createApiHandler({
+    db,
+    config,
+    guangguang: {
+      status: () => ({ enabled: true, provider: "deepseek-official", model: "deepseek-v4-flash" }),
+      ask: async (input) => {
+        guangguangRequests.push(input);
+        return { text: "先保持入射角不变，再记录反射角。", provider: "deepseek-harness", model: "deepseek-v4-flash" };
+      }
+    }
+  });
 });
 
-after(() => {
-  db.close();
+after(async () => {
+  await db.close();
 });
 
 async function request(path, options = {}) {
@@ -50,10 +62,67 @@ test("health endpoint exposes service state", async () => {
   assert.ok(payload.data.capabilities.includes("managed-teacher-accounts"));
 });
 
+test("Guangguang routes complex questions through a bounded specialist team", () => {
+  assert.deepEqual(
+    guangguangRoutingHints("student", "电路读数异常，下一步怎么排查短路？"),
+    {
+      policyVersion: "adaptive-subagent-team-v2",
+      recommendedSpecialists: ["safety_guard", "experiment_diagnostician"],
+      qualityReview: "review-candidate-with-answer_critic",
+      maxSpecialistsBeforeReview: 2,
+      maxTotalSubagentCalls: 3
+    }
+  );
+  assert.deepEqual(
+    guangguangRoutingHints("teacher", "根据当前课堂证据给一条建议"),
+    {
+      policyVersion: "adaptive-subagent-team-v2",
+      recommendedSpecialists: ["teacher_copilot"],
+      qualityReview: "review-candidate-with-answer_critic",
+      maxSpecialistsBeforeReview: 2,
+      maxTotalSubagentCalls: 3
+    }
+  );
+});
+
+test("production bootstrap creates only the configured administrator", async () => {
+  const productionDb = await openDatabase(loadConfig({
+    databasePath: ":memory:",
+    tokenSecret: "production-test-secret",
+    allowedOrigins: ["https://example.onrender.com"],
+    seedDemoData: false,
+    bootstrapSchoolName: "测试学校",
+    bootstrapAdminName: "首位管理员",
+    bootstrapAdminEmail: "OWNER@EXAMPLE.COM",
+    bootstrapAdminPassword: "Production12345!"
+  }));
+  const users = await productionDb.all("SELECT email, name, role, password_hash FROM users ORDER BY email");
+  assert.equal(users.length, 1);
+  assert.equal(users[0].email, "owner@example.com");
+  assert.equal(users[0].name, "首位管理员");
+  assert.equal(users[0].role, "admin");
+  assert.doesNotMatch(users[0].password_hash, /Production12345/);
+  await productionDb.close();
+});
+
 test("protected endpoints require a valid token", async () => {
   const { response, payload } = await request("/classes");
   assert.equal(response.status, 401);
   assert.equal(payload.error.code, "AUTH_REQUIRED");
+});
+
+test("authenticated users can ask the isolated Guangguang harness", async () => {
+  const token = await login("student01@physics.local", "Student123!");
+  const result = await request("/guangguang/chat", { method: "POST", token, body: {
+    conversationId: "harness-local-learner-optics",
+    question: "下一步观察什么？",
+    context: { area: "optics", module: "reflection", reading: "30°" }
+  } });
+  assert.equal(result.response.status, 200);
+  assert.equal(result.payload.data.provider, "deepseek-harness");
+  assert.match(result.payload.data.text, /记录反射角/);
+  assert.equal(guangguangRequests.at(-1).audience, "student");
+  assert.equal(guangguangRequests.at(-1).user.email, "student01@physics.local");
 });
 
 test("teacher can manage classes, lessons and teaching tasks", async () => {

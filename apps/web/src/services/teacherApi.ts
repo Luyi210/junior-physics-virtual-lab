@@ -3,6 +3,8 @@ import type {
   ApiHealth,
   AuthSession,
   ExperimentSession,
+  GuangguangChatReply,
+  GuangguangChatRequest,
   StudentExperimentSession,
   PlatformUser,
   TeachingClass,
@@ -18,8 +20,7 @@ const LEGACY_TOKEN_KEY = "physics-lab-v2-api-access-token";
 const TEACHER_TOKEN_KEY = "physics-lab-v2-api-teacher-token";
 const STUDENT_TOKEN_KEY = "physics-lab-v2-api-student-token";
 const configuredBaseUrl = import.meta.env.VITE_API_URL as string | undefined;
-const localProductionBaseUrl = typeof window !== "undefined" && ["127.0.0.1", "localhost"].includes(window.location.hostname) ? "/api" : "";
-const API_BASE_URL = configuredBaseUrl?.replace(/\/$/, "") ?? (import.meta.env.DEV ? "http://127.0.0.1:8787/api" : localProductionBaseUrl);
+const API_BASE_URL = configuredBaseUrl?.replace(/\/$/, "") ?? (import.meta.env.DEV ? "http://127.0.0.1:8787/api" : "/api");
 
 export class TeacherApiError extends Error {
   constructor(public status: number, public code: string, message: string) {
@@ -83,7 +84,8 @@ export const teacherApi = {
   createLesson: (input: Omit<TeachingLesson, "id" | "schoolId" | "createdBy" | "createdAt" | "updatedAt">) => request<TeachingLesson>(TEACHER_TOKEN_KEY, "/lessons", { method: "POST", body: JSON.stringify(input) }, true, true),
   tasks: (classId?: string) => request<TeachingTask[]>(TEACHER_TOKEN_KEY, `/tasks${classId ? `?classId=${encodeURIComponent(classId)}` : ""}`, {}, true, true),
   createTask: (input: { classId: string; lessonId: string; title: string; mode: TeachingTaskMode; status: "draft" | "published"; opensAt?: string | null; dueAt?: string | null; allowRetry: boolean }) => request<TeachingTask>(TEACHER_TOKEN_KEY, "/tasks", { method: "POST", body: JSON.stringify(input) }, true, true),
-  updateTaskStatus: (taskId: string, status: TeachingTaskStatus) => request<TeachingTask>(TEACHER_TOKEN_KEY, `/tasks/${encodeURIComponent(taskId)}/status`, { method: "PATCH", body: JSON.stringify({ status }) }, true, true)
+  updateTaskStatus: (taskId: string, status: TeachingTaskStatus) => request<TeachingTask>(TEACHER_TOKEN_KEY, `/tasks/${encodeURIComponent(taskId)}/status`, { method: "PATCH", body: JSON.stringify({ status }) }, true, true),
+  askGuangguang: (input: GuangguangChatRequest) => request<GuangguangChatReply>(TEACHER_TOKEN_KEY, "/guangguang/chat", { method: "POST", body: JSON.stringify(input) }, true, true)
 };
 
 export const studentApi = {
@@ -104,5 +106,6 @@ export const studentApi = {
   startSession: (taskId: string) => request<ExperimentSession>(STUDENT_TOKEN_KEY, "/sessions", { method: "POST", body: JSON.stringify({ taskId }) }),
   appendSessionEvents: (sessionId: string, events: Array<{ id: string; type: string; area: string; occurredAt: string; payload: Record<string, unknown> }>) => request<{ accepted: number }>(STUDENT_TOKEN_KEY, `/sessions/${encodeURIComponent(sessionId)}/events`, { method: "POST", body: JSON.stringify({ events }) }),
   addObservation: (sessionId: string, text: string) => request<{ id: string; sessionId: string; learnerId: string; text: string; createdAt: string }>(STUDENT_TOKEN_KEY, `/sessions/${encodeURIComponent(sessionId)}/observations`, { method: "POST", body: JSON.stringify({ text }) }),
-  completeSession: (sessionId: string) => request<ExperimentSession>(STUDENT_TOKEN_KEY, `/sessions/${encodeURIComponent(sessionId)}/complete`, { method: "PATCH" })
+  completeSession: (sessionId: string) => request<ExperimentSession>(STUDENT_TOKEN_KEY, `/sessions/${encodeURIComponent(sessionId)}/complete`, { method: "PATCH" }),
+  askGuangguang: (input: GuangguangChatRequest) => request<GuangguangChatReply>(STUDENT_TOKEN_KEY, "/guangguang/chat", { method: "POST", body: JSON.stringify(input) })
 };

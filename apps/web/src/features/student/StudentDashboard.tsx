@@ -6,7 +6,6 @@ import type { PlatformUser } from "@physics-lab/contracts";
 import { Link } from "react-router-dom";
 import { BrandMark } from "../../components/BrandMark";
 import { PageIntroduction } from "../../components/PageIntroduction";
-import { PhysicsFieldMotif } from "../../components/PhysicsFieldMotif";
 import type { PhysicsField } from "../../components/PhysicsFieldMotif";
 import { useElementActivity } from "../../hooks/useElementActivity";
 import { OrangeCatAvatar, shuffleOrangeCatAvatar, useOrangeCatAvatarLabel } from "../harness/OrangeCatAvatar";
@@ -71,7 +70,7 @@ function DashboardCatGuide() {
   };
 
   return <section ref={guideRef} className="dashboard-cat-guide" aria-label="光光学习小助手">
-    <div className="dashboard-cat-portrait"><OrangeCatAvatar key={avatarLabel} mood={recommendation?.found ? "celebrating" : recommendation ? "listening" : "idle"} /><button type="button" onClick={shuffleOrangeCatAvatar} title="立即更换光光形象"><i />{avatarLabel} · 换一只</button></div>
+    <div className="dashboard-cat-portrait"><OrangeCatAvatar key={avatarLabel} mood={recommendation?.found ? "celebrating" : recommendation ? "listening" : "idle"} /></div>
     <div className="dashboard-cat-copy">
       <span>PHYSICS KNOWLEDGE GRAPH / 光光学习小助手</span>
       <h3>{recommendation?.title ?? "有自己的问题？让光光帮你找到合适的实验。"}</h3>
@@ -81,17 +80,22 @@ function DashboardCatGuide() {
     <form onSubmit={submitQuestion}>
       <label htmlFor="student-custom-question"><MessageCircleQuestion size={16} />我的自定义问题</label>
       <div><input id="student-custom-question" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="例如：为什么雨后会出现彩虹？" /><button type="submit" disabled={!question.trim()}><SendHorizontal size={16} />问问光光</button></div>
-      <small><Lightbulb size={13} />本地知识图谱检索，不调用大语言模型</small>
+      <small><Lightbulb size={13} />本地知识图谱 · 不消耗 AI 额度</small>
     </form>
 
     {recommendation && <div className={`dashboard-knowledge-result ${recommendation.found ? "found" : "needs-clue"}`}>
       <header><Network size={19} /><span><small>LOCAL GRAPH REASONING / 本地关联路径</small><strong>{recommendation.found ? `匹配可信度 ${recommendation.confidence}%` : "等待更多线索"}</strong></span></header>
-      <div className="knowledge-trail" aria-label="知识图谱匹配路径">
-        {recommendation.trail.map((item, index) => <span key={`${item}-${index}`}><b>{item}</b>{index < recommendation.trail.length - 1 && <ArrowRight size={13} />}</span>)}
-      </div>
-      {recommendation.matchedTerms.length > 0 && <div className="knowledge-matches"><small>从问题中识别</small>{recommendation.matchedTerms.map((term) => <b key={term}><CircleDot size={11} />{term}</b>)}</div>}
-      <section className="knowledge-alternatives"><span>相邻知识与其他可能</span><div>{recommendation.alternatives.map((item) => <Link to={item.to} key={`${item.to}-${item.title}`}><strong>{item.title}</strong><small>{item.reason}</small><ArrowRight size={14} /></Link>)}</div></section>
-      <section className="knowledge-follow-ups"><span>光光建议继续追问</span><div>{recommendation.followUps.map((item) => <button type="button" onClick={() => ask(item)} key={item}>{item}</button>)}</div></section>
+      <details>
+        <summary>查看匹配依据与延伸问题 <ArrowRight size={14} /></summary>
+        <div className="knowledge-result-details">
+          <div className="knowledge-trail" aria-label="知识图谱匹配路径">
+            {recommendation.trail.map((item, index) => <span key={`${item}-${index}`}><b>{item}</b>{index < recommendation.trail.length - 1 && <ArrowRight size={13} />}</span>)}
+          </div>
+          {recommendation.matchedTerms.length > 0 && <div className="knowledge-matches"><small>从问题中识别</small>{recommendation.matchedTerms.map((term) => <b key={term}><CircleDot size={11} />{term}</b>)}</div>}
+          <section className="knowledge-alternatives"><span>相邻知识与其他可能</span><div>{recommendation.alternatives.map((item) => <Link to={item.to} key={`${item.to}-${item.title}`}><strong>{item.title}</strong><small>{item.reason}</small><ArrowRight size={14} /></Link>)}</div></section>
+          <section className="knowledge-follow-ups"><span>光光建议继续追问</span><div>{recommendation.followUps.map((item) => <button type="button" onClick={() => ask(item)} key={item}>{item}</button>)}</div></section>
+        </div>
+      </details>
     </div>}
   </section>;
 }
@@ -144,7 +148,7 @@ export function StudentDashboard() {
   if (!studentUser && !guestMode) return <StudentIdentityPortal connection={connection} onLogin={login} onGuest={() => setGuestMode(true)} onRetry={checkStudentSession} />;
 
   return (
-    <div className="explore-page discovery-home">
+    <div className="explore-page discovery-home discovery-home-focused">
       <PageIntroduction
         pageKey="student-dashboard"
         eyebrow="STUDENT SPACE / 学生探究端"
@@ -169,32 +173,29 @@ export function StudentDashboard() {
       <header className="explore-header">
         <Link to="/"><BrandMark /></Link>
         <nav aria-label="学生探索导航">
-          <Link className="active" to="/student">探索首页</Link>
           {studentUser && <a href="#my-tasks">我的任务</a>}
-          <a href="#fields">六个领域</a>
-          <a href="#questions">问题入口</a>
+          <a href="#fields">选择实验</a>
           <a href="#guangguang">问问光光</a>
           <Link to="/student/textbook">课本知识</Link>
-          <Link to="/student/notebook">实验记录本</Link>
-          <Link to="/lab/lens">精密实验台</Link>
+          <a href="#more-explore">更多</a>
         </nav>
         <div className="explorer-id"><span>{studentUser ? "学生身份" : "当前模式"}</span><b>{studentUser?.name ?? "自由探索"}</b><i>{studentUser?.name.slice(-1) ?? "探"}</i></div>
       </header>
       <nav className="student-mobile-dock" aria-label="学生端快捷导航">
+        {studentUser && <a href="#my-tasks"><BookOpenText size={17} /><span>任务</span></a>}
         <a href="#fields"><Compass size={17} /><span>选领域</span></a>
-        <a href="#questions"><MessageCircleQuestion size={17} /><span>找问题</span></a>
         <a href="#guangguang"><Sparkles size={17} /><span>问光光</span></a>
-        <Link to="/student/textbook"><BookOpenText size={17} /><span>课本</span></Link>
         <Link to="/student/notebook"><PencilLine size={17} /><span>记录本</span></Link>
+        {!studentUser && <a href="#more-explore"><MessageCircleQuestion size={17} /><span>更多</span></a>}
       </nav>
 
       <main>
         {studentUser && <StudentTaskCenter user={studentUser} onLogout={logout} />}
-        <section className={`discovery-home-hero ${studentUser ? "is-authenticated" : ""}`}>
+        {!studentUser && <section className="discovery-home-hero">
           <div className="discovery-home-copy">
-            <p><Sparkles size={17} /> OPEN DISCOVERY SPACE / {studentUser ? "任务之外，自由探索" : "学生探索空间"}</p>
-            <h1>{studentUser ? <>完成任务，也别放下自己的<em>问题</em>。</> : <>从一个<em>问题</em>开始，<br />用实验把猜想变成证据。</>}</h1>
-            <span>{studentUser ? "教师任务给你一条明确的探究线索；六个物理领域则保留开放入口。你可以继续改变条件、比较现象，把新的发现写进自己的实验记录本。" : "六个领域属于同一个开放平台。没有规定顺序，也没有必做任务；学生通过改变条件、观察现象和解释证据，逐渐形成自己的物理观念。"}</span>
+            <p><Sparkles size={17} /> OPEN DISCOVERY SPACE / 学生探索空间</p>
+            <h1>从一个<em>问题</em>开始，<br />用实验把猜想变成证据。</h1>
+            <span>六个领域属于同一个开放平台。没有规定顺序，也没有必做任务；学生通过改变条件、观察现象和解释证据，逐渐形成自己的物理观念。</span>
             <div className="discovery-route-line" aria-label="平台使用路径">
               <b>01 提出问题</b><ArrowRight size={16} /><b>02 作出猜想</b><ArrowRight size={16} /><b>03 操作实验</b><ArrowRight size={16} /><b>04 寻找证据</b><ArrowRight size={16} /><b>05 形成解释</b>
             </div>
@@ -203,32 +204,26 @@ export function StudentDashboard() {
             <DashboardPhysicsCanvas />
             <span className="physics-canvas-live"><i />PHYSICS LIVE CANVAS</span>
           </div>
-        </section>
+        </section>}
 
         <section className="discovery-field-section" id="fields">
           <header className="discovery-section-title">
-            <div><span>01—06 / ALL FIELDS</span><h2>先看动态现象，再选择物理领域</h2></div>
-            <p>每张卡片都有一个持续运行的实验预览。点击卡片后进入该领域，再自由选择具体实验。</p>
+            <div><span>01—06 / ALL FIELDS</span><h2>{studentUser ? "任务之外，也可以自由选择实验" : "选择一个物理领域开始探索"}</h2></div>
+            <p>先选方向，进入后再查看具体实验和动态现象。</p>
           </header>
           <div className="discovery-field-grid">
             {fields.map((field) => {
               const Icon = field.icon;
               return (
                 <Link
-                  className={`discovery-field-card field-${field.key}`}
+                  className={`discovery-field-card discovery-field-card-compact field-${field.key}`}
                   style={{ "--field-accent": field.color } as CSSProperties}
                   to={`/student/explore/${field.key}`}
                   key={field.key}
                 >
-                  <PhysicsFieldMotif field={field.key} className="discovery-field-motif" />
                   <div className="discovery-card-top"><b>{field.number}</b><span>{field.count}</span></div>
-                  <div className="discovery-field-preview">
-                    <DashboardPhysicsCanvas sceneKey={field.preview} compact />
-                    <strong>{field.previewLabel}</strong>
-                  </div>
                   <div className="discovery-field-title"><i><Icon size={23} /></i><span><small>{field.chapter}</small><h2>{field.title}</h2></span></div>
                   <p>{field.note}</p>
-                  <blockquote>{field.question}</blockquote>
                   <strong className="discovery-field-enter">查看实验目录 <ArrowRight size={16} /></strong>
                 </Link>
               );
@@ -236,45 +231,33 @@ export function StudentDashboard() {
           </div>
         </section>
 
-        <section className="discovery-tool-note textbook-library-entry">
-          <div><BookOpenText size={26} /><span><small>TEXTBOOK KNOWLEDGE ATLAS / 课本知识专栏</small><strong>不知道实验对应课本哪里？现在可以按苏科版章节查找。</strong></span></div>
-          <p>13 个章节单元覆盖平台全部 36 个实验节点，每章配有原创物理图解、核心规律、概念索引和直达实验入口。</p>
-          <Link to="/student/textbook">打开课本知识专栏 <ArrowRight size={16} /></Link>
-        </section>
-
-        <section className="discovery-question-section" id="questions">
-          <div className="discovery-question-heading">
-            <span>START WITH A QUESTION</span>
-            <h2>也可以不按章节，直接追一个好奇的问题。</h2>
-            <p>问题库由实验知识图谱生成，覆盖概念、器材、生活现象和观察证据。点击问题会进入对应实验，答案仍需通过操作寻找。</p>
-            <div className="knowledge-graph-stats"><span><b>{physicsKnowledgeGraphStats.experiments}</b>实验节点</span><span><b>{physicsKnowledgeGraphStats.signals}</b>现象线索</span><span><b>{physicsKnowledgeGraphStats.relations}</b>知识关联</span></div>
-            <b>{String(visibleQuestions.length).padStart(2, "0")} 个问题入口 · 当前筛选</b>
-          </div>
-          <div className="knowledge-question-browser">
-            <nav className="knowledge-domain-filter" aria-label="按物理领域筛选问题">
-              <button className={questionDomain === "all" ? "active" : ""} onClick={() => setQuestionDomain("all")}>全部 <b>{knowledgeGraphQuestions.length}</b></button>
-              {(Object.entries(physicsGraphDomains) as Array<[PhysicsGraphDomain, (typeof physicsGraphDomains)[PhysicsGraphDomain]]>).map(([key, domain]) => <button className={questionDomain === key ? "active" : ""} onClick={() => setQuestionDomain(key)} key={key}>{domain.label} <b>{knowledgeGraphQuestions.filter((question) => question.domain === key).length}</b></button>)}
-            </nav>
-            <div className="discovery-question-list">
-              {visibleQuestions.map((question) => <Link to={question.to} key={question.text}><b>{question.mark}</b><span>{question.text}</span><ArrowRight size={16} /></Link>)}
-            </div>
-          </div>
-        </section>
-
         <div id="guangguang"><DashboardCatGuide /></div>
 
-        <section className="dashboard-notebook-entry">
-          <div className="dashboard-notebook-icon"><BookOpenText size={38} /><i /><i /><i /></div>
-          <div><span>EXPERIMENT NOTEBOOK / 实验记录本</span><h2>做过的操作会留下轨迹，真正的收获由你亲自写下。</h2><p>自动整理实验次数、参数变化和已保存观察，再用“我做了什么、我观察到什么、我学到了什么、我还想知道”完成自己的探究记录。</p></div>
-          <aside><PencilLine size={20} /><strong>不是任务打卡</strong><small>没有规定篇数，可以随时补充或修改。</small></aside>
-          <Link to="/student/notebook">打开我的记录本 <ArrowRight size={17} /></Link>
-        </section>
-
-        <section className="discovery-tool-note">
-          <div><Compass size={24} /><span><small>OPTICS / ADVANCED TOOL</small><strong>光学探究需要精确读数时，可以进入凸透镜精密实验台。</strong></span></div>
-          <p>它属于学生探究端中的光学高级工具，与放大镜、照相机和人眼成像等实验处于同一学习体系。</p>
-          <Link to="/lab/lens">打开精密实验台 <ArrowRight size={16} /></Link>
-        </section>
+        <details className="discovery-more" id="more-explore">
+          <summary><span><small>MORE / 按需展开</small><strong>问题库、课本、记录本与精密工具</strong></span><p>这些入口不会消失，需要时再打开。</p><ArrowRight size={18} /></summary>
+          <div className="discovery-resource-grid">
+            <Link to="/student/textbook"><BookOpenText size={21} /><span><small>课本知识</small><strong>按章节查找概念和实验</strong></span><ArrowRight size={16} /></Link>
+            <Link to="/student/notebook"><PencilLine size={21} /><span><small>实验记录本</small><strong>整理操作、观察和新问题</strong></span><ArrowRight size={16} /></Link>
+            <Link to="/lab/lens"><Focus size={21} /><span><small>精密实验台</small><strong>进行凸透镜精确测量</strong></span><ArrowRight size={16} /></Link>
+          </div>
+          <section className="discovery-question-section discovery-question-section-compact" id="questions">
+            <div className="discovery-question-heading">
+              <span>START WITH A QUESTION</span>
+              <h2>从一个好奇的问题出发</h2>
+              <p>选择问题进入对应实验，答案仍需通过操作寻找。</p>
+              <b>{String(visibleQuestions.length).padStart(2, "0")} 个问题入口</b>
+            </div>
+            <div className="knowledge-question-browser">
+              <nav className="knowledge-domain-filter" aria-label="按物理领域筛选问题">
+                <button className={questionDomain === "all" ? "active" : ""} onClick={() => setQuestionDomain("all")}>全部 <b>{knowledgeGraphQuestions.length}</b></button>
+                {(Object.entries(physicsGraphDomains) as Array<[PhysicsGraphDomain, (typeof physicsGraphDomains)[PhysicsGraphDomain]]>).map(([key, domain]) => <button className={questionDomain === key ? "active" : ""} onClick={() => setQuestionDomain(key)} key={key}>{domain.label} <b>{knowledgeGraphQuestions.filter((question) => question.domain === key).length}</b></button>)}
+              </nav>
+              <div className="discovery-question-list">
+                {visibleQuestions.map((question) => <Link to={question.to} key={question.text}><b>{question.mark}</b><span>{question.text}</span><ArrowRight size={16} /></Link>)}
+              </div>
+            </div>
+          </section>
+        </details>
       </main>
     </div>
   );

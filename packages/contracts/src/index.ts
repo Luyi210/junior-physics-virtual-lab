@@ -153,5 +153,24 @@ export interface ApiHealth {
   compatibility: "desktop-managed-accounts-v1";
   capabilities: string[];
   database: "sqlite" | "postgresql";
+  guangguang?: {
+    enabled: boolean;
+    provider: string;
+    model: string;
+    orchestration?: "adaptive-subagent-team-v2";
+    specialistCount?: number;
+  };
   time: string;
+}
+
+export interface GuangguangChatRequest {
+  conversationId: string;
+  question: string;
+  context?: Record<string, unknown>;
+}
+
+export interface GuangguangChatReply {
+  text: string;
+  provider: "deepseek-harness";
+  model: string;
 }

@@ -11,6 +11,7 @@ import type { HarnessArea, HarnessEventType, HarnessSession, HarnessValue } from
 import { create } from "zustand";
 import { localHarnessSessionRepository } from "../../services/harnessSessionRepository";
 import { syncHarnessEvent, syncHarnessObservation } from "../../services/studentSessionSync";
+import { studentApi } from "../../services/teacherApi";
 import { getApparatusContext } from "./tutorialBridge";
 
 const assistant = new RuleBasedLearningAssistant();
@@ -40,17 +41,21 @@ interface HarnessUiState {
   activeModule?: string;
   session?: HarnessSession;
   loading: boolean;
+  asking: boolean;
+  dialogueProvider: "rules" | "deepseek-harness";
   panelOpen: boolean;
   enterArea: (area: HarnessArea, module: string) => Promise<void>;
   record: (type: HarnessEventType, payload?: Record<string, HarnessValue>) => void;
   saveObservation: (text: string) => boolean;
-  askQuestion: (text: string) => boolean;
+  askQuestion: (text: string) => Promise<boolean>;
   readInsight: (id: string) => void;
   setPanelOpen: (open: boolean) => void;
 }
 
 export const useHarnessStore = create<HarnessUiState>((set, get) => ({
   loading: false,
+  asking: false,
+  dialogueProvider: "rules",
   panelOpen: false,
 
   async enterArea(area, module) {
@@ -109,14 +114,45 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
     return true;
   },
 
-  askQuestion(text) {
+  async askQuestion(text) {
     const current = get().session;
     const module = get().activeModule;
-    if (!current || !module || !text.trim()) return false;
-    const reply = dialogueAssistant.respondToQuestion(current, module, text, getApparatusContext(module));
-    const session = appendDialogueExchange(current, module, text, reply);
+    if (!current || !module || !text.trim() || get().asking) return false;
+    const question = text.trim();
+    const apparatus = getApparatusContext(module);
+    const localReply = dialogueAssistant.respondToQuestion(current, module, question, apparatus);
+    let reply = localReply;
+    let dialogueProvider: HarnessUiState["dialogueProvider"] = "rules";
+    set({ asking: true });
+    try {
+      if (studentApi.hasSession()) {
+        const aiReply = await studentApi.askGuangguang({
+          conversationId: current.id,
+          question,
+          context: {
+            area: current.area,
+            module,
+            apparatus,
+            recentEvents: current.events.slice(-18),
+            observations: current.observations.slice(-8),
+            recentDialogue: (current.dialogue ?? []).filter((message) => message.module === module).slice(-8)
+          }
+        });
+        reply = { ...localReply, text: aiReply.text };
+        dialogueProvider = "deepseek-harness";
+      }
+    } catch {
+      dialogueProvider = "rules";
+    }
+    const latest = get().session;
+    if (!latest || latest.id !== current.id || get().activeModule !== module) {
+      set({ asking: false, dialogueProvider });
+      return false;
+    }
+    const session = appendDialogueExchange(latest, module, question, reply);
     set({ session });
     scheduleSave(session);
+    set({ asking: false, dialogueProvider });
     return true;
   },
 

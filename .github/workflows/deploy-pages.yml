@@ -32,6 +32,8 @@ jobs:
 
       - name: Build web application
         run: npm run build --workspace @physics-lab/web
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

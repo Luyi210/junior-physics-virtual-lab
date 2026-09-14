@@ -13,6 +13,7 @@
     "dev:api": "npm run dev --workspace @physics-lab/api",
     "start:api": "npm run start --workspace @physics-lab/api",
     "start:platform": "node scripts/start-platform.mjs",
+    "start:render": "node scripts/serve-render.mjs",
     "stop:platform": "node scripts/stop-platform.mjs",
     "smoke:platform": "node scripts/smoke-test-platform.mjs",
     "build": "npm run build --workspace @physics-lab/web && node scripts/prepare-sites-build.mjs",
@@ -20,5 +21,8 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "verify": "npm run typecheck && npm test && npm run build"
+  },
+  "engines": {
+    "node": ">=24 <25"
   }
 }

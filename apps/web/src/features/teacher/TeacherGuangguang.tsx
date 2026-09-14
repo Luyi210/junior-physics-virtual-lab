@@ -1,6 +1,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import { Activity, BookOpenCheck, Bot, Check, ChevronDown, Lightbulb, MessageSquareText, Radio, Send, ShieldCheck, Sparkles, X } from "lucide-react";
 import { OrangeCatAvatar } from "../harness/OrangeCatAvatar";
+import { teacherApi } from "../../services/teacherApi";
 import { TeacherWorkspace, teacherExperimentCatalog } from "./teacherWorkspace";
 
 type TeacherGuangguangProps = {
@@ -152,23 +153,56 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<CopilotMessage[]>([]);
   const [broadcastStatus, setBroadcastStatus] = useState("");
+  const [responding, setResponding] = useState(false);
+  const [dialogueProvider, setDialogueProvider] = useState<"rules" | "deepseek-harness">("rules");
   const insight = useMemo(() => buildInsight(workspace, pathname), [workspace, pathname]);
 
-  function ask(text: string) {
+  async function ask(text: string) {
     const clean = text.trim();
-    if (!clean) return;
-    const reply = answerQuestion(clean, workspace, insight);
+    if (!clean || responding) return;
+    const localReply = answerQuestion(clean, workspace, insight);
     setMessages((current) => [
       ...current,
-      { id: `teacher-${Date.now()}`, role: "teacher", text: clean },
-      { id: `assistant-${Date.now()}-${current.length}`, role: "assistant", text: reply }
+      { id: `teacher-${Date.now()}`, role: "teacher", text: clean }
     ]);
     setQuestion("");
+    setResponding(true);
+    let reply = localReply;
+    let provider: "rules" | "deepseek-harness" = "rules";
+    try {
+      if (teacherApi.hasSession()) {
+        const lesson = currentLesson(workspace);
+        const aiReply = await teacherApi.askGuangguang({
+          conversationId: `teacher-${insight.mode}`,
+          question: clean,
+          context: {
+            page: pathname,
+            insight,
+            lesson: lesson ? {
+              title: lesson.title,
+              objective: lesson.objective,
+              inquiryQuestion: lesson.inquiryQuestion,
+              duration: lesson.duration
+            } : null
+          }
+        });
+        reply = aiReply.text;
+        provider = "deepseek-harness";
+      }
+    } catch {
+      provider = "rules";
+    }
+    setMessages((current) => [
+      ...current,
+      { id: `assistant-${Date.now()}-${current.length}`, role: "assistant", text: reply }
+    ]);
+    setDialogueProvider(provider);
+    setResponding(false);
   }
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    ask(question);
+    void ask(question);
   }
 
   function broadcast() {
@@ -188,7 +222,7 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
       <aside className={`teacher-guangguang-panel ${open ? "is-open" : ""}`} aria-hidden={!open} inert={!open} role="dialog" aria-modal="true" aria-label="光光教学副驾">
         <header className="teacher-guangguang-header">
           <div className="teacher-guangguang-avatar"><OrangeCatAvatar mood="listening" /></div>
-          <div><span>GUANGGUANG / T-COPILOT</span><h2>光光教学副驾</h2><p><i />规则诊断在线 · 本地模式</p></div>
+          <div><span>GUANGGUANG / T-COPILOT</span><h2>光光教学副驾</h2><p><i />{dialogueProvider === "deepseek-harness" ? "DeepSeek Harness 已连接" : "规则诊断在线 · AI 自动兜底"}</p></div>
           <button type="button" onClick={() => setOpen(false)} aria-label="关闭光光教学副驾"><X size={19} /></button>
         </header>
 
@@ -207,16 +241,17 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
         </section>
 
         <section className="teacher-guangguang-dialogue">
-          <header><MessageSquareText size={15} /><span><b>和光光讨论</b><small>只基于当前本地工作区回答</small></span></header>
-          <div className="teacher-guangguang-chips">{quickQuestions.map((item) => <button key={item} type="button" onClick={() => ask(item)}>{item}</button>)}</div>
+          <header><MessageSquareText size={15} /><span><b>和光光讨论</b><small>只提交当前页面的教学/live 证据</small></span></header>
+          <div className="teacher-guangguang-chips">{quickQuestions.map((item) => <button key={item} type="button" disabled={responding} onClick={() => void ask(item)}>{item}</button>)}</div>
           <div className="teacher-guangguang-messages">
             {!messages.length && <div className="teacher-guangguang-welcome"><Bot size={19} /><p>老师好，我已经读取当前页面的教学信息。你可以问我现在该关注什么，或让我给一条课堂追问。</p></div>}
             {messages.map((message) => <article key={message.id} className={`role-${message.role}`}>{message.role === "assistant" && <OrangeCatAvatar mood="speaking" compact />}<div><span>{message.role === "teacher" ? "我" : "光光"}</span><p>{message.text}</p></div></article>)}
+            {responding && <div className="teacher-guangguang-welcome"><Bot size={19} /><p>光光正在结合当前教学证据思考……</p></div>}
           </div>
-          <form onSubmit={submit}><textarea value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="问光光：这节课什么时候适合介入？" /><button type="submit" aria-label="发送问题"><Send size={17} /></button></form>
+          <form onSubmit={submit}><textarea value={question} disabled={responding} onChange={(event) => setQuestion(event.target.value)} placeholder="问光光：这节课什么时候适合介入？" /><button type="submit" disabled={responding || !question.trim()} aria-label="发送问题"><Send size={17} /></button></form>
         </section>
 
-        <footer><Activity size={13} /><span>依据：课例、课堂进程、观察记录与报告数据</span><em>RULE-BASED</em></footer>
+        <footer><Activity size={13} /><span>依据：课例、课堂进程、观察记录与报告数据</span><em>{dialogueProvider === "deepseek-harness" ? "DEEPSEEK HARNESS" : "RULE FALLBACK"}</em></footer>
       </aside>
       {open && <button className="teacher-guangguang-scrim" type="button" onClick={() => setOpen(false)} aria-label="关闭光光教学副驾" />}
     </>

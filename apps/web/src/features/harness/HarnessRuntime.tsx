@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Activity, ArrowRight, BookMarked, BrainCircuit, Check, ChevronDown, ChevronLeft, ChevronRight, CircleCheck, Crosshair, GraduationCap, Lightbulb, Maximize2, MessageCircle, MousePointerClick, MoveHorizontal, Network, PauseCircle, PlayCircle, RefreshCw, RotateCcw, Save, ScanSearch, SendHorizontal, ShieldCheck, Sparkles, UserRound, Volume2, VolumeX, X } from "lucide-react";
+import { Activity, ArrowRight, BookMarked, BrainCircuit, Check, ChevronDown, ChevronLeft, ChevronRight, CircleCheck, Crosshair, GraduationCap, Lightbulb, Maximize2, MessageCircle, MousePointerClick, MoveHorizontal, Network, PauseCircle, PlayCircle, RotateCcw, Save, SendHorizontal, ShieldCheck, Sparkles, UserRound, Volume2, VolumeX, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { analyzeHarnessDraft, createHarnessExperimentSummary, diagnoseHarnessExperiment, getHarnessAdaptiveQuestions, getHarnessCoachAlert, getHarnessConceptMemory, getHarnessConceptNode, getHarnessKnowledgeMastery, getHarnessLearnerModel, getHarnessLearningBranch, getHarnessModuleGuide, getHarnessQuickQuestions, getHarnessReviewSchedule, getHarnessTutorialAction, getRecommendedHarnessHintLevel } from "@physics-lab/harness";
 import type { HarnessArea, HarnessEventType, HarnessTutorialAction } from "@physics-lab/harness";
 import { useHarnessStore } from "./harnessStore";
-import { OrangeCatAvatar, shuffleOrangeCatAvatar, useOrangeCatAvatarLabel } from "./OrangeCatAvatar";
+import { OrangeCatAvatar, useOrangeCatAvatarLabel } from "./OrangeCatAvatar";
 import {
   dispatchTutorialCommand,
   getApparatusContext,
@@ -345,6 +345,8 @@ function HarnessPanel() {
   const loading = useHarnessStore((state) => state.loading);
   const panelOpen = useHarnessStore((state) => state.panelOpen);
   const session = useHarnessStore((state) => state.session);
+  const asking = useHarnessStore((state) => state.asking);
+  const dialogueProvider = useHarnessStore((state) => state.dialogueProvider);
   const unread = useHarnessStore((state) => state.session?.insights.filter((item) => !item.read).length ?? 0);
   const setPanelOpen = useHarnessStore((state) => state.setPanelOpen);
   const askQuestion = useHarnessStore((state) => state.askQuestion);
@@ -355,6 +357,8 @@ function HarnessPanel() {
   const [tutorialMiniSide, setTutorialMiniSide] = useState<"left" | "right">("right");
   const [draft, setDraft] = useState("");
   const [saved, setSaved] = useState(false);
+  const [historyExpanded, setHistoryExpanded] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summarySaved, setSummarySaved] = useState(false);
   const [coachTarget, setCoachTarget] = useState<SpotlightTarget>();
@@ -415,6 +419,8 @@ function HarnessPanel() {
   const questionLibrary = analysis.questionLibrary ?? [];
   const lastFollowUps = [...dialogue].reverse().find((message) => message.role === "assistant")?.followUps;
   const suggestions = lastFollowUps?.length ? lastFollowUps : quickQuestions;
+  const visibleDialogue = historyExpanded ? dialogue : dialogue.slice(-3);
+  const hiddenDialogueCount = Math.max(0, dialogue.length - visibleDialogue.length);
   const draftFeedback = activeArea && activeModule ? analyzeHarnessDraft(activeArea, activeModule, draft) : undefined;
   const dockCoachAlert = !panelOpen && session && activeModule ? getHarnessCoachAlert(session, activeModule, getApparatusContext(activeModule)) : undefined;
 
@@ -424,6 +430,8 @@ function HarnessPanel() {
   }, [dialogue.length, panelOpen, activeModule]);
 
   useEffect(() => {
+    setHistoryExpanded(false);
+    setSupportOpen(false);
     setSummaryOpen(false);
     setSummarySaved(false);
     setCoachTarget(undefined);
@@ -451,15 +459,20 @@ function HarnessPanel() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [panelOpen, setPanelOpen]);
 
-  const send = (text = draft, preserveDraft = false) => {
+  const send = async (text = draft, preserveDraft = false) => {
     const question = text.trim();
-    if (!question || !askQuestion(question)) return;
+    if (!question || asking || !await askQuestion(question)) return;
     if (!preserveDraft) setDraft("");
   };
 
   const askFromReview = (text: string) => {
     send(text);
     setPanelView("dialogue");
+  };
+
+  const sendFromSupport = (text: string) => {
+    send(text);
+    setSupportOpen(false);
   };
 
   const save = () => {
@@ -488,22 +501,16 @@ function HarnessPanel() {
         <aside className={`harness-panel harness-dialogue-panel cat-partner-panel ${panelView === "tutorial" && tutorialCompact ? `tutorial-compact mini-side-${tutorialMiniSide}` : ""}`} role="dialog" aria-modal="true" aria-label="橘猫实验员交流与动态教程">
           <header>
             <div className="harness-panel-mark cat-panel-mark"><OrangeCatAvatar compact /></div>
-            <div><span>INQUIRY HARNESS / 橘猫实验伙伴</span><strong>橘猫实验员 · 光光</strong><small>{avatarLabel} · 本次探究保持此形象</small></div>
+            <div><span>GUANGGUANG / 实验伙伴</span><strong>光光</strong><small>{avatarLabel} · 依据当前实验提供提示</small></div>
             <div className="cat-panel-actions">
-              <button className="cat-avatar-shuffle" onClick={shuffleOrangeCatAvatar} aria-label={`更换光光形象，当前为${avatarLabel}`} title="换一只光光"><RefreshCw size={15} /><span>换形象</span></button>
               <button onClick={() => { setTutorialCompact(false); setPanelOpen(false); }} aria-label="收起探究伙伴"><X size={17} /></button>
             </div>
           </header>
 
-          <div className="harness-assurance harness-dialogue-assurance">
-            <ShieldCheck size={16} />
-            <span><strong>循证对话＋可操作动态教程</strong><small>依据当前装置和实验记录提供引导，不替你完成实验</small></span>
-          </div>
-
           <nav className="cat-panel-tabs" aria-label="橘猫实验员功能">
-            <button className={panelView === "dialogue" ? "active" : ""} onClick={() => { setTutorialCompact(false); setPanelView("dialogue"); }}><MessageCircle size={16} /><span>我有问题<small>提问与分级提示</small></span></button>
-            <button className={panelView === "tutorial" ? "active" : ""} onClick={() => setPanelView("tutorial")}><GraduationCap size={17} /><span>带我做<small>边讲解边操作</small></span></button>
-            <button className={panelView === "review" ? "active" : ""} onClick={() => { setTutorialCompact(false); setPanelView("review"); }}><BookMarked size={16} /><span>看看实验<small>证据与本次小结</small></span></button>
+            <button className={panelView === "dialogue" ? "active" : ""} onClick={() => { setTutorialCompact(false); setPanelView("dialogue"); }}><MessageCircle size={16} /><span>问光光</span></button>
+            <button className={panelView === "tutorial" ? "active" : ""} onClick={() => setPanelView("tutorial")}><GraduationCap size={17} /><span>带我做</span></button>
+            <button className={panelView === "review" ? "active" : ""} onClick={() => { setTutorialCompact(false); setPanelView("review"); }}><BookMarked size={16} /><span>实验回顾</span></button>
           </nav>
 
           {loading || !session || !activeArea || !activeModule ? (
@@ -512,7 +519,7 @@ function HarnessPanel() {
             <div className={`harness-panel-body harness-dialogue-body panel-view-${panelView}`}>
               <section className="harness-dialogue-context">
                 <div><span>当前讨论</span><strong>{areaNames[activeArea]} · {activeModule.replaceAll("-", " ")}</strong></div>
-                <div className="harness-dialogue-metrics"><span><Activity size={13} />{diagnosis?.operationCount ?? 0} 次当前操作</span><span><BookMarked size={13} />{diagnosis?.observationCount ?? 0} 条当前发现</span></div>
+                {panelView === "review" && <div className="harness-dialogue-metrics"><span><Activity size={13} />{diagnosis?.operationCount ?? 0} 次当前操作</span><span><BookMarked size={13} />{diagnosis?.observationCount ?? 0} 条当前发现</span></div>}
               </section>
 
               {panelView === "review" && <section className="cat-review-intro"><BookMarked size={18} /><span><small>EXPERIMENT REVIEW / 本次实验分析</small><strong>只根据真实操作和你亲自保存的观察进行分析</strong><p>这不是分数，也不会自动补写学生没有观察到的实验结果。</p></span></section>}
@@ -530,30 +537,44 @@ function HarnessPanel() {
                 <footer><p><Sparkles size={13} />这些状态只来自当前实验的操作和记录，不评价学生能力。{learnerModel.strength}；{learnerModel.memoryLine}。</p><aside><strong>下一项小挑战</strong><span>{learnerModel.nextChallenge}</span><button type="button" onClick={(event) => { event.preventDefault(); askFromReview("根据我的记录给我一个小挑战"); }}>让光光出题 <ArrowRight size={13} /></button></aside></footer>
               </details>}
 
-              {panelView === "review" && knowledgeMastery && <section className={`harness-long-memory band-${knowledgeMastery.band}`} aria-label="光光的长期掌握证据">
-                <header><span><BrainCircuit size={15} /><small>LONG-TERM MEMORY / 跨多次实验记忆</small><strong>{knowledgeMastery.bandLabel}</strong></span><b>{knowledgeMastery.evidenceCount}<small>/5 类掌握证据</small></b></header>
-                <div className="harness-long-memory-meter"><i><b style={{ width: `${knowledgeMastery.score}%` }} /></i><small>证据覆盖 {knowledgeMastery.score}% · 可信度 {Math.round(knowledgeMastery.confidence * 100)}%</small></div>
-                <div className="harness-long-memory-signals"><span><b>{knowledgeMastery.visits}</b>次进入</span><span><b>{knowledgeMastery.operations}</b>次操作</span><span><b>{knowledgeMastery.comparisons}</b>项对照</span><span><b>{knowledgeMastery.observations}</b>条记录</span><span><b>{knowledgeMastery.reasoningTurns}</b>次解释</span></div>
-                <p><ShieldCheck size={13} /><span><strong>当前证据：</strong>{knowledgeMastery.strength}。<strong>复习建议：</strong>{knowledgeMastery.nextReview}。</span></p>
-                {reviewSchedule && <div className={`harness-review-schedule status-${reviewSchedule.status}`}><RotateCcw size={14} /><span><small>主动回忆计划</small><strong>{reviewSchedule.label}</strong><p>{reviewSchedule.reason}</p></span>{reviewSchedule.status !== "not-ready" && <button type="button" onClick={() => askFromReview(reviewSchedule.prompt)}>{reviewSchedule.status === "due" ? "现在回忆" : "提前练习"}<ArrowRight size={12} /></button>}</div>}
-                {knowledgeMastery.misconception && <aside className={knowledgeMastery.misconception.count >= 2 ? "repeated" : ""}><Lightbulb size={14} /><span><small>概念核验记忆 · 出现 {knowledgeMastery.misconception.count} 次</small><strong>{knowledgeMastery.misconception.claim}</strong></span><button type="button" onClick={() => askFromReview(knowledgeMastery.misconception!.probe)}>用反例再验证 <ArrowRight size={13} /></button></aside>}
-                <footer>这不是成绩或能力预测；它只汇总本机保存的操作、记录和对话证据。</footer>
-              </section>}
-
-              {panelView === "dialogue" && learningBranch && <section className={`harness-learning-branch branch-${learningBranch.id}`} aria-label="光光的可选探究支线">
-                <div className="harness-learning-branch-mark"><span /><span /><span /></div>
-                <div><small>{learningBranch.eyebrow}</small><strong>{learningBranch.title}</strong><p>{learningBranch.reason}</p></div>
-                <button type="button" onClick={() => send(learningBranch.prompt)}>跟光光试试看 <ArrowRight size={13} /></button>
-              </section>}
+              {panelView === "review" && knowledgeMastery && <details className={`harness-long-memory band-${knowledgeMastery.band}`} aria-label="光光的长期掌握证据">
+                <summary><span><BrainCircuit size={15} /><small>跨多次实验记忆</small><strong>{knowledgeMastery.bandLabel}</strong></span><b>{knowledgeMastery.evidenceCount}<small>/5 类证据</small></b><ChevronDown size={14} /></summary>
+                <div className="harness-long-memory-body">
+                  <div className="harness-long-memory-meter"><i><b style={{ width: `${knowledgeMastery.score}%` }} /></i><small>证据覆盖 {knowledgeMastery.score}% · 可信度 {Math.round(knowledgeMastery.confidence * 100)}%</small></div>
+                  <div className="harness-long-memory-signals"><span><b>{knowledgeMastery.visits}</b>次进入</span><span><b>{knowledgeMastery.operations}</b>次操作</span><span><b>{knowledgeMastery.comparisons}</b>项对照</span><span><b>{knowledgeMastery.observations}</b>条记录</span><span><b>{knowledgeMastery.reasoningTurns}</b>次解释</span></div>
+                  <p><ShieldCheck size={13} /><span><strong>当前证据：</strong>{knowledgeMastery.strength}。<strong>复习建议：</strong>{knowledgeMastery.nextReview}。</span></p>
+                  {reviewSchedule && <div className={`harness-review-schedule status-${reviewSchedule.status}`}><RotateCcw size={14} /><span><small>主动回忆计划</small><strong>{reviewSchedule.label}</strong><p>{reviewSchedule.reason}</p></span>{reviewSchedule.status !== "not-ready" && <button type="button" onClick={() => askFromReview(reviewSchedule.prompt)}>{reviewSchedule.status === "due" ? "现在回忆" : "提前练习"}<ArrowRight size={12} /></button>}</div>}
+                  {knowledgeMastery.misconception && <aside className={knowledgeMastery.misconception.count >= 2 ? "repeated" : ""}><Lightbulb size={14} /><span><small>概念核验记忆 · 出现 {knowledgeMastery.misconception.count} 次</small><strong>{knowledgeMastery.misconception.claim}</strong></span><button type="button" onClick={() => askFromReview(knowledgeMastery.misconception!.probe)}>用反例再验证 <ArrowRight size={13} /></button></aside>}
+                  <footer>这不是成绩或能力预测；它只汇总本机保存的操作、记录和对话证据。</footer>
+                </div>
+              </details>}
 
               {panelView === "dialogue" && coachAlert && <section className={`harness-smart-coach severity-${coachAlert.severity}`} aria-live="polite">
-                <header><span><BrainCircuit size={15} />{coachAlert.eyebrow}</span><b>{coachAlert.severity === "warning" ? "需修正" : coachAlert.severity === "ready" ? "可挑战" : "建议"}</b></header>
-                <strong>{coachAlert.title}</strong><p>{coachAlert.message}</p>
-                <small><ScanSearch size={12} />{coachAlert.evidence}</small>
-                <footer><button type="button" onClick={() => send(coachAlert.prompt)}>{coachAlert.actionLabel}<ArrowRight size={13} /></button><button type="button" onClick={() => setCoachTarget((current) => current ? undefined : coachAlert.target)}><Crosshair size={13} />{coachTarget ? "取消定位" : "在实验中定位"}</button></footer>
+                <BrainCircuit className="harness-smart-coach-mark" size={17} />
+                <span className="harness-smart-coach-copy"><small>{coachAlert.severity === "warning" ? "先解决这个卡点" : coachAlert.severity === "ready" ? "可以继续挑战" : "光光建议"}</small><strong>{coachAlert.message}</strong></span>
+                <button className="harness-smart-coach-action" type="button" onClick={() => send(coachAlert.prompt)}><span>{coachAlert.actionLabel}</span><ArrowRight size={13} /></button>
+                <button className="harness-smart-coach-locate" type="button" onClick={() => setCoachTarget((current) => current ? undefined : coachAlert.target)} aria-label={coachTarget ? "取消实验定位" : "在实验中定位"} title={coachTarget ? "取消实验定位" : "在实验中定位"}><Crosshair size={14} /></button>
               </section>}
 
-              {panelView === "dialogue" && conceptMemory && <div className="harness-memory-line"><BrainCircuit size={13} /><span><small>本地学习记忆</small>{conceptMemory.line}</span></div>}
+              {panelView === "dialogue" && <details className="harness-support-tools" open={supportOpen} onToggle={(event) => setSupportOpen(event.currentTarget.open)}>
+                <summary><Lightbulb size={15} /><span><strong>需要更多帮助？</strong><small>提示、探究支线与提问示例</small></span><b>按需展开</b><ChevronDown size={14} /></summary>
+                <div className="harness-support-tools-body">
+                  {learningBranch && <section className={`harness-learning-branch branch-${learningBranch.id}`} aria-label="光光的可选探究支线">
+                    <div className="harness-learning-branch-mark"><span /><span /><span /></div>
+                    <div><small>{learningBranch.eyebrow}</small><strong>{learningBranch.title}</strong><p>{learningBranch.reason}</p></div>
+                    <button type="button" onClick={() => sendFromSupport(learningBranch.prompt)}>试试看 <ArrowRight size={13} /></button>
+                  </section>}
+                  {conceptMemory && <div className="harness-memory-line"><BrainCircuit size={13} /><span><small>本地学习记忆</small>{conceptMemory.line}</span></div>}
+                  <section className="harness-hint-ladder" aria-label="光光三级提示">
+                    <header><span><Lightbulb size={14} />按需要逐级打开提示</span><small>推荐第 {recommendedHintLevel} 级，逐步具体但不直接给答案</small></header>
+                    <div><button className={recommendedHintLevel === 1 ? "recommended" : ""} type="button" onClick={() => sendFromSupport("给我一级提示")}><b>01</b><span><strong>观察方向</strong><small>先看什么</small></span></button><button className={recommendedHintLevel === 2 ? "recommended" : ""} type="button" onClick={() => sendFromSupport("给我二级提示")}><b>02</b><span><strong>操作方法</strong><small>怎样比较</small></span></button><button className={recommendedHintLevel === 3 ? "recommended" : ""} type="button" onClick={() => sendFromSupport("给我三级提示")}><b>03</b><span><strong>表达证据</strong><small>如何说明</small></span></button></div>
+                  </section>
+                  <details className="harness-question-library">
+                    <summary><MessageCircle size={14} /><span><small>不知道怎样提问？</small><strong>查看提问示例</strong></span><b>{questionLibrary.length}<small>类</small></b><ChevronDown size={13} /></summary>
+                    <div>{questionLibrary.map((question, index) => <button type="button" onClick={(event) => { event.preventDefault(); sendFromSupport(question); }} key={question}><b>{String(index + 1).padStart(2, "0")}</b><span>{question}</span><ArrowRight size={12} /></button>)}</div>
+                  </details>
+                </div>
+              </details>}
 
               {panelView === "review" && conceptNode && <details className="harness-concept-map">
                 <summary>
@@ -574,11 +595,6 @@ function HarnessPanel() {
                   <footer><small>可以继续自由探索，不要求按图谱顺序完成。</small><div>{conceptNode.connections.map((item) => <span key={item}>{item}</span>)}</div></footer>
                 </div>
               </details>}
-
-              {panelView === "dialogue" && <section className="harness-hint-ladder" aria-label="光光三级提示">
-                <header><span><Lightbulb size={14} />卡住了吗？按需要逐级打开提示</span><small>光光推荐第 {recommendedHintLevel} 级 · 提示逐渐具体但不直接显示答案</small></header>
-                <div><button className={recommendedHintLevel === 1 ? "recommended" : ""} type="button" onClick={() => send("给我一级提示")}><b>01</b><span><strong>观察方向</strong><small>先看什么</small></span></button><button className={recommendedHintLevel === 2 ? "recommended" : ""} type="button" onClick={() => send("给我二级提示")}><b>02</b><span><strong>操作脚手架</strong><small>怎样比较</small></span></button><button className={recommendedHintLevel === 3 ? "recommended" : ""} type="button" onClick={() => send("给我三级提示")}><b>03</b><span><strong>证据句式</strong><small>如何表达</small></span></button></div>
-              </section>}
 
               {panelView === "review" && experimentSummary && <section className={`harness-session-summary ${summaryOpen ? "open" : ""}`} aria-label="本次探究小结">
                 <header>
@@ -612,13 +628,15 @@ function HarnessPanel() {
 
               {panelView === "dialogue" && <section className="harness-chat" aria-live="polite">
                 <div className="harness-chat-stream">
+                  {hiddenDialogueCount > 0 && <button className="harness-history-toggle" type="button" onClick={() => setHistoryExpanded(true)}>查看更早的 {hiddenDialogueCount} 条消息</button>}
+                  {historyExpanded && dialogue.length > 3 && <button className="harness-history-toggle" type="button" onClick={() => setHistoryExpanded(false)}>收起早期对话</button>}
                   {dialogue.length === 0 && (
                     <article className="harness-message assistant welcome">
                       <i><OrangeCatAvatar compact /></i>
-                      <div><small>橘猫实验员 · 光光</small><p>喵，我已经连接到当前实验。你可以问我下一步观察什么、为什么出现这个现象；也可以切换到“带我做”或“看看实验”。</p><em>回答来自本地物理规则，不是大语言模型。</em></div>
+                      <div><small>橘猫实验员 · 光光</small><p>我已连接当前实验。告诉我你观察到了什么，或者问下一步该看哪里。</p></div>
                     </article>
                   )}
-                  {dialogue.map((message) => (
+                  {visibleDialogue.map((message) => (
                     <article className={`harness-message ${message.role}`} key={message.id}>
                       <i>{message.role === "assistant" ? <OrangeCatAvatar compact /> : <UserRound size={16} />}</i>
                       <div><small>{message.role === "assistant" ? "橘猫实验员 · 光光" : "我的问题"}</small><p>{message.text}</p>{message.intent && <em><BrainCircuit size={10} />依据当前装置与学习轨迹 · {message.intent.toUpperCase()}</em>}</div>
@@ -629,25 +647,21 @@ function HarnessPanel() {
 
                 <div className="harness-quick-questions" aria-label="快捷提问">
                   <span>接着问</span>
-                  <div>{suggestions.slice(0, 4).map((question) => <button onClick={() => send(question)} key={question}>{question}</button>)}</div>
+                  <div>{suggestions.slice(0, 2).map((question) => <button onClick={() => void send(question)} disabled={asking} key={question}>{question}</button>)}</div>
                 </div>
-
-                <details className="harness-question-library">
-                  <summary><MessageCircle size={14} /><span><small>不知道怎样提问？</small><strong>查看光光还能回答什么</strong></span><b>{questionLibrary.length}<small>类示例</small></b><ChevronDown size={13} /></summary>
-                  <div>{questionLibrary.map((question, index) => <button type="button" onClick={(event) => { event.preventDefault(); send(question); }} key={question}><b>{String(index + 1).padStart(2, "0")}</b><span>{question}</span><ArrowRight size={12} /></button>)}</div>
-                </details>
 
                 <div className="harness-composer">
                   <textarea
                     value={draft}
                     onChange={(event) => setDraft(event.target.value)}
+                    disabled={asking}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" && !event.shiftKey) {
                         event.preventDefault();
-                        send();
+                        void send();
                       }
                     }}
-                    placeholder="输入与当前实验有关的问题或猜想……"
+                    placeholder="问现象、下一步，或写下你的猜想……"
                     aria-label="向探究伙伴提问"
                   />
                   {draftFeedback && <div className={`harness-draft-intelligence mode-${draftFeedback.mode}`}><BrainCircuit size={13} /><span><strong>{draftFeedback.label}</strong><small>{draftFeedback.message}</small>{draftFeedback.checklist && <i>{draftFeedback.checklist.map((item) => <b className={item.passed ? "passed" : ""} key={item.id}>{item.passed ? <Check size={9} /> : <span />}{item.label}</b>)}</i>}</span><b>{Math.round(draftFeedback.confidence * 100)}%</b></div>}
@@ -655,8 +669,8 @@ function HarnessPanel() {
                   {draftFeedback?.mode === "hypothesis" && (draftFeedback.observationQuality ?? 0) < 3 && <button className="harness-evidence-template hypothesis" type="button" onClick={() => setDraft((value) => `${value.trim()}${value.trim() ? "\n" : ""}如果只把____从____调到____，并保持____不变，那么我预测____会____；我将通过比较____来检验。`)}><Sparkles size={13} />补成可检验假设</button>}
                   {draftFeedback?.mode === "reasoning" && (draftFeedback.observationQuality ?? 0) < 3 && <button className="harness-evidence-template reasoning" type="button" onClick={() => setDraft((value) => `${value.trim()}${value.trim() ? "\n" : ""}在保持____不变时，我观察到____；因为____会导致____，所以这组证据支持____。`)}><Sparkles size={13} />补上因果桥梁</button>}
                   {draftFeedback?.mode === "conclusion" && (draftFeedback.observationQuality ?? 0) < 3 && <button className="harness-evidence-template conclusion" type="button" onClick={() => setDraft((value) => `${value.trim()}${value.trim() ? "\n" : ""}在保持____不变、只改变____的条件下，根据两组观察，我发现____；在本次实验范围内，这说明____。`)}><Sparkles size={13} />补入结论边界</button>}
-                  <button className={`harness-send ${draftFeedback?.mode === "question" ? "suggested" : ""}`} onClick={() => draftFeedback?.mode === "observation" ? send(`检查这条观察：${draft}`, true) : draftFeedback?.mode === "hypothesis" ? send(`检查这条假设：${draft}`, true) : draftFeedback?.mode === "reasoning" ? send(`检查这条因果推理链：${draft}`, true) : draftFeedback?.mode === "conclusion" ? send(`检查这条结论：${draft}`, true) : send()} disabled={!draft.trim()}><SendHorizontal size={16} /><span>{draftFeedback?.mode === "observation" ? "审查证据" : draftFeedback?.mode === "hypothesis" ? "审查假设" : draftFeedback?.mode === "reasoning" ? "审查因果链" : draftFeedback?.mode === "conclusion" ? "审查结论" : "发送问题"}</span></button>
-                  <button className={`harness-save-observation ${draftFeedback?.mode === "observation" ? "suggested" : ""}`} onClick={save} disabled={!draft.trim()}>{saved ? <Check size={15} /> : <Save size={15} />}{saved ? "已保存" : "保存为观察"}</button>
+                  <button className={`harness-send ${draftFeedback?.mode === "question" ? "suggested" : ""}`} onClick={() => { void (draftFeedback?.mode === "observation" ? send(`检查这条观察：${draft}`, true) : draftFeedback?.mode === "hypothesis" ? send(`检查这条假设：${draft}`, true) : draftFeedback?.mode === "reasoning" ? send(`检查这条因果推理链：${draft}`, true) : draftFeedback?.mode === "conclusion" ? send(`检查这条结论：${draft}`, true) : send()); }} disabled={!draft.trim() || asking}><SendHorizontal size={16} /><span>{asking ? "光光思考中…" : draftFeedback?.mode === "observation" ? "审查证据" : draftFeedback?.mode === "hypothesis" ? "审查假设" : draftFeedback?.mode === "reasoning" ? "审查因果链" : draftFeedback?.mode === "conclusion" ? "审查结论" : "发送问题"}</span></button>
+                  {draft.trim() && <button className={`harness-save-observation ${draftFeedback?.mode === "observation" ? "suggested" : ""}`} onClick={save}>{saved ? <Check size={15} /> : <Save size={15} />}{saved ? "已保存" : "保存为观察"}</button>}
                   <small>Enter 发送 · Shift + Enter 换行</small>
                 </div>
               </section>}
@@ -676,7 +690,7 @@ function HarnessPanel() {
             <TutorialExperience activeArea={activeArea} activeModule={activeModule} compact={tutorialCompact} side={tutorialMiniSide} onCompactChange={setTutorialCompact} onSideChange={setTutorialMiniSide} />
           )}
 
-          <footer><span>GUANGGUANG · 智能实验教练</span><button onClick={() => setPanelOpen(false)}>回到实验 <ArrowRight size={14} /></button></footer>
+          <footer className="cat-panel-status"><span><ShieldCheck size={12} />{dialogueProvider === "deepseek-harness" ? "DeepSeek Harness · 仅发送问题与当前实验上下文" : "本地物理规则 · AI 不可用时安全兜底"}</span></footer>
         </aside></>
       )}
     </>

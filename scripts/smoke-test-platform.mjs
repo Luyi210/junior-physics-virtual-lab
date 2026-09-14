@@ -73,7 +73,7 @@ await Promise.all(routeCodeAssets.map(async (asset) => {
 const healthResponse = await fetchChecked("api/health");
 const health = await healthResponse.json();
 assert(health.data?.status === "ok", "后台健康状态异常");
-assert(health.data?.database === "sqlite", "教学数据库未就绪");
+assert(["sqlite", "postgresql"].includes(health.data?.database), "教学数据库未就绪");
 assert(health.data?.compatibility === "desktop-managed-accounts-v1", "前后端版本不兼容");
 assert(health.data?.capabilities?.includes("managed-teacher-accounts"), "管理员账号能力未加载");
 
@@ -81,4 +81,4 @@ const protectedResponse = await fetchChecked("api/auth/me", 401);
 const protectedPayload = await protectedResponse.json();
 assert(protectedPayload.error?.code === "AUTH_REQUIRED", "后台鉴权通道返回异常");
 
-console.log(`✓ 平台开机自检通过：${routes.length} 个页面入口、${routeCodeAssets.length} 个页面代码资源、同源 API 与 SQLite 均正常`);
+console.log(`✓ 平台开机自检通过：${routes.length} 个页面入口、${routeCodeAssets.length} 个页面代码资源、同源 API 与 ${health.data.database} 均正常`);

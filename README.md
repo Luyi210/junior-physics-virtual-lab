@@ -21,6 +21,10 @@ npm install
 npm run dev
 ```
 
+## Render 公网部署
+
+仓库根目录的 `render.yaml` 可创建免费的 Render 网页与 API 服务，并连接免费的 Neon PostgreSQL 保存登录、班级、任务和实验记录。首次上线、GitHub Pages 连接和取消步骤见 [Render 部署与取消说明](docs/Render部署与取消说明.md)。
+
 ## 当前能力
 
 - 平台实验导航与统一工作台
@@ -33,6 +37,7 @@ npm run dev
 - 动态密度实验：天平、排水法、量筒水位和材料识别
 - 所有学生模块自由进入、随时切换，无强制关卡与必做进度
 - 开放发现笔记和本地自动保存
+- “光光”支持受限的 DeepSeek Harness 对话增强；未配置、断网或上游异常时自动回退本地物理规则
 - 凸透镜、物体和光屏的组件化场景
 - 拖动物体和光屏、参数精确控制
 - 实像、虚像、焦点临界状态实时计算
@@ -41,6 +46,8 @@ npm run dev
 - 实验数据记录和 CSV 导出
 - IndexedDB 本地项目保存
 - 后端项目接口数据契约预留
+
+“光光”的 DeepSeek Harness 接入、API Key 和模型配置见 [配置说明](docs/光光DeepSeekHarness配置说明.md)。
 
 ## PhET 参考边界
 

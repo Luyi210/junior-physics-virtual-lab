@@ -30,7 +30,7 @@ const SoundParticleMicroscope = lazy(async () => {
 
 type FieldKey = "sound" | "mechanics" | "circuit" | "thermal" | "measurement";
 type CoreLabKey = "sound-features" | "mechanics-lever" | "circuit-basic" | "thermal-boiling" | "measurement-density";
-type ConceptLabKey = "sound-medium" | "sound-noise" | "sound-echo" | "mechanics-speed" | "mechanics-friction" | "mechanics-pressure" | "mechanics-buoyancy" | "circuit-ohm" | "circuit-power" | "circuit-magnet" | "thermal-thermometer" | "thermal-melting" | "thermal-evaporation" | "measurement-balance" | "measurement-mass-volume" | "measurement-liquid-density";
+type ConceptLabKey = "sound-medium" | "sound-noise" | "sound-echo" | "sound-campus" | "sound-auditorium" | "sound-microphone" | "mechanics-speed" | "mechanics-friction" | "mechanics-pressure" | "mechanics-buoyancy" | "circuit-ohm" | "circuit-power" | "circuit-magnet" | "thermal-thermometer" | "thermal-melting" | "thermal-evaporation" | "measurement-balance" | "measurement-mass-volume" | "measurement-liquid-density";
 
 interface ScienceFieldMeta { title: string; subtitle: string; icon: LucideIcon; accent: string; book: string; description: string; strands: string[]; }
 interface ScienceModuleMeta {
@@ -50,7 +50,7 @@ function ScienceModuleLoading({ title }: { title: string }) {
 }
 
 const fieldMeta: Record<FieldKey, ScienceFieldMeta> = {
-  sound: { title: "声音实验场", subtitle: "从振动出发，追踪声音怎样到达耳朵", icon: Waves, accent: "#68b9e8", book: "苏科版八年级上册 · 第一章 声现象", description: "按照声音的产生与传播、声音的特性、噪声控制和人耳听不到的声音四条课本线索组织实验。", strands: ["产生与传播", "响度·音调·音色", "噪声控制", "超声与次声"] },
+  sound: { title: "声音实验场", subtitle: "从振动出发，走向真实的声学工程", icon: Waves, accent: "#68b9e8", book: "苏科版八年级上册 · 第一章 声现象", description: "从振动、传播、声音特性和超声波出发，把课本原理带入校园噪声治理、礼堂声学设计和真实麦克风测量。", strands: ["产生与传播", "响度·音调·音色", "噪声控制", "超声与次声", "校园与建筑声学"] },
   mechanics: { title: "力学工坊", subtitle: "从运动和受力，走向机械与浮沉", icon: Compass, accent: "#e5b24d", book: "八上第五章 · 八下第七至九章 · 九上第十一章", description: "把速度、力、摩擦、简单机械、压强和浮力放到同一条力学探索路线中，先观察变化，再寻找定量关系。", strands: ["运动与速度", "力与平衡", "简单机械", "压强与浮力"] },
   circuit: { title: "电学连接室", subtitle: "从电流路径，走向电功率和电磁转换", icon: CircuitBoard, accent: "#ef765b", book: "苏科版九上第十三、十四章 · 九下第十五、十六章", description: "从连接基本电路开始，逐步研究电流、电压、电阻、电功率以及电流的磁效应。", strands: ["电路连接", "电流·电压·电阻", "电功与电功率", "电与磁"] },
   thermal: { title: "热学观察站", subtitle: "让看不见的热过程留下曲线", icon: Flame, accent: "#e99048", book: "苏科版八年级上册 · 第四章 物态变化", description: "以温度测量为基础，通过汽化、液化、熔化、凝固和蒸发等实验建立物态变化图景。", strands: ["温度测量", "汽化与液化", "熔化与凝固", "生活中的物态变化"] },
@@ -58,7 +58,7 @@ const fieldMeta: Record<FieldKey, ScienceFieldMeta> = {
 };
 
 const inquiryFormulas: Record<CoreLabKey | ConceptLabKey, string> = {
-  "sound-medium": "振动 → 介质 → 接收", "sound-features": "响度 ↔ A · 音调 ↔ f", "sound-noise": "声源 → 传播 → 人耳", "sound-echo": "s = vt / 2",
+  "sound-medium": "振动 → 介质 → 接收", "sound-features": "响度 ↔ A · 音调 ↔ f", "sound-noise": "声源 → 传播 → 人耳", "sound-echo": "s = vt / 2", "sound-campus": "L接收 = L声源 − ΣΔL", "sound-auditorium": "T₆₀ ≈ 0.161V / A", "sound-microphone": "真实声音 → 波形 · 频谱 · 响度",
   "mechanics-speed": "v = s / t", "mechanics-friction": "匀速时 f = F拉", "mechanics-lever": "F₁l₁ = F₂l₂", "mechanics-pressure": "p = F / S", "mechanics-buoyancy": "F浮 = G − F′",
   "circuit-basic": "闭合回路 → 电流", "circuit-ohm": "I = U / R", "circuit-power": "P = UI；W = Pt", "circuit-magnet": "I↑ / N↑ → 磁性↑",
   "thermal-thermometer": "量程 · 分度值 · 平视", "thermal-boiling": "吸热 · T ≈ 沸点", "thermal-melting": "晶体熔化 · T ≈ 熔点", "thermal-evaporation": "T↑ / S↑ / v风↑",
@@ -70,7 +70,10 @@ const scienceModules: Record<FieldKey, ScienceModuleMeta[]> = {
     { key: "sound-medium", shortTitle: "产生与传播", title: "声音的产生与传播", chapter: "八上·第一章 第一节", note: "振动、介质、真空与声波", question: "抽走空气以后，闹钟为什么会越来越难听见？", icon: Waves, guide: ["观察声源振动，并判断声音传播是否需要介质。", "改变空气保留程度和接收距离，比较接收到的声音强弱。", "声源仍在振动，但介质越少或距离越远，接收效果越弱。"], life: [{ title: "土电话", text: "棉线的振动把声音传到另一只纸杯，说明固体能够传声。" }, { title: "月球表面", text: "月球几乎没有空气，宇航员不能像在教室里一样直接交谈。" }, { title: "建筑回声", text: "声波遇到墙面会反射，礼堂设计需要控制回声。" }] },
     { key: "sound-features", shortTitle: "声音三要素", title: "响度、音调和音色", chapter: "八上·第一章 第二节", note: "振幅、频率与波形", question: "波形变高和变密，分别改变了声音的什么特性？", icon: Gauge, guide: ["用波形比较声音的响度和音调。", "一次只改变频率或振幅，观察波形疏密和高度。", "振幅主要影响响度，频率主要影响音调；不同声源还有不同音色。"], life: [{ title: "调节音量", text: "音箱音量变大时，振动幅度和接收到的响度增大。" }, { title: "乐器定音", text: "改变琴弦长度和松紧程度，可以改变振动频率与音调。" }, { title: "辨认说话者", text: "即使音调和响度相近，人们也能利用音色辨认不同声源。" }] },
     { key: "sound-noise", shortTitle: "噪声控制", title: "噪声的产生与控制", chapter: "八上·第一章 第三节", note: "声源、传播途中与人耳", question: "同一种噪声，可以在哪三个环节被减弱？", icon: Compass, guide: ["把噪声看成一种会传播的声音，而不是只给它贴上“难听”的标签。", "改变声源处声级和等效衰减量，观察接收位置的声级变化。", "控制噪声可以从声源、传播途中和接收端三个环节入手。"], life: [{ title: "汽车消声器", text: "在声源处减弱发动机排气噪声。" }, { title: "道路隔音屏", text: "在传播途中阻挡和吸收部分声能。" }, { title: "防护耳罩", text: "在接收端减少进入人耳的声音。" }] },
-    { key: "sound-echo", shortTitle: "超声与次声", title: "听不见的声音与回声测距", chapter: "八上·第一章 第四节", note: "超声定位与次声监测", question: "发出超声后隔一段时间收到回声，距离怎样算？", icon: Waves, guide: ["利用声波发出后返回的时间估算目标距离。", "改变回声往返时间和介质声速，比较计算结果。", "声波走的是往返路程，所以目标距离应是总路程的一半。"], life: [{ title: "倒车雷达", text: "发出超声波并接收回声，估计车辆与障碍物的距离。" }, { title: "医学超声", text: "利用人体组织对超声波的反射获得内部结构信息。" }, { title: "地震监测", text: "某些自然现象会产生次声，可用于远距离监测。" }] }
+    { key: "sound-echo", shortTitle: "超声与次声", title: "听不见的声音与回声测距", chapter: "八上·第一章 第四节", note: "超声定位与次声监测", question: "发出超声后隔一段时间收到回声，距离怎样算？", icon: Waves, guide: ["利用声波发出后返回的时间估算目标距离。", "改变回声往返时间和介质声速，比较计算结果。", "声波走的是往返路程，所以目标距离应是总路程的一半。"], life: [{ title: "倒车雷达", text: "发出超声波并接收回声，估计车辆与障碍物的距离。" }, { title: "医学超声", text: "利用人体组织对超声波的反射获得内部结构信息。" }, { title: "地震监测", text: "某些自然现象会产生次声，可用于远距离监测。" }] },
+    { key: "sound-campus", shortTitle: "校园噪声治理", title: "校园声环境工程挑战", chapter: "八上·第一章 工程拓展", note: "声源—传播—接收端联合治理", question: "如何在有限预算内，让教室或图书馆安静下来？", icon: Shield, guide: ["从教室、食堂、临街操场和图书馆中选择待治理场景。", "在声源、传播路径和接收端配置措施，同时查看降噪效果与成本。", "真实噪声治理往往需要多环节组合，不是只把人耳“堵住”。"], life: [{ title: "校园规划", text: "将阅览区与操场、道路等声源拉开距离。" }, { title: "教室改造", text: "门窗密封与吸声材料可以减少外界声和反射声。" }, { title: "健康管理", text: "用声级巡检图找出长期暴露风险较高的区域。" }] },
+    { key: "sound-auditorium", shortTitle: "礼堂建筑声学", title: "为每个座位设计清晰的声音", chapter: "八上·第一章 项目学习", note: "混响时间、吸声材料与上座率", question: "礼堂里声音越响、持续越久，语音就越清楚吗？", icon: RadioTower, guide: ["用测试脉冲观察礼堂中的反射声如何逐渐衰减。", "改变空间体积、上座人数和内衬材料，比较估算混响时间。", "语音厅需要适度混响：过长会模糊，过短又可能过于干涩。"], life: [{ title: "学校礼堂", text: "吸声顶棚、窗帘与扩散表面共同提高语音清晰度。" }, { title: "录音棚", text: "通过吸声和隔声控制不必要的反射与外界干扰。" }, { title: "智能会议室", text: "拾音、扩声和建筑声学需要一起设计。" }] },
+    { key: "sound-microphone", shortTitle: "真实声音采集", title: "把你的声音变成可见数据", chapter: "八上·第一章 数字实验", note: "本机麦克风、时间波形与频谱", question: "说话、拍手和乐器声，在波形上有什么不同？", icon: Mic2, guide: ["允许浏览器使用本机麦克风，实时观察声音的波形、相对强度和主频线索。", "对比说话、拍手和稳定乐音，冻结多组读数作为证据。", "所有分析都在当前设备中完成，平台不录音、不上传原始音频。"], life: [{ title: "声纹与语音识别", text: "数字系统会从波形和频谱中提取可区分的特征。" }, { title: "智能降噪", text: "耳机与会议软件会识别噪声成分并进行抑制。" }, { title: "声学监测", text: "城市与工厂可持续监测声环境变化。" }] }
   ],
   mechanics: [
     { key: "mechanics-speed", shortTitle: "运动与速度", title: "路程、时间与速度", chapter: "八上·第五章", note: "比较运动快慢", question: "同样的路程用时不同，怎样公平比较快慢？", icon: Gauge, guide: ["用单位时间内通过的路程描述运动快慢。", "改变路程或时间，观察速度读数和运动轨迹变化。", "速度等于路程与时间之比，比较时必须注意单位一致。"], life: [{ title: "区间测速", text: "用一段路程和通过这段路程的时间计算平均速度。" }, { title: "运动手表", text: "根据定位距离和时间估算配速与速度。" }, { title: "列车时刻表", text: "路程和运行时间可以帮助比较不同车次的平均速度。" }] },
@@ -170,6 +173,9 @@ function renderScienceLab(module: ScienceModuleMeta): React.ReactNode {
   switch (module.key) {
     case "sound-features": return <SoundLab />;
     case "sound-medium": case "sound-noise": case "sound-echo": return <SoundConceptLab module={module} />;
+    case "sound-campus": return <CampusNoiseChallenge />;
+    case "sound-auditorium": return <AuditoriumAcousticsLab />;
+    case "sound-microphone": return <LiveMicrophoneLab />;
     case "mechanics-speed": return <SpeedLab />;
     case "mechanics-friction": return <FrictionLab />;
     case "mechanics-lever": return <LeverLab />;
@@ -227,7 +233,8 @@ interface ConceptConfig {
   calculate: (a: number, b: number) => ConceptResult;
 }
 
-const conceptConfigs: Record<ConceptLabKey, ConceptConfig> = {
+type ParametricConceptLabKey = Exclude<ConceptLabKey, "sound-campus" | "sound-auditorium" | "sound-microphone">;
+const conceptConfigs: Record<ParametricConceptLabKey, ConceptConfig> = {
   "sound-medium": { eyebrow: "SOUND MEDIUM / 介质实验", labelA: "空气保留程度", minA: 0, maxA: 100, stepA: 1, initialA: 100, unitA: "%", labelB: "接收距离", minB: 1, maxB: 12, stepB: .5, initialB: 4, unitB: "m", formula: "接收强度取决于介质与距离", visual: "wave", calculate: (air, distance) => { const value = air / Math.max(1, distance * distance) * 10; return { value, unit: "相对强度", status: air < 3 ? "接近真空，几乎不能传声" : value < 12 ? "声音很微弱" : value < 60 ? "可以听见" : "声音较清楚", detail: "声源保持振动；改变的是声音传播到接收者的条件。" }; } },
   "sound-noise": { eyebrow: "NOISE CONTROL / 噪声控制", labelA: "声源处声级", minA: 40, maxA: 110, stepA: 1, initialA: 88, unitA: "dB", labelB: "等效衰减量", minB: 0, maxB: 45, stepB: 1, initialB: 16, unitB: "dB", formula: "L接收 = L声源 − ΔL", visual: "wave", calculate: (source, attenuation) => { const value = source - attenuation; return { value, unit: "dB", status: value < 30 ? "接收处非常安静" : value < 50 ? "接收处较安静" : value < 70 ? "接收处声音较明显" : "接收处声级仍较高", detail: "这里的衰减量是声源控制、传播阻隔和接收端防护共同产生的等效声级差；0 dB 是参考声压级，不代表绝对没有声音，分贝也不是普通百分比。" }; } },
   "sound-echo": { eyebrow: "ULTRASOUND ECHO / 回声测距", labelA: "回声往返时间", minA: 2, maxA: 120, stepA: 1, initialA: 36, unitA: "ms", labelB: "介质中的声速", minB: 300, maxB: 1500, stepB: 10, initialB: 340, unitB: "m/s", formula: "距离 = 声速 × 往返时间 ÷ 2", visual: "wave", calculate: (time, speed) => { const value = speed * time / 2000; return { value, unit: "m", status: `目标约在 ${value.toFixed(1)} m 外`, detail: "仪器测得的是声波发出到返回的总时间，因此要除以 2。" }; } },
@@ -655,7 +662,7 @@ function ConceptApparatusScene({ module, a, b, normalizedA, normalizedB, result,
 }
 
 function TextbookConceptLab({ field, module }: { field: FieldKey; module: ScienceModuleMeta }) {
-  const config = conceptConfigs[module.key as ConceptLabKey];
+  const config = conceptConfigs[module.key as ParametricConceptLabKey];
   const ModuleIcon = module.icon;
   const [a, setA] = useState(config.initialA);
   const [b, setB] = useState(config.initialB);
@@ -823,6 +830,275 @@ function SoundLab() {
     <div className="science-controls"><ScienceRange label="振动频率" value={frequency} min={110} max={715} step={11} unit="Hz" onChange={setFrequency} onInteract={interact} /><ScienceRange label="相对振幅" value={amplitude} min={8} max={70} step={1} unit="%" onChange={setAmplitude} onInteract={interact} /><ResultCell label="证据提醒" value={baseline ? "只改变一个条件，再与灰色基准波比较" : "先保存一条基准波形"} pending={!baseline} /></div>
     <section className="sound-feature-matrix"><header><span><ClipboardList size={16}/><b>THREE-FACTOR EVIDENCE / 三要素证据矩阵</b></span><button disabled={!currentFeature} onClick={recordFeatureComparison}><Save size={14}/>{currentFeature ? `记录${soundFeatureLabels[currentFeature].control}对照` : "先形成单变量对照"}</button></header><div>{(Object.keys(soundFeatureLabels) as SoundFeatureFactor[]).map((factor,index) => <article className={featureEvidence.includes(factor) ? "complete" : currentFeature === factor ? "ready" : ""} key={factor}><span>0{index + 1}</span><small>控制量</small><strong>{soundFeatureLabels[factor].control}</strong><i>→</i><small>观察量</small><b>{soundFeatureLabels[factor].observation}</b><em>{featureEvidence.includes(factor) ? "证据已记录" : currentFeature === factor ? "当前可记录" : "等待对照"}</em></article>)}</div></section>
     {baseline && <EvidenceVerdict valid={soundLearningReady} title={soundLearningReady ? "频率、振幅与波形三项证据已闭环" : soundComparison?.valid ? "当前是合格单变量对照，记录后继续下一项" : "基准已保存，但对照条件还不合格"} detail={soundLearningReady ? "三个独立对照分别支持：频率影响音调和周期，振幅影响响度与波高，不同波形对应不同音色。" : soundComparison?.valid ? `本次只改变了${soundFeatureLabels[currentFeature!].control}；记录后更新基准，再研究尚未完成的条件。` : soundComparison?.changedIndexes.length === 0 ? "请改变频率、振幅或音色中的一个。" : "当前同时改变了两项或三项，请恢复其他控制量。"} />}
+  </LabFrame>;
+}
+
+type CampusSceneKey = "classroom" | "canteen" | "road" | "library";
+type NoiseStage = "source" | "path" | "receiver";
+
+const campusScenes: Record<CampusSceneKey, { label: string; source: string; base: number; target: number; note: string }> = {
+  classroom: { label: "上课教室", source: "走廊交谈 + 桌椅拖动", base: 72, target: 50, note: "目标：让教师讲解不被背景声掩蔽" },
+  canteen: { label: "午间食堂", source: "餐具碰撞 + 人群交谈", base: 86, target: 65, note: "目标：降低高峰期持续噪声暴露" },
+  road: { label: "临街操场", source: "车辆鸣笛 + 发动机", base: 82, target: 55, note: "目标：保护邻近教学楼的课堂环境" },
+  library: { label: "图书阅览室", source: "脚步 + 设备提示音", base: 61, target: 40, note: "目标：营造可持续专注的安静区域" }
+};
+
+const campusNoiseMeasures: Array<{ id: string; stage: NoiseStage; title: string; detail: string; reduction: number; cost: number }> = [
+  { id: "quiet-rule", stage: "source", title: "安静行为协议", detail: "减少不必要的高声与碰撞", reduction: 5, cost: 1 },
+  { id: "equipment", stage: "source", title: "设备减振维护", detail: "处理松动、碰撞与机械振动", reduction: 8, cost: 2 },
+  { id: "green-belt", stage: "path", title: "空间缓冲带", detail: "拉开距离并优化功能分区", reduction: 7, cost: 2 },
+  { id: "barrier", stage: "path", title: "隔声屏 / 密封窗", detail: "阻挡主要传播路径", reduction: 13, cost: 4 },
+  { id: "absorber", stage: "path", title: "吸声顶棚与软包", detail: "减少室内多次反射", reduction: 9, cost: 3 },
+  { id: "earmuff", stage: "receiver", title: "个体听力防护", detail: "适合短时高声级作业", reduction: 8, cost: 2 }
+];
+
+const noiseStageLabels: Record<NoiseStage, { number: string; title: string; english: string }> = {
+  source: { number: "01", title: "控制声源", english: "SOURCE" },
+  path: { number: "02", title: "阻断传播", english: "PATH" },
+  receiver: { number: "03", title: "保护接收者", english: "RECEIVER" }
+};
+
+function CampusNoiseChallenge() {
+  const recordHarness = useHarnessStore((state) => state.record);
+  const [sceneKey, setSceneKey] = useState<CampusSceneKey>("classroom");
+  const [selected, setSelected] = useState<string[]>([]);
+  const [scanning, setScanning] = useState(false);
+  const [interacted, setInteracted] = useState(false);
+  const scene = campusScenes[sceneKey];
+  const chosenMeasures = campusNoiseMeasures.filter((measure) => selected.includes(measure.id));
+  const reduction = chosenMeasures.reduce((sum, measure) => sum + measure.reduction, 0);
+  const cost = chosenMeasures.reduce((sum, measure) => sum + measure.cost, 0);
+  const received = Math.max(24, scene.base - reduction);
+  const targetMet = received <= scene.target;
+  const budgetMet = cost <= 7;
+  const designValid = targetMet && budgetMet;
+  const stageCount = new Set(chosenMeasures.map((measure) => measure.stage)).size;
+  const waveOpacity = Math.max(.12, Math.min(1, (received - 25) / 60));
+
+  useEffect(() => {
+    publishApparatusSnapshot({
+      module: "sound-campus", capturedAt: new Date().toISOString(), origin: interacted ? "learner" : "system",
+      controls: [
+        { id: "scene", label: "校园场景", value: scene.label, source: "control" },
+        { id: "measures", label: "治理措施", value: selected.length, unit: "项", source: "control" }
+      ],
+      apparatus: chosenMeasures.map((measure) => ({ id: measure.id, label: measure.title, value: true, source: "apparatus" as const })),
+      readings: [
+        { id: "source-db", label: "声源声级", value: scene.base, unit: "dB", source: "reading" },
+        { id: "receiver-db", label: "接收点估算声级", value: received, unit: "dB", source: "reading" }
+      ],
+      derived: [
+        { id: "reduction", label: "累计衰减", value: reduction, unit: "dB", source: "model" },
+        { id: "cost", label: "方案成本", value: cost, unit: "点", source: "model" },
+        { id: "stages", label: "覆盖环节", value: stageCount, unit: "个", source: "model" }
+      ],
+      validity: { ready: designValid, issues: designValid ? [] : [!targetMet ? `还需降低至少 ${received - scene.target} dB。` : "", !budgetMet ? "方案超过 7 点预算，请优化组合。" : ""].filter(Boolean) }
+    });
+  }, [budgetMet, chosenMeasures, cost, designValid, interacted, received, reduction, scene, selected.length, stageCount, targetMet]);
+
+  const selectScene = (key: CampusSceneKey) => {
+    setSceneKey(key); setSelected([]); setInteracted(true);
+    recordHarness("configuration.changed", { experiment: "sound-campus", control: "校园场景", value: campusScenes[key].label });
+  };
+  const toggleMeasure = (id: string) => {
+    setSelected((items) => items.includes(id) ? items.filter((item) => item !== id) : [...items, id]);
+    setInteracted(true);
+    recordHarness("configuration.changed", { experiment: "sound-campus", control: "治理措施", value: id });
+  };
+
+  return <LabFrame field="sound" experiment="sound-campus" eyebrow="CAMPUS SOUND LAB / 校园声环境工程" title="用 7 点预算，把真实校园场景安静下来" description="选择一个校园区域，沿着“声源—传播路径—接收者”配置治理措施。读数是用于方案比较的教学模型，实际工程还需现场测量与专业评估。" running={scanning} onToggle={() => { setScanning((value) => !value); setInteracted(true); }} playLabel="开始声级巡检" runningLabel="暂停巡检">
+    <section className="campus-scene-selector" aria-label="选择校园声环境场景">{(Object.keys(campusScenes) as CampusSceneKey[]).map((key, index) => { const item = campusScenes[key]; return <button type="button" className={sceneKey === key ? "active" : ""} onClick={() => selectScene(key)} key={key}><small>ZONE 0{index + 1}</small><strong>{item.label}</strong><span>{item.source}</span><b>{item.base} dB</b></button>; })}</section>
+    <section className={`campus-noise-stage ${scanning ? "is-scanning" : ""}`} style={{ "--noise-opacity": waveOpacity, "--noise-level": `${Math.min(100, received)}%` } as React.CSSProperties}>
+      <header><span><i /> LIVE SOUND MAP</span><b>{scene.note}</b></header>
+      <div className="campus-sound-route">
+        <article className="campus-source"><span><Volume2 size={28} /></span><small>SOURCE LEVEL</small><strong>{scene.base}<em>dB</em></strong><p>{scene.source}</p></article>
+        <div className="campus-wave-path"><div>{Array.from({ length: 6 }, (_, index) => <i style={{ animationDelay: `${index * .12}s` }} key={index} />)}</div><span>累计衰减 <b>−{reduction} dB</b></span></div>
+        <article className={`campus-receiver ${targetMet ? "safe" : "warning"}`}><span><Ear size={28} /></span><small>RECEIVER LEVEL</small><strong>{received}<em>dB</em></strong><p>{targetMet ? "达到当前场景目标" : `目标不高于 ${scene.target} dB`}</p></article>
+      </div>
+      <div className="campus-level-track"><i /><span style={{ width: `${Math.min(100, received)}%` }} /><b style={{ left: `${scene.target}%` }}>目标 {scene.target}</b></div>
+      {!interacted && <InteractionCue text="选择场景，再配置第一项降噪措施" />}
+    </section>
+    <section className="noise-control-console"><header><span><Shield size={17} /><b>NOISE CONTROL CHAIN / 三环节治理</b></span><strong className={budgetMet ? "" : "over"}>预算 {cost} / 7</strong></header><div>{(Object.keys(noiseStageLabels) as NoiseStage[]).map((stage) => <section key={stage}><header><b>{noiseStageLabels[stage].number}</b><span><small>{noiseStageLabels[stage].english}</small><strong>{noiseStageLabels[stage].title}</strong></span></header>{campusNoiseMeasures.filter((measure) => measure.stage === stage).map((measure) => <button type="button" className={selected.includes(measure.id) ? "active" : ""} onClick={() => toggleMeasure(measure.id)} key={measure.id}><span><b>{measure.title}</b><small>{measure.detail}</small></span><em>−{measure.reduction} dB · {measure.cost} 点</em></button>)}</section>)}</div></section>
+    <div className="science-controls"><ResultCell label="接收点估算" value={interacted ? `${received} dB` : "等待方案"} pending={!interacted} /><ResultCell label="目标差值" value={targetMet ? `低于目标 ${scene.target - received} dB` : `还需降低 ${received - scene.target} dB`} /><ResultCell label="治理覆盖" value={`${stageCount} / 3 个环节`} /></div>
+    {interacted && <EvidenceVerdict valid={designValid} title={designValid ? "方案在预算内达到声环境目标" : !budgetMet ? "声级达标，但方案超出预算" : "当前方案还没有达到场景目标"} detail={designValid ? `用 ${cost} 点预算获得约 ${reduction} dB 的组合衰减。继续尝试更少成本或覆盖更多治理环节。` : !budgetMet ? "移除成本较高或作用重复的措施，再比较接收点声级。" : "优先从声源与传播路径治理，必要时再增加接收端防护。"} />}
+  </LabFrame>;
+}
+
+type AuditoriumMaterialKey = "hard" | "curtain" | "panel" | "hybrid";
+const auditoriumMaterials: Record<AuditoriumMaterialKey, { label: string; alpha: number; note: string }> = {
+  hard: { label: "硬质墙面", alpha: .08, note: "反射强，声音持续较久" },
+  curtain: { label: "厚重幕布", alpha: .38, note: "中高频吸声较明显" },
+  panel: { label: "吸声板", alpha: .62, note: "显著缩短反射声衰减时间" },
+  hybrid: { label: "吸声 + 扩散", alpha: .46, note: "兼顾清晰度与空间感" }
+};
+interface AuditoriumReading { id: number; material: string; volume: number; audience: number; rt60: number; }
+
+function AuditoriumAcousticsLab() {
+  const recordHarness = useHarnessStore((state) => state.record);
+  const [materialKey, setMaterialKey] = useState<AuditoriumMaterialKey>("hard");
+  const [volume, setVolume] = useState(1200);
+  const [audience, setAudience] = useState(80);
+  const [pulse, setPulse] = useState(false);
+  const [interacted, setInteracted] = useState(false);
+  const [readings, setReadings] = useState<AuditoriumReading[]>([]);
+  const material = auditoriumMaterials[materialKey];
+  const surface = Math.pow(volume, 2 / 3) * 5.4;
+  const equivalentAbsorption = 26 + surface * material.alpha + audience * .42;
+  const rt60 = Math.max(.18, 0.161 * volume / equivalentAbsorption);
+  const speechReady = rt60 >= .55 && rt60 <= 1.15;
+  const diagnosis = rt60 > 1.15 ? "混响偏长，连续语音可能相互掩蔽" : rt60 < .55 ? "混响偏短，空间可能显得过于干涩" : "处于教学语音的清晰区间";
+  const echoCount = Math.max(2, Math.min(8, Math.round(rt60 * 5)));
+
+  useEffect(() => { if (!pulse) return; const timer = window.setTimeout(() => setPulse(false), 1800); return () => window.clearTimeout(timer); }, [pulse]);
+  useEffect(() => {
+    publishApparatusSnapshot({
+      module: "sound-auditorium", capturedAt: new Date().toISOString(), origin: interacted ? "learner" : "system",
+      controls: [
+        { id: "volume", label: "礼堂体积", value: volume, unit: "m³", source: "control" },
+        { id: "audience", label: "观众人数", value: audience, unit: "人", source: "control" },
+        { id: "material", label: "内衬方案", value: material.label, source: "control" }
+      ],
+      apparatus: [{ id: "pulse", label: "测试脉冲", value: pulse, source: "apparatus" }],
+      readings: [{ id: "rt60", label: "估算混响时间", value: Number(rt60.toFixed(2)), unit: "s", source: "reading" }],
+      derived: [{ id: "absorption", label: "等效吸声量", value: Number(equivalentAbsorption.toFixed(0)), source: "model" }],
+      validity: { ready: speechReady, issues: speechReady ? [] : [diagnosis] }
+    });
+  }, [audience, diagnosis, equivalentAbsorption, interacted, material.label, pulse, rt60, speechReady, volume]);
+  const saveReading = () => {
+    setReadings((items) => [{ id: Date.now(), material: material.label, volume, audience, rt60 }, ...items].slice(0, 5));
+    setInteracted(true);
+    recordHarness("configuration.changed", { experiment: "sound-auditorium", control: "冻结混响读数", value: `${rt60.toFixed(2)}s` });
+  };
+
+  return <LabFrame field="sound" experiment="sound-auditorium" eyebrow="ARCHITECTURAL ACOUSTICS / 建筑声学设计台" title="让最后一排也能听清，而不是只听见“很响”" description="改变空间体积、观众人数与内衬材料，使用简化的 Sabine 关系估算混响时间。该模型用于理解变量方向，不代替建筑声学设计报告。" running={pulse} onToggle={() => { setPulse(true); setInteracted(true); }} playLabel="播放测试脉冲" runningLabel="正在追踪反射声">
+    <section className={`auditorium-stage ${pulse ? "is-pulsing" : ""}`} style={{ "--echo-count": echoCount, "--rt": `${Math.min(2.8, Math.max(.6, rt60))}s` } as React.CSSProperties}>
+      <header><span><RadioTower size={16} /> IMPULSE RESPONSE / 脉冲响应</span><b>{material.note}</b></header>
+      <div className="auditorium-room"><div className="auditorium-curtain" /><div className="auditorium-speaker"><Mic2 size={24} /><i /></div><div className="auditorium-echoes">{Array.from({ length: echoCount }, (_, index) => <i style={{ animationDelay: `${index * .1}s`, opacity: 1 - index / (echoCount + 1) }} key={index} />)}</div><div className="auditorium-audience">{Array.from({ length: 18 }, (_, index) => <i className={index < Math.round(audience / 25) ? "occupied" : ""} key={index} />)}</div><div className="auditorium-back-seat"><Ear size={21} /><span><small>LAST ROW SENSOR</small><b>{diagnosis}</b></span></div></div>
+      <aside className={speechReady ? "ready" : "warning"}><small>ESTIMATED RT60</small><strong>{rt60.toFixed(2)}<em>s</em></strong><span><i style={{ left: `${Math.min(100, rt60 / 2.5 * 100)}%` }} /></span><p>语音参考区间 0.55–1.15 s</p></aside>
+      {!interacted && <InteractionCue text="播放一次测试脉冲，观察反射声衰减" />}
+    </section>
+    <section className="auditorium-materials"><header><span><small>MATERIAL LIBRARY</small><b>选择内衬方案</b></span><button type="button" onClick={saveReading}><Save size={14} />冻结当前读数</button></header><div>{(Object.keys(auditoriumMaterials) as AuditoriumMaterialKey[]).map((key) => { const item = auditoriumMaterials[key]; return <button type="button" className={materialKey === key ? "active" : ""} onClick={() => { setMaterialKey(key); setInteracted(true); }} key={key}><span><i style={{ opacity: item.alpha }} /></span><b>{item.label}</b><small>吸声系数线索 α ≈ {item.alpha}</small><em>{item.note}</em></button>; })}</div></section>
+    <div className="science-controls"><ScienceRange label="礼堂体积" value={volume} min={500} max={2800} step={50} unit="m³" onChange={setVolume} onInteract={() => setInteracted(true)} /><ScienceRange label="观众人数" value={audience} min={0} max={450} step={10} unit="人" onChange={setAudience} onInteract={() => setInteracted(true)} /><ResultCell label="语音清晰度判断" value={interacted ? diagnosis : "等待测试"} pending={!interacted} /></div>
+    {readings.length > 0 && <section className="acoustic-reading-strip"><header><ClipboardList size={15} /><b>DESIGN SNAPSHOTS / 方案对比</b><button type="button" onClick={() => setReadings([])}><RotateCcw size={13} />清空</button></header><div>{readings.map((reading, index) => <article key={reading.id}><small>#{String(readings.length - index).padStart(2, "0")}</small><b>{reading.material}</b><span>{reading.volume} m³ · {reading.audience} 人</span><strong>{reading.rt60.toFixed(2)} s</strong></article>)}</div></section>}
+    {interacted && <EvidenceVerdict valid={speechReady} title={speechReady ? "当前方案进入教学语音参考区间" : "当前混响时间需要继续调整"} detail={speechReady ? "接下来可只改变观众人数或材料中的一个，保存两组读数进行公平比较。" : rt60 > 1.15 ? "尝试增加吸声材料或提高上座人数，观察反射声衰减是否加快。" : "尝试减少吸声、增加空间体积，保留适量自然混响。"} />}
+  </LabFrame>;
+}
+
+interface MicrophoneSnapshot { id: number; level: number; frequency: number; }
+type MicrophoneStatus = "idle" | "requesting" | "active" | "denied" | "unsupported" | "demo";
+
+function LiveMicrophoneLab() {
+  const recordHarness = useHarnessStore((state) => state.record);
+  const [status, setStatus] = useState<MicrophoneStatus>("idle");
+  const [level, setLevel] = useState(0);
+  const [frequency, setFrequency] = useState(0);
+  const [wavePoints, setWavePoints] = useState("0,90 760,90");
+  const [snapshots, setSnapshots] = useState<MicrophoneSnapshot[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+  const contextRef = useRef<AudioContext | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const lastUpdateRef = useRef(0);
+  const active = status === "active" || status === "demo";
+  const levelLabel = level < 5 ? "环境较安静" : level < 18 ? "普通说话线索" : level < 38 ? "声音较强" : "瞬时强声";
+  const pitchLabel = frequency <= 0 ? "等待稳定周期" : frequency < 250 ? "低频成分较突出" : frequency < 1000 ? "中频成分较突出" : "高频成分较突出";
+
+  const stopMicrophone = () => {
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    if (contextRef.current) void contextRef.current.close();
+    streamRef.current = null; contextRef.current = null; rafRef.current = null;
+    setStatus("idle"); setLevel(0); setFrequency(0); setWavePoints("0,90 760,90");
+  };
+
+  useEffect(() => () => {
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    if (contextRef.current) void contextRef.current.close();
+  }, []);
+
+  useEffect(() => {
+    if (status !== "demo") return;
+    let frame = 0;
+    const timer = window.setInterval(() => {
+      frame += 1;
+      const demoLevel = 14 + Math.sin(frame * .38) * 8 + (frame % 13 === 0 ? 18 : 0);
+      const demoFrequency = 220 + Math.sin(frame * .17) * 75;
+      const points = Array.from({ length: 96 }, (_, index) => `${index * 8},${90 + Math.sin(index * .34 + frame * .3) * demoLevel * .9}`).join(" ");
+      setLevel(Math.max(0, demoLevel)); setFrequency(Math.max(0, demoFrequency)); setWavePoints(points);
+    }, 90);
+    return () => window.clearInterval(timer);
+  }, [status]);
+
+  const startMicrophone = async () => {
+    if (!navigator.mediaDevices?.getUserMedia) { setStatus("unsupported"); return; }
+    setStatus("requesting");
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+      const AudioContextCtor = window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const context = new AudioContextCtor();
+      await context.resume();
+      const analyser = context.createAnalyser();
+      analyser.fftSize = 2048; analyser.smoothingTimeConstant = .78;
+      const source = context.createMediaStreamSource(stream); source.connect(analyser);
+      const timeData = new Uint8Array(analyser.fftSize);
+      const frequencyData = new Uint8Array(analyser.frequencyBinCount);
+      streamRef.current = stream; contextRef.current = context; setStatus("active");
+      recordHarness("configuration.changed", { experiment: "sound-microphone", control: "麦克风", value: "enabled" });
+      const sample = (now: number) => {
+        analyser.getByteTimeDomainData(timeData); analyser.getByteFrequencyData(frequencyData);
+        if (now - lastUpdateRef.current > 70) {
+          lastUpdateRef.current = now;
+          let squareSum = 0;
+          for (const value of timeData) { const centered = (value - 128) / 128; squareSum += centered * centered; }
+          const rms = Math.sqrt(squareSum / timeData.length);
+          let peakIndex = 0; let peakValue = 0;
+          for (let index = 2; index < frequencyData.length; index += 1) { if (frequencyData[index]! > peakValue) { peakValue = frequencyData[index]!; peakIndex = index; } }
+          const nextFrequency = peakValue > 22 ? peakIndex * context.sampleRate / analyser.fftSize : 0;
+          const points = Array.from({ length: 96 }, (_, index) => { const sampleIndex = Math.floor(index / 95 * (timeData.length - 1)); return `${index * 8},${90 + ((timeData[sampleIndex]! - 128) / 128) * 78}`; }).join(" ");
+          setLevel(Math.min(100, rms * 260)); setFrequency(nextFrequency); setWavePoints(points);
+        }
+        rafRef.current = requestAnimationFrame(sample);
+      };
+      rafRef.current = requestAnimationFrame(sample);
+    } catch {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      if (contextRef.current) void contextRef.current.close();
+      streamRef.current = null; contextRef.current = null; setStatus("denied");
+    }
+  };
+  const toggleMicrophone = () => { if (active) stopMicrophone(); else void startMicrophone(); };
+  const startDemo = () => { stopMicrophone(); setStatus("demo"); recordHarness("configuration.changed", { experiment: "sound-microphone", control: "信号模式", value: "demo" }); };
+  const freezeReading = () => {
+    if (!active) return;
+    setSnapshots((items) => [{ id: Date.now(), level, frequency }, ...items].slice(0, 5));
+    recordHarness("configuration.changed", { experiment: "sound-microphone", control: "冻结读数", value: `${level.toFixed(1)}%/${frequency.toFixed(0)}Hz` });
+  };
+  useEffect(() => {
+    publishApparatusSnapshot({
+      module: "sound-microphone", capturedAt: new Date().toISOString(), origin: active ? "learner" : "system",
+      controls: [{ id: "mode", label: "采集模式", value: status, source: "control" }],
+      apparatus: [{ id: "microphone", label: "麦克风采集", value: status === "active", source: "apparatus" }],
+      readings: [
+        { id: "level", label: "相对声强线索", value: active ? Number(level.toFixed(1)) : null, unit: "%", source: "reading" },
+        { id: "frequency", label: "主频线索", value: active && frequency > 0 ? Number(frequency.toFixed(0)) : null, unit: "Hz", source: "reading" }
+      ],
+      derived: [{ id: "samples", label: "已冻结证据", value: snapshots.length, unit: "组", source: "model" }],
+      validity: { ready: snapshots.length >= 2, issues: snapshots.length >= 2 ? [] : [active ? "至少冻结两组不同声音的读数。" : "先启用麦克风或模拟信号。"] }
+    });
+  }, [active, frequency, level, snapshots.length, status]);
+
+  return <LabFrame field="sound" experiment="sound-microphone" eyebrow="LIVE ACOUSTIC INPUT / 实时声学采集" title="让真实声音进入实验，而不是只看预设动画" description="浏览器只在当前设备上计算波形与频率线索，不录音、不保存原始声音，也不会把音频上传到服务器。请避免突然对着麦克风发出过强声音。" running={active} onToggle={toggleMicrophone} playLabel={status === "requesting" ? "正在请求权限" : "启用本机麦克风"} runningLabel={status === "demo" ? "停止模拟信号" : "停止麦克风"} actionDisabled={status === "requesting"} disabledLabel="等待权限确认">
+    <section className={`live-mic-stage ${active ? "is-live" : ""}`} style={{ "--live-level": `${Math.max(2, level)}%` } as React.CSSProperties}>
+      <header><span><i /> {status === "active" ? "MIC INPUT ONLINE" : status === "demo" ? "DEMO SIGNAL ONLINE" : "INPUT STANDBY"}</span><b>LOCAL PROCESSING · AUDIO NOT STORED</b></header>
+      <div className="live-waveform"><div className="live-grid" /><svg viewBox="0 0 760 180" preserveAspectRatio="none"><polyline points={wavePoints} /></svg><span><Activity size={15} /> TIME DOMAIN / 时间波形</span>{!active && <InteractionCue text="启用麦克风，说话或轻拍手掌" />}</div>
+      <aside><div className="live-level-ring"><span style={{ transform: `rotate(${Math.min(220, level * 2.2) - 110}deg)` }} /><strong>{level.toFixed(0)}<em>%</em></strong><small>相对强度</small></div><div className="live-frequency"><small>DOMINANT FREQUENCY CLUE</small><strong>{frequency > 0 ? frequency.toFixed(0) : "— —"}<em>{frequency > 0 ? "Hz" : ""}</em></strong><span>{pitchLabel}</span></div></aside>
+      <footer><span><b>LEVEL</b>{levelLabel}</span><span><b>PRIVACY</b>本机实时计算</span><span><b>EVIDENCE</b>{snapshots.length} 组已冻结</span></footer>
+    </section>
+    {(status === "denied" || status === "unsupported") && <section className="microphone-fallback"><AlertTriangle size={20} /><span><b>{status === "unsupported" ? "当前浏览器不支持实时麦克风接口" : "没有获得麦克风权限"}</b><small>你可以在浏览器地址栏恢复权限后重试，或先用模拟信号体验波形与读数。</small></span><button type="button" onClick={startDemo}><Play size={14} />使用模拟信号</button></section>}
+    <section className="microphone-challenges"><header><span><small>REAL-WORLD TASKS</small><b>三个声音证据挑战</b></span><button type="button" disabled={!active} onClick={freezeReading}><Save size={14} />冻结当前读数</button></header><div><article><b>01 / 说一句话</b><p>观察波形如何随音节不断改变，主频线索是否稳定。</p></article><article><b>02 / 轻拍手掌</b><p>寻找短促而幅度较大的瞬态波形，不要靠麦克风过近。</p></article><article><b>03 / 发出稳定音</b><p>用哼唱或乐器保持音高，观察频率线索能否相对稳定。</p></article></div></section>
+    <div className="science-controls"><ResultCell label="相对强度" value={active ? `${level.toFixed(1)}% · ${levelLabel}` : "等待声音"} pending={!active} /><ResultCell label="主频线索" value={active && frequency > 0 ? `${frequency.toFixed(0)} Hz · ${pitchLabel}` : "等待稳定周期"} pending={!active} /><ResultCell label="数据边界" value="线索读数，不等同专业声级计" /></div>
+    {snapshots.length > 0 && <section className="acoustic-reading-strip"><header><ClipboardList size={15} /><b>CAPTURED EVIDENCE / 声音证据</b><button type="button" onClick={() => setSnapshots([])}><RotateCcw size={13} />清空</button></header><div>{snapshots.map((item, index) => <article key={item.id}><small>#{String(snapshots.length - index).padStart(2, "0")}</small><b>{item.level < 10 ? "较弱声音" : item.level < 30 ? "中等声音" : "较强瞬态"}</b><span>相对强度 {item.level.toFixed(1)}%</span><strong>{item.frequency > 0 ? `${item.frequency.toFixed(0)} Hz` : "非周期声"}</strong></article>)}</div></section>}
+    {snapshots.length > 0 && <EvidenceVerdict valid={snapshots.length >= 2} title={snapshots.length >= 2 ? "已经形成可比较的真实声音证据" : "已冻结第一组读数"} detail={snapshots.length >= 2 ? "比较两组的波形、相对强度和主频线索，再说明哪些差异对应响度、音调或声音的瞬态特征。" : "换一种声音再冻结一次，才能形成比较。"} />}
   </LabFrame>;
 }
 

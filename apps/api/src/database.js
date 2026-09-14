@@ -129,12 +129,21 @@ function migrateDatabase(db) {
   if (!userColumns.has("last_login_at")) db.exec("ALTER TABLE users ADD COLUMN last_login_at TEXT");
 }
 
-function seedDatabase(db) {
+function seedDatabase(db, config) {
   const now = new Date().toISOString();
   const insertSchool = db.prepare("INSERT OR IGNORE INTO schools (id, name, created_at) VALUES (?, ?, ?)");
+  const insertUser = db.prepare("INSERT OR IGNORE INTO users (id, school_id, email, password_hash, name, role, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
+
+  if (!config.seedDemoData) {
+    insertSchool.run("school-primary", config.bootstrapSchoolName, now);
+    if (config.bootstrapAdminEmail && config.bootstrapAdminPassword) {
+      insertUser.run("user-admin", "school-primary", config.bootstrapAdminEmail.toLowerCase(), hashPassword(config.bootstrapAdminPassword), config.bootstrapAdminName, "admin", now);
+    }
+    return;
+  }
+
   insertSchool.run("school-demo", "未来物理实验学校", now);
 
-  const insertUser = db.prepare("INSERT OR IGNORE INTO users (id, school_id, email, password_hash, name, role, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
   insertUser.run("user-admin", "school-demo", "admin@physics.local", hashPassword("Admin123!"), "学校管理员", "admin", now);
   insertUser.run("user-teacher", "school-demo", "teacher@physics.local", hashPassword("Teacher123!"), "李老师", "teacher", now);
   const demoStudents = ["陈一诺", "王子墨", "林书言", "周予安", "许星遥", "宋知远", "江雨桐", "沈嘉树", "叶可欣", "顾言川"];
@@ -200,11 +209,38 @@ function seedDatabase(db) {
   });
 }
 
-export function openDatabase(config) {
+function wrapSqlite(nativeDb) {
+  return {
+    dialect: "sqlite",
+    async get(sql, params = []) { return nativeDb.prepare(sql).get(...params); },
+    async all(sql, params = []) { return nativeDb.prepare(sql).all(...params); },
+    async run(sql, params = []) { return nativeDb.prepare(sql).run(...params); },
+    async exec(sql) { nativeDb.exec(sql); },
+    async transaction(work) {
+      nativeDb.exec("BEGIN");
+      try {
+        const result = await work(this);
+        nativeDb.exec("COMMIT");
+        return result;
+      } catch (error) {
+        nativeDb.exec("ROLLBACK");
+        throw error;
+      }
+    },
+    close() { nativeDb.close(); },
+    native: nativeDb
+  };
+}
+
+export async function openDatabase(config) {
+  if (config.databaseUrl) {
+    const { openPostgresDatabase } = await import("./database-postgres.js");
+    return openPostgresDatabase(config);
+  }
   if (config.databasePath !== ":memory:") mkdirSync(dirname(config.databasePath), { recursive: true });
-  const db = new DatabaseSync(config.databasePath);
-  db.exec(schema);
-  migrateDatabase(db);
-  seedDatabase(db);
-  return db;
+  const nativeDb = new DatabaseSync(config.databasePath);
+  nativeDb.exec(schema);
+  migrateDatabase(nativeDb);
+  seedDatabase(nativeDb, config);
+  return wrapSqlite(nativeDb);
 }

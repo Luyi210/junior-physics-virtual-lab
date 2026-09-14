@@ -34,6 +34,7 @@ npm run dev:api
 - 学生实验档案：读取本人历史会话、任务/班级/课例标题与操作、观察证据计数；不可重做任务由服务端强制限制
 - 实时课堂读模型：在线会话、事件数、观察数和教师追问
 - 班级报告：参与者、完成会话、事件和观察汇总
+- 光光智能体：DeepSeek Harness SDK 子进程、学生/教师上下文隔离、频率限制和本地规则兜底
 - 基础防护：JSON 大小限制、登录限流、CORS 白名单、请求 ID、统一错误结构
 
 ## 主要接口
@@ -42,6 +43,7 @@ npm run dev:api
 GET    /api/health
 POST   /api/auth/login
 GET    /api/auth/me
+POST   /api/guangguang/chat
 
 GET    /api/users
 POST   /api/users                         # role: teacher | student（教师只能创建 student）
@@ -102,6 +104,13 @@ PATCH  /api/sessions/:sessionId/complete
 | `PHYSICS_API_TOKEN_SECRET` | 仅本地开发默认值 |
 | `PHYSICS_API_TOKEN_TTL` | `28800` 秒 |
 | `PHYSICS_API_ALLOWED_ORIGINS` | 本地 Vite 地址 |
+| `DEEPSEEK_API_KEY` | 空；设置后默认启用光光 AI |
+| `DEEPSEEK_BASE_URL` | DeepSeek Harness 默认地址 |
+| `PHYSICS_GUANGGUANG_AI_ENABLED` | 有 Key 时为 `true` |
+| `PHYSICS_GUANGGUANG_MODEL` | `deepseek-v4-flash` |
+| `PHYSICS_GUANGGUANG_PROVIDER` | `deepseek-official` |
+| `PHYSICS_GUANGGUANG_MAX_TOKENS` | `2048` |
+| `PHYSICS_GUANGGUANG_TIMEOUT_MS` | `90000` 毫秒 |
 
 前端可以通过 `VITE_API_URL` 指向部署后的 API；开发模式默认探测 `http://127.0.0.1:8787/api`。后台不可用时，教师端继续使用原有本地工作区，不会丢失当前演示能力。
 
