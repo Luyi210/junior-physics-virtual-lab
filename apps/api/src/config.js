@@ -17,13 +17,15 @@ function booleanFromEnv(value, fallback) {
 export function loadConfig(overrides = {}) {
   const dataDirectory = overrides.dataDirectory ?? process.env.PHYSICS_API_DATA_DIR ?? resolve(apiRoot, "data");
   const deepseekApiKey = overrides.deepseekApiKey ?? process.env.DEEPSEEK_API_KEY ?? "";
+  const siliconflowApiKey = overrides.siliconflowApiKey ?? process.env.SILICONFLOW_API_KEY ?? "";
+  const databaseUrl = overrides.databaseUrl ?? process.env.DATABASE_URL ?? "";
   const configuredOrigins = (process.env.PHYSICS_API_ALLOWED_ORIGINS ?? "http://127.0.0.1:5173,http://localhost:5173").split(",").map((item) => item.trim()).filter(Boolean);
   const renderOrigin = process.env.RENDER_EXTERNAL_HOSTNAME ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME}` : "";
   const production = process.env.NODE_ENV === "production" || Boolean(process.env.RENDER);
   return {
     host: overrides.host ?? process.env.PHYSICS_API_HOST ?? "127.0.0.1",
     port: overrides.port ?? numberFromEnv(process.env.PHYSICS_API_PORT, 8787),
-    databaseUrl: overrides.databaseUrl ?? process.env.DATABASE_URL ?? "",
+    databaseUrl,
     databasePath: overrides.databasePath ?? process.env.PHYSICS_API_DATABASE ?? resolve(dataDirectory, "physics-lab.sqlite"),
     tokenSecret: overrides.tokenSecret ?? process.env.PHYSICS_API_TOKEN_SECRET ?? "local-development-secret-change-before-deployment",
     tokenTtlSeconds: overrides.tokenTtlSeconds ?? numberFromEnv(process.env.PHYSICS_API_TOKEN_TTL, 8 * 60 * 60),
@@ -46,6 +48,17 @@ export function loadConfig(overrides = {}) {
     guangguangTurnTimeoutMs: overrides.guangguangTurnTimeoutMs ?? numberFromEnv(process.env.PHYSICS_GUANGGUANG_TIMEOUT_MS, 150_000),
     guangguangQueueLimit: overrides.guangguangQueueLimit ?? numberFromEnv(process.env.PHYSICS_GUANGGUANG_QUEUE_LIMIT, 8),
     guangguangRequestsPerMinute: overrides.guangguangRequestsPerMinute ?? numberFromEnv(process.env.PHYSICS_GUANGGUANG_REQUESTS_PER_MINUTE, 12),
+    vectorRagEnabled: overrides.vectorRagEnabled ?? booleanFromEnv(process.env.PHYSICS_VECTOR_RAG_ENABLED, Boolean(databaseUrl && siliconflowApiKey)),
+    vectorRagSyncOnStart: overrides.vectorRagSyncOnStart ?? booleanFromEnv(process.env.PHYSICS_VECTOR_RAG_SYNC_ON_START, true),
+    vectorRagSearchLimit: overrides.vectorRagSearchLimit ?? numberFromEnv(process.env.PHYSICS_VECTOR_RAG_SEARCH_LIMIT, 12),
+    embeddingBaseUrl: overrides.embeddingBaseUrl ?? process.env.PHYSICS_EMBEDDING_BASE_URL ?? "https://api.siliconflow.cn/v1",
+    embeddingModel: overrides.embeddingModel ?? process.env.PHYSICS_EMBEDDING_MODEL ?? "BAAI/bge-m3",
+    embeddingDimensions: overrides.embeddingDimensions ?? numberFromEnv(process.env.PHYSICS_EMBEDDING_DIMENSIONS, 1024),
+    embeddingBatchSize: overrides.embeddingBatchSize ?? numberFromEnv(process.env.PHYSICS_EMBEDDING_BATCH_SIZE, 32),
+    embeddingTimeoutMs: overrides.embeddingTimeoutMs ?? numberFromEnv(process.env.PHYSICS_EMBEDDING_TIMEOUT_MS, 30_000),
+    rerankModel: overrides.rerankModel ?? process.env.PHYSICS_RERANK_MODEL ?? "BAAI/bge-reranker-v2-m3",
+    rerankEnabled: overrides.rerankEnabled ?? booleanFromEnv(process.env.PHYSICS_RERANK_ENABLED, true),
+    siliconflowApiKey,
     deepseekApiKey,
     deepseekBaseUrl: overrides.deepseekBaseUrl ?? process.env.DEEPSEEK_BASE_URL ?? ""
   };

@@ -627,7 +627,7 @@ export function appendDialogueExchange(session: HarnessSession, module: string, 
   };
   const messages: HarnessDialogueMessage[] = [
     { id: createDialogueId("message-learner"), role: "learner", text: question.trim(), createdAt: now, module },
-    { id: createDialogueId("message-assistant"), role: "assistant", text: reply.text, createdAt: now, module, intent: reply.intent, followUps: reply.followUps }
+    { id: createDialogueId("message-assistant"), role: "assistant", text: reply.text, createdAt: now, module, intent: reply.intent, followUps: reply.followUps, citations: reply.citations }
   ];
   return { ...session, updatedAt: now, events: [...session.events, event], dialogue: [...(session.dialogue ?? []), ...messages] };
 }

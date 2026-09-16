@@ -159,6 +159,15 @@ export interface ApiHealth {
     model: string;
     orchestration?: "adaptive-subagent-team-v2";
     specialistCount?: number;
+    rag?: {
+      enabled: boolean;
+      version: string;
+      mode: string;
+      experiments: number;
+      chunks: number;
+      graphVertices: number;
+      graphEdges: number;
+    };
   };
   time: string;
 }
@@ -173,4 +182,22 @@ export interface GuangguangChatReply {
   text: string;
   provider: "deepseek-harness";
   model: string;
+  citations?: GuangguangKnowledgeCitation[];
+  retrieval?: {
+    id: string;
+    mode: string;
+    confidence: number;
+    intent?: string;
+    strategy?: "clarify-context" | "guided-next-step" | "safety-first" | "answer-with-evidence";
+    experimentStage?: "unknown" | "orientation" | "setup" | "operating" | "collecting" | "observing" | "ready" | "reflecting";
+  };
+}
+
+export interface GuangguangKnowledgeCitation {
+  sourceId: string;
+  title: string;
+  section: string;
+  source: string;
+  route?: string;
+  score: number;
 }

@@ -80,6 +80,7 @@ export function createApiHandler({ db, config, guangguang }) {
         const guangguangStatus = guangguang?.status?.() ?? { enabled: false, provider: "rules", model: "local" };
         const capabilities = ["managed-teacher-accounts", "managed-student-accounts", "class-membership", "teaching-tasks", "experiment-evidence"];
         if (guangguangStatus.enabled) capabilities.push("deepseek-harness-guangguang");
+        if (guangguangStatus.rag?.vector?.ready) capabilities.push("semantic-vector-rag");
         return sendJson(response, 200, { status: "ok", service: "physics-lab-api", version: "0.1.0", compatibility: API_COMPATIBILITY, capabilities, database: db.dialect, guangguang: guangguangStatus, time: new Date().toISOString() }, id, headers);
       }
 

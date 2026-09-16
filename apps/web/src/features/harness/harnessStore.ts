@@ -138,7 +138,7 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
             recentDialogue: (current.dialogue ?? []).filter((message) => message.module === module).slice(-8)
           }
         });
-        reply = { ...localReply, text: aiReply.text };
+        reply = { ...localReply, text: aiReply.text, citations: aiReply.citations };
         dialogueProvider = "deepseek-harness";
       }
     } catch {

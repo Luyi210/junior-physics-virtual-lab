@@ -24,6 +24,7 @@ type CopilotMessage = {
   id: string;
   role: "teacher" | "assistant";
   text: string;
+  citations?: string[];
 };
 
 const quickQuestions = ["现在最值得关注什么？", "给我一条课堂追问", "这些数据能说明什么？"];
@@ -168,6 +169,7 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
     setQuestion("");
     setResponding(true);
     let reply = localReply;
+    let citations: string[] = [];
     let provider: "rules" | "deepseek-harness" = "rules";
     try {
       if (teacherApi.hasSession()) {
@@ -179,6 +181,7 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
             page: pathname,
             insight,
             lesson: lesson ? {
+              experimentId: lesson.experimentId,
               title: lesson.title,
               objective: lesson.objective,
               inquiryQuestion: lesson.inquiryQuestion,
@@ -187,6 +190,7 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
           }
         });
         reply = aiReply.text;
+        citations = aiReply.citations?.slice(0, 2).map((citation) => `${citation.title}·${citation.section}`) ?? [];
         provider = "deepseek-harness";
       }
     } catch {
@@ -194,7 +198,7 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
     }
     setMessages((current) => [
       ...current,
-      { id: `assistant-${Date.now()}-${current.length}`, role: "assistant", text: reply }
+      { id: `assistant-${Date.now()}-${current.length}`, role: "assistant", text: reply, citations }
     ]);
     setDialogueProvider(provider);
     setResponding(false);
@@ -245,7 +249,7 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
           <div className="teacher-guangguang-chips">{quickQuestions.map((item) => <button key={item} type="button" disabled={responding} onClick={() => void ask(item)}>{item}</button>)}</div>
           <div className="teacher-guangguang-messages">
             {!messages.length && <div className="teacher-guangguang-welcome"><Bot size={19} /><p>老师好，我已经读取当前页面的教学信息。你可以问我现在该关注什么，或让我给一条课堂追问。</p></div>}
-            {messages.map((message) => <article key={message.id} className={`role-${message.role}`}>{message.role === "assistant" && <OrangeCatAvatar mood="speaking" compact />}<div><span>{message.role === "teacher" ? "我" : "光光"}</span><p>{message.text}</p></div></article>)}
+            {messages.map((message) => <article key={message.id} className={`role-${message.role}`}>{message.role === "assistant" && <OrangeCatAvatar mood="speaking" compact />}<div><span>{message.role === "teacher" ? "我" : "光光"}</span><p>{message.text}</p>{message.citations?.length ? <small className="teacher-guangguang-sources"><BookOpenCheck size={10} />知识依据：{message.citations.join("；")}</small> : null}</div></article>)}
             {responding && <div className="teacher-guangguang-welcome"><Bot size={19} /><p>光光正在结合当前教学证据思考……</p></div>}
           </div>
           <form onSubmit={submit}><textarea value={question} disabled={responding} onChange={(event) => setQuestion(event.target.value)} placeholder="问光光：这节课什么时候适合介入？" /><button type="submit" disabled={responding || !question.trim()} aria-label="发送问题"><Send size={17} /></button></form>

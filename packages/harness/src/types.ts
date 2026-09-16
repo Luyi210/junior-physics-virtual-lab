@@ -76,6 +76,15 @@ export type HarnessDialogueRole = "learner" | "assistant";
 
 export type HarnessDialogueIntent = "orientation" | "method" | "explain" | "compare" | "predict" | "reflect";
 
+export interface HarnessKnowledgeCitation {
+  sourceId: string;
+  title: string;
+  section: string;
+  source: string;
+  route?: string;
+  score: number;
+}
+
 export interface HarnessDialogueMessage {
   id: string;
   role: HarnessDialogueRole;
@@ -84,12 +93,14 @@ export interface HarnessDialogueMessage {
   module: string;
   intent?: HarnessDialogueIntent;
   followUps?: string[];
+  citations?: HarnessKnowledgeCitation[];
 }
 
 export interface HarnessDialogueReply {
   intent: HarnessDialogueIntent;
   text: string;
   followUps: string[];
+  citations?: HarnessKnowledgeCitation[];
 }
 
 export interface HarnessSession {

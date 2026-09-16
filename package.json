@@ -16,11 +16,12 @@
     "start:render": "node scripts/serve-render.mjs",
     "stop:platform": "node scripts/stop-platform.mjs",
     "smoke:platform": "node scripts/smoke-test-platform.mjs",
+    "knowledge:evaluate": "node scripts/evaluate-rag.mjs",
     "build": "npm run build --workspace @physics-lab/web && node scripts/prepare-sites-build.mjs",
     "build:optics": "npm run build --workspace @physics-lab/optics-research",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "verify": "npm run typecheck && npm test && npm run build"
+    "verify": "npm run typecheck && npm test && npm run knowledge:evaluate && npm run build"
   },
   "engines": {
     "node": ">=24 <25"

@@ -22,6 +22,7 @@
 2. 打开 [Render Dashboard](https://dashboard.render.com/)，选择 **New > Blueprint**，连接这个 GitHub 仓库。
 3. Render 读取 `render.yaml` 后，确认服务方案显示 **Free**，并填写以下私密环境变量：
    - `DATABASE_URL`：上一步复制的 Neon pooled connection string。
+   - `SILICONFLOW_API_KEY`：硅基流动 API Key，用于 BGE-M3 向量化与重排序；不要填写到 `VITE_*` 变量。
    - `PHYSICS_BOOTSTRAP_SCHOOL_NAME`：学校或平台名称。
    - `PHYSICS_BOOTSTRAP_ADMIN_NAME`：首位管理员姓名。
    - `PHYSICS_BOOTSTRAP_ADMIN_EMAIL`：管理员登录邮箱。
@@ -30,6 +31,8 @@
 5. 打开 Render 提供的 `https://...onrender.com` 地址，用刚填写的管理员邮箱和密码登录。
 
 首次启动时后台会自动建表和创建首位管理员。以后重新部署不会覆盖已有账号和教学数据。
+
+首次同时配置 `DATABASE_URL` 和 `SILICONFLOW_API_KEY` 后，后台还会自动启用 Neon `pgvector` 并增量写入光光知识向量。可打开 `https://<你的服务>/api/health` 查看 `guangguang.rag.vector`；`ready: true` 且 `indexedChunks` 与 `totalChunks` 相同表示完成。未配置 Key 或第三方接口临时失败时，光光会继续使用本地知识图谱检索。
 
 ## 让原 GitHub Pages 地址使用同一个后台
 

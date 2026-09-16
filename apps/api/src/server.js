@@ -2,6 +2,7 @@ import { loadConfig } from "./config.js";
 import { openDatabase } from "./database.js";
 import { createApiServer } from "./app.js";
 import { createGuangguangService } from "./guangguang.js";
+import { createVectorKnowledgeService } from "./vector-knowledge.js";
 
 const config = loadConfig();
 
@@ -15,7 +16,9 @@ if (!config.seedDemoData) {
 }
 
 const db = await openDatabase(config);
-const guangguang = createGuangguangService(config);
+const vectorKnowledge = createVectorKnowledgeService(config);
+await vectorKnowledge.initialize();
+const guangguang = createGuangguangService(config, { vectorKnowledge });
 const server = createApiServer({ db, config, guangguang });
 
 server.listen(config.port, config.host, () => {
@@ -23,6 +26,10 @@ server.listen(config.port, config.host, () => {
   console.log(config.guangguangEnabled && config.deepseekApiKey
     ? `Guangguang AI: ${config.guangguangProvider}/${config.guangguangModel}`
     : "Guangguang AI: local rules fallback (set DEEPSEEK_API_KEY to enable)");
+  const vectorStatus = vectorKnowledge.status();
+  console.log(vectorStatus.enabled
+    ? `Guangguang RAG: ${vectorStatus.mode} (${vectorStatus.indexedChunks}/${vectorStatus.totalChunks} chunks ready)`
+    : "Guangguang RAG: local KG fallback (set DATABASE_URL and SILICONFLOW_API_KEY to enable vectors)");
   if (config.seedDemoData) console.log("Demo teacher: teacher@physics.local / Teacher123!");
   else console.log(`Bootstrap administrator: ${config.bootstrapAdminEmail}`);
 });
@@ -31,6 +38,7 @@ function shutdown(signal) {
   console.log(`\n${signal}: closing Physics Lab API`);
   server.close(async () => {
     await guangguang.close();
+    await vectorKnowledge.close();
     await db.close();
     process.exit(0);
   });

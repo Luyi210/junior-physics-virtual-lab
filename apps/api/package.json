@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "typecheck": "node --check src/server.js && node --check src/app.js && node --check src/guangguang.js && node --check src/database.js && node --check src/database-postgres.js && node --check src/repositories.js",
+    "typecheck": "node --check src/server.js && node --check src/app.js && node --check src/guangguang.js && node --check src/knowledge.js && node --check src/vector-knowledge.js && node --check src/database.js && node --check src/database-postgres.js && node --check src/repositories.js",
     "test": "node --test test/*.test.js"
   },
   "engines": {

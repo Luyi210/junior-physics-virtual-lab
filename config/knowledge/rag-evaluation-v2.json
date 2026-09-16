@@ -1,0 +1,188 @@
+[
+  {
+    "id": "context-circuit-dark",
+    "question": "现在怎么办？",
+    "expectedModule": "circuit-basic",
+    "expectedIntent": "troubleshooting",
+    "expectedStrategy": "guided-next-step",
+    "expectedContentType": "method",
+    "context": {
+      "apparatus": {
+        "current": {
+          "module": "circuit-basic",
+          "origin": "learner",
+          "controls": [],
+          "apparatus": [{ "id": "switch", "label": "开关闭合", "value": true, "source": "apparatus" }],
+          "readings": [],
+          "derived": [],
+          "validity": { "ready": false, "issues": ["灯泡不亮，请检查电路是否断路。"] }
+        }
+      }
+    }
+  },
+  {
+    "id": "context-boiling-ready",
+    "question": "这些现象能得出什么结论？",
+    "expectedModule": "thermal-boiling",
+    "expectedIntent": "evidence",
+    "expectedStrategy": "answer-with-evidence",
+    "expectedContentType": "evidence",
+    "context": {
+      "apparatus": {
+        "current": {
+          "module": "thermal-boiling",
+          "origin": "learner",
+          "controls": [],
+          "apparatus": [],
+          "readings": [{ "id": "temperature", "label": "沸腾温度", "value": 100, "unit": "℃", "source": "reading" }],
+          "derived": [],
+          "validity": { "ready": true, "issues": [] }
+        }
+      },
+      "observations": [{ "text": "继续加热时温度保持在100℃附近" }]
+    }
+  },
+  {
+    "id": "context-density-setup",
+    "question": "下一步做什么？",
+    "expectedModule": "measurement-density",
+    "expectedIntent": "procedure",
+    "expectedStrategy": "guided-next-step",
+    "context": {
+      "module": "measurement-density",
+      "area": "measurement",
+      "apparatus": {
+        "current": {
+          "module": "measurement-density",
+          "origin": "system",
+          "controls": [],
+          "apparatus": [],
+          "readings": [],
+          "derived": [],
+          "validity": { "ready": false, "issues": ["先用天平测量石块质量。"] }
+        }
+      }
+    }
+  },
+  {
+    "id": "context-speed-fair-test",
+    "question": "我的比较为什么还不成立？",
+    "expectedModule": "mechanics-speed",
+    "expectedIntent": "troubleshooting",
+    "expectedStrategy": "guided-next-step",
+    "context": {
+      "module": "mechanics-speed",
+      "area": "mechanics",
+      "apparatus": {
+        "current": {
+          "module": "mechanics-speed",
+          "origin": "learner",
+          "controls": [{ "id": "length", "label": "光电门间路程", "value": 1.2, "unit": "m", "source": "control" }],
+          "apparatus": [],
+          "readings": [{ "id": "time", "label": "区间计时", "value": 2.4, "unit": "s", "source": "reading" }],
+          "derived": [{ "id": "fair", "label": "最近两组公平比较", "value": false, "source": "model" }],
+          "validity": { "ready": false, "issues": ["最近两组同时改变了路程和高度，不能检验高度的影响。"] }
+        }
+      }
+    }
+  },
+  {
+    "id": "context-lens-no-image",
+    "question": "为什么光屏上还是没有清晰的像？",
+    "expectedModule": "bench",
+    "expectedIntent": "troubleshooting",
+    "context": { "module": "bench", "area": "lens" }
+  },
+  {
+    "id": "context-sound-observation",
+    "question": "这组读数可以作为证据吗？",
+    "expectedModule": "sound-features",
+    "expectedIntent": "evidence",
+    "expectedContentType": "evidence",
+    "context": { "module": "sound-features", "area": "sound", "observations": [{ "text": "振幅不变，频率从300Hz变为600Hz，音调升高" }] }
+  },
+  {
+    "id": "context-power-safety",
+    "question": "现在还可以继续加电压吗？",
+    "expectedModule": "circuit-power",
+    "expectedIntent": "safety",
+    "expectedStrategy": "safety-first",
+    "context": {
+      "module": "circuit-power",
+      "area": "circuit",
+      "apparatus": {
+        "current": {
+          "module": "circuit-power",
+          "origin": "learner",
+          "controls": [{ "id": "voltage", "label": "实际电压", "value": 7.5, "unit": "V", "source": "control" }],
+          "apparatus": [],
+          "readings": [],
+          "derived": [],
+          "validity": { "ready": false, "issues": ["已观察过压锁定；把实际电压恢复到额定值或安全欠压。"] }
+        }
+      }
+    }
+  },
+  {
+    "id": "context-reflection-change",
+    "question": "刚才改变了什么？应该比较哪个角？",
+    "expectedModule": "reflection",
+    "expectedIntent": "evidence",
+    "context": {
+      "module": "reflection",
+      "area": "optics",
+      "apparatus": {
+        "previous": {
+          "module": "reflection",
+          "controls": [{ "id": "angle", "label": "入射角", "value": 20, "unit": "°", "source": "control" }],
+          "apparatus": [], "readings": [], "derived": [], "validity": { "ready": false, "issues": [] }
+        },
+        "current": {
+          "module": "reflection",
+          "origin": "learner",
+          "controls": [{ "id": "angle", "label": "入射角", "value": 40, "unit": "°", "source": "control" }],
+          "apparatus": [], "readings": [], "derived": [], "validity": { "ready": false, "issues": ["还需要读取反射角。"] }
+        }
+      }
+    }
+  },
+  {
+    "id": "context-teacher-evidence",
+    "question": "这节课应该让学生留下什么证据？",
+    "audience": "teacher",
+    "expectedModule": "mechanics-friction",
+    "expectedIntent": "evidence",
+    "expectedContentType": "evidence",
+    "context": {
+      "lesson": {
+        "experimentId": "mechanics-friction",
+        "title": "探究滑动摩擦力",
+        "objective": "比较压力和接触面对摩擦力的影响",
+        "inquiryQuestion": "哪些因素会改变滑动摩擦力？"
+      }
+    }
+  },
+  {
+    "id": "context-ambiguous",
+    "question": "现在怎么办？",
+    "expectedIntent": "procedure",
+    "expectedStrategy": "clarify-context",
+    "expectedClarification": true,
+    "context": {}
+  },
+  {
+    "id": "context-direct-short-circuit",
+    "question": "能不能直接用导线连接电池两端？",
+    "expectedModule": "circuit-basic",
+    "expectedIntent": "safety",
+    "expectedStrategy": "safety-first",
+    "context": { "module": "circuit-basic", "area": "circuit" }
+  },
+  {
+    "id": "context-liquid-density-calculation",
+    "question": "质量和体积都有了，密度怎么算？",
+    "expectedModule": "measurement-liquid-density",
+    "expectedIntent": "calculation",
+    "context": { "module": "measurement-liquid-density", "area": "measurement" }
+  }
+]

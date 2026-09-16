@@ -29,6 +29,18 @@ services:
         sync: false
       - key: DEEPSEEK_API_KEY
         sync: false
+      - key: SILICONFLOW_API_KEY
+        sync: false
+      - key: PHYSICS_VECTOR_RAG_ENABLED
+        value: "true"
+      - key: PHYSICS_VECTOR_RAG_SYNC_ON_START
+        value: "true"
+      - key: PHYSICS_EMBEDDING_MODEL
+        value: BAAI/bge-m3
+      - key: PHYSICS_EMBEDDING_DIMENSIONS
+        value: "1024"
+      - key: PHYSICS_RERANK_MODEL
+        value: BAAI/bge-reranker-v2-m3
       - key: PHYSICS_GUANGGUANG_AI_ENABLED
         value: "true"
       - key: PHYSICS_GUANGGUANG_MODEL

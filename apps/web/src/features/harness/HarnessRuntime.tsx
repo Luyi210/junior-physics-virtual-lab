@@ -639,7 +639,7 @@ function HarnessPanel() {
                   {visibleDialogue.map((message) => (
                     <article className={`harness-message ${message.role}`} key={message.id}>
                       <i>{message.role === "assistant" ? <OrangeCatAvatar compact /> : <UserRound size={16} />}</i>
-                      <div><small>{message.role === "assistant" ? "橘猫实验员 · 光光" : "我的问题"}</small><p>{message.text}</p>{message.intent && <em><BrainCircuit size={10} />依据当前装置与学习轨迹 · {message.intent.toUpperCase()}</em>}</div>
+                      <div><small>{message.role === "assistant" ? "橘猫实验员 · 光光" : "我的问题"}</small><p>{message.text}</p>{message.citations?.length ? <span className="harness-message-sources"><Network size={10} />知识依据：{message.citations.slice(0, 2).map((citation) => `${citation.title}·${citation.section}`).join("；")}</span> : null}{message.intent && <em><BrainCircuit size={10} />依据当前装置与学习轨迹 · {message.intent.toUpperCase()}</em>}</div>
                     </article>
                   ))}
                   <div ref={streamEndRef} />

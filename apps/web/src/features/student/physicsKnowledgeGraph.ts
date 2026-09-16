@@ -39,6 +39,16 @@ export interface KnowledgeGraphSearchResult {
   followUps: string[];
 }
 
+export type PhysicsKnowledgeRelationType = "concept-link" | "same-domain" | "cross-domain";
+
+export interface PhysicsKnowledgeRelation {
+  sourceId: string;
+  targetId: string;
+  type: PhysicsKnowledgeRelationType;
+  weight: number;
+  sharedConcepts: string[];
+}
+
 export const physicsGraphDomains: Record<PhysicsGraphDomain, { label: string; mark: string; route: string; signals: string[] }> = {
   light: { label: "光现象", mark: "光", route: "/student/explore/light", signals: ["光学", "光线", "成像", "镜片", "镜子", "视觉"] },
   sound: { label: "声现象", mark: "声", route: "/student/explore/sound", signals: ["声音", "听见", "声波", "振动", "噪声", "回声"] },
@@ -96,6 +106,32 @@ export const physicsKnowledgeGraph = nodes;
 
 const nodeById = new Map(nodes.map((node) => [node.id, node]));
 
+export const physicsKnowledgeRelations: PhysicsKnowledgeRelation[] = nodes.flatMap((source) => source.related.flatMap((targetId) => {
+  const target = nodeById.get(targetId);
+  if (!target) return [];
+  const sharedConcepts = source.concepts.filter((concept) => target.concepts.includes(concept));
+  const type: PhysicsKnowledgeRelationType = sharedConcepts.length
+    ? "concept-link"
+    : source.domain === target.domain ? "same-domain" : "cross-domain";
+  return [{
+    sourceId: source.id,
+    targetId,
+    type,
+    weight: type === "concept-link" ? 1 : type === "cross-domain" ? .88 : .78,
+    sharedConcepts
+  }];
+}));
+
+export function getPhysicsKnowledgeNeighbors(id: string) {
+  return physicsKnowledgeRelations
+    .filter((relation) => relation.sourceId === id)
+    .sort((left, right) => right.weight - left.weight)
+    .flatMap((relation) => {
+      const node = nodeById.get(relation.targetId);
+      return node ? [{ node, relation }] : [];
+    });
+}
+
 export const knowledgeGraphQuestions: KnowledgeGraphQuestion[] = nodes.map((node) => ({
   mark: physicsGraphDomains[node.domain].mark,
   domain: node.domain,
@@ -145,10 +181,14 @@ export function searchPhysicsKnowledgeGraph(question: string): KnowledgeGraphSea
   const second = ranked[1];
   const confidence = Math.min(98, Math.round(48 + best.score * 1.55 + Math.max(0, best.score - (second?.score ?? 0)) * .7));
   const domain = physicsGraphDomains[best.node.domain];
-  const relatedNodes = best.node.related.map((id) => nodeById.get(id)).filter((node): node is PhysicsKnowledgeNode => Boolean(node));
+  const neighbors = getPhysicsKnowledgeNeighbors(best.node.id);
+  const relatedNodes = neighbors.map((item) => item.node);
   const alternatives = ranked.slice(1, 3).map((match) => ({ title: match.node.title, to: match.node.route, reason: `同时匹配：${match.matchedTerms.slice(0, 3).join("、")}` }));
-  relatedNodes.forEach((node) => {
-    if (alternatives.length < 4 && !alternatives.some((item) => item.to === node.route)) alternatives.push({ title: node.title, to: node.route, reason: "知识图谱中的相邻实验" });
+  neighbors.forEach(({ node, relation }) => {
+    const reason = relation.type === "concept-link"
+      ? `共享概念：${relation.sharedConcepts.join("、")}`
+      : relation.type === "cross-domain" ? "跨领域知识连接" : "同领域相邻实验";
+    if (alternatives.length < 4 && !alternatives.some((item) => item.to === node.route)) alternatives.push({ title: node.title, to: node.route, reason });
   });
 
   return {
@@ -170,5 +210,9 @@ export const physicsKnowledgeGraphStats = {
   experiments: nodes.length,
   concepts: new Set(nodes.flatMap((node) => node.concepts)).size,
   signals: new Set(nodes.flatMap((node) => node.signals)).size,
-  relations: nodes.reduce((total, node) => total + node.related.length, 0)
+  relations: physicsKnowledgeRelations.length,
+  relationTypes: physicsKnowledgeRelations.reduce<Record<string, number>>((counts, relation) => {
+    counts[relation.type] = (counts[relation.type] ?? 0) + 1;
+    return counts;
+  }, {})
 };

@@ -317,6 +317,8 @@
   .cat-partner-panel .harness-message > div { padding: 8px 9px; border-radius: 9px; }
   .cat-partner-panel .harness-message small { margin-bottom: 2px; font-size: 8px; }
   .cat-partner-panel .harness-message p { font-size: 12px; line-height: 1.58; }
+  .cat-partner-panel .harness-message-sources { display: flex; align-items: flex-start; gap: 4px; margin-top: 6px; color: #467c73; font-size: 8px; line-height: 1.45; }
+  .cat-partner-panel .harness-message-sources svg { flex: 0 0 auto; margin-top: 1px; }
   .cat-partner-panel .harness-message em { margin-top: 4px; }
   .cat-partner-panel .harness-message.learner { grid-template-columns: minmax(0,1fr) 26px; padding-left: 44px; }
   .cat-partner-panel .harness-message.welcome > div { padding-block: 9px; }
@@ -1229,6 +1231,8 @@
   .teacher-guangguang-messages article > div > span { display: block; margin-bottom: 3px; color: #5f8497; font-size: 7px; }
   .teacher-guangguang-messages article.role-teacher > div > span { text-align: right; }
   .teacher-guangguang-messages article p { padding: 8px 9px; color: #9fc0ce; border: 1px solid rgba(120, 221, 255, .13); background: #0b263c; font-size: 8px; line-height: 1.6; }
+  .teacher-guangguang-sources { display: flex; align-items: flex-start; gap: 4px; margin-top: 4px; color: #6ea8b8; font-size: 7px; line-height: 1.45; }
+  .teacher-guangguang-sources svg { flex: 0 0 auto; margin-top: 1px; }
   .teacher-guangguang-messages article.role-teacher p { color: #062132; border-color: rgba(120, 221, 255, .55); background: #8bdcf5; }
   .teacher-guangguang-dialogue > form { min-height: 58px; display: grid; grid-template-columns: 1fr 38px; align-items: center; gap: 7px; padding: 8px; border-top: 1px solid var(--tc-line); background: rgba(6, 24, 39, .95); }
   .teacher-guangguang-dialogue > form textarea { min-height: 40px; max-height: 78px; padding: 8px 9px; resize: none; color: #c6e2ec; outline: 0; border: 1px solid rgba(120, 221, 255, .16); background: rgba(1, 12, 22, .7); font: 500 8px/1.5 inherit; }

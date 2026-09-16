@@ -1,0 +1,23 @@
+[
+  { "id": "optics-reflection-angle", "question": "反射角应该相对镜面还是法线测量？", "expectedModule": "reflection" },
+  { "id": "optics-pinhole-blur", "question": "小孔变大以后图像为什么模糊？", "expectedModule": "straight" },
+  { "id": "optics-camera-focus", "question": "手机拍照一直模糊应该调哪里？", "expectedModule": "camera" },
+  { "id": "sound-vacuum", "question": "真空中为什么听不到声音？", "expectedModule": "sound-medium" },
+  { "id": "sound-pitch", "question": "波形变密表示音调有什么变化？", "expectedModule": "sound-features" },
+  { "id": "sound-noise-path", "question": "怎样从传播途中减弱噪声？", "expectedModule": "sound-noise" },
+  { "id": "mechanics-speed", "question": "路程时间都不同怎么比较快慢？", "expectedModule": "mechanics-speed" },
+  { "id": "mechanics-friction", "question": "拉木块为什么必须匀速？", "expectedModule": "mechanics-friction" },
+  { "id": "mechanics-lever", "question": "加长撬棍为什么省力？", "expectedModule": "mechanics-lever" },
+  { "id": "mechanics-pressure", "question": "为什么针尖的压强大？", "expectedModule": "mechanics-pressure" },
+  { "id": "mechanics-buoyancy", "question": "物体为什么会在盐水里浮起来？", "expectedModule": "mechanics-buoyancy" },
+  { "id": "circuit-troubleshoot", "question": "灯泡不亮怎么检查电路？", "expectedModule": "circuit-basic" },
+  { "id": "circuit-ohm", "question": "电阻变大电流怎么变化？", "expectedModule": "circuit-ohm" },
+  { "id": "circuit-power", "question": "大功率电器为什么更费电？", "expectedModule": "circuit-power" },
+  { "id": "circuit-magnet", "question": "如何让电磁铁吸更多铁钉？", "expectedModule": "circuit-magnet" },
+  { "id": "thermal-boiling", "question": "水沸腾后为什么温度不再升高？", "expectedModule": "thermal-boiling" },
+  { "id": "thermal-melting", "question": "冰熔化的时候温度如何变化？", "expectedModule": "thermal-melting" },
+  { "id": "thermal-evaporation", "question": "通风为什么让衣服干得快？", "expectedModule": "thermal-evaporation" },
+  { "id": "measurement-balance", "question": "称量过程中能不能调平衡螺母？", "expectedModule": "measurement-balance" },
+  { "id": "measurement-solid-density", "question": "不规则石块怎么测密度？", "expectedModule": "measurement-density" },
+  { "id": "measurement-liquid-density", "question": "液体质量为什么要减掉烧杯质量？", "expectedModule": "measurement-liquid-density" }
+]
