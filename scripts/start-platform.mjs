@@ -17,6 +17,7 @@ const webUrl = "http://127.0.0.1:5173/";
 const apiUrl = "http://127.0.0.1:8787/api/health";
 const apiCompatibility = "desktop-managed-accounts-v1";
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+const demoOnly = !process.argv.includes("--with-api");
 
 mkdirSync(runtimeRoot, { recursive: true });
 
@@ -59,10 +60,10 @@ async function stopTrackedService(service, expectedCommand, label) {
   throw new Error(`旧版${label}没有按预期停止，请先双击“关闭格物实验室.command”后重试。`);
 }
 
-async function responseMatches(url, expectedText) {
+async function responseMatches(url, expectedText, expectedStatus = 200) {
   try {
     const response = await fetch(url, { signal: AbortSignal.timeout(1600), cache: "no-store" });
-    return response.ok && (await response.text()).includes(expectedText);
+    return response.status === expectedStatus && (await response.text()).includes(expectedText);
   } catch {
     return false;
   }
@@ -157,34 +158,46 @@ async function main() {
   const majorVersion = Number(process.versions.node.split(".")[0]);
   if (majorVersion < 24) throw new Error(`需要 Node.js 24 或更高版本，当前为 ${process.versions.node}`);
 
-  note("正在检查网页与教学数据服务……");
+  note(demoOnly ? "正在启动学生与教师演示，不启用教学后台……" : "正在检查网页与教学数据服务……");
   const state = await readState();
-  let apiReady = await responseMatches(apiUrl, apiCompatibility);
-  if (!apiReady && await portIsOpen(8787)) {
-    const stopped = await stopTrackedService(state.api, "apps/api/src/server.js", "教学数据服务");
-    if (!stopped) throw new Error("8787 端口被无法确认身份的程序占用。为保护数据，启动器没有强制关闭它。请关闭旧版格物实验室后重试。");
-    apiReady = false;
-  }
-  if (!apiReady) {
-    const backup = await backupDatabase();
-    if (backup) note(`教学数据已备份到 ${backup}`);
-    const api = startDetached("教学数据服务", process.execPath, [resolve(projectRoot, "apps/api/src/server.js")], {
-      PHYSICS_API_TOKEN_SECRET: await tokenSecret(),
-      PHYSICS_API_ALLOWED_ORIGINS: "http://127.0.0.1:5173,http://localhost:5173"
-    }, "api.log");
-    state.api = { pid: api.pid, command: "apps/api/src/server.js" };
-    await writeState(state);
-    await waitFor("教学数据服务", () => responseMatches(apiUrl, apiCompatibility), api.logFile);
+  state.mode = demoOnly ? "demo" : "full";
+  if (demoOnly) {
+    if (await portIsOpen(8787)) {
+      const stopped = await stopTrackedService(state.api, resolve(projectRoot, "apps/api/src/server.js"), "教学数据服务");
+      if (!stopped) throw new Error("8787 端口上存在不属于本启动器的服务，请先关闭它再启动纯演示模式。");
+    }
+    delete state.api;
   } else {
-    note("教学数据服务已就绪，直接复用。");
+    let apiReady = await responseMatches(apiUrl, apiCompatibility);
+    if (!apiReady && await portIsOpen(8787)) {
+      const stopped = await stopTrackedService(state.api, resolve(projectRoot, "apps/api/src/server.js"), "教学数据服务");
+      if (!stopped) throw new Error("8787 端口被无法确认身份的程序占用。为保护数据，启动器没有强制关闭它。请关闭旧版格物实验室后重试。");
+      apiReady = false;
+    }
+    if (!apiReady) {
+      const backup = await backupDatabase();
+      if (backup) note(`教学数据已备份到 ${backup}`);
+      const api = startDetached("教学数据服务", process.execPath, [resolve(projectRoot, "apps/api/src/server.js")], {
+        PHYSICS_API_TOKEN_SECRET: await tokenSecret(),
+        PHYSICS_API_ALLOWED_ORIGINS: "http://127.0.0.1:5173,http://localhost:5173"
+      }, "api.log");
+      state.api = { pid: api.pid, command: "apps/api/src/server.js" };
+      await writeState(state);
+      await waitFor("教学数据服务", () => responseMatches(apiUrl, apiCompatibility), api.logFile);
+    } else {
+      note("教学数据服务已就绪，直接复用。");
+    }
   }
 
-  const webReady = await responseMatches(webUrl, "格物实验室");
+  const webReady = await responseMatches(webUrl, "格物实验室") && await responseMatches(`${webUrl}api/health`, demoOnly ? "DEMO_ONLY" : apiCompatibility, demoOnly ? 503 : 200);
   if (!webReady) {
-    if (await portIsOpen(5173)) throw new Error("5173 端口被其他程序占用，无法安全启动网页。");
+    if (await portIsOpen(5173)) {
+      const stopped = await stopTrackedService(state.web, resolve(projectRoot, "scripts/serve-web.mjs"), "网页服务");
+      if (!stopped) throw new Error("5173 端口被其他程序占用，无法安全启动网页。");
+    }
     note("正在生成经过验收的正式网页……");
-    await run(npmCommand, ["run", "build", "--workspace", "@physics-lab/web"]);
-    const web = startDetached("网页服务", process.execPath, [resolve(projectRoot, "scripts/serve-web.mjs")], {}, "web.log");
+    await run(npmCommand, ["run", "build", "--workspace", "@physics-lab/web"], { env: { ...process.env, VITE_DEMO_ONLY: String(demoOnly) } });
+    const web = startDetached("网页服务", process.execPath, [resolve(projectRoot, "scripts/serve-web.mjs")], { PHYSICS_DEMO_ONLY: String(demoOnly) }, "web.log");
     state.web = { pid: web.pid, command: "scripts/serve-web.mjs" };
     await writeState(state);
     await waitFor("网页服务", () => responseMatches(webUrl, "格物实验室"), web.logFile);
@@ -192,10 +205,16 @@ async function main() {
     note("网页服务已就绪，直接复用。");
   }
 
-  note("正在执行页面、资源与前后端连接自检……");
-  await run(process.execPath, [resolve(projectRoot, "scripts/smoke-test-platform.mjs")]);
+  await writeState(state);
+  note(demoOnly ? "正在检查学生与教师演示页面……" : "正在执行页面、资源与前后端连接自检……");
+  await run(process.execPath, [resolve(projectRoot, "scripts/smoke-test-platform.mjs")], { env: { ...process.env, PHYSICS_DEMO_ONLY: String(demoOnly) } });
   openWebsite();
   note(`平台已打开：${webUrl}`);
+  if (demoOnly) {
+    note(`学生演示：${webUrl}#/student`);
+    note(`教师演示：${webUrl}#/teacher`);
+    note("本次只运行演示网页，实验与教学演示记录保存在当前浏览器。");
+  }
   note("以后双击“关闭格物实验室.command”即可安全停止本次启动的服务。");
 }
 

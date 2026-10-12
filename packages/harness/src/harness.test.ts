@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { analyzeHarnessDraft, appendDialogueExchange, buildHarnessTutorialActions, createHarnessExperimentSummary, createHarnessObservation, createHarnessSession, diagnoseHarnessExperiment, findHarnessMisconception, getHarnessCoachAlert, getHarnessConceptMemory, getHarnessConceptNode, getHarnessKnowledgeMastery, getHarnessLearnerModel, getHarnessLearningBranch, getHarnessReviewSchedule, getRecommendedHarnessHintLevel, harnessSessionToXAPIStatements, listHarnessConceptNodes, processHarnessEvent, reviewHarnessConclusionText, reviewHarnessEvidenceText, reviewHarnessHypothesisText, reviewHarnessReasoningText, RuleBasedDialogueAssistant, RuleBasedLearningAssistant, understandHarnessQuestion, validateHarnessSession, validateHarnessTutorialActions } from "./index";
+import { analyzeHarnessDraft, appendDialogueExchange, buildHarnessTutorialActions, createHarnessExperimentSummary, createHarnessObservation, createHarnessSession, diagnoseHarnessExperiment, findHarnessMisconception, getHarnessCoachAlert, getHarnessConceptMemory, getHarnessConceptNode, getHarnessKnowledgeMastery, getHarnessLearnerModel, getHarnessLearningBranch, getHarnessModuleGuide, getHarnessReviewSchedule, getRecommendedHarnessHintLevel, harnessSessionToXAPIStatements, listHarnessConceptNodes, processHarnessEvent, reviewHarnessConclusionText, reviewHarnessEvidenceText, reviewHarnessHypothesisText, reviewHarnessReasoningText, RuleBasedDialogueAssistant, RuleBasedLearningAssistant, understandHarnessQuestion, validateHarnessSession, validateHarnessTutorialActions } from "./index";
 import type { HarnessApparatusContext, HarnessApparatusSnapshot } from "./index";
 
 const assistant = new RuleBasedLearningAssistant();
@@ -79,6 +79,12 @@ describe("rule based learning harness", () => {
     expect(measurement.text).toContain("空载归零调平");
     expect(sound.text).toContain("波形的高度、疏密");
     expect(sound.text).toContain("事实");
+  });
+
+  it("keeps local optics fallback specific to each experiment", () => {
+    const guides = ["invisible-light", "camera", "eye", "correction", "instruments"].map((module) => getHarnessModuleGuide(module, "optics"));
+    expect(guides.map((guide) => guide.title)).toEqual(["红外线与紫外线", "照相机成像", "眼睛的成像与调节", "近视与远视矫正", "显微镜与望远镜"]);
+    expect(guides.every((guide) => Boolean(guide.action && guide.focus && guide.principle))).toBe(true);
   });
 
   it("answers variable, evidence and calculation questions with module-specific scaffolds", () => {
@@ -482,7 +488,17 @@ describe("rule based learning harness", () => {
     const session = appendDialogueExchange(base, "sound-features", "为什么频率会影响音调？", reply, "2026-01-01T00:00:01.000Z");
     expect(session.dialogue).toHaveLength(2);
     expect(session.dialogue?.[1]?.role).toBe("assistant");
+    expect(session.dialogue?.[1]?.provider).toBe("rules");
     expect(session.events[0]?.type).toBe("dialogue.asked");
+  });
+
+  it("keeps the model source on an individual assistant reply", () => {
+    const base = createHarnessSession("sound", "test", "2026-01-01T00:00:00.000Z");
+    const session = appendDialogueExchange(base, "sound-features", "频率和音调有关吗？", {
+      intent: "explain", text: "请比较两组频率与音调。", followUps: [], provider: "deepseek-harness"
+    });
+    expect(session.dialogue?.[1]?.provider).toBe("deepseek-harness");
+    expect(validateHarnessSession(session).valid).toBe(true);
   });
 
   it("validates and migrates an early local session without a version field", () => {

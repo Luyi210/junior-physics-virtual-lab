@@ -99,6 +99,9 @@ function validateDialogue(value: unknown, path: string, errors: HarnessValidatio
   if (value.followUps !== undefined && (!Array.isArray(value.followUps) || value.followUps.some((item) => typeof item !== "string"))) {
     errors.push({ path: `${path}.followUps`, message: "追问建议必须是字符串数组" });
   }
+  if (value.provider !== undefined && !["rules", "deepseek-harness"].includes(String(value.provider))) {
+    errors.push({ path: `${path}.provider`, message: "未知回答来源" });
+  }
   return true;
 }
 

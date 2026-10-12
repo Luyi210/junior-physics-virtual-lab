@@ -74,7 +74,18 @@ test("PostgreSQL mode persists the managed classroom workflow", async () => {
   } });
   assert.equal(task.status, 201);
 
+  for (const path of ["/tasks", `/tasks?classId=${classId}`]) {
+    const listed = await request(path, { token: adminToken });
+    assert.equal(listed.status, 200);
+    assert.ok(listed.payload.data.some((item) => item.id === task.payload.data.id));
+  }
+
   const studentToken = await login("student@example.com", "StudentTest123!");
+  for (const path of ["/tasks", `/tasks?classId=${classId}`]) {
+    const listed = await request(path, { token: studentToken });
+    assert.equal(listed.status, 200);
+    assert.ok(listed.payload.data.some((item) => item.id === task.payload.data.id));
+  }
   const session = await request("/sessions", { method: "POST", token: studentToken, body: { taskId: task.payload.data.id } });
   assert.equal(session.status, 201);
   const events = await request(`/sessions/${session.payload.data.id}/events`, { method: "POST", token: studentToken, body: { events: [

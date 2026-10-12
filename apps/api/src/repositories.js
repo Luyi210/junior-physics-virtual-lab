@@ -158,9 +158,10 @@ export async function createLesson(db, user, input) {
 }
 
 export async function listTasks(db, user, classId) {
+  const classFilter = classId ? " AND t.class_id=?" : "";
   const rows = user.role === "student"
-    ? await db.all(`SELECT t.*, c.name class_name, l.title lesson_title, l.experiment_id FROM tasks t JOIN classes c ON c.id=t.class_id JOIN lessons l ON l.id=t.lesson_id JOIN class_members cm ON cm.class_id=t.class_id WHERE t.school_id=? AND cm.user_id=? AND t.status='published' AND (? IS NULL OR t.class_id=?) ORDER BY t.updated_at DESC`, [user.schoolId, user.id, classId, classId])
-    : await db.all(`SELECT t.*, c.name class_name, l.title lesson_title, l.experiment_id FROM tasks t JOIN classes c ON c.id=t.class_id JOIN lessons l ON l.id=t.lesson_id WHERE t.school_id=? AND (? IS NULL OR t.class_id=?) ORDER BY t.updated_at DESC`, [user.schoolId, classId, classId]);
+    ? await db.all(`SELECT t.*, c.name class_name, l.title lesson_title, l.experiment_id FROM tasks t JOIN classes c ON c.id=t.class_id JOIN lessons l ON l.id=t.lesson_id JOIN class_members cm ON cm.class_id=t.class_id WHERE t.school_id=? AND cm.user_id=? AND t.status='published'${classFilter} ORDER BY t.updated_at DESC`, [user.schoolId, user.id, ...(classId ? [classId] : [])])
+    : await db.all(`SELECT t.*, c.name class_name, l.title lesson_title, l.experiment_id FROM tasks t JOIN classes c ON c.id=t.class_id JOIN lessons l ON l.id=t.lesson_id WHERE t.school_id=?${classFilter} ORDER BY t.updated_at DESC`, [user.schoolId, ...(classId ? [classId] : [])]);
   return rows.map(mapTask);
 }
 

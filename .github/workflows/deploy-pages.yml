@@ -30,9 +30,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Test demo API isolation
+        run: npm run test --workspace @physics-lab/web
+
       - name: Build web application
         run: npm run build --workspace @physics-lab/web
         env:
+          VITE_DEMO_ONLY: "true"
           VITE_API_URL: ${{ vars.VITE_API_URL }}
 
       - name: Configure GitHub Pages

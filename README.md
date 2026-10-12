@@ -6,7 +6,10 @@
 
 GitHub Pages：<https://luyi210.github.io/junior-physics-virtual-lab/>
 
-每次更新 `main` 分支后，GitHub Actions 会自动构建并发布最新网页。
+每次更新 `main` 分支后，GitHub Actions 会自动构建并发布最新演示网页。学生端和教师端直接进入本地演示，不需要登录或配置教学后台，记录保存在当前浏览器。
+
+- 学生演示：<https://luyi210.github.io/junior-physics-virtual-lab/#/student>
+- 教师演示：<https://luyi210.github.io/junior-physics-virtual-lab/#/teacher>
 
 ## 技术结构
 
@@ -16,10 +19,22 @@ GitHub Pages：<https://luyi210.github.io/junior-physics-virtual-lab/>
 
 ## 本地运行
 
+安装 Node.js 24 和项目依赖后，双击 `启动格物实验室.command`，或执行：
+
+```bash
+npm run start:platform
+```
+
+默认只启动 5173 演示网页，不启动 8787 教学后台。双击 `关闭格物实验室.command` 可关闭演示网页。
+
+确实需要真实账号与教学数据库时，可显式执行 `npm run start:platform -- --with-api`。开发调试仍可使用：
+
 ```bash
 npm install
 npm run dev
 ```
+
+`.command` 是依赖本项目的启动脚本，不能单独复制后运行。已打包的桌面软件自带运行环境；分发时使用完整的 Windows 便携 `.exe` 或 Mac `.dmg` 安装包。
 
 ## Render 公网部署
 

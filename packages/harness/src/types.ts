@@ -94,6 +94,7 @@ export interface HarnessDialogueMessage {
   intent?: HarnessDialogueIntent;
   followUps?: string[];
   citations?: HarnessKnowledgeCitation[];
+  provider?: "rules" | "deepseek-harness";
 }
 
 export interface HarnessDialogueReply {
@@ -101,6 +102,7 @@ export interface HarnessDialogueReply {
   text: string;
   followUps: string[];
   citations?: HarnessKnowledgeCitation[];
+  provider?: "rules" | "deepseek-harness";
 }
 
 export interface HarnessSession {

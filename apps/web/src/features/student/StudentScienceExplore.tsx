@@ -204,7 +204,7 @@ function assertNeverScienceLab(key: never): never {
 function ScienceModuleReading({ module }: { module: ScienceModuleMeta }) {
   const ModuleIcon = module.icon;
   return <>
-    <section className="science-experiment-guide" aria-label={`${module.title}实验说明`}>
+    <section className="science-experiment-guide" data-tutorial-spotlight="explanation" aria-label={`${module.title}实验说明`}>
       <header><span>EXPERIMENT GUIDE / 实验说明</span><h2>这个实验研究什么？应该怎样比较？</h2><p>{module.chapter} · {module.note}。实验不会要求按固定任务闯关，可以自由改变参数，但比较规律时建议一次只改变一个条件。</p></header>
       <div>
         <article><i><Info size={19} /></i><span><small>01 · 这是什么</small><strong>确定实验对象</strong><p>{module.guide[0]}</p></span></article>
@@ -213,7 +213,7 @@ function ScienceModuleReading({ module }: { module: ScienceModuleMeta }) {
       </div>
       <footer><b>开放问题：</b>{module.question}</footer>
     </section>
-    <section className="science-life-application" aria-label={`${module.title}生活应用`}>
+    <section className="science-life-application" data-tutorial-spotlight="application" aria-label={`${module.title}生活应用`}>
       <header><div><span>PHYSICS IN LIFE / 生活中的物理</span><h2>课本规律离开实验台以后，仍在真实世界里工作。</h2></div><ModuleIcon size={34} /></header>
       <div>{module.life.map((item, index) => <article key={item.title}><b>{String(index + 1).padStart(2, "0")}</b><i><ModuleIcon size={20} /></i><h3>{item.title}</h3><p>{item.text}</p></article>)}</div>
     </section>
@@ -433,7 +433,7 @@ function BalanceMeasurementLab() {
 
   return <div className="science-lab tray-balance-lab">
     {guideOpen && <BalanceUsageGuide onClose={() => { window.sessionStorage.setItem("physics-balance-guide-seen", "1"); setGuideOpen(false); }} />}
-    <header><div><span>BALANCE LAB / 托盘天平实训台</span><h1>不显示答案，你能把这块金属的质量测出来吗？</h1><p>像真实实验一样完成归零、调平、放物、加砝码和移动游码；保存第一次结果后取下物体，重新独立操作一次，用重复读数检查测量是否可靠。</p></div><PhysicsFieldMotif field="measurement" className="science-lab-physics" /><div className="science-lab-header-actions"><button onClick={() => setGuideOpen(true)}><Info size={16} />使用教学</button><button onClick={reset}><RotateCcw size={16} />重新开始</button></div></header>
+    <header data-tutorial-spotlight="module"><div><span>BALANCE LAB / 托盘天平实训台</span><h1>不显示答案，你能把这块金属的质量测出来吗？</h1><p>像真实实验一样完成归零、调平、放物、加砝码和移动游码；保存第一次结果后取下物体，重新独立操作一次，用重复读数检查测量是否可靠。</p></div><PhysicsFieldMotif field="measurement" className="science-lab-physics" /><div className="science-lab-header-actions"><button onClick={() => setGuideOpen(true)}><Info size={16} />使用教学</button><button onClick={reset}><RotateCcw size={16} />重新开始</button></div></header>
     <div className={`balance-lab-sim stage-${stage} ${balanced ? "is-balanced" : ""}`} style={{ "--balance-angle": `${beamTilt}deg`, "--left-pan-y": `${leftPanY}px`, "--right-pan-y": `${rightPanY}px`, "--pointer-shift": `${beamTilt * 4}px` } as React.CSSProperties}>
       <div className="balance-procedure-strip" aria-label="实验步骤">
         {["游码归零并调平", "左物右码", "先砝码后游码", "平衡读数"].map((label, index) => <span className={index < stage ? "done" : index === stage ? "active" : ""} key={label}><b>{index < stage ? "✓" : index + 1}</b>{label}</span>)}

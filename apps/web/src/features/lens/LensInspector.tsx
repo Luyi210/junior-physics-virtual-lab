@@ -36,7 +36,7 @@ function RangeField({ label, symbol, value, min, max, step, unit, onChange, onIn
 export function LensInspector({ scene, result, revealed = true, onInteract }: LensInspectorProps) {
   const update = useLensStore((state) => state.update);
   return (
-    <aside className="lens-inspector">
+    <aside className="lens-inspector" data-tutorial-spotlight="controls">
       <div className="inspector-heading">
         <div><span>PARAMETERS</span><h2>实验参数</h2></div>
         <Crosshair size={21} />
@@ -55,7 +55,7 @@ export function LensInspector({ scene, result, revealed = true, onInteract }: Le
         <button className={scene.showLabels ? "selected" : ""} onClick={() => { update({ showLabels: !scene.showLabels }); onInteract?.(); }}><Eye size={17} />标签</button>
       </section>
 
-      <section className={`result-console ${revealed ? "" : "result-standby"}`}>
+      <section className={`result-console ${revealed ? "" : "result-standby"}`} data-tutorial-spotlight="explanation">
         <div className="console-head"><span>{revealed ? "LIVE RESULT" : "MEASUREMENT STANDBY"}</span><i className={revealed ? result.case === "focus" ? "" : result.real ? "real" : "virtual" : ""}>{revealed ? result.case === "focus" ? "PARALLEL" : result.real ? "REAL" : "VIRTUAL" : "WAIT"}</i></div>
         <div className="result-equation">1/f = 1/u + 1/v</div>
         <dl>

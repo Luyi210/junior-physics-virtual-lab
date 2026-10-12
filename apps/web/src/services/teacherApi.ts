@@ -19,8 +19,9 @@ import type {
 const LEGACY_TOKEN_KEY = "physics-lab-v2-api-access-token";
 const TEACHER_TOKEN_KEY = "physics-lab-v2-api-teacher-token";
 const STUDENT_TOKEN_KEY = "physics-lab-v2-api-student-token";
+export const DEMO_ONLY = import.meta.env.VITE_DEMO_ONLY === "true";
 const configuredBaseUrl = import.meta.env.VITE_API_URL as string | undefined;
-const API_BASE_URL = configuredBaseUrl?.replace(/\/$/, "") ?? (import.meta.env.DEV ? "http://127.0.0.1:8787/api" : "/api");
+const API_BASE_URL = DEMO_ONLY ? "" : configuredBaseUrl?.replace(/\/$/, "") ?? (import.meta.env.DEV ? "http://127.0.0.1:8787/api" : "/api");
 
 export class TeacherApiError extends Error {
   constructor(public status: number, public code: string, message: string) {
@@ -36,7 +37,7 @@ function storedToken(key: string, includeLegacy = false) {
 }
 
 async function request<T>(tokenKey: string, path: string, options: RequestInit = {}, authenticated = true, includeLegacy = false): Promise<T> {
-  if (!API_BASE_URL) throw new TeacherApiError(0, "API_NOT_CONFIGURED", "线上版本尚未配置后台地址");
+  if (!API_BASE_URL) throw new TeacherApiError(0, "API_NOT_CONFIGURED", DEMO_ONLY ? "演示版使用本地数据" : "线上版本尚未配置后台地址");
   const accessToken = storedToken(tokenKey, includeLegacy);
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
@@ -58,7 +59,7 @@ const health = () => request<ApiHealth>(TEACHER_TOKEN_KEY, "/health", {}, false)
 
 export const teacherApi = {
   isConfigured: () => Boolean(API_BASE_URL),
-  hasSession: () => Boolean(storedToken(TEACHER_TOKEN_KEY, true)),
+  hasSession: () => !DEMO_ONLY && Boolean(storedToken(TEACHER_TOKEN_KEY, true)),
   health,
   async login(email: string, password: string) {
     const session = await request<AuthSession>(TEACHER_TOKEN_KEY, "/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }, false);
@@ -90,7 +91,7 @@ export const teacherApi = {
 
 export const studentApi = {
   isConfigured: () => Boolean(API_BASE_URL),
-  hasSession: () => Boolean(storedToken(STUDENT_TOKEN_KEY)),
+  hasSession: () => !DEMO_ONLY && Boolean(storedToken(STUDENT_TOKEN_KEY)),
   health,
   async login(email: string, password: string) {
     const session = await request<AuthSession>(STUDENT_TOKEN_KEY, "/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }, false);

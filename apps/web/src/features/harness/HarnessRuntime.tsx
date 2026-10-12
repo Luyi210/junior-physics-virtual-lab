@@ -16,7 +16,7 @@ import type { ExperimentSnapshot, TutorialCommand, TutorialTarget } from "./tuto
 import { guidedOpticsTutorials } from "./opticsTutorials";
 import type { GuidedTutorialProfile, GuidedTutorialTarget } from "./opticsTutorials";
 import type { StudentTaskLessonContext } from "@physics-lab/contracts";
-import { studentApi } from "../../services/teacherApi";
+import { DEMO_ONLY, studentApi } from "../../services/teacherApi";
 import { activeStudentSession } from "../../services/studentSessionSync";
 
 const eventNames: Record<HarnessEventType, string> = {
@@ -198,8 +198,13 @@ interface SpotlightRect { top: number; left: number; width: number; height: numb
 type SpotlightTarget = TutorialTarget | GuidedTutorialTarget;
 
 const genericSpotlightSelectors: Record<GuidedTutorialTarget, string[]> = {
-  module: [".explore-module-content .open-module-intro", ".explore-module-content .open-experience"],
+  module: [".explore-module-content .open-module-intro", ".science-module-experience .science-lab > header", ".explore-module-content .open-experience"],
   visual: [
+    ".science-module-experience > .science-lab > [class*='-sim']",
+    ".science-module-experience > .science-lab > [class*='-apparatus']",
+    ".science-module-experience > .science-lab > [class*='-stage']",
+    ".science-module-experience > .science-lab > [class*='-rig']",
+    ".science-module-experience > .science-lab",
     ".explore-module-content .concept-sim",
     ".explore-module-content .sound-sim",
     ".explore-module-content .lever-sim",
@@ -213,26 +218,44 @@ const genericSpotlightSelectors: Record<GuidedTutorialTarget, string[]> = {
     ".explore-module-content .color-mix-lab",
     ".explore-module-content .correction-lab",
     ".explore-module-content .instrument-lab",
-    ".explore-module-content .celestial-axis",
-    ".explore-module-content .experience-canvas"
+    ".explore-module-content .celestial-lab",
+    ".explore-module-content .curved-mirror-lab",
+    ".explore-module-content .invisible-light-lab",
+    ".explore-module-content .vision-optical-stage",
+    ".explore-module-content .vision-3d-stage",
+    ".explore-module-content .lens-system-3d-lab",
+    ".explore-module-content .experience-canvas",
+    ".explore-module-content .open-experience"
   ],
   controls: [
+    ".science-module-experience .science-lab [class*='-operation-dock']",
+    ".science-module-experience .science-lab > [class*='-controls']:not(.science-controls)",
+    ".science-module-experience .science-lab .noise-control-console",
+    ".science-module-experience .science-lab .campus-scene-selector",
+    ".science-module-experience .science-lab .science-controls",
+    ".science-module-experience .science-lab .science-range",
+    ".science-module-experience .science-lab .science-lab-header-actions",
     ".explore-module-content .science-controls",
     ".explore-module-content .balance-operation-dock",
     ".explore-module-content .open-control-deck",
     ".explore-module-content .rgb-controls",
     ".explore-module-content .medium-tabs",
     ".explore-module-content .correction-lens-deck",
-    ".explore-module-content .instrument-switch"
+    ".explore-module-content .instrument-switch",
+    ".explore-module-content .vision-prescription-console",
+    ".explore-module-content .invisible-application-picker",
+    ".explore-module-content .open-experience"
   ],
-  explanation: [".explore-module-content .science-module-guide", ".explore-module-content .dispersion-guide", ".explore-module-content .physics-law-plate", ".explore-module-content .open-module-intro"],
+  explanation: [".science-module-experience .science-experiment-guide", ".explore-module-content .science-module-guide", ".explore-module-content .dispersion-guide", ".explore-module-content .physics-law-plate", ".explore-module-content .open-module-intro"],
   application: [
+    ".science-module-experience .science-life-application",
     ".explore-module-content .science-life-application",
     ".explore-module-content .rainbow-life-section",
     ".explore-module-content .micro-display-workbench",
     ".explore-module-content .mirror-life-workbench",
     ".explore-module-content .invisible-application-picker",
-    ".explore-module-content .open-experience > section:last-of-type"
+    ".explore-module-content .open-experience > section:last-of-type",
+    ".explore-module-content .open-experience"
   ]
 };
 
@@ -347,6 +370,7 @@ function HarnessPanel() {
   const session = useHarnessStore((state) => state.session);
   const asking = useHarnessStore((state) => state.asking);
   const dialogueProvider = useHarnessStore((state) => state.dialogueProvider);
+  const dialogueFallbackReason = useHarnessStore((state) => state.dialogueFallbackReason);
   const unread = useHarnessStore((state) => state.session?.insights.filter((item) => !item.read).length ?? 0);
   const setPanelOpen = useHarnessStore((state) => state.setPanelOpen);
   const askQuestion = useHarnessStore((state) => state.askQuestion);
@@ -639,7 +663,7 @@ function HarnessPanel() {
                   {visibleDialogue.map((message) => (
                     <article className={`harness-message ${message.role}`} key={message.id}>
                       <i>{message.role === "assistant" ? <OrangeCatAvatar compact /> : <UserRound size={16} />}</i>
-                      <div><small>{message.role === "assistant" ? "橘猫实验员 · 光光" : "我的问题"}</small><p>{message.text}</p>{message.citations?.length ? <span className="harness-message-sources"><Network size={10} />知识依据：{message.citations.slice(0, 2).map((citation) => `${citation.title}·${citation.section}`).join("；")}</span> : null}{message.intent && <em><BrainCircuit size={10} />依据当前装置与学习轨迹 · {message.intent.toUpperCase()}</em>}</div>
+                      <div><small>{message.role === "assistant" ? <>橘猫实验员 · 光光 <b className={`harness-source-tag ${message.provider ?? "unknown"}`}>{message.provider === "deepseek-harness" ? "DeepSeek 回答" : message.provider === "rules" ? "本地规则回答" : "旧对话 · 来源未记录"}</b></> : "我的问题"}</small><p>{message.text}</p>{message.citations?.length ? <span className="harness-message-sources"><Network size={10} />知识依据：{message.citations.slice(0, 2).map((citation) => `${citation.title}·${citation.section}`).join("；")}</span> : null}{message.intent && <em><BrainCircuit size={10} />依据当前装置与学习轨迹 · {message.intent.toUpperCase()}</em>}</div>
                     </article>
                   ))}
                   <div ref={streamEndRef} />
@@ -690,7 +714,7 @@ function HarnessPanel() {
             <TutorialExperience activeArea={activeArea} activeModule={activeModule} compact={tutorialCompact} side={tutorialMiniSide} onCompactChange={setTutorialCompact} onSideChange={setTutorialMiniSide} />
           )}
 
-          <footer className="cat-panel-status"><span><ShieldCheck size={12} />{dialogueProvider === "deepseek-harness" ? "DeepSeek Harness · 仅发送问题与当前实验上下文" : "本地物理规则 · AI 不可用时安全兜底"}</span></footer>
+          <footer className="cat-panel-status"><span><ShieldCheck size={12} />{DEMO_ONLY ? "演示模式 · 光光使用本地物理知识与操作教程" : panelView === "tutorial" ? "操作教程为预设脚本，不调用 DeepSeek" : dialogueProvider === "deepseek-harness" ? "上条回复来自 DeepSeek · 仅发送问题与当前实验上下文" : dialogueFallbackReason === "request-failed" ? "上条 DeepSeek 请求失败，已由本地规则回答" : !studentApi.hasSession() ? "当前未登录学生账号 · 问答使用本地规则" : "已登录学生账号 · 提问时优先连接 DeepSeek"}</span></footer>
         </aside></>
       )}
     </>
@@ -911,7 +935,7 @@ function TutorialExperience({ activeArea, activeModule, compact, side, onCompact
 
   if (!started) {
     return <div className="harness-panel-body cat-tutorial-cover">
-      <div className={`cat-tutorial-cover-art ${activeModule === "dispersion" ? "dispersion" : "guided"}`}><OrangeCatAvatar mood="celebrating" /><span className="cat-prism-beam" /><span className="cat-prism-spectrum" /></div>
+      <div className={`cat-tutorial-cover-art ${activeModule === "dispersion" ? "dispersion" : "guided"}`}><span className="cat-tutorial-cover-label">{activeModule === "dispersion" ? "LIGHT LAB / 光的色散" : "GUANGGUANG LAB / 实验探究"}</span><OrangeCatAvatar mood="celebrating" /><span className="cat-prism-beam" /><span className="cat-prism-spectrum" /></div>
       <span>{taskContext ? "CLASS MISSION TUTOR · 班级任务支架" : "DYNAMIC LAB STORY · 自由探索教程"} · {activeModule === "dispersion" ? "约 4 分钟" : guidedProfile.duration}</span>
       <h2>{taskContext ? taskContext.title : activeModule === "dispersion" ? "跟着橘猫，亲手发现白光里的颜色" : guidedProfile.title}</h2>
       <p>{taskContext ? `本次任务的核心问题是：“${taskContext.inquiryQuestion}”光光会用当前装置带你预测、控制变量和寻找证据，但不会替你完成操作。` : activeModule === "dispersion" ? "这不是一段只能观看的视频。光光会边讲边指出装置，在关键步骤停下来，等你亲手打开光源、旋转三棱镜和移动光屏。" : guidedProfile.summary}</p>

@@ -8,7 +8,7 @@ const EVENT_QUEUE_KEY = "physics-lab-v2-api-event-queue";
 export type ActiveStudentSession = Pick<ExperimentSession, "id" | "taskId" | "classId" | "experimentId" | "status" | "startedAt">;
 
 export function activeStudentSession(): ActiveStudentSession | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined" || !studentApi.isConfigured()) return null;
   try {
     const value = JSON.parse(window.localStorage.getItem(ACTIVE_SESSION_KEY) ?? "null") as ActiveStudentSession | null;
     return value?.status === "active" ? value : null;

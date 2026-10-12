@@ -3410,7 +3410,10 @@
   .harness-message > i { width: 28px; height: 28px; display: grid; place-items: center; color: #1e7669; border: 1px solid #8dc6ba; border-radius: 50%; background: #e2f3ec; font-style: normal; }
   .harness-message > div { position: relative; padding: 10px 11px 9px; color: #314f56; border: 1px solid #d0cabe; background: white; }
   .harness-message > div::before { content: ""; position: absolute; top: 9px; left: -5px; width: 8px; height: 8px; border-bottom: 1px solid #d0cabe; border-left: 1px solid #d0cabe; background: white; transform: rotate(45deg); }
-  .harness-message small { display: block; margin-bottom: 4px; color: #55847d; font-size: 10px; letter-spacing: .04em; }
+.harness-message small { display: block; margin-bottom: 4px; color: #55847d; font-size: 10px; letter-spacing: .04em; }
+.harness-message .harness-source-tag { display: inline-block; margin-left: 5px; padding: 2px 5px; border: 1px solid #c8d8d3; border-radius: 4px; color: #4b6d66; background: #f0f7f4; font-size: 9px; font-weight: 700; letter-spacing: 0; }
+.harness-message .harness-source-tag.deepseek-harness { border-color: #9fc9bc; color: #176950; background: #e4f5ec; }
+.harness-message .harness-source-tag.unknown { border-color: #dfd8c8; color: #85745b; background: #faf7f0; }
   .harness-message p { font-size: 13px; line-height: 1.72; }
   .harness-message em { display: flex; align-items: center; gap: 4px; margin-top: 7px; color: #98a29f; font-size: 8px; font-style: normal; letter-spacing: .05em; }
   .harness-message em svg { color: #d48a40; }
@@ -7476,6 +7479,10 @@
   .dock-actions button { min-height: 37px; display: flex; align-items: center; justify-content: center; gap: 7px; color: var(--ink); border: 1px solid var(--ink); background: transparent; cursor: pointer; font-size: 9px; }
   .dock-actions button:disabled { opacity: .35; cursor: not-allowed; }
   .dock-actions .button-record { color: white; background: var(--ink-deep); box-shadow: 3px 3px 0 var(--cyan); }
+  .workbench-applications { display: flex; align-items: center; gap: 20px; padding: 15px 24px; border-top: 1px solid #244049; color: #d7e8e3; background: #0b252d; }
+  .workbench-applications span { flex: 0 0 auto; color: #74d8d0; font-weight: 700; }
+  .workbench-applications p { margin: 0; }
+  @media (max-width: 760px) { .workbench-applications { align-items: flex-start; flex-direction: column; gap: 6px; } }
 
   /* Project-wide Kaiti typography: bold, readable and visually direct */
   p { font-size: 15px !important; line-height: 1.75 !important; }
@@ -8978,7 +8985,8 @@
 
   .cat-tutorial-cover { position: relative; min-height: 100%; padding: 20px 23px 24px; overflow: hidden; background: linear-gradient(rgba(121,88,51,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(121,88,51,.055) 1px,transparent 1px),#fffaf0; background-size: 27px 27px; }
   .cat-tutorial-cover-art { position: relative; height: 148px; display: grid; place-items: center; margin: -5px -8px 16px; overflow: hidden; border: 1px solid #d8c8ad; background: radial-gradient(circle at 50% 45%,#fff3c5,transparent 34%),linear-gradient(150deg,#24414a,#122e36); }
-  .cat-tutorial-cover-art::before { content: "LIGHT LAB  /  光的色散"; position: absolute; top: 11px; left: 13px; color: #79a59f; font-size: 10px; font-weight: 800; letter-spacing: .11em; }
+  .cat-tutorial-cover-label { position: absolute; top: 11px; left: 13px; color: #79a59f; font-size: 10px; font-weight: 800; letter-spacing: .11em; }
+  .cat-tutorial-cover-art.guided .cat-prism-beam, .cat-tutorial-cover-art.guided .cat-prism-spectrum { display: none; }
   .cat-tutorial-cover-art .orange-cat-avatar { position: relative; z-index: 3; width: 126px; height: 126px; transform: translateX(-78px); }
   .cat-prism-beam { position: absolute; z-index: 1; top: 76px; left: 57%; width: 65px; height: 3px; background: #fff6cf; box-shadow: 0 0 11px white; transform: rotate(-3deg); }
   .cat-prism-spectrum { position: absolute; z-index: 2; top: 48px; right: 25px; width: 94px; height: 62px; clip-path: polygon(0 45%,100% 0,100% 100%); background: linear-gradient(#fb5c5c,#f2a944,#f0d253,#65c879,#51aedd,#5e78dc,#a766d2); opacity: .84; filter: drop-shadow(0 0 8px rgba(255,255,255,.35)); animation: cat-spectrum-breathe 2.6s ease-in-out infinite; }

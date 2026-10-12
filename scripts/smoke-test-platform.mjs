@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 const baseUrl = new URL(process.env.PHYSICS_PLATFORM_URL ?? "http://127.0.0.1:5173/");
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const webDist = resolve(projectRoot, "apps/web/dist");
+const demoOnly = process.argv.includes("--demo") || process.env.PHYSICS_DEMO_ONLY === "true";
 
 const teacherRoutes = ["/teacher", "/teacher/accounts", "/teacher/classes", "/teacher/lessons", "/teacher/live", "/teacher/reports"];
 const lightModes = ["overview", "dispersion", "straight", "reflection", "refraction", "color-mix", "celestial", "plane-mirror", "curved-mirror", "invisible-light", "magnifier", "bench", "camera", "eye", "correction", "instruments"];
@@ -70,15 +71,22 @@ await Promise.all(routeCodeAssets.map(async (asset) => {
   assert((await response.arrayBuffer()).byteLength > 0, `页面代码资源为空：${asset}`);
 }));
 
-const healthResponse = await fetchChecked("api/health");
-const health = await healthResponse.json();
-assert(health.data?.status === "ok", "后台健康状态异常");
-assert(["sqlite", "postgresql"].includes(health.data?.database), "教学数据库未就绪");
-assert(health.data?.compatibility === "desktop-managed-accounts-v1", "前后端版本不兼容");
-assert(health.data?.capabilities?.includes("managed-teacher-accounts"), "管理员账号能力未加载");
+if (demoOnly) {
+  const response = await fetchChecked("api/health", 503);
+  const payload = await response.json();
+  assert(payload.error?.code === "DEMO_ONLY", "网页没有切换到纯演示模式");
+  console.log(`✓ 演示自检通过：${routes.length} 个页面入口、${routeCodeAssets.length} 个页面代码资源正常；教学后台请求已禁用`);
+} else {
+  const healthResponse = await fetchChecked("api/health");
+  const health = await healthResponse.json();
+  assert(health.data?.status === "ok", "后台健康状态异常");
+  assert(["sqlite", "postgresql"].includes(health.data?.database), "教学数据库未就绪");
+  assert(health.data?.compatibility === "desktop-managed-accounts-v1", "前后端版本不兼容");
+  assert(health.data?.capabilities?.includes("managed-teacher-accounts"), "管理员账号能力未加载");
 
-const protectedResponse = await fetchChecked("api/auth/me", 401);
-const protectedPayload = await protectedResponse.json();
-assert(protectedPayload.error?.code === "AUTH_REQUIRED", "后台鉴权通道返回异常");
+  const protectedResponse = await fetchChecked("api/auth/me", 401);
+  const protectedPayload = await protectedResponse.json();
+  assert(protectedPayload.error?.code === "AUTH_REQUIRED", "后台鉴权通道返回异常");
 
-console.log(`✓ 平台开机自检通过：${routes.length} 个页面入口、${routeCodeAssets.length} 个页面代码资源、同源 API 与 ${health.data.database} 均正常`);
+  console.log(`✓ 平台开机自检通过：${routes.length} 个页面入口、${routeCodeAssets.length} 个页面代码资源、同源 API 与 ${health.data.database} 均正常`);
+}

@@ -42,8 +42,13 @@ const moduleProfiles: Record<string, Partial<ModuleProfile> & Pick<ModuleProfile
   celestial: { title: "日食与月食", focus: "本影、半影以及三个天体的相对位置", principle: "光的直线传播会在遮挡物后形成影区", action: "旋转观察空间，同时沿太阳光方向检查影区" },
   "plane-mirror": { title: "平面镜成像", focus: "物与像到镜面的距离、大小和连线方向", principle: "平面镜成等大、正立的虚像，物像关于镜面对称", action: "移动物体后从不同视角寻找像的位置" },
   "curved-mirror": { title: "曲面镜成像", focus: "焦点、视野以及像的虚实和大小", principle: "凹面镜使近轴平行光会聚，凸面镜使近轴平行光发散", action: "先切换凹凸面镜，再只改变物距" },
+  "invisible-light": { title: "红外线与紫外线", focus: "探测器读数与屏幕伪彩显示的区别", principle: "红外线和紫外线都不属于人眼可见光，需借助适当探测器观察", action: "只更换一种阻挡材料，比较探测结果" },
   magnifier: { title: "放大镜", focus: "物体位于焦点以内时看到的正立放大虚像", principle: "凸透镜焦内成正立放大的虚像", action: "把物体移到焦点两侧，比较光屏能否承接像" },
   bench: { title: "自由光具座", focus: "物距、像距、焦距与光屏清晰度", principle: "凸透镜成像规律", action: "先固定焦距，移动物体后再寻找清晰像面" },
+  camera: { title: "照相机成像", focus: "镜头后的像面是否与感光器重合", principle: "一般拍摄条件下，镜头在感光器上形成倒立、缩小的实像", action: "改变景物距离后重新调焦，比较清晰度" },
+  eye: { title: "眼睛的成像与调节", focus: "视网膜固定时晶状体曲度怎样随物距改变", principle: "眼睛通过改变晶状体会聚能力让像落在视网膜上", action: "保持视网膜位置不变，比较看远和看近时的晶状体状态" },
+  correction: { title: "近视与远视矫正", focus: "未矫正像点位于视网膜前还是后", principle: "凹透镜使光发散，凸透镜使光会聚", action: "先找未矫正焦点，再尝试相应镜片并观察像点" },
+  instruments: { title: "显微镜与望远镜", focus: "物镜形成的中间像和目镜的观察作用", principle: "物镜与目镜分工完成两级成像", action: "分别调节物镜和目镜，比较中间像与最终视角" },
   "sound-medium": { title: "声音的产生与传播", focus: "空气减少或距离增大时接收强度怎样变化", principle: "声音由振动产生，传播需要介质", action: "保持距离不变先减少空气，再恢复空气改变距离" },
   "sound-features": { title: "声音三要素", focus: "波形的高度、疏密与声音特性的对应关系", principle: "振幅主要影响响度，频率主要影响音调", action: "固定振幅改变频率，再反过来操作" },
   "sound-noise": { title: "噪声的产生与控制", focus: "接收处声级随声源和衰减量怎样变化", principle: "控制噪声可以从声源、传播途中和接收端入手", action: "固定声源处声级，只改变一种控制措施的等效衰减量" },
@@ -627,7 +632,7 @@ export function appendDialogueExchange(session: HarnessSession, module: string, 
   };
   const messages: HarnessDialogueMessage[] = [
     { id: createDialogueId("message-learner"), role: "learner", text: question.trim(), createdAt: now, module },
-    { id: createDialogueId("message-assistant"), role: "assistant", text: reply.text, createdAt: now, module, intent: reply.intent, followUps: reply.followUps, citations: reply.citations }
+    { id: createDialogueId("message-assistant"), role: "assistant", text: reply.text, createdAt: now, module, intent: reply.intent, followUps: reply.followUps, citations: reply.citations, provider: reply.provider ?? "rules" }
   ];
   return { ...session, updatedAt: now, events: [...session.events, event], dialogue: [...(session.dialogue ?? []), ...messages] };
 }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { PlatformUser, TeachingClass, TeachingLesson, TeachingTask } from "@physics-lab/contracts";
 import { ArrowLeft, BarChart3, BookOpenCheck, Boxes, FlaskConical, Home, Menu, Radio, UserCog, Users, X } from "lucide-react";
-import { Link, Navigate, NavLink, Route, Routes, useLocation } from "react-router-dom";
+import { Link, Navigate, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { BrandMark } from "../../components/BrandMark";
 import { PageIntroduction } from "../../components/PageIntroduction";
 import {
@@ -21,7 +21,7 @@ import { TeacherLoginPortal } from "./TeacherLoginPortal";
 import { TeacherRealClasses } from "./TeacherRealClasses";
 import { TeacherTeachingFlow } from "./TeacherTeachingFlow";
 import { TeacherClasses, TeacherLessons, TeacherLiveClassroom, TeacherOverview, TeacherReports } from "./TeacherSections";
-import { teacherApi } from "../../services/teacherApi";
+import { DEMO_ONLY, teacherApi } from "../../services/teacherApi";
 
 const navigation = [
   { to: "/teacher", label: "教学总览", eyebrow: "OVERVIEW", icon: Home, end: true },
@@ -44,11 +44,12 @@ const routeTitles: Record<string, { eyebrow: string; title: string; description:
 export function TeacherDashboard() {
   const [workspace, setWorkspace] = useState<TeacherWorkspace>(() => loadTeacherWorkspace());
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [connection, setConnection] = useState<"checking" | "online" | "offline">("checking");
+  const [connection, setConnection] = useState<"checking" | "online" | "offline">(DEMO_ONLY ? "offline" : "checking");
   const [apiUser, setApiUser] = useState<PlatformUser | null>(null);
-  const [localMode, setLocalMode] = useState(false);
+  const [localMode, setLocalMode] = useState(DEMO_ONLY);
   const [remoteData, setRemoteData] = useState<{ students: PlatformUser[]; teachers: PlatformUser[]; classes: TeachingClass[]; lessons: TeachingLesson[]; tasks: TeachingTask[] }>({ students: [], teachers: [], classes: [], lessons: [], tasks: [] });
   const location = useLocation();
+  const navigate = useNavigate();
   const page = routeTitles[location.pathname] ?? routeTitles["/teacher"];
 
   const refreshRemoteData = useCallback(async (role: PlatformUser["role"] = "teacher") => {
@@ -62,6 +63,7 @@ export function TeacherDashboard() {
   const refreshCurrentRemoteData = useCallback(() => refreshRemoteData(apiUser?.role ?? "teacher"), [apiUser?.role, refreshRemoteData]);
 
   const checkBackend = useCallback(async () => {
+    if (DEMO_ONLY) return;
     setConnection("checking");
     try {
       await teacherApi.health();
@@ -103,6 +105,7 @@ export function TeacherDashboard() {
   }
 
   function logout() {
+    if (DEMO_ONLY) { navigate("/"); return; }
     teacherApi.logout();
     setApiUser(null);
     setLocalMode(false);
@@ -189,7 +192,7 @@ export function TeacherDashboard() {
         <Link className="teacher-brand" to="/"><BrandMark /></Link>
         <div className="teacher-system-id"><span>PHY EDU / {apiUser?.role === "admin" ? "A-01" : "T-01"}</span><b>{apiUser?.role === "admin" ? "平台综合管理站" : "教师教学观测站"}</b></div>
         <nav aria-label="教师工作台导航">
-          {navigation.map(({ to, label, eyebrow, icon: Icon, end }) => (
+          {navigation.filter(({ to }) => !DEMO_ONLY || to !== "/teacher/accounts").map(({ to, label, eyebrow, icon: Icon, end }) => (
             <NavLink key={to} to={to} end={end}>
               <i><Icon size={18} /></i><span><small>{eyebrow}</small><b>{label}</b></span><em>→</em>
             </NavLink>

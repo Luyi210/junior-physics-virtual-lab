@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { BrandMark } from "../../components/BrandMark";
 import { ExperimentFullscreenButton } from "../../components/ExperimentFullscreenButton";
 import { localProjectRepository } from "../../services/projectRepository";
+import { useHarnessStore } from "../harness/harnessStore";
 import { publishApparatusSnapshot } from "../harness/tutorialBridge";
 import { LensCanvas } from "./LensCanvas";
 import { LensInspector } from "./LensInspector";
@@ -28,6 +29,7 @@ export function LensWorkbench() {
   const redo = useLensStore((state) => state.redo);
   const reset = useLensStore((state) => state.reset);
   const update = useLensStore((state) => state.update);
+  const recordHarness = useHarnessStore((state) => state.record);
   const [records, setRecords] = useState<LensRecord[]>([]);
   const [saved, setSaved] = useState(false);
   const [activated, setActivated] = useState(false);
@@ -60,7 +62,13 @@ export function LensWorkbench() {
     if (result.real && result.finite) {
       update({ screenX: Math.max(4, Math.min(95, result.imageX)) });
       setActivated(true);
+      recordHarness("control.changed", { experiment: "bench", control: "自动对焦", value: result.imageX, unit: "cm" });
     }
+  };
+
+  const handleInteraction = () => {
+    setActivated(true);
+    recordHarness("control.changed", { experiment: "bench", control: "精密实验台器材或参数", value: "已调整" });
   };
 
   const addRecord = () => setRecords((rows) => [...rows, {
@@ -117,7 +125,7 @@ export function LensWorkbench() {
       </header>
 
       <main className="workbench-layout">
-        <aside className="component-rail">
+        <aside className="component-rail" data-tutorial-spotlight="module">
           <div className="rail-title"><span>器材</span><small>3 ITEMS</small></div>
           <button className="rail-item active"><span className="candle-glyph">↑</span><b>发光物</b><small>可拖动</small></button>
           <button className="rail-item"><span className="lens-glyph">)(</span><b>凸透镜</b><small>固定光心</small></button>
@@ -125,17 +133,17 @@ export function LensWorkbench() {
           <div className="rail-note"><FlaskConical size={17} /><span>V2 元件模型<br />属性与视图分离</span></div>
         </aside>
 
-        <section className="experiment-stage">
+        <section className="experiment-stage" data-tutorial-spotlight="visual">
           <div className="stage-heading">
             <div><span className="live-dot" />实时光路演算</div>
             <p>拖动发光物和光屏，观察成像变化</p>
             <button onClick={focusScreen} disabled={!result.real}><span>自动对焦</span><ArrowLeft size={15} /></button>
           </div>
-          <LensCanvas scene={scene} result={result} onInteract={() => setActivated(true)} revealResult={activated} />
+          <LensCanvas scene={scene} result={result} onInteract={handleInteraction} revealResult={activated} />
           {!activated && <div className="interaction-cue workbench-cue"><FlaskConical size={18} /><span><small>实验台尚未开始测量</small><strong>拖动物体、光屏，或调节右侧参数</strong></span></div>}
         </section>
 
-        <LensInspector scene={scene} result={result} revealed={activated} onInteract={() => setActivated(true)} />
+        <LensInspector scene={scene} result={result} revealed={activated} onInteract={handleInteraction} />
       </main>
 
       <section className="data-dock">
@@ -158,6 +166,10 @@ export function LensWorkbench() {
           <button className="button-record" onClick={addRecord} disabled={!activated}>记录本组数据</button>
           <button onClick={exportCsv} disabled={!records.length}><Download size={16} />导出 CSV</button>
         </div>
+      </section>
+      <section className="workbench-applications" data-tutorial-spotlight="application" aria-label="凸透镜成像的生活应用">
+        <span>同一条成像规律，三种生活装置</span>
+        <p>照相机常用倒立缩小实像；投影仪利用倒立放大实像；放大镜在焦点以内形成正立放大虚像。返回光现象模块可继续比较。</p>
       </section>
     </div>
   );

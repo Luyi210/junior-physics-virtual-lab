@@ -8,6 +8,7 @@ const publicRoot = resolve(projectRoot, "apps/web/dist");
 const host = process.env.PHYSICS_WEB_HOST ?? "127.0.0.1";
 const port = Number(process.env.PHYSICS_WEB_PORT ?? process.env.PORT ?? 5173);
 const apiUpstream = new URL(process.env.PHYSICS_API_UPSTREAM ?? "http://127.0.0.1:8787");
+const demoOnly = process.env.PHYSICS_DEMO_ONLY === "true";
 
 const contentTypes = {
   ".css": "text/css; charset=utf-8",
@@ -76,7 +77,7 @@ async function proxyApi(request, response, url) {
       method: request.method,
       headers,
       body,
-      signal: AbortSignal.timeout(15_000)
+      signal: AbortSignal.timeout(url.pathname === "/api/guangguang/chat" ? 165_000 : 15_000)
     });
     const responseBody = request.method === "HEAD" ? undefined : Buffer.from(await upstreamResponse.arrayBuffer());
     const responseHeaders = {
@@ -98,6 +99,11 @@ async function proxyApi(request, response, url) {
 const server = createServer(async (request, response) => {
   const url = new URL(request.url ?? "/", `http://${host}:${port}`);
   if (url.pathname === "/api" || url.pathname.startsWith("/api/")) {
+    if (demoOnly) {
+      response.writeHead(503, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+      response.end(JSON.stringify({ error: { code: "DEMO_ONLY", message: "当前为本地演示模式" } }));
+      return;
+    }
     await proxyApi(request, response, url);
     return;
   }

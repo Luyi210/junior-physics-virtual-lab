@@ -43,6 +43,7 @@ interface HarnessUiState {
   loading: boolean;
   asking: boolean;
   dialogueProvider: "rules" | "deepseek-harness";
+  dialogueFallbackReason?: "login-required" | "request-failed";
   panelOpen: boolean;
   enterArea: (area: HarnessArea, module: string) => Promise<void>;
   record: (type: HarnessEventType, payload?: Record<string, HarnessValue>) => void;
@@ -56,12 +57,13 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
   loading: false,
   asking: false,
   dialogueProvider: "rules",
+  dialogueFallbackReason: undefined,
   panelOpen: false,
 
   async enterArea(area, module) {
     if (get().activeArea === area && get().activeModule === module && get().session) return;
     const version = ++entryVersion;
-    set({ activeArea: area, activeModule: module, loading: true });
+    set({ activeArea: area, activeModule: module, loading: true, dialogueProvider: "rules", dialogueFallbackReason: undefined });
     const sessionId = `harness-local-learner-${area}`;
     const stored = await localHarnessSessionRepository.find(sessionId).catch(() => undefined);
     if (version !== entryVersion) return;
@@ -123,6 +125,7 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
     const localReply = dialogueAssistant.respondToQuestion(current, module, question, apparatus);
     let reply = localReply;
     let dialogueProvider: HarnessUiState["dialogueProvider"] = "rules";
+    let dialogueFallbackReason: HarnessUiState["dialogueFallbackReason"] = "login-required";
     set({ asking: true });
     try {
       if (studentApi.hasSession()) {
@@ -138,21 +141,23 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
             recentDialogue: (current.dialogue ?? []).filter((message) => message.module === module).slice(-8)
           }
         });
-        reply = { ...localReply, text: aiReply.text, citations: aiReply.citations };
+        reply = { ...localReply, text: aiReply.text, citations: aiReply.citations, provider: "deepseek-harness" };
         dialogueProvider = "deepseek-harness";
+        dialogueFallbackReason = undefined;
       }
     } catch {
       dialogueProvider = "rules";
+      dialogueFallbackReason = "request-failed";
     }
     const latest = get().session;
     if (!latest || latest.id !== current.id || get().activeModule !== module) {
-      set({ asking: false, dialogueProvider });
+      set({ asking: false });
       return false;
     }
     const session = appendDialogueExchange(latest, module, question, reply);
     set({ session });
     scheduleSave(session);
-    set({ asking: false, dialogueProvider });
+    set({ asking: false, dialogueProvider, dialogueFallbackReason });
     return true;
   },
 

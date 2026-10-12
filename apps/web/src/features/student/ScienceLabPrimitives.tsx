@@ -1,11 +1,11 @@
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { CheckCircle2, Compass, Info, Pause, Play } from "lucide-react";
 import { PhysicsFieldMotif } from "../../components/PhysicsFieldMotif";
 import { useHarnessStore } from "../harness/harnessStore";
 
 type ScienceFieldKey = "sound" | "mechanics" | "circuit" | "thermal" | "measurement";
 
-export function LabFrame({ field, eyebrow, title, description, running, onToggle, playLabel = "启动动态", runningLabel = "暂停", actionDisabled = false, disabledLabel = "先选择样品", children }: {
+export function LabFrame({ field, experiment, eyebrow, title, description, running, onToggle, playLabel = "启动动态", runningLabel = "暂停", actionDisabled = false, disabledLabel = "先选择样品", children }: {
   field: ScienceFieldKey;
   experiment: string;
   eyebrow: string;
@@ -24,7 +24,19 @@ export function LabFrame({ field, eyebrow, title, description, running, onToggle
     onToggle();
     recordHarness("simulation.toggled", { running: !running, action: playLabel });
   };
-  return <div className="science-lab"><header><div><span>{eyebrow}</span><h1>{title}</h1><p>{description}</p></div><PhysicsFieldMotif field={field} className="science-lab-physics" /><div className="science-lab-header-actions"><button className={running ? "running" : ""} onClick={toggle} disabled={actionDisabled}>{running ? <Pause size={16} /> : <Play size={16} />}{actionDisabled ? disabledLabel : running ? runningLabel : playLabel}</button></div></header>{children}</div>;
+  const recordUntrackedButton = (event: MouseEvent<HTMLDivElement>) => {
+    const button = event.target instanceof Element ? event.target.closest("button") : null;
+    if (!button || button.disabled || button.closest(".science-lab-header-actions")) return;
+    const previousCount = useHarnessStore.getState().session?.events.length ?? 0;
+    // A few experiment-specific controls update local state without emitting an event.
+    // Record only those, so the tutorial's real-operation gate can advance.
+    queueMicrotask(() => {
+      const state = useHarnessStore.getState();
+      if (state.activeModule !== experiment || (state.session?.events.length ?? 0) !== previousCount) return;
+      state.record("configuration.changed", { experiment, control: button.textContent?.trim().slice(0, 80) || "实验操作", value: "已操作" });
+    });
+  };
+  return <div className="science-lab" onClickCapture={recordUntrackedButton}><header data-tutorial-spotlight="module"><div><span>{eyebrow}</span><h1>{title}</h1><p>{description}</p></div><PhysicsFieldMotif field={field} className="science-lab-physics" /><div className="science-lab-header-actions"><button className={running ? "running" : ""} onClick={toggle} disabled={actionDisabled}>{running ? <Pause size={16} /> : <Play size={16} />}{actionDisabled ? disabledLabel : running ? runningLabel : playLabel}</button></div></header>{children}</div>;
 }
 
 export function ScienceRange({ label, value, min, max, step, unit, onChange, onInteract }: {

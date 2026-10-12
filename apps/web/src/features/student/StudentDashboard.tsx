@@ -3,7 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, FormEvent } from "react";
 import type { PlatformUser } from "@physics-lab/contracts";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BrandMark } from "../../components/BrandMark";
 import { PageIntroduction } from "../../components/PageIntroduction";
 import type { PhysicsField } from "../../components/PhysicsFieldMotif";
@@ -12,7 +12,7 @@ import { OrangeCatAvatar, shuffleOrangeCatAvatar, useOrangeCatAvatarLabel } from
 import { DashboardPhysicsCanvas } from "./DashboardPhysicsCanvas";
 import { StudentIdentityPortal } from "./StudentIdentityPortal";
 import { StudentTaskCenter } from "./StudentTaskCenter";
-import { studentApi } from "../../services/teacherApi";
+import { DEMO_ONLY, studentApi } from "../../services/teacherApi";
 import { clearActiveStudentSession } from "../../services/studentSessionSync";
 import type { DashboardPhysicsScene } from "./DashboardPhysicsCanvas";
 import { knowledgeGraphQuestions, physicsGraphDomains, physicsKnowledgeGraphStats, searchPhysicsKnowledgeGraph } from "./physicsKnowledgeGraph";
@@ -79,8 +79,8 @@ function DashboardCatGuide() {
     </div>
     <form onSubmit={submitQuestion}>
       <label htmlFor="student-custom-question"><MessageCircleQuestion size={16} />我的自定义问题</label>
-      <div><input id="student-custom-question" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="例如：为什么雨后会出现彩虹？" /><button type="submit" disabled={!question.trim()}><SendHorizontal size={16} />问问光光</button></div>
-      <small><Lightbulb size={13} />本地知识图谱 · 不消耗 AI 额度</small>
+      <div><input id="student-custom-question" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="例如：为什么雨后会出现彩虹？" /><button type="submit" disabled={!question.trim()}><SendHorizontal size={16} />查找相关实验</button></div>
+      <small><Lightbulb size={13} />{DEMO_ONLY ? "本地知识图谱帮你寻找实验；进入实验后可向光光提问" : "这里是本地知识图谱导航；DeepSeek 问答请登录学生账号后进入具体实验"}</small>
     </form>
 
     {recommendation && <div className={`dashboard-knowledge-result ${recommendation.found ? "found" : "needs-clue"}`}>
@@ -102,12 +102,14 @@ function DashboardCatGuide() {
 
 export function StudentDashboard() {
   const [questionDomain, setQuestionDomain] = useState<"all" | PhysicsGraphDomain>("all");
-  const [connection, setConnection] = useState<"checking" | "online" | "offline">("checking");
+  const [connection, setConnection] = useState<"checking" | "online" | "offline">(DEMO_ONLY ? "offline" : "checking");
   const [studentUser, setStudentUser] = useState<PlatformUser | null>(null);
-  const [guestMode, setGuestMode] = useState(false);
+  const [guestMode, setGuestMode] = useState(DEMO_ONLY);
+  const navigate = useNavigate();
   const visibleQuestions = questionDomain === "all" ? knowledgeGraphQuestions : knowledgeGraphQuestions.filter((question) => question.domain === questionDomain);
 
   async function checkStudentSession() {
+    if (DEMO_ONLY) return;
     setConnection("checking");
     try {
       await studentApi.health();
@@ -139,6 +141,7 @@ export function StudentDashboard() {
   }
 
   function logout() {
+    if (DEMO_ONLY) { navigate("/"); return; }
     studentApi.logout();
     clearActiveStudentSession();
     setStudentUser(null);
@@ -167,7 +170,7 @@ export function StudentDashboard() {
           { eyebrow: "03 / OPEN DISCOVERY", title: "完成任务之外，你仍然可以自由探索。", description: "六个物理领域、问题库、实验记录本和精密实验台始终开放。班级任务不是强制闯关路线。", points: ["可以从生活问题直接找实验", "光光提供方法支架但不直接给答案", "自己的记录可以继续补充"], icon: Compass }
         ] : [
           { eyebrow: "01 / GUEST DISCOVERY", title: "游客模式从自己的问题开始。", description: "六个领域均可自由进入，没有规定顺序，也不要求完成固定任务。", points: ["先看动态预览再选择实验", "也可以从问题库直接进入", "随时打开光光或实验记录本"], icon: Compass },
-          { eyebrow: "02 / LOCAL RECORD", title: "游客记录保存在当前浏览器。", description: "操作、观察和光光会话默认保存在本机，不会进入学校班级数据。需要接收教师任务时，请退出游客模式并登录学生账号。", points: ["游客数据属于本地演示数据", "学生登录后可创建真实任务会话"], icon: PencilLine }
+          { eyebrow: "02 / LOCAL RECORD", title: "游客记录保存在当前浏览器。", description: DEMO_ONLY ? "操作、观察和光光会话保存在当前浏览器。你可以自由体验实验、记录发现，再从实验记录本中继续整理。" : "操作、观察和光光会话默认保存在本机，不会进入学校班级数据。需要接收教师任务时，请退出游客模式并登录学生账号。", points: DEMO_ONLY ? ["演示记录保存在当前浏览器", "实验记录本支持整理自己的发现"] : ["游客数据属于本地演示数据", "学生登录后可创建真实任务会话"], icon: PencilLine }
         ]}
       />
       <header className="explore-header">
