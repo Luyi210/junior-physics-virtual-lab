@@ -1,0 +1,377 @@
+@layer responsive {
+
+/* Fullscreen means a complete interactive workbench, not a detached canvas. */
+.open-experience:fullscreen {
+    position: relative;
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    color: #e9f3ef;
+    background: #06161e;
+  }
+.open-experience:fullscreen > .open-module-intro {
+    flex: 0 0 78px;
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 10px 170px 10px 22px;
+    color: #e8f2ee;
+    border: 0;
+    border-bottom: 1px solid #29444e;
+    background: linear-gradient(90deg,#102f3a,#0a202b);
+  }
+.open-experience:fullscreen > .open-module-intro > div { min-width: 0; }
+.open-experience:fullscreen > .open-module-intro > div:first-child { max-width: 72vw; }
+.open-experience:fullscreen .physics-header-motif { display: none; }
+.open-experience:fullscreen > .open-module-intro span { color: #67e0c8; font-size: 10px; }
+.open-experience:fullscreen > .open-module-intro h1 {
+    max-width: 72vw;
+    margin-top: 4px;
+    overflow: hidden;
+    color: #f3f5ed;
+    font-size: clamp(18px,2vw,25px);
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+.open-experience:fullscreen > .open-module-intro p { display: none; }
+.open-experience:fullscreen > .open-module-intro > button {
+    min-height: 40px;
+    margin-left: auto;
+    color: #d9ece7;
+    border-color: #4c7473;
+    background: #173b44;
+    font-size: 13px;
+  }
+.open-experience:fullscreen > :is(.dispersion-guide,.rainbow-life-section,.micro-display-technology,.mirror-life-technology,.celestial-principle-strip,.black-hole-extension,.invisible-inquiry-strip) { display: none; }
+.open-experience:fullscreen > :is(.ray-law-lab,.color-mix-lab,.celestial-lab,.plane-mirror-lab,.curved-mirror-lab,.invisible-light-lab,.experience-canvas,.lens-system-3d-lab,.camera-lab,.eye-lab,.correction-lab,.instrument-lab) {
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none;
+    overflow: hidden;
+    border-right: 0;
+    border-left: 0;
+  }
+.open-experience:fullscreen > :is(.ray-law-lab,.color-mix-lab,.celestial-lab,.plane-mirror-lab,.curved-mirror-lab,.invisible-light-lab) > svg {
+    width: 100%;
+    min-width: 0 !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+.open-experience:fullscreen .optics-3d-stage,
+  .open-experience:fullscreen .experience-canvas canvas { width: 100% !important; height: 100% !important; min-height: 0 !important; }
+.open-experience:fullscreen > :is(.open-control-deck,.bench-control-grid,.rgb-controls,.invisible-controls) {
+    flex: 0 0 auto;
+    grid-template-columns: repeat(auto-fit,minmax(180px,1fr)) !important;
+    width: 100%;
+    max-height: 142px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 0;
+    border-top: 1px solid #38525a;
+    background: #e5e0d5;
+  }
+.open-experience:fullscreen > :is(.open-control-deck,.bench-control-grid,.rgb-controls,.invisible-controls) > * {
+    min-width: 180px;
+    min-height: 116px;
+  }
+.open-experience:fullscreen > .medium-tabs,
+  .open-experience:fullscreen > .instrument-switch,
+  .open-experience:fullscreen > .curved-view-switch,
+  .open-experience:fullscreen > .law-dimension-switch,
+  .open-experience:fullscreen > .law-presets,
+  .open-experience:fullscreen > .lens-dimension-switch,
+  .open-experience:fullscreen > .correction-lens-deck { flex: 0 0 auto; }
+.open-experience:fullscreen > :is(.law-dimension-switch,.lens-dimension-switch) { min-height: 62px; padding-block: 7px; }
+.open-experience:fullscreen > :is(.law-dimension-switch,.lens-dimension-switch) > div small { display: none; }
+.open-experience:fullscreen .lens-fullscreen-inline { display: none; }
+.open-experience:fullscreen > .correction-feedback-docked { display: none; }
+.open-experience:fullscreen > .lens-reading-strip { flex: 0 0 70px; min-height: 70px; }
+.open-experience:fullscreen > .lens-reading-strip > div { min-height: 70px; padding: 8px 16px; }
+.open-experience:fullscreen > .lens-reading-strip strong { font-size: 14px; }
+.open-experience:fullscreen > .lens-reading-strip small { display: none; }
+.open-experience:fullscreen > .medium-tabs button { min-height: 48px; font-size: 13px; }
+.open-experience:fullscreen > .dispersion-toolbar { flex: 0 0 54px; border-right: 0; border-left: 0; }
+.open-experience:fullscreen > .dispersion-light-picker { flex: 0 0 72px; display: block; overflow: hidden; border-right: 0; border-left: 0; }
+.open-experience:fullscreen > .dispersion-light-picker > div { display: none; }
+.open-experience:fullscreen > .dispersion-light-picker nav { height: 72px; grid-template-columns: repeat(5,1fr); }
+.open-experience:fullscreen > .dispersion-light-picker nav button { min-height: 72px; grid-template-columns: auto 1fr; place-content: center; justify-items: start; gap: 9px; }
+.open-experience:fullscreen > .dispersion-light-picker nav button > span { justify-items: start; }
+.open-experience:fullscreen > .dispersion-light-picker nav small { display: none; }
+.open-experience:fullscreen > .electromagnetic-map { display: none; }
+.open-experience:fullscreen > .invisible-spectrum-tabs { flex: 0 0 48px; }
+.open-experience:fullscreen > .invisible-application-picker { flex: 0 0 66px; }
+.open-experience:fullscreen > .invisible-application-picker button { min-height: 66px; padding: 8px 15px; }
+.open-experience:fullscreen > .invisible-application-picker button small { display: none; }
+.open-experience:fullscreen > .invisible-meter-rack { flex: 0 0 70px; }
+.open-experience:fullscreen > .invisible-meter-rack > div { min-height: 70px; padding: 8px 18px; }
+.open-experience:fullscreen > .instrument-switch { min-height: 56px; }
+.open-experience:fullscreen > .instrument-switch button { min-height: 56px; padding-block: 7px; }
+.open-experience:fullscreen .law-readout { right: 22px; bottom: 20px; left: auto; max-width: min(430px,46vw); }
+.open-experience:fullscreen .experiment-fullscreen-exit { position: absolute; }
+.science-lab:fullscreen {
+    position: relative;
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    overflow: hidden;
+    border: 0;
+    color: #e9f3ef;
+    background: #06161e;
+    box-shadow: none;
+  }
+.science-lab:fullscreen > header {
+    flex: 0 0 80px;
+    min-height: 80px;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 78px 10px 22px;
+    color: #eaf3ef;
+    border-bottom: 1px solid #2d4851;
+    background: linear-gradient(90deg,#102f3a,#0a202b);
+  }
+.science-lab:fullscreen > header > div:first-child { min-width: 0; }
+.science-lab:fullscreen > header span { color: var(--science-accent); font-size: 10px; }
+.science-lab:fullscreen > header h1 {
+    max-width: 70vw;
+    margin-top: 4px;
+    overflow: hidden;
+    color: #f3f5ed;
+    font-size: clamp(18px,2vw,25px);
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+.science-lab:fullscreen > header p { display: none; }
+.science-lab:fullscreen > header > div:first-child { max-width: 70vw; }
+.science-lab:fullscreen .science-lab-physics { display: none; }
+.science-lab:fullscreen .science-lab-header-actions { margin-left: auto; }
+.science-lab:fullscreen .science-lab-header-actions > button:not(.science-fullscreen-button) {
+    min-height: 42px;
+    color: #e3efec;
+    border-color: #4b7473;
+    background: #173b44;
+    font-size: 13px;
+  }
+.science-lab:fullscreen .science-fullscreen-button { display: none; }
+.science-lab:fullscreen > :is(.concept-sim,.sound-sim,.lever-sim,.circuit-sim,.thermal-sim,.density-sim,.balance-lab-sim) {
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none;
+    overflow: hidden;
+    border: 0;
+  }
+.science-lab:fullscreen > :is(.topology-tabs,.sample-tabs) { flex: 0 0 46px; }
+.science-lab:fullscreen > :is(.topology-tabs,.sample-tabs) button { min-height: 46px; font-size: 13px; }
+.science-lab:fullscreen > .science-controls {
+    flex: 0 0 auto;
+    grid-template-columns: repeat(auto-fit,minmax(180px,1fr)) !important;
+    width: 100%;
+    max-height: 130px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-top-color: #425961;
+  }
+.science-lab:fullscreen > .science-controls > * {
+    min-width: 180px;
+    min-height: 112px;
+    padding: 17px 20px;
+  }
+.science-lab:fullscreen .science-range span,
+  .science-lab:fullscreen .science-result-cell span { font-size: 13px; }
+.science-lab:fullscreen .science-range output,
+  .science-lab:fullscreen .science-result-cell strong { font-size: 17px; }
+.science-lab:fullscreen .experiment-fullscreen-exit { position: absolute; top: 18px; right: 18px; }
+.tray-balance-lab:fullscreen > .balance-lab-sim { display: grid; grid-template-rows: 50px minmax(0,1fr) 116px 66px; }
+.tray-balance-lab:fullscreen .balance-procedure-strip { min-height: 50px; }
+.tray-balance-lab:fullscreen .tray-balance-workbench { min-height: 0; grid-template-columns: minmax(500px,1.3fr) minmax(300px,.7fr); overflow: hidden; }
+.tray-balance-lab:fullscreen .tray-balance-apparatus { min-height: 0; }
+.tray-balance-lab:fullscreen .balance-operation-dock { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; overflow-y: auto; }
+.tray-balance-lab:fullscreen .balance-operation-dock section { padding: 10px 14px; }
+.tray-balance-lab:fullscreen .balance-operation-dock section > p { display: none; }
+.tray-balance-lab:fullscreen .balance-nut-controls,.tray-balance-lab:fullscreen .balance-object-button,.tray-balance-lab:fullscreen .balance-weight-buttons { margin-top: 8px; }
+.tray-balance-lab:fullscreen .balance-rider-console { min-height: 116px; grid-template-columns: 220px 1fr; gap: 18px; padding: 12px 22px; }
+.tray-balance-lab:fullscreen .balance-rider-scale { height: 78px; }
+.tray-balance-lab:fullscreen .balance-live-guidance { min-height: 66px; padding-block: 10px; }
+.workbench-page:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+.workbench-page:fullscreen .workbench-fullscreen-button { display: none; }
+.workbench-page:fullscreen .exit-button { display: none; }
+.workbench-page:fullscreen .experiment-fullscreen-exit { position: absolute; top: 15px; right: 15px; }
+@media (max-height: 760px) {
+    .open-experience:fullscreen > .open-module-intro {
+      flex-basis: 60px;
+      min-height: 60px;
+      padding-block: 6px;
+    }
+    .open-experience:fullscreen > .open-module-intro span { display: none; }
+    .open-experience:fullscreen > .lens-dimension-switch {
+      min-height: 50px;
+      padding-block: 3px;
+    }
+    .open-experience:fullscreen > .lens-dimension-switch button {
+      min-height: 42px;
+    }
+    .open-experience:fullscreen > .lens-reading-strip {
+      flex-basis: 58px;
+      min-height: 58px;
+    }
+    .open-experience:fullscreen > .lens-reading-strip > div {
+      min-height: 58px;
+      gap: 2px;
+      padding-block: 5px;
+    }
+    .open-experience:fullscreen > :is(.open-control-deck,.bench-control-grid,.rgb-controls,.invisible-controls) {
+      max-height: 104px;
+    }
+    .open-experience:fullscreen > :is(.open-control-deck,.bench-control-grid,.rgb-controls,.invisible-controls) > * {
+      min-height: 92px;
+      padding-block: 10px;
+    }
+  }
+@media (max-width: 1180px) {
+    .hero-lab { grid-template-columns: 1fr; }
+    .hero-copy { padding-right: 0; }
+    .hero-instrument { min-height: 580px; }
+    .lab-grid { grid-template-columns: repeat(2, 1fr); }
+    .workbench-layout { grid-template-columns: 92px minmax(500px, 1fr) 300px; }
+    .rail-item { min-height: 82px; }
+    .current-lesson { grid-template-columns: 270px 1fr 170px; }
+    .lesson-brief { padding: 35px 30px; }
+    .lesson-layout { grid-template-columns: 205px minmax(560px,1fr); }
+    .learning-notebook { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #cbc6bb; border-left: 0; }
+    .notebook-head { grid-column: 1 / -1; }
+    .learning-notebook section { border-right: 1px solid #d6d1c7; }
+    .explore-hero { grid-template-columns: 1fr 420px; }
+    .discovery-orbit { width: 410px; }
+    .student-explore-layout { grid-template-columns: 190px minmax(580px,1fr); }
+    .discovery-notebook { grid-column: 1 / -1; display: grid; grid-template-columns: 210px 1fr 160px 250px; align-items: start; border-top: 1px solid #c7c2b7; border-left: 0; }
+    .discovery-notebook textarea { height: 115px; }
+    .discovery-notebook > button { margin-top: 18px; }
+    .discovery-notebook section { margin-top: 18px; }
+    .science-layout { grid-template-columns: 180px minmax(620px,1fr); }
+    .science-note { display: none; }
+    .mirror-life-technology > header { grid-template-columns: 1fr; }
+    .mirror-life-badge { display: none; }
+    .mirror-life-workbench { grid-template-columns: 1fr; }
+    .mirror-life-visual { min-height: 520px; border-right: 0; border-bottom: 1px solid #314c56; }
+    .mirror-life-visual > svg { min-height: 520px; }
+  }
+@media (max-width: 900px) {
+    .open-module-intro > div:first-child { max-width: 78%; }
+    .physics-header-motif { right: -34px; width: 315px; opacity: .5; }
+    .science-lab-physics { right: 70px; opacity: .12; }
+    .science-field-physics { right: 70px; opacity: .16; }
+    .home-nav nav a { display: none; }
+    .section-heading { grid-template-columns: 1fr; gap: 18px; }
+    .architecture-steps { grid-template-columns: 1fr 1fr; }
+    .architecture-steps div:nth-child(2) { border-right: 0; }
+    .architecture-steps div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+    .workbench-header { height: auto; min-height: 68px; align-items: flex-start; gap: 12px; padding: 12px; }
+    .workbench-actions span { display: none; }
+    .workbench-layout { height: auto; min-height: 0; grid-template-columns: 76px minmax(0, 1fr); }
+    .lens-inspector { grid-column: 1 / -1; display: grid; grid-template-columns: 180px 1fr 290px; border-top: 1px solid #244049; border-left: 0; }
+    .inspector-heading { align-items: flex-start; }
+    .inspector-section { border-right: 1px solid #c9c4b8; }
+    .display-options { display: none; }
+    .experiment-stage { min-height: 560px; }
+    .data-dock { height: auto; min-height: 170px; grid-template-columns: 140px 1fr; }
+    .dock-actions { grid-column: 1 / -1; flex-direction: row; }
+    .dock-actions button { min-width: 140px; }
+    .student-header nav { display: none; }
+    .student-welcome { align-items: flex-start; flex-direction: column; }
+    .current-lesson { grid-template-columns: 230px 1fr; }
+    .lesson-progress-dial { display: none; }
+    .student-columns { grid-template-columns: 1fr; }
+    .student-side { grid-template-columns: 1fr 1fr; }
+    .lesson-header { grid-template-columns: 58px 1fr 180px; }
+    .lesson-home { display: none; }
+    .lesson-layout { grid-template-columns: 1fr; }
+    .lesson-stepper { border-right: 0; border-bottom: 1px solid #cbc6bb; }
+    .step-list { grid-template-columns: repeat(5, 1fr); }
+    .step-list::before, .step-list button > svg, .step-list button small { display: none; }
+    .step-list button { min-height: 55px; grid-template-columns: 28px 1fr; }
+    .teacher-note { display: none; }
+    .learning-notebook { display: none; }
+    .student-canvas { height: 520px; }
+    .explore-header nav { display: none; }
+    .student-space-context { grid-template-columns: 160px 1fr; }
+    .student-space-context p { display: none; }
+    .explore-hero { grid-template-columns: 1fr; }
+    .discovery-orbit { width: min(520px, 90vw); justify-self: center; }
+    .optics-module-grid, .field-grid { grid-template-columns: 1fr 1fr; }
+    .curiosity-strip { grid-template-columns: 1fr; gap: 30px; }
+    .student-explore-header { grid-template-columns: 58px 1fr 120px; }
+    .open-mode-badge { display: none; }
+    .student-explore-layout { grid-template-columns: 1fr; }
+    .experiment-fullscreen-trigger { right: 24px; }
+    .explore-module-rail { border-right: 0; border-bottom: 1px solid #c7c2b7; }
+    .module-rail-heading, .professional-link { display: none; }
+    .explore-module-rail nav { display: flex; overflow-x: auto; }
+    .explore-module-rail nav button { flex: 0 0 142px; }
+    .module-nav-group { display: contents; }
+    .module-nav-group > header { display: none; }
+    .discovery-notebook { display: none; }
+    .island-intro { grid-template-columns: 1fr 320px; }
+    .optics-strand { grid-template-columns: 190px 1fr; }
+    .strand-module-grid { grid-template-columns: repeat(2, minmax(145px,1fr)); }
+    .rgb-controls { grid-template-columns: 1fr 1fr; }
+    .rgb-controls .observation-output { grid-column: 1 / -1; }
+    .micro-display-technology > header { grid-template-columns: 1fr; }
+    .micro-tech-badge { display: none; }
+    .micro-local-controller > div { grid-template-columns: 1fr 1fr; }
+    .micro-local-controller .open-range:nth-child(2) { border-right: 0; }
+    .micro-display-workbench { grid-template-columns: 1fr; }
+    .micro-screen-observer { min-height: 500px; border-right: 0; border-bottom: 1px solid #2c4650; }
+    .micro-tech-comparison { grid-template-columns: 1fr; }
+    .micro-tech-comparison article { min-height: 0; border-right: 0; border-bottom: 1px solid #c4beb2; }
+    .micro-tech-comparison article:last-child { border-bottom: 0; }
+    .mirror-life-comparison { grid-template-columns: 1fr; }
+    .mirror-life-comparison article { min-height: 0; border-right: 0; border-bottom: 1px solid #c4beb2; }
+    .mirror-life-comparison article:last-child { border-bottom: 0; }
+    .invisible-controls { grid-template-columns: 1fr 1fr; }
+    .invisible-controls .observation-output { grid-column: 1 / -1; }
+    .invisible-inquiry-strip { grid-template-columns: 1fr; }
+    .invisible-inquiry-strip > div { min-height: 0; border-right: 0; border-bottom: 1px solid #c3bdae; }
+    .invisible-inquiry-strip > div:last-child { border-bottom: 0; }
+    .celestial-principle-strip { grid-template-columns: 1fr; }
+    .celestial-principle-strip article { min-height: 0; border-right: 0; border-bottom: 1px solid #c3bdae; }
+    .celestial-principle-strip article:last-child { border-bottom: 0; }
+    .curved-view-switch > div small { display: none; }
+    .lens-dimension-switch > div small { display: none; }
+    .science-header { grid-template-columns: 58px 240px 1fr; }
+    .science-header > a:last-child { display: none; }
+    .science-layout { grid-template-columns: 1fr; }
+    .science-nav { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid #c7c2b7; }
+    .science-nav > span, .science-nav .back-optics { display: none; }
+    .science-nav > a { flex: 0 0 150px; }
+    .science-field-context { grid-template-columns: 1fr auto; }
+    .science-field-context > span { display: none; }
+    .science-field-context > div { justify-content: flex-start; }
+    .science-field-hero { grid-template-columns: 1fr 220px; padding: 38px 34px; }
+    .science-field-emblem { width: 180px; height: 180px; }
+    .science-textbook-chain > div { grid-template-columns: repeat(2,1fr); }
+    .science-textbook-chain > div > span:nth-child(2) { border-right: 0; }
+    .science-textbook-chain > div > span:nth-child(-n+2) { border-bottom: 1px solid #d2ccc0; }
+    .science-overview-heading { grid-template-columns: 1fr; }
+  }
+}

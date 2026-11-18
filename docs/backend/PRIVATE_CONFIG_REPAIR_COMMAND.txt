@@ -1,0 +1,44 @@
+sudo -n python3 - <<'PHYSICS_HELPER_REPAIR'
+import base64, hashlib, os, stat, tempfile, zlib
+from pathlib import Path
+p = Path("/home/ubuntu/initialize-private-config.py")
+previous_sha = "ee9f178abbff1089c1b8742b161ad859c771e0692df9467f45f82d94d47f2531"
+expected_sha = "ba94a5ace59a26cab31b625588d6962b0f81a990694721ce3d2582ba69a30839"
+data = zlib.decompress(base64.b64decode("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"))
+if hashlib.sha256(data).hexdigest() != expected_sha:
+    raise SystemExit("HELPER_UPDATE_REFUSED: payload checksum mismatch")
+compile(data, str(p), "exec")
+if p.is_symlink() or not p.is_file():
+    raise SystemExit("HELPER_UPDATE_REFUSED: unexpected file type")
+old = p.read_bytes()
+actual_sha = hashlib.sha256(old).hexdigest()
+if actual_sha == expected_sha:
+    print("HELPER_UPDATED " + expected_sha)
+    raise SystemExit(0)
+if actual_sha != previous_sha:
+    raise SystemExit("HELPER_UPDATE_REFUSED: existing helper differs; do not run it")
+metadata = p.stat()
+backup = p.with_name("initialize-private-config.before-tty-fix.py")
+if os.path.lexists(backup):
+    if backup.is_symlink() or backup.read_bytes() != old:
+        raise SystemExit("HELPER_UPDATE_REFUSED: backup path already differs")
+else:
+    fd = os.open(backup, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "wb") as output:
+        output.write(old)
+fd, temporary = tempfile.mkstemp(prefix=".physics-helper.", dir=p.parent)
+try:
+    os.fchmod(fd, stat.S_IMODE(metadata.st_mode))
+    os.fchown(fd, metadata.st_uid, metadata.st_gid)
+    with os.fdopen(fd, "wb") as output:
+        output.write(data)
+        output.flush()
+        os.fsync(output.fileno())
+    os.replace(temporary, p)
+finally:
+    if os.path.exists(temporary):
+        os.unlink(temporary)
+if hashlib.sha256(p.read_bytes()).hexdigest() != expected_sha:
+    raise SystemExit("HELPER_UPDATE_REFUSED: final checksum mismatch")
+print("HELPER_UPDATED " + expected_sha)
+PHYSICS_HELPER_REPAIR

@@ -1,18 +1,18 @@
 import { closeSync, existsSync, mkdirSync, openSync } from "node:fs";
-import { copyFile, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { connect } from "node:net";
 import { homedir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomBytes } from "node:crypto";
 import { spawn, spawnSync } from "node:child_process";
+import { loadConfig } from "../apps/api/src/config.js";
+import { backupBeforeApiStart } from "./lib/platform-backup.mjs";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const runtimeRoot = resolve(projectRoot, ".runtime");
 const stateFile = resolve(runtimeRoot, "platform-state.json");
 const secretFile = resolve(runtimeRoot, "token-secret");
-const databaseFile = resolve(projectRoot, "apps/api/data/physics-lab.sqlite");
-const backupRoot = resolve(projectRoot, "apps/api/data/backups");
 const webUrl = "http://127.0.0.1:5173/";
 const apiUrl = "http://127.0.0.1:8787/api/health";
 const apiCompatibility = "desktop-managed-accounts-v1";
@@ -100,20 +100,6 @@ function startDetached(label, command, args, environment, logName) {
   return { pid: child.pid, logFile };
 }
 
-async function backupDatabase() {
-  if (!existsSync(databaseFile)) return null;
-  const stamp = new Date().toISOString().replaceAll(":", "-").replace("T", "_").slice(0, 19);
-  const destination = resolve(backupRoot, stamp);
-  await mkdir(destination, { recursive: true });
-  for (const suffix of ["", "-wal", "-shm"]) {
-    const source = `${databaseFile}${suffix}`;
-    if (existsSync(source)) await copyFile(source, resolve(destination, `physics-lab.sqlite${suffix}`));
-  }
-  const backups = (await readdir(backupRoot, { withFileTypes: true })).filter((item) => item.isDirectory()).map((item) => item.name).sort().reverse();
-  await Promise.all(backups.slice(10).map((name) => rm(resolve(backupRoot, name), { recursive: true, force: true })));
-  return destination;
-}
-
 async function tokenSecret() {
   try {
     return (await readFile(secretFile, "utf8")).trim();
@@ -175,8 +161,9 @@ async function main() {
       apiReady = false;
     }
     if (!apiReady) {
-      const backup = await backupDatabase();
-      if (backup) note(`教学数据已备份到 ${backup}`);
+      const backup = await backupBeforeApiStart(loadConfig(), projectRoot);
+      if (backup.kind === "sqlite") note(`教学数据已备份并核验：${backup.directory}（历史备份全部保留）`);
+      if (backup.kind === "postgresql") note("当前配置为PostgreSQL；本机SQLite备份不适用，请使用该数据库的独立备份与恢复流程。");
       const api = startDetached("教学数据服务", process.execPath, [resolve(projectRoot, "apps/api/src/server.js")], {
         PHYSICS_API_TOKEN_SECRET: await tokenSecret(),
         PHYSICS_API_ALLOWED_ORIGINS: "http://127.0.0.1:5173,http://localhost:5173"

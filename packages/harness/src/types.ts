@@ -85,6 +85,14 @@ export interface HarnessKnowledgeCitation {
   score: number;
 }
 
+export interface HarnessDialogueContextSnapshot {
+  capturedAt: string;
+  apparatusAvailable: boolean;
+  /** Bounded, source-labelled excerpts, never a claim of student measurement. */
+  evidence: string[];
+  changedWhileWaiting: boolean;
+}
+
 export interface HarnessDialogueMessage {
   id: string;
   role: HarnessDialogueRole;
@@ -95,6 +103,7 @@ export interface HarnessDialogueMessage {
   followUps?: string[];
   citations?: HarnessKnowledgeCitation[];
   provider?: "rules" | "deepseek-harness";
+  contextSnapshot?: HarnessDialogueContextSnapshot;
 }
 
 export interface HarnessDialogueReply {
@@ -103,6 +112,7 @@ export interface HarnessDialogueReply {
   followUps: string[];
   citations?: HarnessKnowledgeCitation[];
   provider?: "rules" | "deepseek-harness";
+  contextSnapshot?: HarnessDialogueContextSnapshot;
 }
 
 export interface HarnessSession {

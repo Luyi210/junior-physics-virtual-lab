@@ -1,0 +1,25 @@
+.cat-partner-panel .harness-question-evidence { margin-top: 8px; padding-top: 7px; border-top: 1px solid #dce6df; color: #45655f; font-size: 11px; line-height: 1.6; }
+.cat-partner-panel .harness-question-evidence summary { cursor: pointer; font-weight: 600; }
+.cat-partner-panel .harness-question-evidence ul { margin: 6px 0; padding-left: 17px; }
+.cat-partner-panel .harness-question-evidence p { margin: 0 0 5px; font-size: 11px; }
+.cat-partner-panel .harness-question-evidence p[role="status"] { color: #855015; }
+.cat-partner-panel .harness-question-evidence small { display: block; font-size: 10px; letter-spacing: 0; }
+.cat-partner-panel .harness-question-evidence button,
+.cat-partner-panel .harness-question-status button { margin-top: 5px; padding: 6px 9px; border: 1px solid #9eb8aa; border-radius: 7px; color: #2e6251; background: #f3f8f3; font: inherit; cursor: pointer; }
+.cat-partner-panel .harness-question-evidence button:disabled { cursor: wait; opacity: .6; }
+.cat-partner-panel .harness-question-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 10px; color: #4b625c; font-size: 12px; line-height: 1.5; }
+.cat-partner-panel .harness-question-status button { margin: 0; }
+.cat-partner-panel .harness-apparatus-check { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; color: #49665d; font-size: 11px; line-height: 1.5; }
+.cat-partner-panel .harness-apparatus-check button { min-height: 40px; padding: 7px 11px; border: 1px solid #9bb6a9; border-radius: 8px; background: #edf5ed; color: #245d48; font: inherit; font-weight: 600; cursor: pointer; }
+.cat-partner-panel .harness-apparatus-check button:disabled { opacity: .5; cursor: wait; }
+.cat-partner-panel .harness-apparatus-check button:focus-visible { outline: 2px solid #276563; outline-offset: 3px; }
+.cat-partner-panel .harness-coach-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+
+@media (max-width: 640px), (max-height: 500px) and (pointer: coarse) {
+  .cat-partner-panel .harness-question-evidence :is(summary,button),
+  .cat-partner-panel .harness-question-status button,
+  .cat-partner-panel .harness-apparatus-check button { min-height: 44px; }
+  .cat-partner-panel .harness-question-evidence summary { display: flex; align-items: center; }
+  .cat-partner-panel .harness-apparatus-check { font-size: 12px; }
+  .cat-partner-panel .harness-question-evidence p { font-size: 12px; }
+}

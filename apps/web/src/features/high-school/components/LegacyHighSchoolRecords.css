@@ -1,0 +1,13 @@
+.hs-legacy-records { margin-top: 24px; border-top: 1px solid #d9ddcc; border-bottom: 1px solid #d9ddcc; padding: 20px 0; color: #52644e; }
+.hs-legacy-records > summary { display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; }
+.hs-legacy-records > summary span { font-size: 14px; font-weight: 600; }
+.hs-legacy-records > summary small { margin-left: auto; font-size: 11px; color: #7b806e; }
+.hs-legacy-records > p { font-size: 12px; line-height: 1.8; max-width: 72em; color: #777e6c; }
+.hs-legacy-records > p[role="alert"] { color: #945d32; }
+.hs-legacy-record-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 12px; }
+.hs-legacy-record-heading h3 { margin: 0; font-size: 13px; }
+.hs-legacy-records td { vertical-align: top; }
+.hs-legacy-records td p { margin: 3px 0; font-size: 12px; }
+.hs-legacy-records pre { max-width: 400px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 11px; }
+.hs-legacy-empty { padding: 14px; background: #f1f1e9; }
+.hs-legacy-records summary:focus-visible { outline: 2px solid #ae603a; outline-offset: 5px; }

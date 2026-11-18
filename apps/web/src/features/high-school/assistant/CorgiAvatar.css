@@ -1,0 +1,18 @@
+.lili-assistant .lili-corgi-photo,.lili-corgi-photo{display:block;position:relative;width:var(--corgi-size,72px);height:var(--corgi-size,72px);flex:none;overflow:visible}
+.lili-corgi-photo>.lili-corgi-vector,.lili-corgi-photo>.lili-corgi-image{display:block;position:absolute;inset:0;width:100%;height:100%;margin:0}
+.lili-corgi-photo>.lili-corgi-image{object-fit:contain;object-position:center bottom;opacity:0;user-select:none;pointer-events:none}
+.lili-corgi-photo>.lili-corgi-image.is-ready{opacity:1;filter:drop-shadow(0 5px 5px #0004)}
+.lili-assistant .lili-launcher .lili-corgi-photo{width:80px;height:80px;margin-top:-23px}.lili-assistant .lili-panel>header .lili-corgi-photo{width:78px;height:78px;margin:-5px 0}
+.lili-assistant .lili-avatar-controls{margin:0;padding:0 20px;border-bottom:1px solid #293c4e;color:#b9cbdc;background:#101d2b}
+.lili-assistant .lili-avatar-controls summary{display:flex;align-items:center;gap:12px;min-height:59px;padding:8px 0;list-style:none;cursor:pointer;font-size:11px;line-height:1.6}
+.lili-assistant .lili-avatar-controls summary::-webkit-details-marker{display:none}.lili-assistant .lili-avatar-controls summary:after{content:"+";margin-left:auto;flex:none;width:23px;text-align:center;color:#87dbe9;font-size:19px;font-weight:300}.lili-assistant .lili-avatar-controls[open] summary:after{content:"−"}
+.lili-assistant .lili-avatar-number{flex:none;font:500 17px/1.5 "SFMono-Regular",Consolas,monospace;font-variant-numeric:tabular-nums;color:#e6c796}.lili-assistant .lili-avatar-number>span{font-size:10px;color:#9aacbc}
+.lili-assistant .lili-avatar-choice{min-width:0;display:grid;gap:2px;overflow-wrap:anywhere}.lili-assistant .lili-avatar-choice>span{color:#b9d1df}.lili-assistant .lili-avatar-controls summary small{color:#97afc3;font-size:10px}
+.lili-assistant .lili-avatar-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding-top:4px}
+.lili-assistant .lili-avatar-actions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:44px;padding:10px 9px;border:1px solid #3c566c;border-radius:9px;color:#c5dae8;background:#182c3e;font:inherit;font-size:11px;line-height:1.5;cursor:pointer;overflow-wrap:anywhere;transition:background .16s,border-color .16s}
+.lili-assistant .lili-avatar-actions button:last-child{grid-column:1/-1}.lili-assistant .lili-avatar-actions button svg{flex:none}.lili-assistant .lili-avatar-actions button[aria-pressed="true"]{color:#b8edf5;border-color:#538394;background:#183a48}
+.lili-assistant .lili-avatar-controls p{margin:11px 0 0;color:#a6bdce;font-size:11px;line-height:1.8}.lili-assistant .lili-avatar-controls>a{display:inline-flex;align-items:center;min-height:44px;color:#95d3e2;font-size:11px;text-decoration:underline;text-underline-offset:4px}
+.lili-assistant .lili-avatar-controls :is(summary,button,a):focus-visible{outline:2px solid #67ddf3;outline-offset:3px}
+@media(hover:hover){.lili-assistant .lili-avatar-actions button:hover{background:#213d50;border-color:#638c9f}.lili-assistant .lili-avatar-controls summary:hover .lili-avatar-choice>span{color:#dcf1fc}}
+@media(max-width:600px){.lili-assistant .lili-launcher .lili-corgi-photo{width:64px;height:64px;margin-top:-17px}.lili-assistant .lili-panel>header .lili-corgi-photo{width:66px;height:66px}.lili-assistant .lili-avatar-controls{padding:0 17px}.lili-assistant .lili-avatar-controls summary{gap:9px}.lili-assistant .lili-avatar-number{font-size:15px}.lili-assistant .lili-avatar-number>span{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.lili-assistant .lili-avatar-actions button{transition:none}}

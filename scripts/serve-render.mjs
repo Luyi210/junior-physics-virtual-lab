@@ -21,7 +21,7 @@ const api = launch("教学数据服务", "apps/api/src/server.js", {
   PHYSICS_API_PORT: internalApiPort
 });
 const web = launch("网页服务", "scripts/serve-web.mjs", {
-  PHYSICS_WEB_HOST: "0.0.0.0",
+  PHYSICS_WEB_HOST: process.env.PHYSICS_WEB_HOST ?? "0.0.0.0",
   PHYSICS_WEB_PORT: publicPort,
   PHYSICS_API_UPSTREAM: `http://127.0.0.1:${internalApiPort}`
 });

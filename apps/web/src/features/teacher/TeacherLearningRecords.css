@@ -1,0 +1,68 @@
+@layer components {
+  .teacher-learning-records { min-width: 0; }
+  .teacher-record-filters { display: grid; grid-template-columns: minmax(170px, .7fr) minmax(240px, 1.3fr); gap: 18px; margin-bottom: 22px; padding: 20px; border: 1px solid var(--tc-line); background: var(--tc-panel); }
+  .teacher-record-filters label { display: grid; min-width: 0; gap: 8px; color: var(--tc-muted); font-size: 12px; }
+  .teacher-record-filters select { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--tc-line-bright); border-radius: 0; color: var(--tc-text); background: var(--tc-panel-solid); font: inherit; font-size: 13px; }
+  .teacher-record-filters select:disabled { opacity: .55; }
+  .teacher-learning-records :is(button, select, summary):focus-visible { outline: 2px solid var(--tc-cyan); outline-offset: 4px; }
+  .teacher-record-results > header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 18px; }
+  .teacher-record-results > header span { color: var(--tc-muted); font-size: 11px; }
+  .teacher-record-results h3 { margin-top: 5px; font: 700 22px var(--serif); overflow-wrap: anywhere; }
+  .teacher-record-results > header p { margin-top: 5px; color: var(--tc-muted); font-size: 12px; }
+  .teacher-record-results > header button { flex-shrink: 0; }
+  .teacher-record-summary { display: flex; flex-wrap: wrap; gap: 14px 30px; padding: 16px 20px; border: 1px solid var(--tc-line); background: rgba(120, 221, 255, .04); }
+  .teacher-record-summary span { color: #b9d3e1; font-size: 12px; }
+  .teacher-record-summary b { margin-right: 5px; color: var(--tc-cyan); font: 600 23px var(--mono); }
+  .teacher-record-note { margin: 12px 0 18px; color: var(--tc-muted); font-size: 12px; line-height: 1.7; }
+  .teacher-record-list { display: grid; gap: 12px; }
+  .teacher-record-card { min-width: 0; border: 1px solid var(--tc-line); background: var(--tc-panel); }
+  .teacher-record-card[open] { border-color: var(--tc-line-bright); }
+  .teacher-record-card > summary { display: grid; grid-template-columns: 38px minmax(120px, 1fr) auto minmax(150px, .8fr) 17px; align-items: center; gap: 14px; min-height: 90px; padding: 18px; cursor: pointer; list-style: none; }
+  .teacher-record-card > summary::-webkit-details-marker { display: none; }
+  .teacher-record-card > summary:hover { background: rgba(120, 221, 255, .04); }
+  .teacher-record-icon { display: grid; place-items: center; width: 36px; height: 40px; color: var(--tc-cyan); border: 1px solid var(--tc-line); }
+  .teacher-record-identity { display: grid; min-width: 0; gap: 6px; }
+  .teacher-record-identity strong { color: var(--tc-text); font-size: 15px; overflow-wrap: anywhere; }
+  .teacher-record-identity span, .teacher-record-updated { color: var(--tc-muted); font-size: 11px; line-height: 1.6; }
+  .teacher-record-updated { text-align: right; }
+  .teacher-record-updated time { display: block; }
+  .teacher-record-status { justify-self: start; padding: 5px 9px; border: 1px solid var(--tc-line); color: var(--tc-muted); font-size: 11px; white-space: nowrap; }
+  .teacher-record-status.is-active { color: var(--tc-amber); border-color: rgba(255, 211, 106, .3); background: rgba(255, 211, 106, .04); }
+  .teacher-record-status.is-completed { color: var(--tc-green); border-color: rgba(85, 229, 193, .3); background: rgba(85, 229, 193, .04); }
+  .teacher-record-chevron { color: var(--tc-cyan); transition: transform .2s; }
+  .teacher-record-card[open] .teacher-record-chevron { transform: rotate(180deg); }
+  .teacher-record-detail { padding: 0 20px 20px; border-top: 1px solid var(--tc-line); }
+  .teacher-record-context { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 15px 0; color: var(--tc-muted); font-size: 11px; }
+  .teacher-record-detail dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 0; }
+  .teacher-record-detail dl > div { min-width: 0; padding: 16px; border: 1px solid var(--tc-line); background: rgba(2, 14, 25, .35); }
+  .teacher-record-detail dt { margin-bottom: 10px; color: var(--tc-cyan); font-size: 12px; font-weight: 700; }
+  .teacher-record-detail dd { margin: 0; color: var(--tc-text); font-size: 13px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .teacher-record-detail dd.is-empty, .teacher-record-empty-detail { color: var(--tc-muted); font-size: 12px; line-height: 1.8; }
+  .teacher-record-message { display: grid; justify-items: center; gap: 14px; padding: 40px 24px; color: var(--tc-muted); text-align: center; border: 1px dashed var(--tc-line); background: rgba(9, 29, 47, .4); }
+  .teacher-record-message > svg { color: var(--tc-cyan); }
+  .teacher-record-message p { max-width: 600px; font-size: 13px; line-height: 1.8; }
+  .teacher-record-message.is-error, .teacher-record-message.is-error > svg { color: #ffb8ac; }
+  .teacher-record-message .is-spinning { animation: teacher-backend-spin .9s linear infinite; }
+
+  @media (max-width: 1050px) {
+    .teacher-record-card > summary { grid-template-columns: 38px minmax(0, 1fr) auto 17px; }
+    .teacher-record-updated { grid-column: 2 / 4; grid-row: 2; text-align: left; }
+    .teacher-record-updated time { display: inline; }
+    .teacher-record-chevron { grid-column: 4; grid-row: 1; }
+  }
+  @media (max-width: 640px) {
+    .teacher-record-filters { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 16px; }
+    .teacher-record-results > header { align-items: flex-start; }
+    .teacher-record-results h3 { font-size: 18px; }
+    .teacher-record-card > summary { grid-template-columns: minmax(0, 1fr) auto 17px; gap: 10px; padding: 16px; }
+    .teacher-record-icon { display: none; }
+    .teacher-record-chevron { grid-column: 3; }
+    .teacher-record-updated { grid-column: 1 / 3; }
+    .teacher-record-detail { padding: 0 14px 14px; }
+    .teacher-record-detail dl { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .teacher-record-message .is-spinning { animation: none; }
+    .teacher-record-chevron { transition: none; }
+  }
+}

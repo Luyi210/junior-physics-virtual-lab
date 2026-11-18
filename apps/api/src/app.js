@@ -7,6 +7,10 @@ import {
   getStudentTaskLesson, listStudentSessions, recordUserLogin, removeClassMember, resetManagedAccountPassword, updateManagedAccountStatus, updateTaskStatus
 } from "./repositories.js";
 
+import { getSessionLearningRecord, listTaskLearningRecords, saveSessionLearningRecord, validateLearningRecord } from "./learning-records.js";
+import { createSessionLearningFeedback, listSessionLearningFeedback, validateLearningFeedback } from "./learning-feedback.js";
+import { validateLiliRequest } from "./lili.js";
+
 const loginAttempts = new Map();
 export const API_COMPATIBILITY = "desktop-managed-accounts-v1";
 
@@ -16,7 +20,7 @@ function corsHeaders(request, config) {
   return {
     "access-control-allow-origin": allowedOrigin,
     "access-control-allow-headers": "authorization, content-type, x-request-id",
-    "access-control-allow-methods": "GET, POST, PATCH, DELETE, OPTIONS",
+    "access-control-allow-methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
     "access-control-max-age": "600",
     vary: "Origin",
     "x-content-type-options": "nosniff",
@@ -67,7 +71,7 @@ function validateEvents(body) {
   }));
 }
 
-export function createApiHandler({ db, config, guangguang }) {
+export function createApiHandler({ db, config, guangguang, lili }) {
   return async function handle(request, response) {
     const id = requestId(request);
     const headers = corsHeaders(request, config);
@@ -78,17 +82,18 @@ export function createApiHandler({ db, config, guangguang }) {
 
       if (request.method === "GET" && path === "/api/health") {
         const guangguangStatus = guangguang?.status?.() ?? { enabled: false, provider: "rules", model: "local" };
-        const capabilities = ["managed-teacher-accounts", "managed-student-accounts", "class-membership", "teaching-tasks", "experiment-evidence"];
+        const capabilities = ["managed-teacher-accounts", "managed-student-accounts", "class-membership", "teaching-tasks", "experiment-evidence", "structured-learning-records", "learning-feedback"];
         if (guangguangStatus.enabled) capabilities.push("deepseek-harness-guangguang");
         if (guangguangStatus.rag?.vector?.ready) capabilities.push("semantic-vector-rag");
-        return sendJson(response, 200, { status: "ok", service: "physics-lab-api", version: "0.1.0", compatibility: API_COMPATIBILITY, capabilities, database: db.dialect, guangguang: guangguangStatus, time: new Date().toISOString() }, id, headers);
+        if (lili) capabilities.push("high-school-lili");
+        return sendJson(response, 200, { status: "ok", service: "physics-lab-api", version: "0.1.0", compatibility: API_COMPATIBILITY, capabilities, database: db.dialect, guangguang: guangguangStatus, lili: lili?.status?.() ?? { enabled: false }, time: new Date().toISOString() }, id, headers);
       }
 
       if (request.method === "POST" && path === "/api/auth/login") {
         throttleLogin(request);
         const body = await readJson(request, config.bodyLimitBytes);
-        const email = requiredString(body, "email", { max: 180 });
-        const password = requiredString(body, "password", { max: 200 });
+        const email = requiredString(body, "email", { max: 254 });
+        const password = requiredString(body, "password", { max: 200, trim: false });
         const row = await findUserForLogin(db, email);
         if (!row || !verifyPassword(password, row.password_hash)) throw new ApiError(401, "LOGIN_FAILED", "邮箱或密码不正确");
         if (row.status === "disabled") throw new ApiError(403, "ACCOUNT_DISABLED", "这个账号已停用，请联系学校管理员");
@@ -99,6 +104,14 @@ export function createApiHandler({ db, config, guangguang }) {
       const user = await authenticate(request, db, config);
 
       if (request.method === "GET" && path === "/api/auth/me") return sendJson(response, 200, user, id, headers);
+
+      if (request.method === "POST" && path === "/api/lili/chat") {
+        // Bounded RC histories accompany up to 30 saved samples; the semantic
+        // validator still limits each history to 32 segments.
+        const input = validateLiliRequest(await readJson(request, 131_072));
+        if (!lili?.ask) throw new ApiError(503, "LILI_UNAVAILABLE", "力力的联网服务暂未启用");
+        return sendJson(response, 200, await lili.ask({ ...input, user }), id, headers);
+      }
 
       if (request.method === "POST" && path === "/api/guangguang/chat") {
         const body = await readJson(request, config.bodyLimitBytes);
@@ -126,7 +139,7 @@ export function createApiHandler({ db, config, guangguang }) {
         requireRole(user, "teacher", "admin");
         const body = await readJson(request, config.bodyLimitBytes);
         const email = requiredString(body, "email", { max: 180 });
-        const password = requiredString(body, "password", { max: 200 });
+        const password = requiredString(body, "password", { max: 200, trim: false });
         const role = body.role ? requiredEnum(body, "role", ["teacher", "student"]) : "student";
         if (!/^\S+@\S+\.\S+$/.test(email)) throw new ApiError(422, "VALIDATION_ERROR", "email 格式不正确");
         if (password.length < 8) throw new ApiError(422, "VALIDATION_ERROR", "临时密码至少需要 8 个字符");
@@ -144,7 +157,7 @@ export function createApiHandler({ db, config, guangguang }) {
       if (request.method === "PATCH" && params) {
         requireRole(user, "teacher", "admin");
         const body = await readJson(request, config.bodyLimitBytes);
-        const password = requiredString(body, "password", { max: 200 });
+        const password = requiredString(body, "password", { max: 200, trim: false });
         if (password.length < 8) throw new ApiError(422, "VALIDATION_ERROR", "新密码至少需要 8 个字符");
         return sendJson(response, 200, await resetManagedAccountPassword(db, user, params.userId, password), id, headers);
       }
@@ -226,6 +239,11 @@ export function createApiHandler({ db, config, guangguang }) {
         return sendJson(response, 200, await updateTaskStatus(db, user, params.taskId, requiredEnum(body, "status", ["draft", "published", "closed", "archived"])), id, headers);
       }
 
+      params = match(path, "/api/tasks/:taskId/records");
+      if (request.method === "GET" && params) {
+        return sendJson(response, 200, await listTaskLearningRecords(db, user, params.taskId), id, headers);
+      }
+
       params = match(path, "/api/tasks/:taskId/lesson-context");
       if (request.method === "GET" && params) {
         requireRole(user, "student");
@@ -241,6 +259,26 @@ export function createApiHandler({ db, config, guangguang }) {
       if (request.method === "GET" && path === "/api/sessions") {
         requireRole(user, "student");
         return sendJson(response, 200, await listStudentSessions(db, user), id, headers);
+      }
+
+      params = match(path, "/api/sessions/:sessionId/record");
+      if (request.method === "GET" && params) {
+        return sendJson(response, 200, await getSessionLearningRecord(db, user, params.sessionId), id, headers);
+      }
+      if (request.method === "PUT" && params) {
+        requireRole(user, "student");
+        const body = await readJson(request, config.bodyLimitBytes);
+        return sendJson(response, 200, await saveSessionLearningRecord(db, user, params.sessionId, validateLearningRecord(body)), id, headers);
+      }
+
+      params = match(path, "/api/sessions/:sessionId/feedback");
+      if (request.method === "GET" && params) {
+        return sendJson(response, 200, await listSessionLearningFeedback(db, user, params.sessionId), id, headers);
+      }
+      if (request.method === "POST" && params) {
+        requireRole(user, "teacher", "admin");
+        const body = await readJson(request, config.bodyLimitBytes);
+        return sendJson(response, 201, await createSessionLearningFeedback(db, user, params.sessionId, validateLearningFeedback(body)), id, headers);
       }
 
       params = match(path, "/api/sessions/:sessionId/events");

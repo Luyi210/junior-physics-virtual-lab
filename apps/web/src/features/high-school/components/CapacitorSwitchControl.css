@@ -1,0 +1,44 @@
+@layer pages {
+  .hs-viewport-stage.hs-capacitor-viewport-stage { height: auto; min-height: 420px; }
+  .hs-capacitor-board { width: 100%; min-width: 0; background: #f7f5eb; }
+  .hs-capacitor-board .hs-diagram { display: block; width: 100%; height: clamp(300px, 34vw, 430px); }
+  .hs-capacitor-board .hs-diagram text { fill: #536b50; font-size: 11px; }
+  .hs-capacitor-board .hs-diagram .hs-capacitor-meter-letter { fill: #355740; font-size: 18px; font-weight: 600; }
+  .hs-capacitor-board .hs-diagram .hs-capacitor-positive-charge { fill: #a75c34; font-size: 15px; }
+  .hs-capacitor-board .hs-diagram .hs-capacitor-negative-charge { fill: #3d6851; font-size: 15px; }
+  .hs-capacitor-contact { cursor: pointer; outline: none; }
+  .hs-capacitor-contact[aria-disabled="true"] { cursor: default; }
+  .hs-capacitor-contact:focus-visible .hs-capacitor-contact-ring { stroke: #a45b35; stroke-width: 4; }
+  .hs-capacitor-modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .hs-capacitor-board > .hs-capacitor-modes { padding: 16px 18px 0; }
+  .hs-capacitor-modes button { min-width: 0; min-height: 58px; display: grid; gap: 5px; align-content: center; padding: 10px 12px; border: 1px solid #c6d1ba; border-radius: 4px; color: #35543e; background: #fffdf5; font: inherit; text-align: left; cursor: pointer; }
+  .hs-capacitor-modes strong { font-size: 14px; font-weight: 550; }
+  .hs-capacitor-modes small { font-size: 10px; line-height: 1.5; color: #79836c; }
+  .hs-capacitor-modes button[aria-pressed="true"] { border-color: #466c4f; background: #e9efdf; box-shadow: inset 0 -2px #466c4f; }
+  .hs-capacitor-modes button:focus-visible { outline: 2px solid #b46a3e; outline-offset: 3px; }
+  .hs-capacitor-modes button:disabled { cursor: default; opacity: .55; }
+  .hs-capacitor-board-note { margin: 0; padding: 0 18px 15px; color: #78816d; font-size: 11px; line-height: 1.7; }
+  .hs-capacitor-control { border: 1px solid #d4ddc7; border-top: 0; padding: 25px; background: #f9f6ec; }
+  .hs-capacitor-control > header { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; }
+  .hs-capacitor-control h3 { margin: 6px 0 0; color: #294536; font: 500 23px/1.5 Georgia, "Noto Serif SC", serif; }
+  .hs-capacitor-control > p { margin: 15px 0 18px; color: #63715d; font-size: 12px; line-height: 1.85; }
+  .hs-capacitor-tau { display: grid; gap: 5px; color: #68765e; font-size: 11px; }
+  .hs-capacitor-tau b { color: #a15c35; font: 500 25px/1.3 Georgia, serif; font-variant-numeric: tabular-nums; }
+  .hs-capacitor-readings { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin-top: 20px; background: #dbe0cd; border: 1px solid #dbe0cd; }
+  .hs-capacitor-readings > div { display: grid; align-content: start; gap: 9px; min-width: 0; padding: 14px 12px; background: #f4f3e7; }
+  .hs-capacitor-readings span { font-size: 10px; color: #748269; }
+  .hs-capacitor-readings output { color: #355b42; font: 500 23px/1.25 Georgia, serif; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .hs-capacitor-readings output small { font-size: 12px; }
+  .hs-capacitor-control > .hs-capacitor-mode-note { padding: 11px 14px; border-left: 3px solid #b46a3e; background: #f0ebdc; }
+  .hs-capacitor-control > footer { color: #78816c; font-size: 10px; line-height: 1.8; }
+  @media (max-width: 600px) {
+    .hs-capacitor-board > .hs-capacitor-modes { padding: 12px 10px 0; gap: 5px; }
+    .hs-capacitor-modes button { padding: 8px; }
+    .hs-capacitor-modes strong { font-size: 12px; }
+    .hs-capacitor-modes small { font-size: 9px; }
+    .hs-capacitor-control { padding: 19px 15px; }
+    .hs-capacitor-control h3 { font-size: 21px; }
+    .hs-capacitor-readings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .hs-capacitor-board-note { padding-inline: 12px; }
+  }
+}

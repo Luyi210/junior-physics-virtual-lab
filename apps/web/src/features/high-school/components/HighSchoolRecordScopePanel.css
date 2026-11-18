@@ -1,0 +1,56 @@
+.hs-record-scope { margin: 0 0 24px; padding: 20px 24px; background: #f0f1e7; border: 1px solid #d8dfcd; border-left: 3px solid #55735a; }
+.hs-record-scope-title { display: flex; align-items: center; gap: 12px; color: #31503a; }
+.hs-record-scope-title > div { display: grid; gap: 3px; }
+.hs-record-scope-title span { font-size: 11px; letter-spacing: .09em; }
+.hs-record-scope-title strong { font-size: 16px; overflow-wrap: anywhere; }
+.hs-record-scope-title > b { margin-left: auto; font-size: 11px; white-space: nowrap; border: 1px solid #b9c6af; padding: 3px 7px; }
+.hs-record-scope > p { margin: 12px 0 0; color: #667062; font-size: 12px; line-height: 1.7; }
+.hs-record-scope-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
+.hs-record-scope-actions button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border: 1px solid #c7d0bf; background: #fafaf4; color: #47604a; font: inherit; font-size: 12px; cursor: pointer; }
+.hs-record-scope-actions button[aria-pressed="true"] { background: #31583e; color: #fffef5; border-color: #31583e; }
+.hs-record-scope-actions a { padding: 7px 4px; font-size: 12px; color: #49664b; text-underline-offset: 3px; }
+.hs-record-scope-actions :focus-visible { outline: 2px solid #b85d30; outline-offset: 3px; }
+@media (max-width: 600px) { .hs-record-scope { padding: 16px; } .hs-record-scope-title strong { font-size: 14px; } }
+
+/* One archive treatment for the catalog and experiment desk, including read-only states. */
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 24px;
+  padding: 20px 24px;
+  border: 1px solid #2d4259;
+  border-left: 3px solid #67ddf3;
+  border-radius: 10px;
+  background: linear-gradient(115deg, #11243a, #0d192a 65%);
+  box-shadow: inset 0 1px #d5f6ff05;
+}
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-title { grid-column: 1; gap: 12px; color: #e1edf7; min-width: 0; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-title > svg { flex-shrink: 0; color: #78dced; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-title > div { display: grid; gap: 2px; min-width: 0; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-title span { color: #9ab5cd; font-size: 11px; letter-spacing: .06em; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-title strong { font-size: 14px; line-height: 1.6; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-title > b { margin-left: 8px; color: #97e6dc; background: #163a3e; border: 1px solid #29515a; border-radius: 5px; padding: 4px 8px; font-size: 11px; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] > p { grid-column: 1; margin: 0; color: #a1b4cb; font-size: 12px; line-height: 1.8; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions { grid-column: 2; grid-row: 1 / 3; align-self: center; justify-content: flex-end; max-width: 450px; margin: 0; gap: 8px; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions button { min-height: 44px; min-width: 0; max-width: 100%; gap: 8px; padding: 10px 13px; border: 1px solid #365069; border-radius: 7px; color: #c7d9e9; background: #13263b; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions button svg { flex-shrink: 0; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions button:hover { background: #1b374e; border-color: #5f93ad; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions button[aria-pressed="true"] { color: #b9f3ff; border-color: #4c9caf; background: #173c50; box-shadow: inset 0 0 0 1px #67ddf310; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px; color: #a8d3e6; font-size: 12px; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions a:hover { color: #e7faff; text-decoration: underline; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode][data-writable="false"] { border-left-color: #eec78a; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode][data-writable="false"] .hs-record-scope-title > b { color: #f1d3a5; border-color: #715d40; background: #3a3023; }
+.hs-page.hs-lab-theme .hs-record-scope[data-mode] > [role="alert"] { grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid #65513c; color: #f4cfb0; }
+@media (max-width: 1100px) {
+  .hs-page.hs-lab-theme .hs-record-scope[data-mode] { grid-template-columns: minmax(0, 1fr); }
+  .hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions { grid-column: 1; grid-row: auto; justify-content: flex-start; max-width: none; padding-top: 4px; }
+}
+@media (max-width: 600px) {
+  .hs-page.hs-lab-theme .hs-record-scope[data-mode] { padding: 16px; gap: 12px; }
+  .hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-title { flex-wrap: wrap; gap: 8px; }
+  .hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-title > div { flex: 1; }
+  .hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-title > b { margin-left: auto; }
+  .hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions { display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; }
+  .hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions button { justify-content: center; }
+  .hs-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions a { justify-content: center; }
+}

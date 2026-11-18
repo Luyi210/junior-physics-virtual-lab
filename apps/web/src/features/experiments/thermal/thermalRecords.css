@@ -1,0 +1,9 @@
+.thermal-run-notice { margin: 0; padding: 12px 18px; border-bottom: 1px solid #c9c3b8; color: #725033; background: #f8efdc; font-size: 13px; line-height: 1.6; }
+.thermal-run-notice button { margin-left: 12px; padding: 5px 10px; border: 1px solid #9a6a40; border-radius: 3px; color: #694323; background: #fffaf0; cursor: pointer; }
+.thermal-evaporation-records.evap-evidence-ledger { display: block; font-size: 12px; }
+.thermal-evaporation-records p { margin: 0 0 10px; line-height: 1.7; }
+.thermal-record-table-scroll { width: 100%; overflow-x: auto; }
+.thermal-evaporation-records table { width: 100%; min-width: 660px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.thermal-evaporation-records th, .thermal-evaporation-records td { padding: 9px 10px; border: 1px solid #c9c3b8; text-align: right; white-space: nowrap; }
+.thermal-evaporation-records th { color: #725033; background: #e7e2d7; font-weight: 600; }
+.thermal-timed-readings > div { max-height: 340px; overflow-y: auto; }

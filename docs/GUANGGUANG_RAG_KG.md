@@ -7,8 +7,8 @@
 当前索引由以下已有内容组合生成：
 
 - `packages/harness/src/conceptGraph.ts`：探究问题、前置知识、证据标准、误区、分层提示和应用连接。
-- `apps/web/src/features/student/physicsKnowledgeGraph.ts`：概念词、生活问题信号、实验路由和实验间关系。
-- `apps/web/src/features/student/textbookKnowledge.ts`：教材章节映射。
+- `packages/knowledge/src/physicsKnowledgeGraph.ts`：概念词、生活问题信号、实验路由和实验间关系。
+- `packages/knowledge/src/textbookKnowledge.ts`：教材章节映射。
 
 当前自动生成：
 

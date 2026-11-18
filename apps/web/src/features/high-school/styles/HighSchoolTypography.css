@@ -1,0 +1,129 @@
+@import "./HighSchoolFontFaces.css";
+
+/* A self-contained type system. The legacy global !important rules deliberately
+   exclude these two surfaces, including the assistant outside the page root. */
+.hs-page.hs-lab-theme,
+.lili-assistant.lili-assistant {
+  --hs-sans: "High School Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --hs-display: "High School Display", "Avenir Next Condensed", "Bahnschrift", sans-serif;
+  --hs-serif: var(--hs-sans);
+  --hs-mono: "SFMono-Regular", "Cascadia Code", "Menlo", var(--hs-sans);
+  --kai: var(--hs-sans);
+  --font-body: var(--hs-sans);
+  --font-display: var(--hs-sans);
+  --font-data: var(--hs-mono);
+  font-family: var(--hs-sans);
+  font-weight: 400;
+  font-synthesis: none;
+  line-height: 1.75;
+  letter-spacing: .01em;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hs-page.hs-lab-theme :is(h1, h2, h3),
+.lili-assistant.lili-assistant :is(h2, h3) {
+  font-family: var(--hs-sans);
+  font-weight: 550;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+.hs-page.hs-lab-theme :is(button, input, select, textarea),
+.lili-assistant.lili-assistant :is(button, input, textarea) { font-family: var(--hs-sans); }
+.hs-page.hs-lab-theme button,
+.lili-assistant.lili-assistant button { font-weight: 500; }
+.hs-page.hs-lab-theme :is(strong, b),
+.lili-assistant.lili-assistant :is(strong, b) { font-weight: 600; }
+.hs-page.hs-lab-theme code { font-family: var(--hs-mono); }
+.hs-page.hs-lab-theme svg text { font-family: var(--hs-sans); font-weight: 500; }
+
+/* Page titles stay quiet enough to make the apparatus the visual focus. */
+.hs-home.hs-lab-theme .hs-cosmic-copy h1 {
+  font-size: clamp(44px, 4.5vw, 70px);
+  font-weight: 550;
+  line-height: 1.42;
+  letter-spacing: -.045em;
+}
+.hs-home.hs-lab-theme .hs-cosmic-copy h1 em { font-weight: 400; }
+.hs-home.hs-lab-theme .hs-cosmic-copy > p { font-size: 16px; line-height: 2; letter-spacing: .015em; }
+.hs-home.hs-lab-theme :is(.hs-section-heading, .hs-live-intro, .hs-inquiry-banner) h2 { font-weight: 500; line-height: 1.45; }
+.hs-home.hs-lab-theme :is(.hs-section-heading, .hs-live-intro, .hs-inquiry-banner) h2 em { font-weight: 400; }
+.hs-page.hs-lab-theme .hs-brand > span { font-family: var(--hs-sans); font-size: 24px; font-weight: 600; letter-spacing: .035em; }
+.hs-page.hs-lab-theme .hs-brand small { font-family: var(--hs-sans); font-size: 10px; font-weight: 400; line-height: 1.7; letter-spacing: .05em; }
+.hs-page.hs-lab-theme .hs-header nav :is(a, button) { font-size: 13px; font-weight: 500; letter-spacing: .025em; }
+.hs-page.hs-lab-theme .hs-header-method { letter-spacing: .06em; }
+.hs-page.hs-lab-theme .hs-header-method small { font-family: var(--hs-display); font-size: 12px; letter-spacing: .06em; }
+.hs-page.hs-lab-theme .hs-kicker { font-family: var(--hs-sans); font-size: 12px; font-weight: 500; letter-spacing: .12em; }
+.hs-page.hs-lab-theme .hs-section-index { font-family: var(--hs-display); font-size: 14px; letter-spacing: .08em; }
+
+/* Chinese metadata uses the reading face, not the code/numeric face. */
+.hs-home.hs-lab-theme .hs-card-body h3 { font-size: 21px; font-weight: 550; line-height: 1.55; letter-spacing: -.02em; }
+.hs-home.hs-lab-theme .hs-card-body p { font-size: 13px; line-height: 1.9; }
+.hs-home.hs-lab-theme .hs-card-body > small { font-family: var(--hs-sans); font-size: 11px; line-height: 1.8; }
+.hs-home.hs-lab-theme :is(.hs-card-volume, .hs-availability, .hs-card-scene-meta > span:last-child) { font-size: 11px; letter-spacing: .015em; }
+.hs-home.hs-lab-theme .hs-card-scene-caption { font-family: var(--hs-sans); font-size: 10px; letter-spacing: .08em; }
+.hs-home.hs-lab-theme .hs-card-number { font-family: var(--hs-display); font-size: 15px; font-weight: 500; letter-spacing: .08em; }
+.hs-home.hs-lab-theme .hs-experiment-card footer > small { font-family: var(--hs-sans); font-size: 11px; }
+.hs-home.hs-lab-theme :is(.hs-volume-list, .hs-domain-filter, .hs-active-filters) button { font-size: 13px; }
+.hs-home.hs-lab-theme .hs-volume-list button { white-space: normal; }
+.hs-home.hs-lab-theme .hs-volume-list button small { font-family: var(--hs-display); font-size: 15px; }
+.hs-home.hs-lab-theme .hs-search input { font-size: 14px; }
+.hs-home.hs-lab-theme .hs-filter-note p { font-size: 12px; line-height: 1.85; }
+.hs-home.hs-lab-theme :is(.hs-catalog-search > span, .hs-result-heading, .hs-curriculum-note summary) { font-size: 12px; }
+.hs-home.hs-lab-theme .hs-curriculum-note > p { font-size: 13px; line-height: 1.85; }
+.hs-home.hs-lab-theme .hs-live-intro > p { font-size: 15px; line-height: 1.9; }
+.hs-home.hs-lab-theme .hs-live-steps :is(b, small) { font-family: var(--hs-sans); font-size: 12px; line-height: 1.7; }
+.hs-home.hs-lab-theme .hs-live-steps b { font-weight: 550; font-size: 13px; }
+
+/* Condensed instrument numerals are reserved for large readings, not prose. */
+.hs-page.hs-lab-theme :is(.hs-cosmic-count > strong, .hs-clock strong, .hs-live-readings strong, .hs-showcase-readings strong, .hs-showcase-time b) {
+  font-family: var(--hs-display), var(--hs-sans);
+  font-weight: 500;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: .015em;
+}
+.hs-home.hs-lab-theme .hs-cosmic-count > strong { font-size: 60px; line-height: .95; }
+.hs-home.hs-lab-theme .hs-cosmic-count small { font-family: var(--hs-sans); font-size: 11px; }
+.hs-page.hs-lab-theme :is(.hs-clock strong span, .hs-live-readings strong small) { font-family: var(--hs-sans); font-size: 12px; font-weight: 400; letter-spacing: 0; }
+.hs-experiment-page.hs-lab-theme .hs-clock strong { font-size: 38px; }
+.hs-experiment-page.hs-lab-theme .hs-live-readings strong { font-size: clamp(29px, 2.6vw, 38px); }
+.hs-experiment-page.hs-lab-theme .hs-experiment-heading h1 { font-weight: 550; line-height: 1.5; letter-spacing: -.035em; }
+.hs-experiment-page.hs-lab-theme .hs-experiment-heading p { font-size: 14px; line-height: 1.95; }
+.hs-experiment-page.hs-lab-theme :is(.hs-controls h2, .hs-observation-heading h2, .hs-panel-heading h2) { font-size: 23px; font-weight: 500; line-height: 1.5; }
+.hs-experiment-page.hs-lab-theme :is(.hs-console-label, .hs-reading-provenance, .hs-clock small, .hs-control-note, .hs-parameter-edit-note) { font-family: var(--hs-sans); font-size: 12px; line-height: 1.85; }
+.hs-experiment-page.hs-lab-theme .hs-parameter label { font-weight: 500; font-size: 13px; }
+.hs-experiment-page.hs-lab-theme .hs-parameter-number { font-family: var(--hs-mono); font-size: 15px; font-weight: 400; }
+.hs-experiment-page.hs-lab-theme :is(.hs-model-panel ul, .hs-records-heading p, .hs-inquiry-prompts > p, .hs-inquiry-prompts li) { font-size: 13px; line-height: 1.9; }
+.hs-experiment-page.hs-lab-theme .hs-table-scroll :is(th, td) { font-size: 13px; line-height: 1.75; }
+.hs-experiment-page.hs-lab-theme .hs-table-scroll th { font-weight: 550; }
+.hs-experiment-page.hs-lab-theme .hs-plot text { font-family: var(--hs-sans); font-size: 12px; font-weight: 400; }
+
+.hs-page.hs-lab-theme .hs-showcase :is(button, .hs-showcase-heading p) { font-size: 13px; }
+.hs-page.hs-lab-theme .hs-showcase :is(.hs-showcase-eyebrow, .hs-showcase-boundary, .hs-showcase-stage-note, .hs-showcase-status) { font-family: var(--hs-sans); font-size: 11px; line-height: 1.7; }
+.hs-page.hs-lab-theme .cosmic-observatory button { font-family: var(--hs-sans); font-size: 12px; }
+
+.lili-assistant.lili-assistant .lili-launcher b { font-family: var(--hs-sans); font-size: 21px; font-weight: 550; letter-spacing: .04em; }
+.lili-assistant.lili-assistant .lili-panel h2 { font-weight: 550; letter-spacing: .025em; }
+.lili-assistant.lili-assistant .lili-welcome h3 { font-weight: 500; letter-spacing: -.025em; line-height: 1.6; }
+.lili-assistant.lili-assistant .lili-welcome h3 em { font-weight: 400; }
+.lili-assistant.lili-assistant :is(.lili-message > p, .lili-welcome p) { font-size: 14px; line-height: 1.95; font-weight: 400; }
+.lili-assistant.lili-assistant :is(.lili-suggestions button, .lili-manual-context button) { font-size: 13px; line-height: 1.75; }
+.lili-assistant.lili-assistant :is(.lili-panel header p, .lili-welcome small, .lili-manual-context p, .lili-notice) { font-size: 12px; line-height: 1.8; }
+.lili-assistant.lili-assistant :is(.lili-panel form small, .lili-panel footer, .lili-message > small) { font-family: var(--hs-sans); font-size: 11px; line-height: 1.7; }
+.lili-assistant.lili-assistant .lili-panel textarea { font-family: var(--hs-sans); font-size: 14px; line-height: 1.8; }
+
+@media (max-width: 980px) {
+  .hs-home.hs-lab-theme .hs-cosmic-copy h1 { font-size: clamp(44px, 7.3vw, 66px); }
+  .hs-home.hs-lab-theme .hs-volume-list button { white-space: nowrap; }
+}
+@media (max-width: 600px) {
+  .hs-home.hs-lab-theme .hs-cosmic-copy h1 { font-size: clamp(37px, 9vw, 51px); letter-spacing: -.045em; }
+  .hs-home.hs-lab-theme .hs-cosmic-copy > p { font-size: 14px; }
+  .hs-home.hs-lab-theme .hs-cosmic-count > strong { font-size: 50px; }
+  .hs-home.hs-lab-theme .hs-card-body h3 { font-size: 20px; }
+  .hs-page.hs-lab-theme .hs-brand > span { font-size: 22px; }
+  .hs-page.hs-lab-theme .hs-brand small { font-size: 9px; }
+  .hs-page.hs-lab-theme .hs-live-readings strong { font-size: 30px; }
+  .hs-page.hs-lab-theme .hs-clock strong { font-size: 34px; }
+  .hs-experiment-page.hs-lab-theme .hs-experiment-heading h1 { font-size: 27px; }
+  .lili-assistant.lili-assistant .lili-panel textarea { font-size: 16px; }
+}

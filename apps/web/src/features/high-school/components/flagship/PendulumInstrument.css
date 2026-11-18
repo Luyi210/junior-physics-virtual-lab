@@ -1,0 +1,34 @@
+@layer pages {
+  .hs-pendulum-instrument { width: 100%; min-width: 0; height: auto; display: flex; flex-direction: column; gap: 9px; padding: 14px 16px 12px; color: #31523b; }
+  .hs-pendulum-readouts { display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 12px; padding: 0 10px; }
+  .hs-pendulum-readouts > div { display: flex; flex-direction: column; gap: 4px; }
+  .hs-pendulum-readouts > div + div { border-left: 1px solid #d3dcc9; padding-left: 15px; }
+  .hs-pendulum-readouts span { color: #73836a; font-size: 12px; }
+  .hs-pendulum-readouts strong { color: #31523b; font-family: Georgia, "Noto Serif SC", serif; font-size: 23px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .hs-pendulum-readouts strong.hs-pendulum-direction { font-family: inherit; font-size: 15px; line-height: 30px; }
+  .hs-pendulum-readouts small { margin-left: 5px; font-size: 12px; }
+  .hs-pendulum-instrument > .hs-diagram { flex: 0 0 auto; display: block; width: 100%; height: clamp(280px, 32vw, 410px); overflow: visible; }
+  .hs-pendulum-instrument > .hs-diagram text { font-size: 14px; fill: #5b7252; }
+  .hs-pendulum-release { cursor: grab; outline: none; touch-action: none; }
+  .hs-pendulum-release:active { cursor: grabbing; }
+  .hs-pendulum-release:focus-visible .hs-pendulum-release-ring { stroke: #945127; stroke-width: 3; stroke-dasharray: none; }
+  .hs-pendulum-release[aria-disabled="true"] { cursor: default; }
+  .hs-pendulum-controlbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 7px; }
+  .hs-pendulum-controlbar > span { margin-right: 4px; font-size: 13px; white-space: nowrap; }
+  .hs-pendulum-controlbar b { font-variant-numeric: tabular-nums; font-weight: 500; }
+  .hs-pendulum-controlbar button { min-height: 44px; padding: 7px 11px; border: 1px solid #bcc9ae; border-radius: 6px; background: #f8f6eb; color: #395b40; font: inherit; font-size: 13px; cursor: pointer; touch-action: manipulation; }
+  .hs-pendulum-controlbar button[aria-pressed="true"] { color: #fff9ea; background: #466b4e; border-color: #466b4e; }
+  .hs-pendulum-controlbar button:disabled { opacity: .5; cursor: default; }
+  .hs-pendulum-controlbar button:focus-visible { outline: 2px solid #b77746; outline-offset: 2px; }
+  .hs-pendulum-help { margin: 1px 0 0; font-size: 12px; line-height: 1.65; color: #738169; }
+  .hs-pendulum-three-controls { width: min(370px, 78vw); padding: 9px 10px 5px; border: 1px solid #c5d0b8; border-radius: 8px; background: rgb(248 246 235 / 95%); }
+  .hs-pendulum-three-controls p { margin: 5px 0 0; color: #6a7f5d; font-size: 11px; text-align: center; }
+  @media (max-width: 640px) {
+    .hs-pendulum-instrument { padding: 12px 8px; }
+    .hs-pendulum-readouts { padding: 0 4px; gap: 8px; }
+    .hs-pendulum-readouts > div + div { padding-left: 8px; }
+    .hs-pendulum-readouts strong { font-size: 20px; }
+    .hs-pendulum-readouts strong.hs-pendulum-direction { font-size: 13px; line-height: 27px; }
+    .hs-pendulum-controlbar button { min-height: 44px; padding: 7px 10px; }
+  }
+}

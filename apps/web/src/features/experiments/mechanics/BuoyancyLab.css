@@ -1,0 +1,16 @@
+.buoyancy-lab-sim.buoyancy-rig-v2{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,260px);align-items:start;gap:20px;min-height:0;padding:22px;overflow:hidden}
+.buoyancy-lab-sim.buoyancy-rig-v2::after{display:none}
+.buoyancy-rig-v2 .buoyancy-procedure-strip{position:relative;top:auto;right:auto;left:auto;grid-column:1/-1;flex-wrap:wrap;overflow:visible}
+.buoyancy-rig-v2 .buoyancy-apparatus-drawing{position:relative;grid-row:2/4;width:100%;height:auto;min-width:0;max-height:630px;overflow:visible}
+.buoyancy-apparatus-drawing .buoyancy-drawing-title{fill:#dbece5;font:13px "PingFang SC","Microsoft YaHei",sans-serif}
+.buoyancy-apparatus-drawing .buoyancy-drawing-note{fill:#b5d0d1;font:11px "PingFang SC","Microsoft YaHei",sans-serif}
+.buoyancy-apparatus-drawing .buoyancy-gauge-number{fill:#294e50;font:11px var(--mono)}
+.buoyancy-apparatus-drawing .buoyancy-drawing-object-label{fill:#fff;font:11px "PingFang SC","Microsoft YaHei",sans-serif;paint-order:stroke;stroke:#233c42;stroke-width:2px}
+.buoyancy-apparatus-drawing .buoyancy-drawing-forces{fill:#dfebe4;font:10px var(--mono)}
+.buoyancy-rig-v2 .buoyancy-depth-meter,.buoyancy-rig-v2 .buoyancy-live-reading{position:relative;top:auto;right:auto;bottom:auto;left:auto;width:auto;grid-column:2;min-width:0;margin:0}
+.buoyancy-rig-v2 .buoyancy-depth-meter{margin-top:20px}
+.buoyancy-rig-v2 .buoyancy-depth-meter i::before{width:36px}
+.buoyancy-rig-v2 .buoyancy-live-reading{align-self:start;line-height:1.65}
+.buoyancy-rig-v2 .buoyancy-rig-caption{position:relative;grid-column:1/-1;margin:0;color:#9ebec1;font-size:11px;line-height:1.85}
+.buoyancy-rig-v2 .interaction-cue{position:relative;top:auto;left:auto;grid-column:1/-1;min-width:0;transform:none;animation:none}
+@media(max-width:760px){.buoyancy-lab-sim.buoyancy-rig-v2{grid-template-columns:minmax(0,1fr);gap:15px;padding:18px 12px}.buoyancy-rig-v2 .buoyancy-apparatus-drawing{grid-row:auto;grid-column:1;max-height:none}.buoyancy-rig-v2 .buoyancy-depth-meter,.buoyancy-rig-v2 .buoyancy-live-reading{grid-column:1;margin-top:0}.buoyancy-rig-v2 .buoyancy-depth-meter i::before{width:clamp(27px,10vw,56px)}}

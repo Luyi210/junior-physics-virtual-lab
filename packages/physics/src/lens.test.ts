@@ -24,4 +24,24 @@ describe("calculateLens", () => {
     expect(result.finite).toBe(false);
     expect(result.imageDistance).toBe(Number.POSITIVE_INFINITY);
   });
+
+  it.each([
+    [29.5, "between", "放大"], [29.9, "between", "放大"],
+    [30, "twice", "等大"], [30.1, "far", "缩小"], [30.5, "far", "缩小"]
+  ] as const)("f=15、u=%s 时数值、性质和解释一致", (u, lensCase, size) => {
+    const result = calculateLens({ ...base, focalLength: 15, objectX: -u });
+    expect(result.case).toBe(lensCase);
+    expect(result.nature).toContain(size);
+    expect(result.conclusion).toContain(size);
+    expect(Math.abs(result.magnification) - 1).toBeCloseTo((30 - u) / (u - 15));
+  });
+
+  it("焦点两侧的有限物距不能因显示分辨率而被改写成无穷远", () => {
+    for (const u of [14.99, 15.01]) {
+      const result = calculateLens({ ...base, focalLength: 15, objectX: -u });
+      expect(result.finite).toBe(true);
+      expect(result.real).toBe(u > 15);
+      expect(1 / u + 1 / result.imageDistance).toBeCloseTo(1 / 15, 12);
+    }
+  });
 });

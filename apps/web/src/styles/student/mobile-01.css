@@ -1,0 +1,55 @@
+/* Student learning, records and the home preview on small touch screens. */
+@media (max-width: 760px) {
+  .home-page .home-nav { height: auto; min-height: 72px; flex-wrap: wrap; gap: 12px; padding: 14px 16px; }
+  .home-page .home-nav > nav { width: 100%; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+  .home-page .home-nav > nav > a:nth-child(-n+3) { display: flex; min-width: 0; min-height: 44px; align-items: center; justify-content: center; padding: 8px 4px; color: #d6edf7; border: 1px solid #527289; background: #102d42; font-size: 14px; white-space: normal; }
+  .home-page .home-nav > nav > :nth-child(n+4) { display: none; }
+  .home-page .home-live-physics .canvas-scene-caption,.discovery-home-atlas .canvas-scene-caption { top: 14px; right: 14px; left: 14px; max-width: none; }
+  .home-page .home-live-physics .canvas-scene-caption span,.discovery-home-atlas .canvas-scene-caption span { white-space: normal; font-size: 12px; line-height: 1.55; }
+  .home-page .home-live-physics .canvas-scene-tabs,.discovery-home-atlas .canvas-scene-tabs { right: 12px; bottom: 72px; left: 12px; grid-template-columns: repeat(10,44px); gap: 6px; overflow-x: auto; padding: 4px 0; overscroll-behavior-x: contain; scroll-snap-type: x proximity; }
+  .home-page .home-live-physics .canvas-scene-tabs { bottom: 138px; }
+  .home-page .home-live-physics .canvas-scene-tabs button,.discovery-home-atlas .canvas-scene-tabs button { width: 44px; height: 44px; font-size: 13px; scroll-snap-align: start; }
+  .home-page .home-live-physics .canvas-motion-toggle { top: auto; right: 12px; bottom: 196px; left: auto; min-height: 44px; max-width: calc(100% - 24px); padding-inline: 14px; font-size: 12px; }
+  .discovery-home-atlas .canvas-motion-toggle { bottom: 16px; min-height: 44px; font-size: 12px; }
+  .discovery-home-atlas .physics-canvas-live { display: none; }
+  .home-page .portal-entry { min-width: 0; gap: 10px; padding-inline: 14px; }
+  .home-page .portal-entry > span { min-width: 0; }
+  .home-page .portal-entry strong { font-size: 17px; }
+  .home-page .portal-entry em,.home-page .hero-description { font-size: 14px; line-height: 1.8; }
+  .discovery-home-focused .dashboard-cat-guide input,.dashboard-cat-guide input,.student-login-card input,.notebook-writing-grid textarea,.textbook-search input { min-height: 46px; font-size: 16px; }
+  .student-login-card :is(input,button),.dashboard-cat-guide button { min-height: 46px; }
+  .dashboard-cat-guide form { min-width: 0; }
+  .discovery-home-focused .dashboard-cat-guide form > div { grid-template-columns: minmax(0,1fr); }
+  .dashboard-cat-guide .knowledge-follow-ups button { min-height: 44px; font-size: 13px; line-height: 1.6; }
+  .student-flight-tools { flex-wrap: wrap; }
+  .student-flight-tools button,.student-flight-tabs button { min-height: 44px; font-size: 13px; }
+  .student-flight-tabs { max-width: 100%; align-items: stretch; overflow-x: auto; overscroll-behavior-x: contain; }
+  .student-flight-tabs button { flex-shrink: 0; }
+  .notebook-cloud-strip { min-width: 0; }
+  .notebook-cloud-strip > header { min-width: 0; align-items: flex-start; }
+  .notebook-cloud-strip > header > i { flex-shrink: 0; }
+  .notebook-cloud-strip header p { font-size: 12px; line-height: 1.65; overflow-wrap: anywhere; }
+  .notebook-cloud-strip article span { font-size: 11px; }
+  .notebook-cloud-strip > a { min-height: 44px; font-size: 13px; }
+  .notebook-activity-list { overscroll-behavior-x: contain; scroll-snap-type: x proximity; }
+  .notebook-activity-list button { scroll-snap-align: start; }
+  .notebook-paper-actions button { min-height: 46px; font-size: 14px; }
+  .notebook-writing-grid textarea { scroll-margin-block: 100px; }
+  .learning-record-top { flex-wrap: wrap; }
+  .learning-record-top > a,.record-actions :is(a,button) { min-height: 44px; }
+  .learning-record-top > span { overflow-wrap: anywhere; }
+  .learning-record-fields textarea { font-size: 16px; scroll-margin-block: 100px; }
+  .learning-record-empty { flex-wrap: wrap; }
+}
+
+@media (max-width: 360px) {
+  .home-page .portal-entry strong { font-size: 16px; }
+  .home-page .portal-entry > i { width: 36px; height: 40px; }
+  .notebook-cloud-strip > div { flex-wrap: wrap; }
+  .notebook-cloud-strip article { flex-basis: 50%; }
+}
+
+.notebook-storage-message { width: calc(100% - 2 * var(--page-gutter)); max-width: calc(var(--site-width) - 2 * var(--page-gutter)); margin: 20px auto; padding: 14px 18px; border: 1px solid #b8573f; color: #7a3325; background: #fff4e9; line-height: 1.7; overflow-wrap: anywhere; }
+.notebook-draft-message { margin: 18px 0 0; color: #415d5c; font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
+.notebook-draft-message[role="alert"] { color: #9b3b28; }
+@media (max-width: 760px) { .notebook-storage-message { width: calc(100% - 24px); } }

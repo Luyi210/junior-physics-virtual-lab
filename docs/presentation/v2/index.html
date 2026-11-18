@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>物理实验平台制作过程 · 第二版</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:1920px;height:1080px;overflow:hidden}body{font-family:"Hiragino Sans GB","PingFang SC",sans-serif;background:#07131f;color:#ecf6f5}h1,h2,h3,p{margin:0}small{font-size:20px}strong{font-weight:700}.slide{display:none;position:relative;width:1920px;height:1080px;overflow:hidden}.slide.active{display:block}.dark{background:radial-gradient(circle at 84% 15%,#143f56 0,#0b263b 30%,#07131f 70%);color:#eef8f7}.paper{background:#e9ece6;color:#12313b}.paper:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 98%,#d4dcd5 99%) 0 0/52px 52px,linear-gradient(transparent 98%,#d4dcd5 99%) 0 0/52px 52px;opacity:.25;pointer-events:none}.orb{position:absolute;border:1px solid #4bc6df58;border-radius:50%;transform:rotate(-20deg)}.eyebrow{font:700 19px "Avenir Next",sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#7cddd8}.paper .eyebrow{color:#287c83}.page-no{position:absolute;right:88px;top:55px;font:700 120px "Avenir Next",sans-serif;letter-spacing:-.08em;color:#ffffff10;line-height:1}.paper .page-no{color:#0b455319}.folio{position:absolute;bottom:47px;left:88px;right:88px;border-top:1px solid #8dc8d064;padding-top:17px;font:600 18px "Avenir Next",sans-serif;letter-spacing:.08em;color:#a8c7cb;display:flex;justify-content:space-between}.paper .folio{border-color:#2e647258;color:#597d80}.headline{font-size:65px;line-height:1.23;letter-spacing:-.035em;font-weight:700}.lead{font-size:27px;line-height:1.62;color:#a9c6cb}.paper .lead{color:#4d7279}.accent{color:#80e5e3}.paper .accent{color:#007c83}.orange{color:#ffbe79}.paper .orange{color:#ad5d24}.rule{height:2px;background:linear-gradient(90deg,#73e4dc,#6db3ff,transparent)}.label{font:700 18px "Avenir Next",sans-serif;letter-spacing:.15em;text-transform:uppercase}.source{font-size:17px;opacity:.8}.pill{border:1px solid #9cd9db8a;border-radius:999px;padding:9px 18px;display:inline-block;font-size:18px}.paper .pill{border-color:#4d898a88}.top{position:absolute;top:78px;left:93px;right:93px}.top h2{margin-top:24px}.top .lead{margin-top:14px}.chapter{font:700 19px "Avenir Next",sans-serif;letter-spacing:.17em;color:#92e0dc}.paper .chapter{color:#27757d}.quote{font-family:"Hiragino Sans GB",sans-serif;font-weight:600;line-height:1.45}.thin{font-weight:400}.mono{font-family:"Avenir Next",sans-serif}.white-panel{background:#f6f7f0;color:#12313b;box-shadow:0 22px 60px #001c2922}.dark-panel{background:#0b2940;color:#eaf7f7;border:1px solid #62b8c674}.photo{object-fit:cover;display:block}.tag{display:inline-block;font:700 16px "Avenir Next",sans-serif;letter-spacing:.1em;color:#26777d;border:1px solid #4b999a88;padding:5px 12px;border-radius:5px}.dark .tag{color:#8de2e3;border-color:#6ec9cf80}.vline{width:2px;background:#98cbd0}
+
+/* 01 — immersive title */
+#s01 .hero-shot{position:absolute;right:0;top:0;width:1160px;height:1080px;object-fit:cover;object-position:66% center;filter:saturate(1.1)}#s01 .veil{position:absolute;inset:0;background:linear-gradient(90deg,#061622 0%,#061622 34%,#061622e6 49%,#06162252 74%,#0616222b 100%)}#s01 .orb-a{width:900px;height:900px;left:-235px;top:-238px;border:2px solid #6ce8e73d}#s01 .hero-title{position:absolute;left:92px;top:217px;width:1040px;font-size:92px;font-weight:700;line-height:1.25;letter-spacing:-.06em}#s01 .hero-sub{position:absolute;left:98px;top:505px;font-size:29px;line-height:1.75;color:#bdd3d5;width:690px}#s01 .hero-kicker{position:absolute;left:100px;top:141px;font-size:22px;color:#86e8e5;letter-spacing:.22em}#s01 .hero-facts{position:absolute;left:92px;right:92px;bottom:135px;display:flex;gap:13px}#s01 .hero-facts div{min-width:290px;padding:24px 29px;border-top:2px solid #76dfdd;background:#082436d9;backdrop-filter:blur(12px)}#s01 .hero-facts b{font:700 42px "Avenir Next",sans-serif;color:#b4ffff}#s01 .hero-facts span{display:block;font-size:20px;margin-top:7px;color:#b6d2d6}#s01 .cover-source{position:absolute;right:90px;bottom:76px;color:#9db8bc;font-size:17px}
+
+/* 02 — origin / archival poster */
+#s02 .origin-left{position:absolute;left:93px;top:310px;width:775px;height:585px;background:#f5f5ed;padding:43px;box-shadow:20px 22px 0 #acc4c4}#s02 .origin-left img{width:100%;height:348px;object-fit:cover;object-position:left center;border:8px solid #dfece8}#s02 .origin-left figcaption{font-size:21px;line-height:1.55;margin-top:23px;color:#426369}#s02 .origin-right{position:absolute;left:950px;top:315px;width:840px}#s02 .origin-right .issue{display:grid;grid-template-columns:94px 1fr;border-top:1px solid #8ca8a8;padding:23px 0 21px}#s02 .origin-right .issue b{font:700 40px "Avenir Next",sans-serif;color:#187a82}#s02 .origin-right .issue h3{font-size:30px;margin:0 0 8px}#s02 .origin-right .issue p{font-size:21px;color:#567279;line-height:1.45}#s02 .origin-ribbon{position:absolute;left:950px;top:815px;width:840px;background:#123e47;color:#f3f7ef;padding:23px 30px;font-size:24px}
+
+/* 03 — concentric collaboration loop */
+#s03 .loop{position:absolute;left:265px;top:315px;width:990px;height:590px;border:2px solid #70d7d375;border-radius:50%;transform:rotate(-8deg)}#s03 .loop:after{content:"";position:absolute;inset:92px 164px;border:1px dashed #8ac9c46d;border-radius:50%}#s03 .loop-core{position:absolute;left:610px;top:515px;width:330px;height:190px;border-radius:50%;background:#90e5dc;color:#0e3644;display:flex;align-items:center;justify-content:center;text-align:center;font-size:36px;font-weight:700;box-shadow:0 0 70px #61dcd279}#s03 .step{position:absolute;width:330px;min-height:135px;padding:18px 23px;background:#0e3449;border:1px solid #89dad78f;box-shadow:0 15px 38px #0007}#s03 .step b{color:#89e5e0;font-size:19px}.step p{font-size:23px;margin-top:9px;line-height:1.42}#s03 .step.a{left:114px;top:365px}#s03 .step.b{left:1127px;top:375px}#s03 .step.c{left:1234px;top:673px}#s03 .step.d{left:296px;top:790px}#s03 .step.e{left:160px;top:600px}#s03 .ownership{position:absolute;right:90px;top:128px;width:450px;font-size:22px;line-height:1.58;color:#bdd3d4}#s03 .ownership strong{color:#effbf8}
+
+/* 04 — editorial transcript */
+#s04 .transcript{position:absolute;left:95px;right:95px;top:314px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:25px}#s04 .episode{min-height:560px;border-top:8px solid #195963;padding:26px 28px 20px;background:#f9f9f3;box-shadow:0 18px 40px #28474a17}#s04 .episode:nth-child(2){border-top-color:#ad6b38}#s04 .episode:nth-child(3){border-top-color:#1a8b8e}#s04 .episode .n{font:700 25px "Avenir Next",sans-serif;color:#9ab4b3}#s04 .episode blockquote{margin:22px 0 26px;font-size:32px;line-height:1.5;min-height:144px;color:#153b43;font-weight:700}#s04 .episode .arrow{font-size:22px;color:#ac6c35;padding-bottom:15px;border-bottom:1px solid #aac4c0}#s04 .episode h3{font-size:27px;margin-top:23px}#s04 .episode p{font-size:22px;line-height:1.53;margin-top:12px;color:#57737a}#s04 .transcript-note{position:absolute;left:96px;right:96px;bottom:122px;font-size:24px;color:#355e66;border-left:6px solid #2e8a8d;padding-left:20px}
+
+/* 05 — open-source atlas */
+#s05 .atlas-center{position:absolute;left:725px;top:375px;width:470px;height:470px;border:2px solid #84d7d5;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle,#19556a,#082336 70%);box-shadow:0 0 95px #2ed8d038}#s05 .atlas-center strong{font-size:45px;line-height:1.3}#s05 .atlas-center em{display:block;font-size:20px;color:#9bd7d8;margin-top:21px;font-style:normal}#s05 .atlas-card{position:absolute;width:500px;min-height:146px;border-left:4px solid #75dedb;padding:14px 22px;background:#0d3045db}#s05 .atlas-card h3{font-size:28px}.atlas-card p{font-size:21px;line-height:1.43;color:#bbd2d5;margin-top:7px}#s05 .atlas-card.a{left:105px;top:316px}#s05 .atlas-card.b{left:105px;top:503px;border-color:#e9ac72}#s05 .atlas-card.c{left:105px;top:690px;border-color:#9bb2f5}#s05 .atlas-card.d{right:105px;top:316px;border-color:#9bb2f5}#s05 .atlas-card.e{right:105px;top:503px;border-color:#e9ac72}#s05 .atlas-card.f{right:105px;top:690px}#s05 .atlas-line{position:absolute;height:2px;background:#6fc8c56d;transform-origin:left}#s05 .atlas-note{position:absolute;left:737px;top:883px;width:450px;text-align:center;font-size:20px;color:#a5c8cc}
+
+/* 06 — four contrasting principles */
+#s06 .principles{position:absolute;top:328px;left:95px;right:95px;display:flex;gap:0;height:535px}.principle{width:25%;padding:33px 34px;border-left:1px solid #9cb8b7;position:relative}.principle:last-child{border-right:1px solid #9cb8b7}.principle .num{font:700 74px "Avenir Next",sans-serif;color:#aac8c3}.principle h3{font-size:33px;line-height:1.35;margin:26px 0 22px}.principle p{font-size:22px;line-height:1.58;color:#486f74}.principle .sig{position:absolute;bottom:21px;left:34px;font:700 17px "Avenir Next",sans-serif;color:#277c83}.principle .mark{position:absolute;top:34px;right:31px;width:31px;height:31px;background:#1d7d86;border-radius:50%}#s06 .principle:nth-child(2) .mark{border-radius:0;transform:rotate(45deg);background:#bb7440}#s06 .principle:nth-child(3) .mark{background:#5875aa}#s06 .principle:nth-child(4) .mark{background:#b5814e}#s06 .principle-bottom{position:absolute;left:95px;right:95px;bottom:135px;border-top:2px solid #1a737c;padding-top:24px;font-size:26px;color:#265b63}
+
+/* 07 — architecture map */
+#s07 .arch{position:absolute;left:95px;top:315px;right:95px;height:580px}#s07 .arch .a-box{position:absolute;background:#0c3145;border:1px solid #6cb8c880;padding:23px 25px;min-height:118px}#s07 .arch .a-box strong{font:700 26px "Avenir Next",sans-serif;color:#97e5e0}#s07 .arch .a-box p{font-size:20px;color:#b4d1d3;margin-top:9px;line-height:1.3}#s07 .arch .web{left:620px;top:0;width:470px;text-align:center;background:#115066;border-color:#9ce2db}#s07 .arch .api{left:1305px;top:0;width:375px}#s07 .arch .physics{left:130px;top:215px;width:420px}#s07 .arch .knowledge{left:630px;top:215px;width:420px}#s07 .arch .harness{left:1130px;top:215px;width:420px}#s07 .arch .contracts{left:630px;top:431px;width:420px}#s07 .arch .connector{position:absolute;background:#77ccca;height:2px;opacity:.75}#s07 .arch .c1{left:855px;top:118px;width:2px;height:98px}#s07 .arch .c2{left:342px;top:182px;width:1027px}#s07 .arch .c3{left:342px;top:182px;width:2px;height:33px}#s07 .arch .c4{left:1342px;top:182px;width:2px;height:33px}#s07 .arch .c5{left:855px;top:332px;width:2px;height:100px}#s07 .arch-note{position:absolute;left:95px;top:900px;font-size:23px;color:#c6dbdb}
+
+/* Shared product screenshot treatment */
+.shot-frame{overflow:hidden;border:1px solid #9bd7d58a;box-shadow:0 28px 75px #00142286;background:#071a29}.shot-frame img{width:100%;height:100%;object-fit:cover}
+/* Second pass: the conversation reads as a transcript, not a card grid. */
+#s02 .origin-ribbon{font-size:21px;white-space:nowrap}
+#s04 .transcript{left:95px;right:95px;top:315px;display:flex;flex-direction:column;gap:0}
+#s04 .episode{height:183px;min-height:0;display:grid;grid-template-columns:120px 770px 85px 1fr;align-items:center;border:0;border-top:1px solid #9eb5b2;padding:0;background:transparent;box-shadow:none}
+#s04 .episode:nth-child(2),#s04 .episode:nth-child(3){border-top:1px solid #9eb5b2}
+#s04 .episode:last-child{border-bottom:1px solid #9eb5b2}
+#s04 .episode .n{font:700 64px "Avenir Next",sans-serif;color:#aac8c5}
+#s04 .episode .question{font-size:29px;line-height:1.42;color:#153b43;font-weight:700;padding-right:34px}
+#s04 .episode .question:before{content:"我问 / ";display:block;font:700 17px "Avenir Next",sans-serif;letter-spacing:.14em;color:#25818a;margin-bottom:10px}
+#s04 .episode .arrow{font:700 48px "Avenir Next",sans-serif;color:#ac6c35;border:0;padding:0}
+#s04 .episode .answer{padding-left:18px;border-left:4px solid #23868a}
+#s04 .episode:nth-child(2) .answer{border-color:#b07139}
+#s04 .episode:nth-child(3) .answer{border-color:#4d70ac}
+#s04 .episode .answer h3{font-size:28px;margin:0 0 7px}
+#s04 .episode .answer p{font-size:21px;line-height:1.43;color:#57737a;margin:0}
+#s07 .arch .c6{left:1090px;top:58px;width:215px}
+</style>
+<link rel="stylesheet" href="extra.css" />
+</head>
+<body>
+<section id="s01" class="slide dark">
+  <img class="hero-shot" src="assets/source-high-school-home.png" alt="高中专区当前网页截图" /><div class="veil"></div><div class="orb orb-a"></div>
+  <div class="hero-kicker">A MAKING-OF STORY · 物理实验平台 V2</div>
+  <h1 class="hero-title">从一个<span class="accent">教学想法</span><br>到一座<span class="orange">物理实验室</span></h1>
+  <p class="hero-sub">我如何与 ChatGPT / Codex 持续对话，研究开源项目，修改代码与物理模型，把已有初中平台扩展为可探索的初高中实验产品。</p>
+  <div class="hero-facts"><div><b>24</b><span>项高中开放实验</span></div><div><b>2</b><span>位实验助手：光光与力力</span></div><div><b>1</b><span>条“提出问题 → 验证 → 再改”的路线</span></div></div>
+  <div class="cover-source">产品截图：本地高中首页 · 公开部署仍待完成</div>
+</section>
+<section id="s02" class="slide paper"><div class="page-no">02</div><div class="top"><div class="chapter">THE STARTING POINT / 起点</div><h2 class="headline">先认识已有产品，<span class="accent">再决定改哪里</span></h2><p class="lead">我最初想知道：这个平台究竟有哪些内容？后端在哪？哪些旧文件还需要保留？</p></div>
+  <figure class="origin-left"><img src="assets/source-student-home.png" alt="初中学生端当前网页截图"><figcaption>初中端已有学生入口、实验探索与教师功能。这次工作是继续升级已有产品，而不是从空白项目开始。</figcaption></figure>
+  <div class="origin-right"><div class="issue"><b>01</b><div><h3>盘点主工程与周边资料</h3><p>区分运行代码、教材研究、历史安装包和扫码体验说明。</p></div></div><div class="issue"><b>02</b><div><h3>弄清前端、后端和物理模型</h3><p>网页负责操作；纯物理包负责计算；后台负责账号、班级、任务与记录。</p></div></div><div class="issue"><b>03</b><div><h3>整理成后续能改的结构</h3><p>按职责放置文件，避免每加一个实验就把公式、动画、存储写在一起。</p></div></div></div>
+  <div class="origin-ribbon">我的追问：<strong>“整理一下这个平台的代码架构”</strong>　→　形成后续开发的目录边界</div><div class="folio"><span>依据：项目总览 · 代码架构 · 当前可见对话</span><span>02 / 14</span></div>
+</section>
+<section id="s03" class="slide dark"><div class="page-no">03</div><div class="top"><div class="chapter">HUMAN × CODEX / 协作方法</div><h2 class="headline">我怎样把 Codex 用成<span class="accent">开发伙伴</span></h2><p class="lead">一个问题不会自动变成成熟产品；每轮都要经过提出、研究、实现、验证与反馈。</p></div>
+  <div class="loop"></div><div class="loop-core">持续迭代<br>不是一次生成</div>
+  <div class="step a"><b>01　我提出目标</b><p>“交互更强，物理要准确，还要有高中专区。”</p></div>
+  <div class="step b"><b>02　Codex 查证</b><p>阅读代码、课程资料与开源项目，拆成可验证的改动。</p></div>
+  <div class="step c"><b>03　Codex 实现</b><p>改模型、页面、助手与后台；记录来源和适用边界。</p></div>
+  <div class="step d"><b>04　自动与实机检查</b><p>数值测试、页面操作、构建；真实设备仍单独验收。</p></div>
+  <div class="step e"><b>05　我继续反馈</b><p>“还是不行”“再有科技感一点”“手机直接用二维”。</p></div>
+  <div class="ownership"><strong>人负责判断：</strong>教学目标、体验感受、优先级、最终验收。<br><strong>Codex 负责协助：</strong>研究、写代码、运行检查、说明未验证的部分。</div>
+  <div class="folio"><span>关键方法：提出具体问题，再要求可见结果与验证证据</span><span>03 / 14</span></div>
+</section>
+<section id="s04" class="slide paper"><div class="page-no">04</div><div class="top"><div class="chapter">CONVERSATIONS THAT CHANGED THE PRODUCT / 真实对话</div><h2 class="headline">我说了什么，<span class="accent">产品就怎样变化？</span></h2><p class="lead">三段可见对话节选。省略号表示删去中间文字；结果来自后续多轮工作。</p></div>
+  <div class="transcript"><div class="episode"><div class="n">01</div><div class="question">“整理一下这个平台的代码架构”</div><div class="arrow">→</div><div class="answer"><h3>分清代码责任</h3><p>网页、API、物理计算、知识与助手各归其位。新增实验沿结构继续开发。</p></div></div>
+  <div class="episode"><div class="n">02</div><div class="question">“高中的这个界面…没有初中的那个高级”</div><div class="arrow">→</div><div class="answer"><h3>重做高中视觉</h3><p>首页、字体、空间层次与工作台反复调整；“科技感”和“天体、量子”又推动下一轮。</p></div></div>
+  <div class="episode"><div class="n">03</div><div class="question">“手机端不好显示的…直接呈现二维的”</div><div class="arrow">→</div><div class="answer"><h3>手机二维优先</h3><p>电脑保留三维，手机默认二维；视图切换共用当前物理状态与实验记录。</p></div></div></div>
+  <div class="transcript-note">我的作用：提出目标、亲自看效果、指出不足，再决定下一轮的方向。</div><div class="folio"><span>依据：当前可见对话 · 阶段验收记录</span><span>04 / 14</span></div>
+</section>
+<section id="s05" class="slide dark"><div class="page-no">05</div><div class="top"><div class="chapter">OPEN SOURCE FIELD NOTES / 开源学习地图</div><h2 class="headline">“去 GitHub 学好的项目”——<span class="accent">具体学了什么？</span></h2><p class="lead">我要求 Codex 带着项目里的真实问题去研究，而不是随便列几个仓库名称。</p></div>
+  <div class="atlas-center"><div><strong>问题驱动<br>开源研究</strong><em>看文档 → 看许可 → 提炼原则 → 独立实现</em></div></div>
+  <div class="atlas-card a"><h3>PhET Pendulum Lab</h3><p>实验教学：观察、定量测量、模型解释分层。</p></div>
+  <div class="atlas-card b"><h3>PhET Joist / Scenery</h3><p>工程架构：同一物理模型服务多种视图。</p></div>
+  <div class="atlas-card c"><h3>myPhysicsLab / CircuitJS1</h3><p>物理过程：方程与读数分离；切换保留历史。</p></div>
+  <div class="atlas-card d"><h3>React Three Fiber / Drei</h3><p>三维仪器：相机控制、按需渲染、性能预算。</p></div>
+  <div class="atlas-card e"><h3>Moodle / Moodle App</h3><p>课堂记录：学生提交、教师反馈、本地与在线分层。</p></div>
+  <div class="atlas-card f"><h3>xAPI / Learning Locker</h3><p>可靠同步：操作标识、重试、冲突和归属。</p></div>
+  <div class="atlas-note">借鉴设计思路；不复制第三方仿真源码、素材或品牌。</div><div class="folio"><span>依据：高中开源参考 · 实验档案开源参考（历史调研）</span><span>05 / 14</span></div>
+</section>
+<section id="s06" class="slide paper"><div class="page-no">06</div><div class="top"><div class="chapter">WHAT I LEARNED / 从研究到自己的设计</div><h2 class="headline">参考别人的好项目，<span class="accent">学的是方法</span></h2><p class="lead">这些原则落到了项目代码里，但教材模型、页面和实验交互按自身目标实现。</p></div>
+  <div class="principles"><div class="principle"><div class="mark"></div><div class="num">01</div><h3>模型与画面<br>分开</h3><p>物理包计算参数与时间对应的结果。二维与三维读取同一结果，改外观不应改公式。</p><div class="sig">MODEL / VIEW</div></div>
+  <div class="principle"><div class="mark"></div><div class="num">02</div><h3>先操作，<br>再谈证据</h3><p>让学生预测、控制变量、保存读数、解释图像；不能把理论答案当作学生已测数据。</p><div class="sig">INQUIRY / EVIDENCE</div></div>
+  <div class="principle"><div class="mark"></div><div class="num">03</div><h3>三维为学习<br>服务</h3><p>观察视角帮助看清空间关系；按需加载与重绘，手机保留清楚可操作的二维路径。</p><div class="sig">3D / 2D</div></div>
+  <div class="principle"><div class="mark"></div><div class="num">04</div><h3>开源仍有<br>边界</h3><p>分别核对仓库的许可证和维护信息；公开可读，不代表素材、代码和商标都可直接移用。</p><div class="sig">LICENSE / ATTRIBUTION</div></div></div>
+  <div class="principle-bottom">从“看到一个好项目”到“知道为什么借鉴、借鉴了什么、没有借鉴什么”。</div><div class="folio"><span>依据：开源调研记录 · 开发 workflow</span><span>06 / 14</span></div>
+</section>
+<section id="s07" class="slide dark"><div class="page-no">07</div><div class="top"><div class="chapter">THE SYSTEM / 架构剖面</div><h2 class="headline">让每个文件待在<span class="accent">该待的位置</span></h2><p class="lead">这回应了我反复强调的“文件要有逻辑”；以后找问题和加实验都更清楚。</p></div>
+  <div class="arch"><div class="connector c1"></div><div class="connector c2"></div><div class="connector c3"></div><div class="connector c4"></div><div class="connector c5"></div><div class="connector c6"></div>
+  <div class="a-box web"><strong>apps/web</strong><p>首页 · 初高中实验 · 教师页面 · 二维/三维</p></div><div class="a-box api"><strong>apps/api</strong><p>账号、班级、任务、记录、助手接口</p></div>
+  <div class="a-box physics"><strong>packages/physics</strong><p>公式、参数、时间和数值边界；不依赖网页</p></div><div class="a-box knowledge"><strong>packages/knowledge</strong><p>教材目录、知识与 24 项生活案例</p></div><div class="a-box harness"><strong>packages/harness</strong><p>光光／力力的规则、提示和追问</p></div><div class="a-box contracts"><strong>packages/contracts</strong><p>前后端共享的数据形状与约定</p></div></div>
+  <div class="arch-note">例如：修正单摆公式先改物理包；改善力力说法改助手规则；两种视图同时读取更新后的结果。</div><div class="folio"><span>依据：平台代码架构 · 开发 workflow</span><span>07 / 14</span></div>
+</section>
+<section id="s08" class="slide paper"><div class="page-no">08</div><div class="top"><div class="chapter">FROM SIX TO TWENTY-FOUR / 高中专区</div><h2 class="headline">“先把高中的实验补齐一下”</h2><p class="lead">高中专区不是一下做完：先建六个样板，再打磨重点实验，最后扩到 24 项。</p></div>
+  <div class="growth"><div class="growth-row"><div class="big">06</div><div><h3>首批样板：建立共同工作台</h3><p>匀变速、牛顿第二定律、抛体、单摆、电源内阻、双缝干涉；把参数、时钟、图表与记录接起来。</p></div></div>
+  <div class="growth-row"><div class="big">+04</div><div><h3>重点深化：让器材和记录更真实</h3><p>弹簧逐级加载、共点力独立试配、机械能六位置纸带、电容器分段开关历史。</p></div></div>
+  <div class="growth-row"><div class="big">+14</div><div><h3>领域扩展：形成 24 项开放实验</h3><p>继续覆盖碰撞、折射、电磁感应、热学、光电效应、带电粒子等主题。</p></div></div></div>
+  <div class="growth-shot"><img src="assets/source-pendulum-desktop.png" alt="当前单摆工作台截图" /></div><div class="growth-caption">产品截图：当前本地单摆实验页。完整工作台还包含模型曲线、读数、记录与适用条件。</div>
+  <div class="growth-bottom">每项实验都尽量形成：<strong>可操作条件 → 模型反馈 → 读数与图像 → 保存证据 → 解释边界</strong>。</div><div class="folio"><span>依据：高中产品设计 · 实验扩展验收</span><span>08 / 14</span></div>
+</section>
+<section id="s09" class="slide dark"><div class="page-no">09</div><div class="top"><div class="chapter">PHYSICS, NOT JUST ANIMATION / 物理准确性</div><h2 class="headline">我要求的是<span class="accent">会动，也讲得对</span></h2><p class="lead">物理检查落实到公式、变量、单位、操作前提和原始读数，而不是只看动画是否顺滑。</p></div>
+  <div class="science"><div class="case"><div class="case-head">CASE 01 / PENDULUM</div><h3>单摆：小角条件不能省</h3><svg viewBox="0 0 520 225" aria-hidden="true"><line x1="260" y1="24" x2="260" y2="205" stroke="#6f8791" stroke-dasharray="7 7" stroke-width="2"/><line x1="260" y1="24" x2="390" y2="176" stroke="#8ce0db" stroke-width="5"/><circle cx="390" cy="176" r="24" fill="#eab677"/><path d="M260 80 A55 55 0 0 1 296 66" fill="none" stroke="#eab677" stroke-width="3"/><text x="306" y="78" fill="#eab677" font-size="22">θ</text><circle cx="260" cy="24" r="7" fill="#b0d8d9"/></svg><div class="equation">T ≈ 2π√(L / g)</div><p>摆长量到球心；大摆角不能直接套用小角近似。手动计时保留学生的起止选择。</p></div>
+  <div class="case"><div class="case-head">CASE 02 / NEWTON II</div><h3>牛二：系统边界要画清</h3><svg viewBox="0 0 520 225" aria-hidden="true"><line x1="35" y1="174" x2="484" y2="174" stroke="#84a9b1" stroke-width="3"/><rect x="115" y="106" width="170" height="65" rx="12" fill="#2c8290" stroke="#93ded9" stroke-width="3"/><circle cx="150" cy="183" r="15" fill="#c3d9d5"/><circle cx="252" cy="183" r="15" fill="#c3d9d5"/><line x1="286" y1="130" x2="380" y2="130" stroke="#eab677" stroke-width="3"/><circle cx="397" cy="130" r="17" fill="none" stroke="#eab677" stroke-width="4"/><line x1="413" y1="130" x2="413" y2="183" stroke="#eab677" stroke-width="3"/><rect x="394" y="181" width="38" height="27" rx="3" fill="#eab677"/></svg><div class="equation">M = m(车) + m(挂码)</div><p>两者都属于运动系统；启动后绳张力不能直接当作挂码重力，比较时要控制其他变量。</p></div>
+  <div class="case"><div class="case-head">CASE 03 / DOUBLE SLIT</div><h3>双缝：条纹与间隔不同</h3><svg viewBox="0 0 520 225" aria-hidden="true"><line x1="50" y1="35" x2="50" y2="199" stroke="#7baeb6" stroke-width="6"/><line x1="186" y1="30" x2="186" y2="90" stroke="#7baeb6" stroke-width="7"/><line x1="186" y1="113" x2="186" y2="135" stroke="#7baeb6" stroke-width="7"/><line x1="186" y1="158" x2="186" y2="210" stroke="#7baeb6" stroke-width="7"/><line x1="438" y1="30" x2="438" y2="205" stroke="#6c9eaa" stroke-width="5"/><circle cx="438" cy="68" r="6" fill="#a7f5f1"/><circle cx="438" cy="112" r="6" fill="#a7f5f1"/><circle cx="438" cy="156" r="6" fill="#a7f5f1"/><path d="M188 101 Q320 51 438 68 M188 147 Q320 164 438 156" fill="none" stroke="#50c1d0" stroke-width="2" opacity=".8"/><text x="448" y="117" fill="#eab677" font-size="22">Δx</text></svg><div class="equation">Δx ≈ λL / d</div><p>跨过 n 条亮纹只有 n−1 个相邻间隔；屏内仅有一条亮纹时不能完成读尺。</p></div></div>
+  <div class="science-bottom">共同底线：<strong>模型计算、自动采样、手动虚拟读数、真实仪器测量</strong>必须分清，不能互相冒充。</div><div class="folio"><span>依据：高中物理模型说明 · 单摆、牛二与双缝验收记录</span><span>09 / 14</span></div>
+</section>
+<section id="s10" class="slide dark"><div class="page-no">10</div><div class="top"><div class="chapter">VISUAL ITERATION / 视觉与交互</div><h2 class="headline">“还不够高级”之后，<span class="accent">反复做了什么？</span></h2><p class="lead">你既要求更强的物理科技感，也要求实验能真正操作；视觉和器材交互一起迭代。</p></div>
+  <div class="iteration-photo"><img src="assets/source-high-school-home.png" alt="当前高中首页观测站截图" /></div>
+  <div class="annotation"><div class="entry"><b>你的反馈 ①</b><p>“交互感觉太少”</p><small>单摆释放点、碰撞前后对照、多用电表接法、折射临界角等逐项改进。</small></div>
+  <div class="entry"><b>你的反馈 ②</b><p>“需要科技感好一点的那种”</p><small>首页转向深空观测站：天体轨道、波的干涉、量子云意象与更清楚的仪表层级。</small></div>
+  <div class="entry"><b>你的反馈 ③</b><p>“可以在更佳科技感一点吗？”</p><small>继续调整字体、三维台面、光照、材质和动态节奏，而不是停在第一版。</small></div></div>
+  <div class="iteration-bottom">画面里的宇宙意象是探索入口；可得出物理结论的，仍是单独建模和验证的正式实验。</div><div class="folio"><span>产品截图：本地高中首页；依据：视觉升级与四样板改进记录</span><span>10 / 14</span></div>
+</section>
+<section id="s11" class="slide paper"><div class="page-no">11</div><div class="top"><div class="chapter">TWO TUTORS / 光光与力力</div><h2 class="headline">让助手<span class="accent">看懂实验</span>，而不只是聊天</h2><p class="lead">你选择的重点：“实验辅导能力：看懂操作、指出问题、分步提示”。</p></div>
+  <div class="assistant-left"><div class="pet-content"><div class="name">光光</div><div class="role">初中实验伙伴</div><ul><li>结合当前实验和操作线索提醒下一步</li><li>区分学生记录与系统计算值</li><li>按观察、操作、证据给分级提示</li></ul></div><img class="pet-face" src="../../../apps/web/public/images/cat-assistant/orange-cat.webp" alt="光光形象" /></div>
+  <div class="assistant-right"><div class="pet-content"><div class="name">力力</div><div class="role">高中柯基实验伙伴</div><ul><li>对应 24 项实验的条件和限制</li><li>检查记录、接住“为什么／现在呢”</li><li>结合生活案例解释模型与类比边界</li></ul></div><img class="pet-face" src="../../../apps/web/public/assets/lili/corgi-01.webp" alt="柯基力力形象" /></div>
+  <div class="assistant-process"><span>学生提问</span><b>→</b><span>读取当前条件</span><b>→</b><span>检查阻断与证据</span><b>→</b><span>给可执行提示</span></div>
+  <div class="assistant-note">规则能确定的问题优先本地答复；联网 AI 可在可用时参与解释，但不能编造学生做过的实验。</div><div class="folio"><span>依据：助手设计、生活案例与相关回归测试</span><span>11 / 14</span></div>
+</section>
+<section id="s12" class="slide dark"><div class="page-no">12</div><div class="top"><div class="chapter">MOBILE FIRST, WHEN NEEDED / 移动端取舍</div><h2 class="headline">手机上，<span class="accent">先让实验可读可做</span></h2><p class="lead">你提出：不好显示的三维实验可直接呈现二维；这变成了设备默认视图策略。</p></div>
+  <div class="device-desktop"><img src="assets/source-pendulum-desktop.png" alt="单摆桌面版截图" /></div><div class="device-phone"><img src="assets/source-pendulum-mobile.png" alt="单摆窄屏浏览器截图" /></div>
+  <div class="mobile-aside"><h3>同一模型，<br>两种观察方式</h3><p>电脑可用三维观察空间关系；手机默认二维读数。切换视图保留参数、时钟和记录。</p><p class="warn">还做了触控目标、横屏、安全区与聊天键盘适配。真实手机与微信内体验仍须完整验收。</p></div>
+  <div class="device-label">本地 Edge 桌面与窄窗截图；右侧是浏览器模拟窄屏，不等于真实手机验收。</div><div class="folio"><span>依据：移动端第 40—42 阶段记录</span><span>12 / 14</span></div>
+</section>
+<section id="s13" class="slide paper"><div class="page-no">13</div><div class="top"><div class="chapter">EVIDENCE BEFORE CLAIMS / 质量验证</div><h2 class="headline">做完代码后，<span class="accent">怎样知道它可靠？</span></h2><p class="lead">一项功能要经过不同层次的检查；每一层只能证明它真正覆盖的范围。</p></div>
+  <div class="verification"><div class="tier"><b>01</b><h3>物理计算测试</h3><p>公式、单位、边界条件和无效状态。</p></div><div class="tier"><b>02</b><h3>交互流程测试</h3><p>改参、暂停、记录、恢复、身份隔离。</p></div><div class="tier"><b>03</b><h3>服务与助手测试</h3><p>接口校验、来源区分、异常降级与追问。</p></div><div class="tier"><b>04</b><h3>工程构建检查</h3><p>类型、架构依赖、生产打包和资源预算。</p></div><div class="tier"><b>05</b><h3>真实使用验收</h3><p>浏览器画面、手机触屏、GPU、教师审阅。</p></div></div>
+  <div class="claim"><div class="symbol">≠</div><h3>这些“通过”并不等价</h3><p>自动测试通过，不代表所有画面都被人看过；窄窗截图，也不能证明真机触屏一定顺畅。</p></div>
+  <div class="proof-note">这也是为什么阶段记录要写清：<strong>修了什么、怎么测的、还缺什么证据</strong>。</div><div class="folio"><span>依据：开发 workflow · 阶段验收文档</span><span>13 / 14</span></div>
+</section>
+<section id="s14" class="slide dark"><img class="closing-shot" src="assets/source-high-school-home.png" alt="本地高中专区截图" /><div class="closing-shade"></div>
+  <div class="chapter" style="position:absolute;left:98px;top:78px">WHERE THE PROJECT STANDS / 当前进度</div><h2 class="closing-title">作品已经能展示，<br><span class="accent">公开使用还要走完最后一程。</span></h2>
+  <p class="closing-sub">我想让别人通过网址或二维码使用它。现在需要把本地成果、教学审阅、真实手机验收与独立服务器部署接起来。</p>
+  <div class="roadmap"><div class="phase"><b>NOW / 本地成果</b><h3>可以展示制作过程</h3><p>已有初中实验、高中 24 项本地实验、二维／三维、教师空间以及光光和力力。</p></div><div class="phase"><b>NEXT / 补充证据</b><h3>让老师与学生试用</h3><p>核对课程与物理模型；完成真机触屏、性能、完整记录流程与真实反馈。</p></div><div class="phase"><b>THEN / 对外访问</b><h3>完成独立站点联调</h3><p>物理产品与另一网站在同一服务器上独立运行；公开子域名尚待验收。</p></div></div>
+  <div class="closing-line">这是一个由人的教学判断和持续反馈驱动、由 Codex 协助研究与开发的进行中作品。</div><div class="folio"><span>依据：制作过程稿 · 服务器准备记录；线上状态以正式验收为准</span><span>14 / 14</span></div>
+</section>
+<script>
+const n=new URLSearchParams(location.search).get('slide')||'01';
+document.getElementById('s'+n)?.classList.add('active');
+</script>
+</body></html>

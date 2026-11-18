@@ -1,0 +1,71 @@
+.lili-assistant{--lili-ink:#e5eef8;--lili-paper:#101c2d;--lili-copper:#eec78a;position:fixed;right:max(24px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));z-index:85;color:var(--lili-ink);font-family:"Avenir Next","PingFang SC","Microsoft YaHei",sans-serif}
+.lili-assistant,.lili-assistant *{box-sizing:border-box}
+.lili-assistant button,.lili-assistant summary{-webkit-tap-highlight-color:transparent}
+.lili-launcher{display:flex;align-items:center;gap:10px;min-height:64px;margin-left:auto;border:1px solid;border-radius:18px;padding:5px 16px 5px 3px;cursor:pointer;color:inherit;text-align:left}
+.lili-launcher span{display:grid;gap:4px;min-width:0}.lili-launcher b{font-size:20px;font-weight:650;letter-spacing:1px}.lili-launcher small{font-size:11px;line-height:1.4}.lili-launcher>svg{flex:none;margin-left:5px}
+.lili-corgi{width:72px;height:72px;overflow:visible;flex:none}.lili-corgi-head{transform-origin:80px 112px}.lili-corgi-eyes{transform-origin:80px 76px;animation:lili-blink 7s infinite}.is-speaking .lili-corgi-head{animation:lili-nod 1s ease-in-out infinite}.is-speaking .lili-corgi-tongue{animation:lili-talk .55s ease-in-out infinite}
+.lili-panel{width:418px;max-height:min(800px,calc(100dvh - 116px));display:flex;flex-direction:column;min-width:0;border:1px solid;border-radius:22px;overflow:hidden;margin-bottom:14px;isolation:isolate}
+.lili-panel>header{display:flex;align-items:center;gap:13px;padding:19px 17px 16px;flex:none;border-bottom:1px solid;position:relative}
+.lili-portrait{display:grid;place-items:center;width:76px;height:76px;flex:none;border-radius:20px}
+.lili-heading{flex:1;min-width:0}.lili-eyebrow{display:block;font-size:10px;letter-spacing:2px;line-height:1.6}.lili-panel h2{margin:4px 0 6px;display:flex;align-items:center;flex-wrap:wrap;gap:7px 10px;font-size:27px;font-weight:650;line-height:1.2;letter-spacing:1px}.lili-panel h2 .lili-capability{display:inline-flex;align-items:center;min-height:23px;padding:3px 7px;border:1px solid;border-radius:5px;font-size:10px;font-weight:500;letter-spacing:0;line-height:1.5}.lili-panel header p{font-size:11px;line-height:1.6;margin:0;overflow-wrap:anywhere}.lili-panel header button{width:44px;height:44px;flex:none;display:grid;place-items:center;align-self:flex-start;border:1px solid transparent;border-radius:12px;background:none;color:inherit;cursor:pointer;margin:-5px -6px 0 0}
+.lili-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scroll-padding:14px}.lili-dialogue{padding:24px 22px 4px;overflow-wrap:anywhere;min-width:0}
+.lili-welcome{padding:3px 0 22px}.lili-welcome>span{display:inline-flex;gap:8px;align-items:center;font-size:11px;letter-spacing:2px}.lili-welcome h3{font-size:30px;line-height:1.55;font-weight:600;letter-spacing:1px;margin:15px 0 12px}.lili-welcome h3 em{font-style:normal}.lili-welcome p{font-size:13px;line-height:1.85;margin:0}.lili-welcome ul{display:flex;gap:8px 13px;flex-wrap:wrap;margin:15px 0 20px;padding:0;list-style:none}.lili-welcome li{font-size:11px;line-height:1.7;display:flex;align-items:center;gap:6px}.lili-welcome li:before{content:"";width:4px;height:4px;border:1px solid;transform:rotate(45deg)}.lili-welcome small{display:block;font-size:11px;line-height:1.85;border-top:1px solid;padding-top:14px}
+.lili-message{margin-bottom:23px;max-width:100%;overflow-wrap:anywhere;min-width:0}.lili-message>small{display:block;font-size:10px;letter-spacing:.5px;line-height:1.6}.lili-message>p{white-space:pre-wrap;font-size:13px;line-height:1.9;margin:8px 0}.lili-message.is-student{padding:12px 15px;border:1px solid;border-radius:15px 15px 4px 15px;margin-left:25px}.lili-message.is-student>p{margin:6px 0 0}.lili-message.is-lili{padding-right:2px}.lili-message details{font-size:11px;line-height:1.7}.lili-message details summary{min-height:44px;cursor:pointer;padding:11px 0}.lili-message details a{display:flex;align-items:center;min-height:44px;margin:3px 0;text-decoration:underline;text-underline-offset:4px}.lili-thinking{display:flex;align-items:center;gap:9px;font-size:12px;line-height:1.8;margin:0 0 20px}
+.lili-manual-context{border:1px solid;border-radius:13px;padding:14px;margin-bottom:20px;overflow-wrap:anywhere}.lili-manual-context>div{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 10px}.lili-manual-context strong{font-size:12px;font-weight:600}.lili-manual-context span{font-size:10px}.lili-manual-context p{font-size:11px;line-height:1.8;margin:8px 0 12px}.lili-manual-context button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:44px;padding:10px 12px;border:1px solid;border-radius:8px;font:inherit;font-size:12px;cursor:pointer}.lili-manual-context button svg{flex:none}
+.lili-suggestions{display:grid;gap:7px;padding:0 22px 20px}.lili-suggestions>p{font-size:10px;letter-spacing:1.5px;line-height:1.5;margin:3px 0 4px}.lili-suggestions button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;border:1px solid;border-radius:10px;padding:11px 13px;font-size:12px;line-height:1.6;text-align:left;cursor:pointer}.lili-suggestions button span{min-width:0;overflow-wrap:anywhere}.lili-suggestions button svg{flex:none}
+.lili-panel button:disabled{opacity:.48;cursor:default}.lili-notice{font-size:11px;line-height:1.8;margin:0 22px 19px;padding:10px 12px;border:1px solid;border-radius:8px;overflow-wrap:anywhere}
+.lili-panel form{flex:none;border:1px solid;margin:0 17px 0;border-radius:13px;overflow:hidden}.lili-input-label{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden}.lili-panel textarea{display:block;width:100%;border:0;resize:vertical;min-height:64px;max-height:120px;outline:0;padding:14px;background:transparent;color:inherit;font:13px/1.7 "Avenir Next","PingFang SC",sans-serif}.lili-panel form:focus-within{outline:2px solid;outline-offset:3px}.lili-panel form>div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 8px 8px 13px}.lili-panel form small{font-size:9px;line-height:1.6;min-width:0;max-width:210px;overflow-wrap:anywhere}.lili-panel form button{flex:none;border:0;border-radius:9px;min-width:78px;min-height:44px;padding:10px 12px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;cursor:pointer}
+.lili-panel footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1px 10px;flex:none;padding:8px 20px 12px;font-size:10px;line-height:1.6;min-width:0}.lili-panel footer>span{min-width:0;overflow-wrap:anywhere}.lili-panel footer a{display:inline-flex;align-items:center;gap:5px;min-height:44px;text-decoration:none}
+.lili-assistant :is(button,a,summary):focus-visible{outline:2px solid;outline-offset:3px}
+@keyframes lili-blink{0%,44%,48%,100%{transform:scaleY(1)}46%{transform:scaleY(.12)}}@keyframes lili-nod{50%{transform:rotate(3deg)}}@keyframes lili-talk{50%{transform:translateY(2px)}}
+@media (max-width:600px), (max-height:500px) and (pointer:coarse) {
+  .lili-assistant { right:max(12px,env(safe-area-inset-right)); bottom:max(12px,env(safe-area-inset-bottom)); }
+  .lili-panel {
+    --panel-edge-left:max(8px,env(safe-area-inset-left));
+    --panel-edge-right:max(8px,env(safe-area-inset-right));
+    --panel-edge-top:max(8px,env(safe-area-inset-top));
+    --panel-edge-bottom:max(8px,env(safe-area-inset-bottom));
+    position:fixed;
+    z-index:1;
+    top:calc(var(--panel-viewport-top,0px) + var(--panel-edge-top));
+    left:calc(var(--panel-viewport-left,0px) + var(--panel-edge-left));
+    width:calc(var(--panel-viewport-width,100vw) - var(--panel-edge-left) - var(--panel-edge-right));
+    height:calc(var(--panel-viewport-height,100dvh) - var(--panel-edge-top) - var(--panel-edge-bottom));
+    max-height:none;
+    border-radius:18px;
+    margin:0;
+    overscroll-behavior:contain;
+  }
+  .lili-panel :is(button,summary,a) { touch-action:manipulation; }
+  .lili-launcher { min-height:54px; padding-right:13px; gap:8px; }
+  .lili-launcher span small { display:none; }
+  .lili-panel>header { gap:10px; padding:8px 12px; }
+  .lili-portrait { width:46px; height:50px; border-radius:12px; }
+  .lili-panel h2 { font-size:22px; margin:2px 0 3px; }
+  .lili-panel .lili-eyebrow { font-size:10px; letter-spacing:1px; }
+  .lili-panel header button { margin:0; }
+  .lili-assistant .lili-panel>header .lili-corgi-photo { width:52px; height:52px; }
+  .lili-dialogue { padding:18px 16px 2px; }
+  .lili-welcome h3 { font-size:26px; }
+  .lili-assistant.is-open .lili-panel :is(.lili-message>p,.lili-welcome p) { font-size:15px; line-height:1.8; }
+  .lili-suggestions { padding:0 16px 16px; }
+  .lili-suggestions button,.lili-manual-context button { font-size:13px; }
+  .lili-notice { margin:0 16px 16px; }
+  .lili-panel form { margin:4px 12px 0; }
+  .lili-assistant.is-open .lili-panel form textarea { font-size:16px; padding:9px 12px; min-height:52px; max-height:80px; resize:none; }
+  .lili-panel form small { max-width:150px; font-size:10px; }
+  .lili-panel form button { min-width:70px; padding:10px; }
+  .lili-panel footer { padding:2px 15px 4px; font-size:11px; }
+  .lili-panel:has(textarea:focus)>header .lili-eyebrow { display:none; }
+  .lili-panel:has(textarea:focus)>footer { display:none; }
+  .lili-panel:has(textarea:focus)>form { margin-bottom:8px; }
+}
+/* Desktop short windows may scroll the full card. On a phone the visible
+   viewport drives its height, keeping the close button and composer in place. */
+@media (min-width:601px) and (max-height:540px) and (pointer:fine) {
+  .lili-panel { overflow-y:auto; overscroll-behavior:contain; }
+  .lili-panel>*,.lili-body { flex-shrink:0; }
+  .lili-body { overflow:visible; flex:none; }
+  .lili-panel>header { padding-top:11px; padding-bottom:11px; }
+}
+@media(prefers-reduced-motion:reduce){.lili-assistant *,.lili-assistant *:before,.lili-assistant *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

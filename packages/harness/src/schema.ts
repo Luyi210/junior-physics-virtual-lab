@@ -102,6 +102,15 @@ function validateDialogue(value: unknown, path: string, errors: HarnessValidatio
   if (value.provider !== undefined && !["rules", "deepseek-harness"].includes(String(value.provider))) {
     errors.push({ path: `${path}.provider`, message: "未知回答来源" });
   }
+  if (value.contextSnapshot !== undefined) {
+    const snapshot = value.contextSnapshot;
+    if (!isRecord(snapshot) || !isDateString(snapshot.capturedAt)
+      || typeof snapshot.apparatusAvailable !== "boolean" || typeof snapshot.changedWhileWaiting !== "boolean"
+      || !Array.isArray(snapshot.evidence) || snapshot.evidence.length > 6
+      || snapshot.evidence.some((item) => typeof item !== "string" || item.length > 200)) {
+      errors.push({ path: `${path}.contextSnapshot`, message: "提问时装置摘要格式无效" });
+    }
+  }
   return true;
 }
 

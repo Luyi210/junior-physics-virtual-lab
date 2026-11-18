@@ -23,7 +23,9 @@ export interface LensResult {
   conclusion: string;
 }
 
-const EPSILON = 0.05;
+// Numerical equality only: instrument/readout tolerances must not turn a
+// physically enlarged or reduced image into an exactly equal-sized image.
+const sameDistance = (a: number, b: number) => Math.abs(a - b) <= 16 * Number.EPSILON * Math.max(1, Math.abs(a), Math.abs(b));
 
 export function calculateLens(input: LensInput): LensResult {
   const objectDistance = input.lensX - input.objectX;
@@ -35,7 +37,7 @@ export function calculateLens(input: LensInput): LensResult {
     throw new RangeError("物体必须位于透镜左侧");
   }
 
-  if (Math.abs(objectDistance - input.focalLength) < EPSILON) {
+  if (sameDistance(objectDistance, input.focalLength)) {
     return {
       objectDistance,
       imageDistance: Number.POSITIVE_INFINITY,
@@ -62,7 +64,7 @@ export function calculateLens(input: LensInput): LensResult {
 
   let lensCase: LensCase;
   let conclusion: string;
-  if (Math.abs(objectDistance - 2 * input.focalLength) < 0.25) {
+  if (sameDistance(objectDistance, 2 * input.focalLength)) {
     lensCase = "twice";
     conclusion = "物体位于二倍焦距，形成倒立、等大的实像。";
   } else if (objectDistance > 2 * input.focalLength) {
@@ -76,7 +78,7 @@ export function calculateLens(input: LensInput): LensResult {
     conclusion = "物距小于焦距，形成正立、放大的虚像，光屏不能承接。";
   }
 
-  const size = Math.abs(magnification) > 1.05 ? "放大" : Math.abs(magnification) < 0.95 ? "缩小" : "等大";
+  const size = lensCase === "twice" ? "等大" : Math.abs(magnification) > 1 ? "放大" : "缩小";
   const nature = `${magnification < 0 ? "倒立" : "正立"}、${size}、${real ? "实像" : "虚像"}`;
 
   return {

@@ -1,0 +1,20 @@
+{
+  "name": "@physics-lab/knowledge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./graph": "./src/physicsKnowledgeGraph.ts",
+    "./textbook": "./src/textbookKnowledge.ts",
+    "./high-school": "./src/highSchool/catalog.ts",
+    "./classroom": "./src/classroomExperiments.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test src/*.test.mjs src/highSchool/*.test.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

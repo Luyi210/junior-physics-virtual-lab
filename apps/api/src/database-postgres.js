@@ -1,7 +1,6 @@
 import pg from "pg";
 import { hashPassword } from "./security.js";
-
-const { Pool } = pg;
+import { countInvalidDatabaseIdentities, initializationResult, planDatabaseInitialization } from "./database-initialization.js";
 
 const schema = `
   CREATE TABLE IF NOT EXISTS schools (
@@ -86,6 +85,40 @@ const schema = `
     completed_at TEXT
   );
 
+  CREATE TABLE IF NOT EXISTS session_learning_records (
+    session_id TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE,
+    learner_id TEXT NOT NULL REFERENCES users(id),
+    prediction TEXT NOT NULL,
+    measurements TEXT NOT NULL,
+    conclusion TEXT NOT NULL,
+    question TEXT NOT NULL,
+    revision INTEGER NOT NULL CHECK(revision > 0),
+    last_mutation_id TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS session_learning_feedback (
+    id TEXT PRIMARY KEY,
+    school_id TEXT NOT NULL REFERENCES schools(id),
+    class_id TEXT NOT NULL REFERENCES classes(id),
+    task_id TEXT NOT NULL REFERENCES tasks(id),
+    session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+    learner_id TEXT NOT NULL REFERENCES users(id),
+    author_id TEXT NOT NULL REFERENCES users(id),
+    author_name TEXT NOT NULL,
+    author_role TEXT NOT NULL CHECK(author_role IN ('teacher','admin')),
+    body TEXT NOT NULL CHECK(length(body) BETWEEN 1 AND 4000),
+    report_revision INTEGER NOT NULL CHECK(report_revision > 0),
+    report_updated_at TEXT NOT NULL,
+    report_prediction TEXT NOT NULL,
+    report_measurements TEXT NOT NULL,
+    report_conclusion TEXT NOT NULL,
+    report_question TEXT NOT NULL,
+    mutation_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    UNIQUE(author_id, session_id, mutation_id)
+  );
+
   CREATE TABLE IF NOT EXISTS session_events (
     id TEXT PRIMARY KEY,
     session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
@@ -116,6 +149,7 @@ const schema = `
   CREATE INDEX IF NOT EXISTS idx_lessons_school ON lessons(school_id);
   CREATE INDEX IF NOT EXISTS idx_tasks_class ON tasks(class_id, status);
   CREATE INDEX IF NOT EXISTS idx_sessions_class_status ON sessions(class_id, status);
+  CREATE INDEX IF NOT EXISTS idx_feedback_session ON session_learning_feedback(session_id, created_at, id);
   CREATE INDEX IF NOT EXISTS idx_events_session ON session_events(session_id, occurred_at);
   CREATE INDEX IF NOT EXISTS idx_observations_session ON observations(session_id, created_at);
 `;
@@ -138,17 +172,37 @@ function clientAdapter(client) {
   };
 }
 
-async function bootstrap(database, config) {
+async function initializationState(database) {
+  const schools = await database.get("SELECT COUNT(*) AS count FROM schools");
+  const users = await database.get("SELECT COUNT(*) AS count FROM users");
+  const orphans = await database.get("SELECT COUNT(*) AS count FROM users u LEFT JOIN schools s ON s.id = u.school_id WHERE s.id IS NULL");
+  const invalidIdentityCount = countInvalidDatabaseIdentities(
+    await database.all("SELECT id FROM schools"),
+    await database.all("SELECT id, school_id FROM users")
+  );
+  const administrators = await database.all("SELECT email, password_hash FROM users WHERE role = 'admin'");
+  return {
+    dialect: "postgresql",
+    schoolCount: Number(schools.count),
+    userCount: Number(users.count),
+    orphanUserCount: Number(orphans.count),
+    invalidIdentityCount,
+    administrators: administrators.map((row) => ({ email: row.email, passwordHash: row.password_hash }))
+  };
+}
+
+async function bootstrap(database, plan) {
   const now = new Date().toISOString();
-  await database.run("INSERT INTO schools (id, name, created_at) VALUES (?, ?, ?) ON CONFLICT DO NOTHING", ["school-primary", config.bootstrapSchoolName, now]);
+  await database.run("INSERT INTO schools (id, name, created_at) VALUES (?, ?, ?)", ["school-primary", plan.schoolName, now]);
   await database.run(
-    "INSERT INTO users (id, school_id, email, password_hash, name, role, created_at) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING",
-    ["user-admin", "school-primary", config.bootstrapAdminEmail.toLowerCase(), hashPassword(config.bootstrapAdminPassword), config.bootstrapAdminName, "admin", now]
+    "INSERT INTO users (id, school_id, email, password_hash, name, role, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    ["user-admin", "school-primary", plan.adminEmail, hashPassword(plan.adminPassword), plan.adminName, "admin", now]
   );
 }
 
 export async function openPostgresDatabase(config, options = {}) {
-  const pool = options.pool ?? new Pool({ connectionString: config.databaseUrl, max: 5 });
+  const ownsPool = options.pool == null;
+  const pool = options.pool ?? new pg.Pool({ connectionString: config.databaseUrl, max: 5 });
   const base = clientAdapter(pool);
   const database = {
     ...base,
@@ -167,9 +221,40 @@ export async function openPostgresDatabase(config, options = {}) {
         client.release();
       }
     },
-    async close() { await pool.end(); }
+    // An injected pool belongs to its caller, on both success and failure.
+    async close() { if (ownsPool) await pool.end(); }
   };
-  await database.exec(schema);
-  await bootstrap(database, config);
+  try {
+    const client = await pool.connect();
+    const connection = clientAdapter(client);
+    let began = false, failure, rollbackFailure;
+    try {
+      await client.query("BEGIN");
+      began = true;
+      // Every initializer uses this transaction-scoped lock on the same client,
+      // including schema creation and the read-before-insert policy decision.
+      await client.query("SELECT pg_advisory_xact_lock(1819271539, 1701736308)");
+      await connection.exec(schema);
+      const plan = planDatabaseInitialization(await initializationState(connection), config);
+      if (plan.mode === "bootstrap") await bootstrap(connection, plan);
+      await client.query("COMMIT");
+      database.initialization = initializationResult(plan);
+    } catch (error) {
+      failure = error;
+      if (began) {
+        try { await client.query("ROLLBACK"); } catch (error) { rollbackFailure = error; }
+      }
+      throw error;
+    } finally {
+      // An unconfirmed rollback must not return a possibly active transaction
+      // to a caller-owned pool; release(error) discards only this connection.
+      try { client.release(rollbackFailure); } catch (error) { if (!failure) throw error; }
+    }
+  } catch (error) {
+    if (ownsPool) {
+      try { await pool.end(); } catch { /* Preserve the initialization failure. */ }
+    }
+    throw error;
+  }
   return database;
 }

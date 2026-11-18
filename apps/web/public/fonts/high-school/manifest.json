@@ -1,0 +1,1237 @@
+{
+  "format": "physics-high-school-font-subsets-v1",
+  "method": "Original variable Noto unicode shards, exact corpus cmap subsets; static Barlow 500/600 Latin subsets. No merging or outline simplification.",
+  "tools": {
+    "fontTools": "4.60.2",
+    "Brotli": "1.2.1"
+  },
+  "buildScriptSha256": "39164c9b2734cafa1fcef6ca40bd3ec533ade68066deda50a7aaa7e5088a56d0",
+  "sources": [
+    {
+      "name": "@fontsource-variable/noto-sans-sc",
+      "version": "5.3.1",
+      "license": "OFL-1.1",
+      "tarball": "https://registry.npmjs.org/@fontsource-variable/noto-sans-sc/-/noto-sans-sc-5.3.1.tgz",
+      "integrity": "sha512-UB96JJ17HyD5ehEU7Em0hDdh7fvTMB4B4Hzmq5c4QaNwwSLqTrdM2S+coySeBqCkXwh0DxqXT0b0wMrmzorFpQ==",
+      "sha256": "95a11c5bbacd9995d94fc8cf964ee687307aacf20957ca6a4a16077519388163",
+      "repository": "git+https://github.com/fontsource/font-files.git"
+    },
+    {
+      "name": "@fontsource/barlow-condensed",
+      "version": "5.3.0",
+      "license": "OFL-1.1",
+      "tarball": "https://registry.npmjs.org/@fontsource/barlow-condensed/-/barlow-condensed-5.3.0.tgz",
+      "integrity": "sha512-RA7MmIx0v3eQ6Gcf74qLVLOwLB0GpPOzx+eU9iG/AmCnSJGcIWYeU8y6CEMGZ210MGwGg5CZhzLkkvyZdTTk1g==",
+      "sha256": "759fcdd25df64b4ef41653808d849cdb9ba0a520999032ceb137ce035a17e2ea",
+      "repository": "git+https://github.com/fontsource/font-files.git"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/data/highSchoolClassroom.ts",
+      "sha256": "95c4d337f876205102cc4195b3a0d39db35864df4930b29d8142e75f682c7ce1"
+    },
+    {
+      "path": "apps/web/src/data/highSchoolContext.ts",
+      "sha256": "d647ef878ff9f2e76a66d270003fe0a7f649da2b478e5018c51647932b49bf9d"
+    },
+    {
+      "path": "apps/web/src/data/highSchoolRecordScope.ts",
+      "sha256": "5878c4eb082a92729a5a383b4b673fa0d80931286fcf5fcffc74e64d34cbb812"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/CorgiAvatar.css",
+      "sha256": "15b61188e1aa4272348c7e33e4b0ce83b5d964d97c23845090a6d0a49976cf90"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/CorgiAvatar.tsx",
+      "sha256": "80e97bdc5914515f1f9c7acd47bc61ce06ea60f403dffae9f9afcc74903c243c"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/CorgiAvatarControls.tsx",
+      "sha256": "f05039ce74735edcb35115d12ec8c5961b47d84640167883a07490ede5006742"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/LegacyCorgiAvatar.tsx",
+      "sha256": "8041777c7c73eedc5c6471064537629c3638bd1d13cb06296fcd4b1a2de3d972"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/LiliAssistant.css",
+      "sha256": "d7097f36219bba3285c6782d6b970e6290d96e431b20e744dc3f3dcf9a757f61"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/LiliAssistant.tsx",
+      "sha256": "e7160fc88b75d28ce77935bcbeb0c038b8cb872c70c3ba5f484e91431da548f1"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/LiliCosmicTheme.css",
+      "sha256": "56aadd460c07f23e844458f28039ce2a4027711469f182155f4c70590aac55ba"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/LiliQuestionContext.tsx",
+      "sha256": "6f8ad05cb0a6e838ecb4acee654d68703936015920bacded91a1aa2e914acf52"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/corgiAvatars.ts",
+      "sha256": "e35395652679b744590c8ee30934184d46bbbb97dda25392c5622a16525f4d84"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/liliConversationContext.ts",
+      "sha256": "2dcc3381a3840a18fcaee0024b75cb7107914727f0b941be16b22c1e61b3f3c7"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/liliRequest.ts",
+      "sha256": "5f45d9e8ba1ea232d3a4824e9f267f958a1ddffc059077e73f610c41fd87916f"
+    },
+    {
+      "path": "apps/web/src/features/high-school/assistant/useCorgiAvatarRotation.ts",
+      "sha256": "4f1d97f848ef3602708a98222a7d12365663f498accf88dc89276d363c9df448"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/CapacitorApparatus3D.tsx",
+      "sha256": "1838f4054990888604f8df71ce56328db5504615a1d1c313a668a571d27ed6fa"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/CapacitorDiagram.tsx",
+      "sha256": "0ddaff394e16183ae5fe3b511ea84b07f1be6a2a5093144938cfbbb1d661a925"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/CapacitorHistoryDetails.css",
+      "sha256": "b456f8f4b1ee5afc969e53c57a514a6f91dc1af23aabe3dbe762c66fdac7675d"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/CapacitorHistoryDetails.tsx",
+      "sha256": "41c53c2fc6993518025eb49cb3706f0cfdf86b8f111f13d4e4621a45c2415e1c"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/CapacitorSwitchControl.css",
+      "sha256": "5c7a3c0d21fd922b9f5e17323857d762671122ac4e1da33f6c43203bd16dea11"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/CapacitorSwitchControl.tsx",
+      "sha256": "f405fd7c970218521a6929cfc98e5b3e97af5f7d922f0e33652ddeb79447b221"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ClassroomEvidencePicker.css",
+      "sha256": "f0743dd9cc7c7702cf592504efb4b0973258e10d3425d90006f5dc8ab4b7fa1a"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ClassroomEvidencePicker.tsx",
+      "sha256": "0278a674115bb6153214502280c05caf17c7a70f55af95b092e429bf9d79fa19"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ExperimentDiagram2D.tsx",
+      "sha256": "517eebd8c17e8f83eec0a5253d3d3dbdbcf20ac0e9a884020017b0c75832419b"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ExperimentParameterControl.css",
+      "sha256": "f66e493d94b6280ce260dc530f0a97ecae8b21258b5b37146cd79422e764f352"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ExperimentParameterControl.tsx",
+      "sha256": "f173db14e7dca36fe0c594703a20b4ad6daf380f8dc33010c2032f485cc750b6"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ExperimentPlot.tsx",
+      "sha256": "cac636da149892842c808396fb6a5512c94c5925cc882465594c5899e4bef482"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ExperimentReadings.css",
+      "sha256": "a2cd4a1a3668fe85faa214c145a1112053d70b85b550ed18dceeb7ff6795e07e"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ExperimentReadings.tsx",
+      "sha256": "2734e95b537e083a8601611c594e52de11a2166351bfc3f53eeb5f80a38acd4d"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ExperimentScene3D.tsx",
+      "sha256": "32257fabd6069a3e5ffc408315e2e59e2dfdaf51ba11d1dcab491a9ec3d78b6e"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ExperimentViewport.css",
+      "sha256": "8e7ac78eb2403eb8c3b4b5d551b42820f53ece8704ace4b4e7d93bb6a139aa74"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ExperimentViewport.tsx",
+      "sha256": "45df11b052b1c55b6b1e0259620775898cf9d9e00d8e23e9652c4c0727f19680"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ForceCompositionApparatus3D.tsx",
+      "sha256": "5a1916ca973ba1cf188d9228191243f166fbb6fc69b671201ffe9e4c76059354"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ForceCompositionControl.css",
+      "sha256": "f1ebda168d7dee0fdc95453f5ecc685da1f0861e7ce3a294e1666c9548eef5cb"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ForceCompositionControl.tsx",
+      "sha256": "4653be4f67473328c89486cfb8a659923bbcea100bce2ec043a8a2540c0f0ce3"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ForceCompositionDiagram.tsx",
+      "sha256": "d6ea3d7f60712a507bca2809bd833f605cd1370acece407fc89464a0df813db6"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/HighSchoolClassroomPanel.css",
+      "sha256": "e2b0f824382fb575fc3af7c4eef108de379a1382f14f7599c697a9a35c400b26"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/HighSchoolClassroomPanel.tsx",
+      "sha256": "4cced8856e5da4b06a78c87a0580d00d89130bd73f423cadc752ebe06315fa64"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/HighSchoolHeader.tsx",
+      "sha256": "015e832d09af3dd134dabe5db68d76db2ee9e1971a23d224e86fd59c74b314b3"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/HighSchoolRecordScopePanel.css",
+      "sha256": "c33eafd7ca4d7f9308ef8d1b58b6ce744817c86b78a2c4e73d819907f9ab40f1"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/HighSchoolRecordScopePanel.tsx",
+      "sha256": "ce4ab2368e9c89ed3a816ba61ec4c60e6319bb7d35189a0d6df9d0ba6fc819a1"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/InquiryGuide.css",
+      "sha256": "fa5a3f97f2375c82696c5721f02feff5f8d30b0190c16852d1dbac3617b14c72"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/InquiryGuide.tsx",
+      "sha256": "5687722c930ba698d136684b923b7a652d5efc0a80f59955ca35bdf399725991"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/InstrumentIllustration.tsx",
+      "sha256": "2f94c05455c64a4ab7ed32642eb84ee02914f1390e084b35bd8c124ec4bde76e"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/LegacyHighSchoolRecords.css",
+      "sha256": "7f463d02a45dd02242bc07f8250c4f5932d297fc4d4d21c0f858d9b5ec12f048"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/LegacyHighSchoolRecords.tsx",
+      "sha256": "0f551e57db0ff03521dae08c50be7b205fb0d1fa1de28ed88159d687bdc78c7f"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ManualMeasurementPanel.css",
+      "sha256": "eec19c740a1fa6c5bea78edeeab0da245621b6d929fdee24267d78c7722cfa66"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ManualMeasurementPanel.tsx",
+      "sha256": "f231908218c21fce7b7e90a40cb612ad319e5613fb479f8147a1353d2802bed4"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/MeasurementAnalysisPanel.css",
+      "sha256": "1c244b40caf731d296ef7c2ce56266b8cfba089cbf77af4f45ae442bf26af1cb"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/MeasurementAnalysisPanel.tsx",
+      "sha256": "75d03bed8017c3db44c9e2ce1894d061791368207956dce556f22401cb328cf7"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/MeasurementPointTable.tsx",
+      "sha256": "76dbce599fb4800ae21fec9bcece19917aae27504a9729e2ef065c58ff34eda1"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/MeasurementRecoveryPanel.css",
+      "sha256": "66f19c246f1b7f9c5534a3d87de3d1bdf8247fb840b086b4ffef95a3b3f35fd5"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/MeasurementRecoveryPanel.tsx",
+      "sha256": "8a637df9b7c23e25262c711e2fbc1a404fa9631861fa8eac25c2606b1b6062be"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/MechanicalEnergyApparatus3D.tsx",
+      "sha256": "90a764edc0227103e2b32e7568293e66a40655dfbfa40acfaa02836711fae7a2"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/MechanicalEnergyDiagram.tsx",
+      "sha256": "4a74f303d384913ad17a74849554a782f67fd7c84ae8037497351e5450ac5b5b"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/MechanicalEnergyMeasurementPanel.css",
+      "sha256": "38415b1e6efa3ef60d45272d500751fb759605beeeb6372323a89294c931ba9f"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/MechanicalEnergyMeasurementPanel.tsx",
+      "sha256": "e35e2e92e45e4b5eb1e990503c5551419112fc4c572490bc161cc5e3707778a3"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/PrecisionReadingPractice.tsx",
+      "sha256": "c6273a1abdd9cdfb7b86fc6b9a754b35cc57547f27133dbe088f75b9ae083b8f"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/SceneEnvironment3D.tsx",
+      "sha256": "d21fb6765a95f2c1c2f2b8ac828c11577c51145531b1da17b5bc25444705f62c"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/ScenePrimitives3D.tsx",
+      "sha256": "73874d2e737787a23053878848be318c53813c6f35921e4f2d53321c34147232"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/SpringApparatus3D.tsx",
+      "sha256": "70ef838d5cbb72c62735388be26469787e43ec736ecd2585e09f1482dc6c49e7"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/SpringDiagram.tsx",
+      "sha256": "b6fcadbb159576e0004c595f278fe524a2696f0c68b89f38fe3734d15a3a5852"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/SpringLoadControl.css",
+      "sha256": "5a0d6d7cc98fdc8146e271606953d024b2c3dfb3e80e6ee93fa6c2a9ec44c290"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/SpringLoadControl.tsx",
+      "sha256": "027cd8e5e6ba958bafa4e008eb42a48427d7ff6fe495db44ca225b3d25308f33"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/WorkbenchChrome.tsx",
+      "sha256": "9d49e985752679f3d20f45ec6f2c01a225a39013af0acdfc921693dc2021fd32"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/capacitorGeometry.ts",
+      "sha256": "72b258775c697129bf4e4bfabfb2a6bf50f01ea7d7ed11c6d7e0edb707ae04ac"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/cosmos/CosmicObservatory.css",
+      "sha256": "ebdc7153690ce836deb0e692640af1ef820efeb0ee224c7979ccbb7b54752e4f"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/cosmos/CosmicObservatory.tsx",
+      "sha256": "a6abd9f2914ea56432a4d82abb86983362dc73f447f0959c001f683489f69ee3"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/cosmos/CosmicStaticArt.tsx",
+      "sha256": "16119985d8a8d886219cacf3ffa8c7c4f62382cb96c28e3f95941cc81cf4ec49"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/cosmos/cosmicGeometry.ts",
+      "sha256": "e199d67cb6889dda8d86352dbe9a3084bb5338d8a2fe0515e8883f24ac4c13eb"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/cosmos/cosmicLoop.ts",
+      "sha256": "10a9baacae089d5b5138f8b6f637f134202fe25c8ba53b502413e95a8ebcf447"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/cosmos/cosmicPainter.ts",
+      "sha256": "73323ec9cb7b0def9dcf330f9c9df0f21ecfc6aff44d1658718876ed31f3e307"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/ApparatusPrimitives3D.tsx",
+      "sha256": "11704dd587fd931cb7d462f06c534c89f071310c580a9a86c73066df7c27a977"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/DiagramPrimitives.tsx",
+      "sha256": "a45e8d13ac1825ac6fd3788dfc10993c2e8ff2747009626b4a63050cfdb1c307"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/ElectricApparatus3D.tsx",
+      "sha256": "fd2c3d63d0faaddcf726b33506dd4040219d6548ef802c3dfe079b000beff634"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/ElectricDiagrams.tsx",
+      "sha256": "85c1ba8b6ed74ea314ea2eb9f4c2e7cba6700d96f2e27962db2fb01cd8750906"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/ExpandedApparatus3D.tsx",
+      "sha256": "0000fb8baeb06c43e074172b348c1736a116f2520a760bfb6da139102c5d4b96"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/ExpandedDiagram2D.tsx",
+      "sha256": "c6da1f6545bb227fd0a5b91704437aa52beb629b94730a57bc97424d48748c8e"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/ExpandedInstrumentIcon.tsx",
+      "sha256": "0f41e3fbf4beae7630b6ba49de2c941d72cfb2dfb1213a6fc68e994fd6ce8084"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/ExpandedInstruments.css",
+      "sha256": "c86069b6eea914efd9d86a110d36442f3b90b9c23e4f9631d593fcc256ccf0d0"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/MagnetismApparatus3D.tsx",
+      "sha256": "5f02649e5efa7c90c4bd4764372e8fdd3db7d4111f9ce3d1909cc87e5c842cbf"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/MagnetismDiagrams.tsx",
+      "sha256": "261885e22a74181c8f3b33b652c95d200c4bc736499e44790b9f17d5480453df"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/MechanicsApparatus3D.tsx",
+      "sha256": "17378a45d497d1da384b06a42d809096d436d71406f3a7022b3dc20609057ad6"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/MechanicsDiagrams.tsx",
+      "sha256": "2955dd741ec7dee715e8e2fd2cb9365d5e331970f53b318ea6c623f7fd4d3801"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/OpticsThermalApparatus3D.tsx",
+      "sha256": "892de291a810d65f251bb9a1795bbaf7a8b7a7226bb2acb713b6ef6bf7191964"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/OpticsThermalDiagrams.tsx",
+      "sha256": "c24c4e468ff671177ed7ca912f67d0ab5c03fdd00fa50572b8c8feca934977c2"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/expandedGeometry.ts",
+      "sha256": "56caf7dce858b288ddedcf86355a9e633f6601f8f653114c8ad8a16867473803"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/expandedSceneTypes.ts",
+      "sha256": "f7563cf5d7697df3e42a7c7828a0a43b2f547d9cbfd12aaada278bfbf97d9ae5"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/expanded/multimeterGeometry.ts",
+      "sha256": "aa34c231f4ee3ebbcdacbd83e669f9ab7abc007393f40bc2c76da651d26ced7e"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/CollisionApparatus3D.tsx",
+      "sha256": "b473b4b1c4ea06d8d526b8b17137bcd492ddd46b02200b455f96a5f6366d953e"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/CollisionDiagram.tsx",
+      "sha256": "98a15647066f73c6eb19167f836a3b2971660316974423c37447e708f454566d"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/CollisionLearningPanel.tsx",
+      "sha256": "ae359f98de9aefe6d9bc4042df5561610842e266c750744d321f8f1871fe8286"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/CollisionModelView.ts",
+      "sha256": "3f2c8929298964607f50a8a753a5a21b8717b6d1f304d3d7ce2b698c95a90af7"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/CollisionRefraction.css",
+      "sha256": "abc1c925d7b9c865275afad3317ec82d762a683958b49d7a17e7cc3322a8e3c9"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/MultimeterControlPanel.css",
+      "sha256": "2402bf72e31639b15163ca8dd9a02e7348c6d20d7f0709d725a3a1512e558b65"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/MultimeterControlPanel.tsx",
+      "sha256": "bb0634b168502df742a4f7873f9f212867cb18419554fc6f0c1b1f8af93c9c83"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/PendulumApparatus3D.tsx",
+      "sha256": "06f5334d5ed367d40907794f2329163da2243af64ef139ca256f5b86208f8b08"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/PendulumControls.tsx",
+      "sha256": "995a7a4ddb2eca31c18b6678bcbd1e89ce8bc0682ea4f36fd6273dc8846a1135"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/PendulumDiagram.tsx",
+      "sha256": "cc80ede25e23ac337476b8eed08428e67bc9bf92b5878f60ae2aacc764a3ac3e"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/PendulumGeometry.ts",
+      "sha256": "ef59059d26299cbefb38ea5010452bd3f5bc69d90dcc560d131fe6f6cb783821"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/PendulumInstrument.css",
+      "sha256": "e5aa8e92702249fba10e8f8b48f505861f1af9ee4d889e1a3e04dce611274fd3"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/RefractionApparatus3D.tsx",
+      "sha256": "aa46dcf3e8fbd33b757cc947d436dcb1e79abcefc10f631f51f1134294f59387"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/RefractionDiagram.tsx",
+      "sha256": "71e71c77644efc64e189637a8b01b99f3c665074975590daadcbcc403cfe338a"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/RefractionGeometry.ts",
+      "sha256": "c8e6a8297b95d1c9e3cd433619e10a784179a53aac160e726ba07934e7b4783c"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/flagship/RefractionLearningPanel.tsx",
+      "sha256": "9d02342e3000075eacf99f2ece5795ffdea5d55e1309b39eeb9f9c1440dd0cec"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/forceCompositionGeometry.ts",
+      "sha256": "598c3c4ba3784295f43b9f6c19ad0c2faab30b14293f89b85383d1feab9ccb7b"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/forceCompositionScene3D.ts",
+      "sha256": "093d2577a1f1b6a5496ef77294f733fd292f0c2535166d0f126c7db2d810c8a3"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/manualInstrumentState.ts",
+      "sha256": "ed0daa3c662f89f2bbef351191424be6a4abfd48cb81484a98a7b74e7c25ebbc"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/mechanicalEnergyGeometry.ts",
+      "sha256": "36444f60e4af48b328ab581d622396f7bd5929d331e665a00bf753d3cef9103d"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/sceneCamera.ts",
+      "sha256": "2c389621da454529513eb10f57cc534802cf95b258af4455a208d4eacba865b9"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/sceneGeometry.ts",
+      "sha256": "0adc1a547aee6d698e0916d33a15d0b2ca94e5d28a9dff7aedbbe1c31141e5b3"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/showcase/HighSchoolShowcase.css",
+      "sha256": "adac2d8a3f4a0a727b9906f2747bddd43990aead33a3fd8dc50cc992a53b6667"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/showcase/HighSchoolShowcase.tsx",
+      "sha256": "aa25fd0b7db089b0254d8749474c5c71c9759f934b00662e3f4c374f2252815f"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/showcase/showcaseModel.ts",
+      "sha256": "488190ca5bf70c6d6d8dd62f1e45987a367b06f3d8b2440aa4125630c00bbc34"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/showcase/showcasePlayback.ts",
+      "sha256": "d7c44e0244232e6d4f3eadd93531a5384fffec69e1172698719f463123757d85"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/spatial/SpatialExperimentGallery.tsx",
+      "sha256": "e9273986b7f0f42525e96e9565daafdaf8d496fe86c77d1779bc3914d28801e8"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/spatial/spatialGalleryInteraction.ts",
+      "sha256": "e53de69d9ac8177b1c4cd2d160df4f865030cbf0579b87b28e1e3cd14e408aba"
+    },
+    {
+      "path": "apps/web/src/features/high-school/components/springSceneGeometry.ts",
+      "sha256": "f912fb84e529a43cf8cf9173a19a645afe96cda65cc17b52fac79208b134ea9d"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/capacitorEvidence.ts",
+      "sha256": "2ee0ac8d8c39928106444c16d7a09412efed501e337a3f3c3a3de0d625bd3b7d"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/classroomEvidence.ts",
+      "sha256": "45aeea43c532bc3485009f0b35a93a344f47364b34bff82f81dde81e940da939"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/classroomEvidenceSources.ts",
+      "sha256": "edbfc94140cc41b0c9c61ee92e5b44a87bcb5607f956c5cebaa877053966fcda"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/expandedProtocols.ts",
+      "sha256": "a054cfd75055a8ccce8f9861c53597f56a62710b6dec1497868c8842efcd4252"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/manualContext.ts",
+      "sha256": "e3515fff7e1994a21479c6862adc8d63d346ea4971953b89d9996a2d70dc31ef"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/manualMeasurementRepository.ts",
+      "sha256": "a1f411015303d655a6cb163feb59bc8cc3772ca6b83692ff35670d034ab8f884"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/measurementPresentation.ts",
+      "sha256": "7c7e22b765d780ddd7e2886500e730fe1da7dccb9cc80fac448ac2922f307685"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/measurementStorage.ts",
+      "sha256": "be20bda0bdf81da38da6f4d53df999746e0f87f53a884505fe18ff2c9606bc3a"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/mechanicalEnergyEvidence.ts",
+      "sha256": "dfa8d3f63af98dd17a11c340f9c1e2a249361cf68c2de64bbe0fccec90e5058d"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/parameterInput.ts",
+      "sha256": "aa23aa274aaceb1607527c5085347cd4bb13955a27d3239c4dbc0ec6d749040d"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/precisionReading.ts",
+      "sha256": "2a60cb5ffbc92c3014a76757faa7ad488875a7ebcf8100de8ac4dd00ae12b1fa"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/useExperimentClock.ts",
+      "sha256": "a7debcd7397f6796c8d5ccd072baf14ee3d2d6a8f1a5ec54f2463d1ff3d707b1"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/useManualMeasurements.ts",
+      "sha256": "cdb93b7ca5e8e3ffbc61c489dd73f33658c2ba09195a4431e15a33e5b3519cc6"
+    },
+    {
+      "path": "apps/web/src/features/high-school/experiments/workbench.ts",
+      "sha256": "50bbf3372a28abfdf1c57230aa8aaeaeb9405caed869c919bb08bcad4c7730e2"
+    },
+    {
+      "path": "apps/web/src/features/high-school/pages/HighSchoolExperimentPage.tsx",
+      "sha256": "19a04a4210dcaedf94d6e6e8b6bbc4a1011029c1b38ff916330da8a4e1960264"
+    },
+    {
+      "path": "apps/web/src/features/high-school/pages/HighSchoolHome.css",
+      "sha256": "ae35c5a798ea0217e793473822577cf6a8d9387fb6feea3c2cf3b2d295e7b87e"
+    },
+    {
+      "path": "apps/web/src/features/high-school/pages/HighSchoolHomePage.tsx",
+      "sha256": "ae06055c65ec59e93f5f2320aa94a0088f22d5d79e5d0d46d208bd5ab761610e"
+    },
+    {
+      "path": "apps/web/src/features/high-school/pages/HighSchoolPages.css",
+      "sha256": "8bbf08ef81ecef2ea04030fb6f0cadc73e5af0c107d6836f665d1e2db2e21bf2"
+    },
+    {
+      "path": "apps/web/src/features/high-school/pages/HighSchoolWorkbench.css",
+      "sha256": "f954aed198c2e34aa6e9de004e8fa40e5cbdcb12f278a8ccfb8f9f2899ea37ab"
+    },
+    {
+      "path": "apps/web/src/features/high-school/styles/HighSchoolTheme.css",
+      "sha256": "1c7d3b09154bc312bb7c8cd46109d9ef13e70785621f59a22c8d2a44a06df3b7"
+    },
+    {
+      "path": "apps/web/src/features/high-school/styles/HighSchoolTypography.css",
+      "sha256": "cf217e8f2499fad6ba40712189903e5c1df4cce7b68519c7988462be034d65e7"
+    },
+    {
+      "path": "packages/harness/src/highSchool/lili.ts",
+      "sha256": "2ec4bd0f07703642617cb3641137a071c5379fb3544f3e11fd13200160eb7568"
+    },
+    {
+      "path": "packages/harness/src/highSchool/liliExpansion.ts",
+      "sha256": "8d20e84ddf17b7cf73ff3ef6ca1f810430516e2416c3a1ac419d174d450d3e72"
+    },
+    {
+      "path": "packages/harness/src/highSchool/liliManual.ts",
+      "sha256": "ba30192e1852b18ee62b913e2171911d2c1fa6d76d5cff6e5b4cedf6ec2f0bc0"
+    },
+    {
+      "path": "packages/knowledge/src/classroomExperiments.ts",
+      "sha256": "e184a037af4f80c857a4cbd7c60c17babb53a7a372016142d85a2088a71e0f7b"
+    },
+    {
+      "path": "packages/knowledge/src/highSchool/catalog.ts",
+      "sha256": "fb096fe21dc2561e567a964b8ca719d7de1ee7cfb7c78c122af1d3093c373f4c"
+    },
+    {
+      "path": "packages/physics/src/highSchool/capacitor.ts",
+      "sha256": "16de56669fd26db1aa0fbba0ca7629eb2701a9fe58c8d35ca2665e168c393e5f"
+    },
+    {
+      "path": "packages/physics/src/highSchool/catalog.ts",
+      "sha256": "f3bc891526408c6f79089e468edeabba1381dc9d2d84989a2adb3d4eec5feefe"
+    },
+    {
+      "path": "packages/physics/src/highSchool/elasticity.ts",
+      "sha256": "bd87b73bcaa1e508eb1dc00f9d82c7d475471a50b3f94eba46e6d8680b4ddd09"
+    },
+    {
+      "path": "packages/physics/src/highSchool/electricityOptics.ts",
+      "sha256": "8f7bd4f5cc6f3f34842081f07cb098d08b917292eaaa36f33802e55fa884342b"
+    },
+    {
+      "path": "packages/physics/src/highSchool/expandedMeasurementAnalysis.ts",
+      "sha256": "f285a6f101fdcc9449e4eaf109adff8b6381cb779a25aa337b19088f87031df0"
+    },
+    {
+      "path": "packages/physics/src/highSchool/expandedModels.ts",
+      "sha256": "51f0904b99f7ae6022347590098b4a3956c3eb6e72fbd1a047c81046a595be05"
+    },
+    {
+      "path": "packages/physics/src/highSchool/expandedSimulation.ts",
+      "sha256": "244e545ea3e658f62e797045fce7e939dbeee94d7e60c1fe53eb5fd1181e42e7"
+    },
+    {
+      "path": "packages/physics/src/highSchool/expansionCatalog.ts",
+      "sha256": "d7005880bfadf221d1119740f536a0386f801171b2e1b41466de46eabdb212ba"
+    },
+    {
+      "path": "packages/physics/src/highSchool/forceComposition.ts",
+      "sha256": "239ec15bd168895b8d2a6a42b3cae1d988542cb00876c8af0fbfd901fafd0f0e"
+    },
+    {
+      "path": "packages/physics/src/highSchool/index.ts",
+      "sha256": "014c5e6a3dc66b17a6cf65ae11d2ce7bda935cbd55bf2b6260ce38734efb0330"
+    },
+    {
+      "path": "packages/physics/src/highSchool/kinematics.ts",
+      "sha256": "5e899a54f773fdbc719b441a0f5d938692b642f0eb55cde0d0435a79c4970601"
+    },
+    {
+      "path": "packages/physics/src/highSchool/manualMeasurements.ts",
+      "sha256": "ff37ffad3f43989f6b98183046bf738a6d19b1f58d971fd126a8fb07642c7861"
+    },
+    {
+      "path": "packages/physics/src/highSchool/measurementAnalysis.ts",
+      "sha256": "a2e09e2168ecb2fd2ae88b4b36286f0d1a3965be7c860cc616367e6a651f186b"
+    },
+    {
+      "path": "packages/physics/src/highSchool/mechanicalEnergy.ts",
+      "sha256": "e24025c572bb8e1ac48cefcdf70d5ac84f784f9dc78d12b55642fe155d0aaa2a"
+    },
+    {
+      "path": "packages/physics/src/highSchool/pendulum.ts",
+      "sha256": "298887cb6366932987a9d8c09600e5c4e5257eb0768e0fecb15ad2e37a73ae92"
+    },
+    {
+      "path": "packages/physics/src/highSchool/simulation.ts",
+      "sha256": "ac019af4783c601e8400662986191e0c2e026c5ff027c4c2ff0e89556b4e8de7"
+    },
+    {
+      "path": "packages/physics/src/highSchool/types.ts",
+      "sha256": "cedf08f3f28704d1c6a8176896e627720c1531de08d9156f87913fa47d05bc56"
+    }
+  ],
+  "licenses": [
+    {
+      "file": "OFL-Noto-Sans-SC.txt",
+      "sha256": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3"
+    },
+    {
+      "file": "OFL-Barlow-Condensed.txt",
+      "sha256": "046ee27d8bddc6b6ee08eee53c96dbf3ec1f6df561644e018507dd8ffcb11d31"
+    }
+  ],
+  "requestedCodepointCount": 1156,
+  "sansCoveredCodepointCount": 1125,
+  "unsupportedCodepointsUseSystemFallback": [
+    "U+0394",
+    "U+03A6",
+    "U+03A9",
+    "U+03B1",
+    "U+03B2",
+    "U+03B4",
+    "U+03B5",
+    "U+03B8",
+    "U+03BB",
+    "U+03BC",
+    "U+03BD",
+    "U+03C0",
+    "U+03C1",
+    "U+03C4",
+    "U+03C9",
+    "U+1D62",
+    "U+1D67",
+    "U+2076",
+    "U+207B",
+    "U+2080",
+    "U+2081",
+    "U+2082",
+    "U+208A",
+    "U+208B",
+    "U+2093",
+    "U+209B",
+    "U+2161",
+    "U+21BA",
+    "U+21BB",
+    "U+223F",
+    "U+2393"
+  ],
+  "woff2TotalBytes": 381500,
+  "assets": [
+    {
+      "file": "hs-sans-27-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 1584,
+      "sha256": "114d0df509c082767f00391f65af83985011e3cc8f25233f75176a45a7eb6917",
+      "sourceFile": "files/noto-sans-sc-27-wght-normal.woff2",
+      "sourceSha256": "4e0dafaa26d924f5612a138a34a817aa06b8f72bad9798fe64d221fb13001d31",
+      "unicodeRange": "U+9608",
+      "cmapCount": 1,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-32-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 1708,
+      "sha256": "8a58941e568ca63849c47e861cd6e13c4db0952657204d1a46548d5e8fc4c232",
+      "sourceFile": "files/noto-sans-sc-32-wght-normal.woff2",
+      "sourceSha256": "2d884d1cfd97c6f72518a2d690573e4130b0b707423f25963d7cc975388adf3e",
+      "unicodeRange": "U+904F",
+      "cmapCount": 1,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-43-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 1572,
+      "sha256": "163636d42e003fe1f32166b9c4b0e853b0be93455457cb4f5b86352cbb91ff93",
+      "sourceFile": "files/noto-sans-sc-43-wght-normal.woff2",
+      "sourceSha256": "a98ffa0839e353eb7e768084e27892596616f6a3d8bb65c94202898bccb1fd68",
+      "unicodeRange": "U+8026",
+      "cmapCount": 1,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-59-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 1620,
+      "sha256": "677a3957dab6ce119cb0882b90fa3b6eda3e2bc510cbafa8c395b091c0c9ed8c",
+      "sourceFile": "files/noto-sans-sc-59-wght-normal.woff2",
+      "sourceSha256": "0557109d55c77ff9c9b5c9732d732c5328bd0b61038cffe611d9d62b26ded420",
+      "unicodeRange": "U+6DC6",
+      "cmapCount": 1,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-63-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 1676,
+      "sha256": "74ff226c6d0e3aa4fa60688437ab06ca93d2c246b50883f8b79abd24db30c606",
+      "sourceFile": "files/noto-sans-sc-63-wght-normal.woff2",
+      "sourceSha256": "0897654d316342cdf37bb3d16fcf1a51fdcc38fcf1fb39880b5d3f17e87bf7de",
+      "unicodeRange": "U+692D",
+      "cmapCount": 1,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-81-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 1276,
+      "sha256": "639fd7f1dd1bcffbc4279b345e3e6c012035f34ed4aec09143c0cf16434ad985",
+      "sourceFile": "files/noto-sans-sc-81-wght-normal.woff2",
+      "sourceSha256": "9958d614924fa54de4f661febd02c1de787ef640d58970e4d928e1ecd7c17990",
+      "unicodeRange": "U+531D",
+      "cmapCount": 1,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-88-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 1140,
+      "sha256": "e9556419cf429e257e77f9a6f2cf9a374cf93fd8aa893c925c4b34f0b72f3af7",
+      "sourceFile": "files/noto-sans-sc-88-wght-normal.woff2",
+      "sourceSha256": "008f38db74bc1c346ba8f4d6065dd41d0fe33a4ed2f9909cb880b81c5a3f9334",
+      "unicodeRange": "U+25B7",
+      "cmapCount": 1,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-90-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 2252,
+      "sha256": "a72c8287f06cee624e0bdff7a47cd5c45c906684902c3a2a876eb4ffd7bb5f54",
+      "sourceFile": "files/noto-sans-sc-90-wght-normal.woff2",
+      "sourceSha256": "80d51f95afbebcbed0cc53985fbce43eec3a37c8ec88b08d316c56a32aa77843",
+      "unicodeRange": "U+2194,U+2197,U+2199,U+221E,U+2248,U+2260,U+2297,U+2299",
+      "cmapCount": 8,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-91-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 1132,
+      "sha256": "cba5404e9b47e137e0031a265ce300de262b8a4cc95c82f7c48326b5193c541f",
+      "sourceFile": "files/noto-sans-sc-91-wght-normal.woff2",
+      "sourceSha256": "7bf857d9d1285675fe572e64f968ae1f3213da7654ffd335633fb5b39493c057",
+      "unicodeRange": "U+2074",
+      "cmapCount": 1,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-100-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 3036,
+      "sha256": "09a308b52809fc873b229805d11d928271d3daf4ba28df90c43693fea34349b7",
+      "sourceFile": "files/noto-sans-sc-100-wght-normal.woff2",
+      "sourceSha256": "2c5ddf9cdfad73afb5235e06bc8ed3b5c627849200d673978148700c78f84160",
+      "unicodeRange": "U+221A,U+2264,U+63B7,U+695E,U+7EF7",
+      "cmapCount": 5,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-101-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 2200,
+      "sha256": "e7aae294d3cad585a59c59c4967034b0810ef5255db12fe872aac27dd1a01bba",
+      "sourceFile": "files/noto-sans-sc-101-wght-normal.woff2",
+      "sourceSha256": "a33308bf652e64ac2884bfe830996e933322b939b915bb823fd47383580664ad",
+      "unicodeRange": "U+5E27,U+68D8,U+6E32",
+      "cmapCount": 3,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-102-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 3308,
+      "sha256": "746f8be433294782f967cd6ea37c9496c171d964459f929de017a398bd14e13f",
+      "sourceFile": "files/noto-sans-sc-102-wght-normal.woff2",
+      "sourceSha256": "4ea85e144cb385ce086b21b307730d3fdb70a587aaf350b12d0c4c2f13e66d27",
+      "unicodeRange": "U+2265,U+5ED3,U+62E2,U+6A44,U+7C27",
+      "cmapCount": 5,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-103-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 4588,
+      "sha256": "eb47326508dc9eac6935e0d1939c4545d88dfc83f38b2e1bd9fd3e96f8c2df22",
+      "sourceFile": "files/noto-sans-sc-103-wght-normal.woff2",
+      "sourceSha256": "1bfdb1f001006c62434577b60064c3ec0562e4a68191acbc7feeba4b303bf095",
+      "unicodeRange": "U+4FEF,U+5F27,U+63A0,U+6984,U+7194,U+72ED,U+8231",
+      "cmapCount": 7,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-104-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 2596,
+      "sha256": "d8357c409bbb93526e61ea0b5baf31a1a47397b15e13010fea0f449280bbc259",
+      "sourceFile": "files/noto-sans-sc-104-wght-normal.woff2",
+      "sourceSha256": "1e716b78655e396075808be52a9e749df1b6b5d17bd0ccedc6dcb89586903737",
+      "unicodeRange": "U+6760,U+67C4,U+6CB8,U+6EDE,U+FF0B",
+      "cmapCount": 5,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-105-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 4368,
+      "sha256": "cf1a58b2e12a18a3ca0d95f906a9413ee7b4571b1cc3ecf4267f4160362ec04d",
+      "sourceFile": "files/noto-sans-sc-105-wght-normal.woff2",
+      "sourceSha256": "ade910a27a4bd65baed59a8a86a3a6a80f6083daa7123bb9ff32da15e56fda9d",
+      "unicodeRange": "U+2190,U+566A,U+5F26,U+68B3,U+7AD6,U+884D,U+8F90,U+94A9",
+      "cmapCount": 8,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-106-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 5248,
+      "sha256": "b9a0342bba66bacc1b6aac97fd5e5169d1baca45b838a808aa97849427d31c08",
+      "sourceFile": "files/noto-sans-sc-106-wght-normal.woff2",
+      "sourceSha256": "d31c838eb0e43043109bd6ddc23c295c340fc50f9a2f2381076ae8c0fa7f980b",
+      "unicodeRange": "U+5179,U+51D1,U+5300,U+5B99,U+6070,U+6EA2,U+6EB6,U+70EB,U+7EB2,U+94A5",
+      "cmapCount": 10,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-107-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 5480,
+      "sha256": "114da40efd747730b13fa3a26b073fcd341d54aa2e175b6e68c96563090a3ca0",
+      "sourceFile": "files/noto-sans-sc-107-wght-normal.woff2",
+      "sourceSha256": "d8d9b5fd2b266fdf3f6855444e7769e54f39806e48994e7fe5e0c4ace9553c81",
+      "unicodeRange": "U+2103,U+51F8,U+5339,U+5378,U+5F25,U+67EF,U+6A59,U+6A61,U+7B4B,U+7B5B,U+7EF3,U+FF5C",
+      "cmapCount": 12,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-108-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 12360,
+      "sha256": "e5747b1d7ef8e923c0fc27ce11e152c4b5c219d92146fc8ecacb0e0cb6e9fc6c",
+      "sourceFile": "files/noto-sans-sc-108-wght-normal.woff2",
+      "sourceSha256": "12fcc1175cb6370acb056743f4fea7fdde85b6376ada2f15dfbab59f02b45988",
+      "unicodeRange": "U+4EF0,U+4F2A,U+53E0,U+543B,U+5782,U+5F2F,U+5F7C,U+6251,U+629B,U+6321,U+659C,U+77E2,U+7816,U+7A00,U+7B52,U+7BAD,U+7EEA,U+7F1D,U+82AF,U+84B8,U+87BA,U+8870,U+8C10,U+8F74,U+9038,U+94AE,U+9971,U+9AA4",
+      "cmapCount": 28,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-109-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 10196,
+      "sha256": "8bcd3f479c69d857e2eba3942aa7f3a5c4af40798e34e911dc5cc20db9e062c4",
+      "sourceFile": "files/noto-sans-sc-109-wght-normal.woff2",
+      "sourceSha256": "85ebc9985c665dd55346ebc78b93f8d8ef6ff972d78afc288b75d697a242d780",
+      "unicodeRange": "U+2192,U+4E22,U+4E32,U+4F0F,U+5269,U+5367,U+5BC4,U+5FAA,U+5FFD,U+62D3-62D4,U+64E6,U+6746,U+6C0F,U+6CC4,U+6EF4,U+77AC,U+78C1,U+7B79,U+7C92,U+7EB5,U+8361,U+8DC3,U+90BB,U+94DC",
+      "cmapCount": 25,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-110-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 18668,
+      "sha256": "49a8f5061fd314ce34c28091baa2355e001e1ebd82bcdb1365310d69b64daf9b",
+      "sourceFile": "files/noto-sans-sc-110-wght-normal.woff2",
+      "sourceSha256": "51785f4a4d2a011d877052cab1bc4c36cabcc4e186ed0176214061c174b7f024",
+      "unicodeRange": "U+300C-300D,U+4E58,U+4F38,U+503E,U+5141,U+51ED,U+5242,U+52B2,U+5448,U+5766,U+594F,U+59C6,U+59FF,U+5BFF,U+5E9F,U+5F04,U+60AC,U+60EF,U+62D6,U+632F,U+649E,U+65CB,U+6B8B,U+6BEB,U+6CBF,U+6CDB,U+6D45,U+6D53,U+6EDA,U+6F0F,U+73BB,U+7483,U+78B0,U+7ED5,U+8017,U+819C,U+820D,U+8377,U+8986,U+8C13,U+8D21,U+8D56,U+8D8B,U+8DB4,U+8E2A,U+8F68,U+8FA8,U+963B,U+966A,U+9A71,U+FF0D",
+      "cmapCount": 52,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-111-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 14336,
+      "sha256": "4b944247f9004ea9008bdfc952a2fdfa5f1ebbf17f4b45e3f0e01a96846c19ec",
+      "sourceFile": "files/noto-sans-sc-111-wght-normal.woff2",
+      "sourceSha256": "aaa67a70f5e8b351c558e32345093fdfd86f089726b3b86d84b58de6a2475104",
+      "unicodeRange": "U+4EFF,U+4F30,U+4FA7,U+500D,U+504F,U+5192,U+52FF,U+585E,U+586B,U+5B8F,U+5E45,U+5F84,U+6052,U+6062,U+622A,U+6269,U+62B5,U+6325,U+63E1,U+6446,U+66FF,U+695A,U+6A2A,U+6C60,U+6D1B,U+6D6E,U+6E10,U+7D2F,U+7F13,U+8861,U+8DE8,U+8F85,U+9006,U+904D,U+9178,U+9636,U+987F,U+FF5E",
+      "cmapCount": 38,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-112-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 21564,
+      "sha256": "d8d22734e23b56f238517232e8a013758083d471ff3635dfd7c0018d893e7170",
+      "sourceFile": "files/noto-sans-sc-112-wght-normal.woff2",
+      "sourceSha256": "34e76675ceffd89824fb130d7649dc92df9e57843a73b9996d405baa2ff9ecff",
+      "unicodeRange": "U+4ECD,U+4EEA,U+50A8,U+51C0,U+5200,U+5224,U+5360,U+539A,U+56FA,U+574F,U+5851,U+5854,U+5899,U+592E,U+5939,U+5B87,U+5BBD,U+5BF8,U+5C3A,U+6162,U+61C2,U+6297,U+62DF,U+6302,U+635F,U+638C,U+6469,U+6563,U+6697,U+675F,U+67D0,U+67D3,U+68B0,U+6C89,U+6D89,U+6DB2,U+6DF7,U+6ED1,U+7126,U+731C,U+7A0D,U+7EA0,U+7EB9,U+7ED8,U+7F18,U+7F29,U+8033,U+804A,U+80E1,U+865A,U+89E6,U+8BFA,U+8D25,U+8DDD,U+9010,U+9012,U+907F,U+91CA,U+94FA,U+9501,U+9634,U+9694,U+9ED8",
+      "cmapCount": 63,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-113-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 22644,
+      "sha256": "b4c3e6638e3362d089a92b484863b771edbbf897c489165340dafe7c012d3441",
+      "sourceFile": "files/noto-sans-sc-113-wght-normal.woff2",
+      "sourceSha256": "40290d98d5c121bdbb1909e39c9c0242eae3a5a88f1bbe302857e525b90056df",
+      "unicodeRange": "U+4F26,U+5012,U+51B2,U+5220,U+5237,U+523B,U+526F,U+53EB,U+53F3,U+5438,U+5706,U+5750,U+5B88,U+5BDF,U+5BFB,U+5C01,U+5C04,U+5C3E,U+5C4F,U+5CF0,U+5DE6,U+5EF6,U+5F39,U+5FD8,U+6258,U+6263,U+6267,U+6298,U+63A2,U+63D2,U+654F,U+65E7,U+6682,U+66F2,U+671D,U+672B,U+6863,U+6982,U+6DFB,U+732E,U+76D6,U+79D2,U+7A33,U+7A3F,U+7A97,U+7B26,U+7EC3,U+7F3A,U+8349,U+8BA8,U+8BAD,U+8BEF,U+8BFE,U+8DF3,U+8F6E,U+8FF9,U+900F,U+9057,U+9192,U+9488,U+955C,U+9644,U+964D,U+96F6,U+9759,U+9760,U+987A,U+989C,U+9F50",
+      "cmapCount": 69,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-114-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 25968,
+      "sha256": "256ddba52aa04a442ab6feced33777540f51c787f4dd67ed17a870303dd0d0b3",
+      "sourceFile": "files/noto-sans-sc-114-wght-normal.woff2",
+      "sourceSha256": "c49b2eb658a0c2d76de9a279945de30bf32acd8fdd6d56cf84aea9c6b14aacae",
+      "unicodeRange": "U+4E25,U+4E34,U+4E45,U+4EAE,U+4F19,U+4F24,U+4F34,U+4F59,U+4F9D,U+5047,U+505C,U+51CF,U+5374,U+538B,U+53E6,U+5426,U+542B,U+542F,U+5473,U+5708,U+5757,U+57DF,U+57F9,U+5802,U+591F,U+5BA3,U+5C3C,U+5C42,U+5DEE,U+5E55,U+5E8F,U+5EA7,U+5F02,U+5F52,U+5FF5,U+6279,U+63CF,U+6444,U+64CD,U+665A,U+67B6,U+68C0,U+6BCD,U+6C38,U+6CB9,U+6CE2,U+6D3E,U+6D4F,U+6FC0,U+725B,U+7565,U+76AE,U+7A7F,U+7A81,U+7B14,U+7D27,U+7EAF,U+7EB3,U+7EB8,U+7EC7,U+7EE7,U+7EFF,U+805A,U+822C,U+82E5,U+8865,U+8C01,U+8D1F,U+8F93,U+8FF0,U+8FFD,U+9000,U+9047,U+949F,U+94C1,U+9669,U+987B,U+989D",
+      "cmapCount": 78,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-115-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 36212,
+      "sha256": "b043acec7290c08a09608c285bf496f29d0547850a9af0bc1dabdca3e1ad3b9c",
+      "sourceFile": "files/noto-sans-sc-115-wght-normal.woff2",
+      "sourceSha256": "6c0cda055b31066fb60058ac30ede37f6f9ca02265c2e1a84aee81175f567fa8",
+      "unicodeRange": "U+4E14,U+4E1D,U+4E49,U+4E60,U+4EB2,U+4EC5,U+4EFD,U+4F3C,U+4F4F,U+4F8B,U+4FBF,U+5019,U+5145,U+514B,U+516B,U+516D,U+5199,U+51B3,U+51B5,U+5207,U+5219,U+521D,U+52BF,U+5343,U+5347,U+534A,U+5370,U+53F2,U+542C,U+547D,U+54CD,U+54EA,U+56F4,U+5747,U+5883,U+589E,U+5931,U+5947,U+5957,U+5B83,U+5BA4,U+5C1A,U+5C3D,U+5C40,U+5C5E,U+5E72,U+5F80,U+5F85,U+601D,U+627F,U+62C9,U+6309,U+63A7,U+65AD,U+65AF,U+666E,U+677F,U+6781,U+6790,U+6821,U+6838-6839,U+6B27,U+6B62,U+6BB5,U+6D4B,U+6E29,U+6EE1,U+6F14,U+72B6,U+72EC,U+7387,U+753B,U+76D8,U+7701,U+773C,U+77ED,U+7814,U+79BB,U+79EF,U+79FB,U+7A76,U+7B11,U+7B54,U+7B97,U+7C73,U+7D20,U+7EC8,U+7EDD,U+7EED,U+817E,U+8303,U+843D,U+89C9,U+89D2,U+8BA2,U+8BBF,U+8BC9,U+8BCD,U+8C61,U+8D26,U+8D8A,U+8F7B,U+8F83,U+8F91,U+8FB9,U+8FD4,U+8FDC,U+9002,U+9519,U+95ED,U+968F,U+9884,U+98DE,U+9988,U+9EC4,U+FF1B",
+      "cmapCount": 117,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-116-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 37732,
+      "sha256": "38681642ab50732f8b52cc4a145a565742f12dbddd8d8e7b143746ffa5ff35d7",
+      "sourceFile": "files/noto-sans-sc-116-wght-normal.woff2",
+      "sourceSha256": "002e502515bee8b9efa1b17abf7e52b51d4cfa20538ae2b2bd82ac52e1153f5e",
+      "unicodeRange": "U+4E16,U+4E66,U+4E91-4E92,U+4E94,U+4E9B,U+4EC0,U+4F18,U+4F46,U+4F4E,U+4F9B,U+4FEE,U+503C,U+50CF,U+5148,U+518D,U+51C6,U+51E0,U+5217,U+529F,U+5341,U+5361,U+5386,U+53C2,U+53CC,U+53D7-53D8,U+53EA,U+5404,U+5411,U+5417,U+5468,U+559C,U+5668,U+56E0,U+57FA,U+5904,U+592A,U+59CB,U+5B58,U+5BC6,U+5DF1,U+5E08,U+5E26,U+5E2E,U+5F15,U+5F20,U+5F3A,U+5F62,U+5F88,U+5F8B,U+5FC5,U+600E,U+623F,U+627E,U+628A,U+62E9,U+6307,U+6362,U+636E,U+64AD,U+6539,U+6548,U+6574,U+663E,U+666F,U+672A,U+6750,U+6784,U+6A21,U+6B3E,U+6B65,U+6BCF,U+6DF1,U+7167,U+73AF,U+7403,U+754C,U+7559,U+767D,U+7740,U+786E,U+79F0,U+7AEF,U+7B7E,U+7EA2,U+7EA6,U+7EC4,U+7EC6,U+7EDC,U+7EF4,U+8003,U+81F3-81F4,U+822A,U+83B7,U+89C2,U+89C8,U+8BA9,U+8BB8,U+8BC6,U+8BD5,U+8BE5,U+8C03,U+8D23,U+8D70,U+8DB3,U+8FBE,U+8FD1,U+8FDE,U+9001,U+901F-9020,U+90A3,U+914D,U+91C7,U+94FE,U+952E,U+9645,U+9664,U+9700,U+975E,U+97F3,U+9879,U+9886,U+9A8C",
+      "cmapCount": 126,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-117-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 46132,
+      "sha256": "eebe791eb13b079feeb5c99946ca51a68096204aef74dd88be47c154446486e0",
+      "sourceFile": "files/noto-sans-sc-117-wght-normal.woff2",
+      "sourceSha256": "3d7ced7101c03dfa9bf0e60460a1b91fc6f1166fb33f718506e8110bb12e74a7",
+      "unicodeRange": "U+3010-3011,U+4E07,U+4E24,U+4E48,U+4E5F,U+4E8B-4E8C,U+4EA4,U+4EAB,U+4ECB,U+4ECE,U+4ED6,U+4EE3,U+4EF6-4EF7,U+4EFB,U+4F20,U+4F55,U+4F7F,U+4FDD,U+505A,U+5143,U+5149,U+514D,U+5171,U+5177,U+518C,U+51FB,U+521B,U+522B,U+52A9,U+5305,U+5355,U+5373,U+539F,U+53BB,U+53CA,U+53CD,U+53D6,U+53E3,U+53F0,U+5458,U+5546,U+56DB,U+573A,U+578B,U+58F0,U+590D,U+5934,U+5B57,U+5B8C,U+5B98,U+5BB9,U+5BFC,U+5C06,U+5C11,U+5C31,U+5C55,U+5DF2,U+5E03,U+5E38,U+5E76,U+5E94,U+5EFA,U+5F71,U+5F97,U+5FEB,U+6001,U+603B,U+60F3,U+611F,U+6216,U+624D,U+6253,U+6295,U+6301,U+6392,U+641C,U+652F,U+653E,U+6559,U+6599,U+661F,U+671F,U+672F,U+6761,U+67E5,U+6807,U+6837,U+683C,U+6848,U+6B22,U+6B64,U+6BD4,U+6C14,U+6C34,U+6C42,U+6CA1,U+6D41,U+6D88,U+6E05,U+6E38,U+6E90,U+7136,U+7231,U+7531,U+767E,U+76EE,U+76F4,U+771F,U+7801,U+793A,U+79CD,U+7A0B,U+7A7A,U+7ACB,U+7AE0,U+7B2C,U+7B80,U+7BA1,U+7CBE,U+7D22,U+7EA7,U+7ED3,U+7ED9,U+7EDF,U+7F16,U+7F6E,U+800C,U+8272,U+8282,U+88AB,U+88C5,U+89C1,U+89C4,U+89E3,U+8A00,U+8BA1,U+8BA4,U+8BAE,U+8BB0,U+8BBE,U+8BC1,U+8BC4,U+8BFB,U+8D28,U+8D77,U+8D85,U+8DEF,U+8EAB,U+8F66,U+8F6C,U+8F7D,U+8FD0,U+9009,U+90FD,U+91CC-91CD,U+91CF,U+9650,U+96C6,U+9891,U+98CE,U+FF1F",
+      "cmapCount": 165,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-118-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 41372,
+      "sha256": "28e3edd5916d836b6102fe6c35dbd9ee63f062ebca0dc141b744c4f4e90b5faf",
+      "sourceFile": "files/noto-sans-sc-118-wght-normal.woff2",
+      "sourceSha256": "f26330ce4056382832c0f2a0d7f411e0b4140fc87937e8865d91664410cfb98c",
+      "unicodeRange": "U+4E09-4E0B,U+4E0D-4E0E,U+4E13,U+4E1A,U+4E2A,U+4E3A-4E3B,U+4E4B,U+4E86,U+4E8E,U+4EA7,U+4EBA,U+4EE4-4EE5,U+4EEC,U+4F1A,U+4F4D,U+4F53,U+4F5C,U+4F60,U+4FE1,U+5165,U+5168,U+516C,U+5173,U+5176,U+5185,U+51FA,U+5206,U+5230,U+5236,U+524D,U+529B,U+52A0-52A1,U+52A8,U+5316,U+533A,U+53D1,U+53EF,U+53F7,U+5408,U+540C-540E,U+544A,U+548C,U+54C1,U+56DE,U+56FD-56FE,U+5728,U+5730,U+5907,U+5916,U+591A,U+5927,U+5929,U+597D,U+5982,U+5B50,U+5B66,U+5B89,U+5B9A,U+5B9E,U+5BA2,U+5BB6,U+5BF9,U+5C0F,U+5DE5,U+5E02,U+5E73-5E74,U+5EA6,U+5F00,U+5F0F,U+5F53,U+5F55,U+5FAE,U+5FC3,U+6027,U+60C5,U+610F,U+6210-6211,U+6240,U+624B,U+6280,U+62A5,U+63A5,U+63A8,U+63D0,U+6536,U+6570,U+6587,U+65B9,U+65E0,U+65F6,U+660E,U+662F,U+66F4,U+6700,U+670D,U+672C,U+673A,U+6743,U+6765,U+679C,U+6B21,U+6B63,U+6CD5,U+6CE8,U+6D3B,U+70ED,U+7248,U+7269,U+7279,U+73B0,U+7406,U+751F,U+7528,U+7535,U+767B,U+76F8,U+770B,U+77E5,U+7AD9,U+7B49,U+7C7B,U+7CFB,U+7EBF,U+7ECF,U+8005,U+8054,U+80FD,U+81EA,U+884C,U+8868,U+8981,U+89C6,U+8BBA,U+8BDD,U+8BF4,U+8BF7,U+8D44,U+8FC7,U+8FD8-8FD9,U+8FDB,U+901A,U+9053,U+90E8,U+91D1,U+957F,U+95EE,U+95F4,U+9762,U+9875,U+9898,U+9996,U+9AD8,U+FF08-FF09",
+      "cmapCount": 166,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-119-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 3880,
+      "sha256": "94914c97fac9c5cd09b53cf58490423686d07d5919b45f2b9e4b560f9dda555e",
+      "sourceFile": "files/noto-sans-sc-119-wght-normal.woff2",
+      "sourceSha256": "09b9fa5a9521fbeccb8267a5abe7443c83cbe25b32eb15b00de316d913235525",
+      "unicodeRange": "U+3001-3002,U+4E00,U+4E2D,U+65B0,U+65E5,U+6709,U+70B9,U+7684,U+7F51,U+FF0C,U+FF0E,U+FF1A",
+      "cmapCount": 13,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-sans-latin-wght.woff2",
+      "family": "High School Sans",
+      "weight": "100 900",
+      "bytes": 16064,
+      "sha256": "d3c4d48c07409ec9087a2166fb49f0f717fd3eb9cad2bec90d88f9a048525ddf",
+      "sourceFile": "files/noto-sans-sc-latin-wght-normal.woff2",
+      "sourceSha256": "cf5346b0747cd71123c8f74da0ad41fc0f63eda07b9d8e0382e00882ae743733",
+      "unicodeRange": "U+0020-007E,U+00A0,U+00B0-00B3,U+00B7,U+00B9,U+00BD,U+00D7,U+00F7,U+2013-2014,U+201C-201D,U+2026,U+2033,U+2191,U+2193,U+2212",
+      "cmapCount": 114,
+      "outlineAndAdvanceVerifiedAt": [
+        400,
+        500,
+        600
+      ]
+    },
+    {
+      "file": "hs-display-latin-500.woff2",
+      "family": "High School Display",
+      "weight": "500",
+      "bytes": 14440,
+      "sha256": "1cb5ec90fe9ffa15c33b627d8a1eee5acc27b1a3dcc3c232544f644df68cd7ed",
+      "sourceFile": "files/barlow-condensed-latin-500-normal.woff2",
+      "sourceSha256": "460f141ec8f6c9a1516bfd2bd9fe71656246d7a9d04a0955faf53158d8970c4c",
+      "unicodeRange": "U+0020-007E,U+00A0,U+00B0-00B3,U+00B7,U+00B9,U+00BD,U+00D7,U+00F7,U+2013-2014,U+201C-201D,U+2026,U+2033,U+2212",
+      "cmapCount": 112,
+      "outlineAndAdvanceVerifiedAt": [
+        500
+      ]
+    },
+    {
+      "file": "hs-display-latin-600.woff2",
+      "family": "High School Display",
+      "weight": "600",
+      "bytes": 15148,
+      "sha256": "b4396ff165c16de570ff87f40917da24e514646d0149490cbd0942a8a6ea3e53",
+      "sourceFile": "files/barlow-condensed-latin-600-normal.woff2",
+      "sourceSha256": "215a93c696f442034a46fbb382958f753fda60e30490683aeea6b235fcbb2b66",
+      "unicodeRange": "U+0020-007E,U+00A0,U+00B0-00B3,U+00B7,U+00B9,U+00BD,U+00D7,U+00F7,U+2013-2014,U+201C-201D,U+2026,U+2033,U+2212",
+      "cmapCount": 112,
+      "outlineAndAdvanceVerifiedAt": [
+        600
+      ]
+    }
+  ],
+  "cssSha256": "98e771938a199dc66de3385a21f7e6d67175efed1698ac26dfeafe4e6eee0284",
+  "limitations": [
+    "Only current source corpus plus ASCII/common numeric punctuation is bundled.",
+    "New text, personal names and missing symbols require the CSS system fallback or regeneration.",
+    "Outline/advance checks are FontTools comparisons, not a browser rasterization or complete shaping-engine acceptance."
+  ]
+}

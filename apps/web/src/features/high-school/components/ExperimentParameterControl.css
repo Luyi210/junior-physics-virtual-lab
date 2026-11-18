@@ -1,0 +1,40 @@
+/* Unlayered to match the existing numeric editor rules. */
+.hs-experiment-page .hs-parameter { min-width: 0; padding-bottom: 20px; border-bottom: 1px solid #2a4056; }
+.hs-experiment-page .hs-parameter:last-child { padding-bottom: 0; border-bottom: 0; }
+.hs-experiment-page .hs-parameter label { align-items: baseline; gap: 12px; margin-bottom: 8px; color: #d1e2ee; font-size: 14px; line-height: 1.6; }
+.hs-experiment-page .hs-parameter label > span { color: #d5bb91; font-size: 12px; text-align: right; }
+.hs-experiment-page .hs-parameter-inputs { grid-template-columns: minmax(0, 1fr) 88px; gap: 14px; }
+.hs-experiment-page .hs-parameter input[type="range"] { height: 44px; margin: 0; accent-color: #67ddf3; background: transparent; cursor: pointer; }
+.hs-experiment-page .hs-parameter .hs-parameter-number {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  padding: 9px 10px;
+  border: 1px solid #4a6981;
+  border-radius: 6px;
+  color: #dff5ff;
+  background: #091422;
+  font: 15px/1.5 var(--hs-mono, monospace);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.hs-experiment-page .hs-parameter-choice {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-height: 46px;
+  padding: 10px;
+  border: 1px solid #4a6981;
+  border-radius: 6px;
+  color: #dff5ff;
+  background: #091422;
+  color-scheme: dark;
+  font: inherit;
+  font-size: 14px;
+}
+.hs-experiment-page .hs-parameter :is(input, select):focus-visible { outline: 2px solid #67ddf3; outline-offset: 3px; }
+.hs-experiment-page .hs-parameter-number[aria-invalid="true"] { border-color: #f3aa94; background: #33232b; }
+.hs-experiment-page .hs-range-bounds { width: calc(100% - 102px); margin-top: 0; color: #94aec4; font-size: 12px; font-variant-numeric: tabular-nums; }
+.hs-experiment-page .hs-parameter-edit-note { margin: 10px 0 0; color: #9db6cb; font-size: 12px; line-height: 1.7; }
+.hs-experiment-page .hs-parameter-edit-note.is-invalid { color: #ffc0aa; }

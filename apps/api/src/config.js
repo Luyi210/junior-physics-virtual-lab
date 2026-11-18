@@ -31,7 +31,7 @@ export function loadConfig(overrides = {}) {
     tokenTtlSeconds: overrides.tokenTtlSeconds ?? numberFromEnv(process.env.PHYSICS_API_TOKEN_TTL, 8 * 60 * 60),
     allowedOrigins: overrides.allowedOrigins ?? [...new Set([...configuredOrigins, renderOrigin].filter(Boolean))],
     bodyLimitBytes: overrides.bodyLimitBytes ?? 1024 * 1024,
-    seedDemoData: overrides.seedDemoData ?? booleanFromEnv(process.env.PHYSICS_API_SEED_DEMO, !production),
+    seedDemoData: overrides.seedDemoData ?? booleanFromEnv(process.env.PHYSICS_API_SEED_DEMO, !production && !databaseUrl),
     bootstrapSchoolName: overrides.bootstrapSchoolName ?? process.env.PHYSICS_BOOTSTRAP_SCHOOL_NAME ?? "格物实验室",
     bootstrapAdminName: overrides.bootstrapAdminName ?? process.env.PHYSICS_BOOTSTRAP_ADMIN_NAME ?? "平台管理员",
     bootstrapAdminEmail: overrides.bootstrapAdminEmail ?? process.env.PHYSICS_BOOTSTRAP_ADMIN_EMAIL ?? "",
@@ -60,6 +60,13 @@ export function loadConfig(overrides = {}) {
     rerankEnabled: overrides.rerankEnabled ?? booleanFromEnv(process.env.PHYSICS_RERANK_ENABLED, true),
     siliconflowApiKey,
     deepseekApiKey,
+    liliEnabled: overrides.liliEnabled ?? booleanFromEnv(process.env.PHYSICS_LILI_AI_ENABLED, Boolean(deepseekApiKey)),
+    liliPatchPath: overrides.liliPatchPath ?? resolve(projectRoot, "config/deepseek-harness/lili.cordis.patch.yml"),
+    liliHome: overrides.liliHome ?? resolve(projectRoot, ".runtime/lili-harness"),
+    liliWorkspace: overrides.liliWorkspace ?? resolve(projectRoot, ".runtime/lili-workspace"),
+    liliTimeoutMs: overrides.liliTimeoutMs ?? numberFromEnv(process.env.PHYSICS_LILI_TIMEOUT_MS, 45_000),
+    liliRequestsPerMinute: overrides.liliRequestsPerMinute ?? 12,
+    liliQueueLimit: overrides.liliQueueLimit ?? 4,
     deepseekBaseUrl: overrides.deepseekBaseUrl ?? process.env.DEEPSEEK_BASE_URL ?? ""
   };
 }

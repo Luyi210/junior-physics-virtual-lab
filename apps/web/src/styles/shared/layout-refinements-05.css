@@ -1,0 +1,453 @@
+@layer pages {
+
+.measurement-error-lab>header span{display:flex;align-items:center;gap:7px;color:#82d7fa}
+.measurement-error-lab>header b{font-size:10px}
+.measurement-error-lab>header small{color:#7194a3;font-size:8px}
+.measurement-error-lab>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.measurement-error-lab button{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px;color:#8baab6;border:1px solid #31566a;background:#0a2b3b;text-align:left}
+.measurement-error-lab button.done{color:#74dec7;border-color:#51bca4;background:#0d3b3d}
+.measurement-error-lab button:disabled{opacity:.4}
+.measurement-error-lab button span{display:grid;gap:4px}
+.measurement-error-lab button b{color:#d8f2fa;font-size:9px}
+.measurement-error-lab button em{font-size:8px;font-style:normal}
+.measurement-error-lab button strong{max-width:190px;color:#ffd09c;font:800 10px var(--mono);text-align:right}
+.lever-table { display: grid; grid-template-columns: .55fr repeat(4,1fr) 1.7fr; border: 1px solid #c9c3b7; }
+.lever-table > b { padding: 8px 10px; color: #708083; border-right: 1px solid #d2ccc1; background: #e7e2d7; font: 800 9px var(--mono); }
+.lever-table-row { display: contents; }
+.lever-table-row > * { padding: 9px 10px; color: #42595d; border-top: 1px solid #d2ccc1; border-right: 1px solid #d2ccc1; background: #f5f1e8; font: 11px var(--mono); }
+.lever-table-row > strong { color: #8e641b; }
+/* Hands-on thermometer practice bay */
+.thermometer-selection-console { display: grid; grid-template-columns: 1.25fr 1.1fr .75fr; border-top: 1px solid #c9c3b8; border-bottom: 1px solid #c9c3b8; background: #e7e2d7; }
+.thermometer-selection-console > section { min-width: 0; display: grid; align-content: center; gap: 7px; padding: 14px 16px; border-right: 1px solid #c9c3b8; }
+.thermometer-selection-console > section:last-child { border-right: 0; }
+.thermometer-selection-console section > span { display: flex; align-items: center; gap: 7px; color: #4d6265; font-size: 11px; font-weight: 850; }
+.thermometer-selection-console section > span b { display: grid; width: 24px; height: 24px; place-items: center; color: white; background: #b7604e; font: 800 9px var(--mono); }
+.thermometer-selection-console section > div { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }
+.thermometer-selection-console button { min-height: 47px; display: grid; grid-template-columns: 12px 1fr; grid-template-rows: auto auto; align-content: center; gap: 2px 6px; color: #607174; border: 1px solid #c3bdb1; background: #f5f1e8; cursor: pointer; text-align: left; }
+.thermometer-selection-console button > i { grid-row: 1 / 3; width: 7px; height: 31px; align-self: center; border-radius: 4px; }
+.thermometer-selection-console button strong { font-size: 9px; }
+.thermometer-selection-console button small { color: #879294; font-size: 7px; }
+.thermometer-selection-console button.active { color: white; border-color: #9b4e41; background: #9b4e41; }
+.thermometer-selection-console button.active small { color: #efd0c9; }
+.thermometer-selection-console section > strong { color: #6e7d7e; font-size: 11px; }
+.thermometer-selection-console section > strong.valid { color: #287268; }
+.thermometer-selection-console section > strong.danger { color: #be4b3e; }
+.thermometer-selection-console section > small { color: #788587; font-size: 9px; }
+.thermometer-lab-sim { position: relative; min-height: 700px; overflow: hidden; color: white; background: radial-gradient(circle at 28% 55%,rgba(239,118,91,.09),transparent 31%),linear-gradient(145deg,#071b23,#102f38 65%,#071a21); }
+.thermometer-lab-sim::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(239,118,91,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(239,118,91,.04) 1px,transparent 1px); background-size: 24px 24px; }
+.thermometer-lab-sim::after { content: "THERMOMETER  /  量程 · 分度值 · 稳定 · 平视"; position: absolute; z-index: 9; top: 18px; right: 19px; min-height: 31px; display: flex; align-items: center; padding: 0 10px; color: #ef8f76; border: 1px solid rgba(239,118,91,.5); background: rgba(5,25,32,.82); font-size: 9px; font-weight: 800; letter-spacing: .08em; }
+.thermometer-procedure-strip { position: absolute; z-index: 9; top: 18px; left: 20px; display: flex; align-items: center; gap: 5px; }
+.thermometer-procedure-strip span { min-height: 31px; display: flex; align-items: center; gap: 6px; padding: 0 9px; color: #718b90; border: 1px solid #35545c; background: rgba(5,22,29,.84); font-size: 9px; }
+.thermometer-procedure-strip span b { color: #79959b; font: 800 8px var(--mono); }
+.thermometer-procedure-strip span.active { color: #f3d8d0; border-color: #9b574b; }
+.thermometer-procedure-strip span.done { color: #98e2d3; border-color: #397568; }
+.thermometer-vessel-rig { position: absolute; z-index: 4; top: 260px; left: 8%; width: 260px; height: 330px; overflow: hidden; border: 8px solid #99afb1; border-top: 0; border-radius: 0 0 30px 30px; }
+.thermometer-sample-liquid { position: absolute; right: 0; bottom: 0; left: 0; height: 70%; background: color-mix(in srgb,var(--sample-color) 67%,transparent); }
+.thermometer-sample-liquid::before { content: ""; position: absolute; top: -6px; right: -3px; left: -3px; height: 12px; border-radius: 50%; background: color-mix(in srgb,var(--sample-color) 80%,white 20%); }
+.thermometer-vessel-rig > b { position: absolute; z-index: 3; right: 12px; bottom: 18px; color: #d9efee; font-size: 11px; }
+.thermometer-vessel-rig > em { position: absolute; z-index: 3; left: 12px; bottom: 18px; color: #acd0d2; font: normal 8px var(--mono); }
+.thermometer-instrument-rig { position: absolute; z-index: 6; top: 100px; left: 22%; width: 110px; height: 470px; transition: top .45s ease,left .45s ease,transform .45s ease; }
+.thermometer-lab-sim.position-above .thermometer-instrument-rig { top: 80px; }
+.thermometer-lab-sim.position-correct .thermometer-instrument-rig { top: 175px; }
+.thermometer-lab-sim.position-bottom .thermometer-instrument-rig { top: 258px; }
+.thermometer-lab-sim.position-wall .thermometer-instrument-rig { top: 175px; left: 29%; transform: rotate(5deg); }
+.thermometer-stem { position: absolute; top: 0; left: 35px; width: 24px; height: 390px; border: 4px solid #dce4e1; border-radius: 13px; background: rgba(240,245,241,.1); }
+.thermometer-stem > i { position: absolute; right: 5px; bottom: 5px; left: 5px; min-height: 9px; border-radius: 8px; background: var(--thermometer-color); transition: height .5s ease; }
+.thermometer-stem > b { position: absolute; bottom: -10px; left: 50%; width: 31px; height: 31px; border-radius: 50%; background: var(--thermometer-color); transform: translateX(-50%); box-shadow: 0 0 8px color-mix(in srgb,var(--thermometer-color) 70%,transparent); }
+.thermometer-instrument-rig > div { position: absolute; top: 15px; left: 62px; height: 355px; display: flex; flex-direction: column; justify-content: space-between; }
+.thermometer-instrument-rig > div i { width: 12px; height: 1px; background: #859a9c; }
+.thermometer-instrument-rig > div i.major { width: 23px; background: #b9c7c5; }
+.thermometer-instrument-rig > strong { position: absolute; top: 395px; left: -30px; width: 150px; color: #e7d4cf; font-size: 10px; text-align: center; }
+.thermometer-instrument-rig > small { position: absolute; top: 416px; left: -65px; width: 220px; color: #7f969a; font: 7px var(--mono); text-align: center; }
+.thermometer-position-console { position: absolute; z-index: 7; top: 105px; left: 42%; width: 320px; padding: 13px; border: 1px solid #405d64; background: rgba(5,23,30,.92); }
+.thermometer-position-console > span { color: #84534a; font: 800 8px var(--mono); }
+.thermometer-position-console > div { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; margin: 8px 0; }
+.thermometer-position-console button { min-height: 31px; color: #829599; border: 1px solid #405b62; background: #173039; cursor: pointer; font-size: 8px; }
+.thermometer-position-console button.active { color: white; border-color: #9c5548; background: #854b41; }
+.thermometer-position-console > strong { color: #d08b7b; font-size: 9px; }
+.thermometer-position-console > strong.valid { color: #8edccc; }
+.thermometer-stability-meter { position: absolute; z-index: 7; top: 260px; left: 42%; width: 320px; padding: 13px; border: 1px solid #405d64; background: rgba(5,23,30,.92); }
+.thermometer-stability-meter > span { display: grid; grid-template-columns: 23px 1fr auto; align-items: center; gap: 6px; }
+.thermometer-stability-meter svg { color: #ef8a72; }
+.thermometer-stability-meter small { color: #84534a; font: 8px var(--mono); }
+.thermometer-stability-meter strong { color: #d6e1df; font: 10px var(--mono); }
+.thermometer-stability-meter > div { height: 7px; margin: 9px 0 5px; overflow: hidden; background: #253f45; }
+.thermometer-stability-meter > div i { display: block; height: 100%; background: linear-gradient(90deg,#ef765b,#eeb75e,#61c9b5); transition: width .2s ease; }
+.thermometer-stability-meter > em { color: #7f9599; font: normal 8px var(--mono); }
+.thermometer-eye-console { position: absolute; z-index: 7; top: 415px; left: 42%; width: 320px; display: grid; grid-template-columns: 32px 1fr; gap: 8px; padding: 13px; border: 1px solid #405d64; background: rgba(5,23,30,.93); }
+.thermometer-eye-console > svg { grid-row: 1 / 3; align-self: center; color: #ef8b72; }
+.thermometer-eye-console span { display: grid; gap: 3px; }
+.thermometer-eye-console small { color: #81969a; font-size: 8px; }
+.thermometer-eye-console strong { font-size: 10px; }
+.thermometer-eye-console > div { grid-column: 1 / 3; display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; }
+.thermometer-eye-console button { min-height: 30px; color: #829599; border: 1px solid #405b62; background: #173039; cursor: pointer; font-size: 8px; }
+.thermometer-eye-console button.active { color: white; border-color: #9b5548; background: #854b41; }
+.thermometer-eye-console > button { grid-column: 1 / 3; min-height: 37px; color: white; border-color: #9b5548; background: #854b41; }
+.thermometer-eye-console > button:disabled { color: #718589; border-color: #40585e; background: #243a40; cursor: not-allowed; }
+.thermometer-final-reading { position: absolute; z-index: 7; right: 4%; bottom: 35px; width: 235px; display: grid; gap: 4px; padding: 13px 15px; border: 1px solid #4e5f63; background: rgba(5,23,30,.93); }
+.thermometer-final-reading small { color: #84534a; font: 8px var(--mono); }
+.thermometer-final-reading strong { color: #e7d5cf; font: 21px var(--serif); }
+.thermometer-final-reading span { color: #84989b; font: 8px var(--mono); }
+.thermometer-final-reading.complete { border-color: #438d7e; }
+.thermometer-final-reading.complete strong { color: #9de6d8; }
+.thermometer-lab-sim.range-error { box-shadow: inset 0 0 55px rgba(221,63,45,.18); }
+.thermometer-lab-sim.range-error::after { content: "RANGE ERROR / 量程不合适，禁止测量"; color: #ff8b76; border-color: #d95746; }
+.thermometer-evidence-workbench { display: grid; grid-template-columns: 1.45fr .65fr; border-bottom: 1px solid #c9c3b8; background: #f5f1e8; }
+.thermometer-evidence-workbench > section { padding: 18px 20px; border-right: 1px solid #c9c3b8; }
+.thermometer-evidence-workbench section > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.thermometer-evidence-workbench section > header span { display: flex; align-items: center; gap: 7px; color: #7e4d44; }
+.thermometer-evidence-workbench section > header button { min-height: 31px; display: flex; align-items: center; gap: 6px; color: white; border: 0; background: #8b5045; cursor: pointer; font-size: 9px; }
+.thermometer-evidence-workbench section > header button:disabled { color: #7b8989; background: #cbc6bb; }
+.thermometer-evidence-workbench section > p { margin: 0; padding: 14px; color: #748184; border: 1px dashed #bfb9ad; font-size: 10px; text-align: center; }
+.thermometer-evidence-workbench section > div { display: grid; grid-template-columns: 1.1fr 1.2fr .8fr 1fr; border: 1px solid #c9c3b7; }
+.thermometer-evidence-workbench section > div > b { padding: 8px 9px; color: #748285; border-right: 1px solid #d1cbc0; background: #e7e2d7; font: 800 9px var(--mono); }
+.thermometer-evidence-row { display: contents; }
+.thermometer-evidence-row > * { padding: 9px; color: #506467; border-top: 1px solid #d1cbc0; border-right: 1px solid #d1cbc0; font: 9px var(--mono); }
+.thermometer-evidence-row > strong:last-child { color: #9b5145; }
+.thermometer-evidence-workbench > aside { display: grid; align-content: center; gap: 7px; padding: 18px; background: #e7e2d7; }
+.thermometer-evidence-workbench > aside > span { color: #697b7e; font: 800 9px var(--mono); }
+.thermometer-evidence-workbench > aside > i { display: flex; align-items: center; gap: 6px; color: #879293; font: normal 9px var(--mono); }
+.thermometer-evidence-workbench > aside > i.done { color: #287369; }
+/* Hands-on ice melting logger */
+.melting-setup-console { display: grid; grid-template-columns: 1fr 1fr 1.05fr; border-top: 1px solid #c9c3b8; border-bottom: 1px solid #c9c3b8; background: #e7e2d7; }
+.melting-setup-console > section { min-width: 0; display: grid; align-content: center; gap: 7px; padding: 14px 16px; border-right: 1px solid #c9c3b8; }
+.melting-setup-console > section:last-child { border-right: 0; }
+.melting-setup-console section > span { display: flex; align-items: center; gap: 7px; color: #4d6265; font-size: 11px; font-weight: 850; }
+.melting-setup-console section > span b { display: grid; width: 24px; height: 24px; place-items: center; color: white; background: #3e8192; font: 800 9px var(--mono); }
+.melting-setup-console section > div { display: flex; align-items: center; gap: 5px; }
+.melting-setup-console label { width: 34px; color: #778587; font-size: 8px; }
+.melting-setup-console button { min-height: 31px; flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; color: #607174; border: 1px solid #c3bdb1; background: #f5f1e8; cursor: pointer; font-size: 9px; }
+.melting-setup-console button.active, .melting-setup-console button.done { color: white; border-color: #34778a; background: #34778a; }
+.melting-setup-console p { margin: 0; color: #6c797b; font-size: 9px; }
+.melting-lab-sim { position: relative; min-height: 680px; overflow: hidden; color: white; background: radial-gradient(circle at 25% 60%,rgba(82,181,219,.13),transparent 32%),linear-gradient(145deg,#061b23,#0e3039 65%,#061a22); }
+.melting-lab-sim::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(82,181,219,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(82,181,219,.045) 1px,transparent 1px); background-size: 24px 24px; }
+.melting-lab-sim::after { content: "MELTING  /  吸热 · T保持0℃"; position: absolute; z-index: 9; top: 18px; right: 19px; min-height: 31px; display: flex; align-items: center; padding: 0 10px; color: #68b9e8; border: 1px solid rgba(104,185,232,.5); background: rgba(5,25,32,.82); font-size: 9px; font-weight: 800; letter-spacing: .1em; }
+.melting-procedure-strip { position: absolute; z-index: 9; top: 18px; left: 20px; display: flex; align-items: center; gap: 5px; }
+.melting-procedure-strip span { min-height: 31px; display: flex; align-items: center; gap: 6px; padding: 0 9px; color: #718b90; border: 1px solid #35545c; background: rgba(5,22,29,.84); font-size: 9px; }
+.melting-procedure-strip span b { color: #79959b; font: 800 8px var(--mono); }
+.melting-procedure-strip span.active { color: #d7f0f4; border-color: #4c91a3; }
+.melting-procedure-strip span.done { color: #98e2d3; border-color: #397568; }
+.melting-water-bath { position: absolute; z-index: 5; top: 160px; left: 5%; width: 310px; height: 380px; overflow: hidden; border: 8px solid #91a8ab; border-top: 0; border-radius: 0 0 30px 30px; background: rgba(121,169,179,.06); box-shadow: 0 18px 28px rgba(0,0,0,.28); }
+.bath-water { position: absolute; right: 0; bottom: 0; left: 0; height: 78%; background: rgba(69,164,202,.48); }
+.bath-water::before { content: ""; position: absolute; top: -6px; right: -3px; left: -3px; height: 12px; border-radius: 50%; background: rgba(135,218,239,.65); }
+.melting-test-tube { position: absolute; z-index: 3; top: -10px; left: 50%; width: 115px; height: 340px; overflow: hidden; border: 5px solid #b7c7c6; border-top: 0; border-radius: 0 0 55px 55px; background: rgba(213,234,235,.08); transform: translateX(-50%); }
+.melting-sample { position: absolute; right: 8px; bottom: 8px; left: 8px; height: 165px; overflow: hidden; border-radius: 0 0 42px 42px; background: color-mix(in srgb,#70c8e2 calc(var(--melted) * 70%),rgba(211,243,249,.28)); }
+.melting-sample > i { position: absolute; left: calc(10px + (var(--ice) % 3) * 28px); bottom: calc(12px + (var(--ice) % 4) * 31px); width: 27px; height: 24px; border: 1px solid #efffff; border-radius: 5px; background: rgba(202,242,249,.7); transform: rotate(calc(-15deg + var(--ice) * 9deg)); transition: opacity .3s ease; }
+.melting-test-tube > em { position: absolute; z-index: 4; right: 4px; bottom: 178px; left: 4px; color: #a9d8df; font: normal 7px var(--mono); text-align: center; }
+.melting-thermometer { position: absolute; z-index: 5; top: 18px; left: 62%; width: 15px; height: 265px; border: 3px solid #e0e7e3; border-radius: 10px; }
+.melting-thermometer > i { position: absolute; right: 3px; bottom: 3px; left: 3px; min-height: 7px; border-radius: 7px; background: #e65f4b; transition: height .25s ease; }
+.melting-thermometer > strong { position: absolute; top: 18px; left: 22px; color: #f1b19e; font: 11px var(--mono); white-space: nowrap; }
+.melting-heater-live { position: absolute; z-index: 6; top: 548px; left: 9%; display: flex; align-items: center; gap: 9px; color: #758f94; }
+.melting-heater-live > svg { color: #705c48; transition: color .2s ease,filter .2s ease; }
+.melting-heater-live.on > svg { color: #f08a4b; filter: drop-shadow(0 0 8px #f07c45); animation: flame-flicker .5s ease-in-out infinite alternate; }
+.melting-heater-live span { display: grid; gap: 3px; }
+.melting-heater-live small { font: 8px var(--mono); }
+.melting-heater-live strong { color: #b2c4c3; font-size: 10px; }
+.melting-lab-sim > svg { position: absolute; z-index: 4; top: 125px; right: 3%; width: 58%; height: 300px; }
+.melting-lab-sim > svg line { stroke: #667f85; stroke-width: 1; }
+.melting-lab-sim > svg .melting-zero-line { stroke: #67b9d0; stroke-dasharray: 5 5; }
+.melting-lab-sim > svg polyline { fill: none; stroke: #72d2e4; stroke-width: 3; filter: drop-shadow(0 0 5px rgba(114,210,228,.6)); }
+.melting-lab-sim > svg text { fill: #758f94; font-size: 9px; }
+.melting-sample-point circle { fill: #ffe4a0; stroke: #56b9d0; stroke-width: 2; filter: drop-shadow(0 0 5px #56b9d0); }
+.melting-sample-point text { fill: #e6d197 !important; font-size: 8px !important; }
+.melting-phase-meter { position: absolute; z-index: 7; right: 5%; bottom: 130px; width: min(500px,48%); padding: 12px 14px; border: 1px solid #405d64; background: rgba(5,23,30,.92); }
+.melting-phase-meter > span { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.melting-phase-meter small { color: #638796; font: 8px var(--mono); }
+.melting-phase-meter strong { color: #a7e7ee; font: 11px var(--mono); }
+.melting-phase-meter > div { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }
+.melting-phase-meter i { min-height: 28px; display: grid; place-items: center; color: #69868b; border: 1px solid #3e5a61; font: normal 8px var(--mono); }
+.melting-phase-meter i.active { color: #d9f5f6; border-color: #4a9caf; background: rgba(74,156,175,.16); }
+.melting-phase-meter i.done { color: #8edbcd; border-color: #397366; }
+.melting-live-reading { position: absolute; z-index: 8; right: 5%; bottom: 26px; width: min(590px,57%); display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 9px; padding: 12px 14px; border: 1px solid #405d64; background: rgba(5,23,30,.94); }
+.melting-live-reading > svg { color: #68b9e8; }
+.melting-live-reading span { display: grid; gap: 3px; }
+.melting-live-reading small { color: #638797; font: 8px var(--mono); }
+.melting-live-reading strong { font-size: 11px; }
+.melting-live-reading em { color: #81999d; font: normal 8px/1.45 var(--mono); }
+.melting-live-reading button { min-height: 38px; display: flex; align-items: center; gap: 6px; padding: 0 11px; color: white; border: 1px solid #43889a; background: #347487; cursor: pointer; font-size: 9px; }
+.melting-live-reading button:disabled { color: #718589; border-color: #40585e; background: #243a40; cursor: not-allowed; }
+.melting-live-reading.valid { color: #9be5d7; border-color: #438d7e; }
+.melting-evidence-workbench { display: grid; grid-template-columns: 1.45fr .75fr; border-bottom: 1px solid #c9c3b8; background: #f5f1e8; }
+.melting-evidence-workbench > section { padding: 18px 20px; border-right: 1px solid #c9c3b8; }
+.melting-evidence-workbench section > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.melting-evidence-workbench section > header span { display: flex; align-items: center; gap: 7px; color: #316b78; }
+.melting-evidence-workbench section > header small { color: #7c898a; font-size: 9px; }
+.melting-evidence-workbench section > p { margin: 0; padding: 14px; color: #748184; border: 1px dashed #bfb9ad; font-size: 10px; text-align: center; }
+.melting-evidence-workbench section > div { display: grid; grid-template-columns: .65fr .8fr 1.45fr .8fr; border: 1px solid #c9c3b7; }
+.melting-evidence-workbench section > div > b { padding: 8px 9px; color: #748285; border-right: 1px solid #d1cbc0; background: #e7e2d7; font: 800 9px var(--mono); }
+.melting-reading-row { display: contents; }
+.melting-reading-row > * { padding: 8px 9px; color: #506467; border-top: 1px solid #d1cbc0; border-right: 1px solid #d1cbc0; font: 9px var(--mono); }
+.melting-reading-row > strong { color: #347b8d; }
+.melting-evidence-workbench > aside { display: grid; align-content: center; gap: 7px; padding: 19px; background: #e7e2d7; }
+.melting-evidence-workbench > aside > span { color: #718184; font: 800 9px var(--mono); }
+.melting-evidence-workbench > aside > strong { color: #4f6366; font-size: 11px; line-height: 1.55; }
+.melting-evidence-workbench > aside.ready > strong { color: #267267; }
+.melting-evidence-workbench > aside p { margin: 0; color: #3e8191; font-size: 9px; }
+.melting-evidence-workbench > aside button { min-height: 36px; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 5px; color: #566a6d; border: 1px solid #bdb7ac; background: #f5f1e8; cursor: pointer; font-size: 9px; }
+/* Hands-on boiling observation station */
+.thermal-setup-console { display: grid; grid-template-columns: 1.05fr .9fr 1.15fr; border-top: 1px solid #c9c3b8; border-bottom: 1px solid #c9c3b8; background: #e7e2d7; }
+.thermal-setup-console > section { min-width: 0; display: grid; align-content: start; gap: 7px; padding: 15px 17px; border-right: 1px solid #c9c3b8; }
+.thermal-setup-console > section:last-child { border-right: 0; }
+.thermal-setup-console section > span { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+.thermal-setup-console section > span b { display: grid; width: 24px; height: 24px; place-items: center; color: white; background: #ca7741; font: 800 9px var(--mono); }
+.thermal-setup-console section > span small { color: #455c60; font-size: 11px; font-weight: 800; }
+.thermal-setup-console section > div { display: flex; align-items: center; gap: 5px; }
+.thermal-setup-console label { width: 35px; color: #778284; font-size: 9px; }
+.thermal-setup-console button { min-height: 30px; flex: 1; padding: 0 7px; color: #596c70; border: 1px solid #c5beb2; background: #f5f1e8; cursor: pointer; font-size: 9px; }
+.thermal-setup-console > section:nth-child(2) > button { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.thermal-setup-console button.active, .thermal-setup-console button.done { color: white; border-color: #9e5c36; background: #9e5c36; }
+.thermal-setup-console button:disabled { cursor: default; opacity: .68; }
+.thermal-setup-console .thermal-pressure-options button { min-height: 42px; display: grid; place-content: center; gap: 2px; }
+.thermal-setup-console .thermal-pressure-options button b { font-size: 8px; }
+.thermal-setup-console .thermal-pressure-options button small { color: #889395; font: 7px var(--mono); }
+.thermal-setup-console .thermal-pressure-options button.active small { color: #f3d6c7; }
+.thermal-setup-console p { margin: 0; color: #687779; font-size: 10px; }
+.thermal-prediction-buttons { display: grid !important; grid-template-columns: repeat(3,1fr); }
+.thermal-observation-station { min-height: 600px; background: radial-gradient(circle at 23% 62%,rgba(233,144,72,.11),transparent 30%),linear-gradient(145deg,#071b23,#102e37 62%,#081a21); }
+.thermal-observation-station::before { background-size: 24px 24px; opacity: .55; }
+.thermal-stage-label { position: absolute; z-index: 7; top: 18px; left: 20px; display: flex; align-items: center; gap: 11px; padding: 9px 12px; border: 1px solid #3d565d; background: rgba(5,22,29,.82); }
+.thermal-stage-label span { color: #ba7041; font: 800 9px var(--mono); letter-spacing: .1em; }
+.thermal-stage-label b { color: #b8c8c7; font-size: 11px; }
+.thermal-observation-station .beaker-water { left: 8%; bottom: 20%; width: 180px; height: 235px; transition: opacity .2s ease; }
+.thermal-observation-station .beaker-water.empty { opacity: .42; }
+.thermal-observation-station .beaker-water > small { position: absolute; z-index: 5; right: 8px; bottom: 8px; color: #d8f4f5; font: 9px var(--mono); }
+.thermal-observation-station .flame { left: calc(8% + 63px); bottom: 6%; }
+.thermal-observation-station .thermometer { left: 29%; bottom: 21%; transition: left .35s ease,opacity .25s ease; }
+.thermal-observation-station .thermometer.parked { left: 38%; opacity: .42; transform: rotate(8deg); transform-origin: bottom; }
+.thermal-observation-station svg { top: 15%; right: 3%; width: 56%; height: 315px; }
+.thermal-record-point circle { fill: #ffe6a7; stroke: #e99048; stroke-width: 2; filter: drop-shadow(0 0 5px #e99048); }
+.thermal-record-point text { fill: #f4d392 !important; font-size: 9px !important; }
+.thermal-live-reading { position: absolute; z-index: 7; right: 20px; bottom: 18px; left: 20px; min-height: 62px; display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 9px; padding: 9px 11px; border: 1px solid #405c63; background: rgba(5,23,30,.92); }
+.thermal-live-reading > svg { color: #e99048; }
+.thermal-live-reading > span { display: grid; gap: 3px; }
+.thermal-live-reading small { color: #718c91; font: 8px var(--mono); }
+.thermal-live-reading strong { color: #f2e1c4; font: 15px var(--mono); }
+.thermal-live-reading button { min-height: 38px; display: flex; align-items: center; gap: 7px; padding: 0 13px; color: white; border: 1px solid #a96035; background: #8d4d2d; cursor: pointer; font-size: 11px; }
+.thermal-live-reading button:disabled { color: #708387; border-color: #41575c; background: #24383d; cursor: not-allowed; }
+.thermal-evidence-workbench { display: grid; grid-template-columns: 1.5fr .8fr; border-bottom: 1px solid #c9c3b8; background: #f5f1e8; }
+.thermal-reading-ledger { border-right: 1px solid #c9c3b8; }
+.thermal-reading-ledger > div { display: grid; grid-template-columns: .7fr .9fr 1.4fr; border: 1px solid #c9c3b7; }
+.thermal-reading-ledger > div > b { padding: 8px 10px; color: #758284; border-right: 1px solid #d1cbc0; background: #e7e2d7; font: 800 9px var(--mono); }
+.thermal-reading-row { display: contents; }
+.thermal-reading-row > * { padding: 8px 10px; color: #4d6265; border-top: 1px solid #d1cbc0; border-right: 1px solid #d1cbc0; font: 10px var(--mono); }
+.thermal-reading-row > strong { color: #a25a31; }
+.thermal-evidence-workbench > aside { display: grid; align-content: center; gap: 7px; padding: 20px; background: #e7e2d7; }
+.thermal-evidence-workbench > aside > span { color: #927153; font: 800 9px var(--mono); letter-spacing: .08em; }
+.thermal-evidence-workbench > aside > strong { color: #4b6063; font-size: 12px; line-height: 1.55; }
+.thermal-evidence-workbench > aside.ready > strong { color: #1d635a; }
+.thermal-evidence-workbench > aside p { margin: 0; color: #a15c34; font-size: 10px; }
+.thermal-evidence-workbench > aside button { min-height: 36px; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 5px; color: #526669; border: 1px solid #bbb5aa; background: #f5f1e8; cursor: pointer; font-size: 10px; }
+.thermal-evidence-workbench > aside button:disabled { opacity: .4; cursor: not-allowed; }
+.boiling-pressure-evidence { padding: 18px 20px 21px; background: #f5f1e8; }
+.boiling-pressure-evidence > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.boiling-pressure-evidence > header span { display: flex; align-items: center; gap: 7px; color: #9b5e36; }
+.boiling-pressure-evidence > header b { font-size: 10px; }
+.boiling-pressure-evidence > header small { color: #7b8889; font-size: 9px; }
+.boiling-pressure-evidence > p { margin: 0; padding: 14px; color: #748184; border: 1px dashed #bfb9ad; font-size: 10px; text-align: center; }
+.boiling-pressure-evidence > div { display: grid; grid-template-columns: 1.2fr repeat(5,.8fr); border: 1px solid #c9c3b7; }
+.boiling-pressure-evidence > div > b { padding: 8px 9px; color: #748285; border-right: 1px solid #d1cbc0; background: #e7e2d7; font: 800 9px var(--mono); }
+.boiling-run-row { display: contents; }
+.boiling-run-row > * { padding: 9px; color: #506467; border-top: 1px solid #d1cbc0; border-right: 1px solid #d1cbc0; font: 10px var(--mono); }
+.boiling-run-row > strong:nth-last-child(2) { color: #a45f33; }
+.boiling-pressure-evidence.complete > header span { color: #287268; }
+/* Hands-on same-material mass-volume series */
+.mv-inquiry-console { display: grid; grid-template-columns: 1.3fr 1fr; border-top: 1px solid #c9c3b8; border-bottom: 1px solid #c9c3b8; background: #e7e2d7; }
+.mv-inquiry-console section { display: grid; gap: 7px; padding: 14px 17px; border-right: 1px solid #c9c3b8; }
+.mv-inquiry-console section:last-child { border-right: 0; }
+.mv-inquiry-console b { color: #6d599e; font-size: 10px; }
+.mv-inquiry-console span,.mv-inquiry-console strong { color: #56696c; font-size: 10px; }
+.mv-inquiry-console section > div { display: flex; gap: 5px; }
+.mv-inquiry-console button { min-height: 31px; flex: 1; color: #607174; border: 1px solid #c3bdb1; background: #f5f1e8; cursor: pointer; font-size: 8px; }
+.mv-inquiry-console button.active { color: #fff; border-color: #7561a9; background: #7561a9; }
+.mv-procedure-strip { min-height: 58px; display: flex; align-items: stretch; gap: 0; padding: 0 18px; overflow-x: auto; border-bottom: 1px solid #c9c3b8; background: #f3f7f8; }
+.mv-procedure-strip span { min-width: 92px; flex: 1 0 92px; display: flex; align-items: center; justify-content: center; gap: 7px; color: #75878b; font-size: 9px; font-weight: 800; }
+.mv-procedure-strip span b { width: 22px; height: 22px; display: grid; place-items: center; color: #778b90; border: 1px solid #aab8ba; font: 800 8px var(--mono); }
+.mv-procedure-strip span.done { color: #267264; }
+.mv-procedure-strip span.done b { color: #092a25; border-color: #65bea9; background: #73ceb9; }
+.mv-procedure-strip > i { width: 22px; flex: 0 0 22px; align-self: center; border-top: 1px dashed #aab9bb; }
+.mv-lab-rig { position: relative; min-height: 650px; overflow: hidden; color: #fff; background: radial-gradient(circle at 45% 52%,rgba(159,137,221,.13),transparent 34%),linear-gradient(145deg,#071b23,#102f38 65%,#071a21); }
+.mv-lab-rig::before { position: absolute; inset: 0; content: ""; background-image: linear-gradient(rgba(159,137,221,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(159,137,221,.045) 1px,transparent 1px); background-size: 24px 24px; }
+.mv-lab-rig::after { position: absolute; z-index: 8; top: 18px; right: 18px; min-height: 31px; display: flex; align-items: center; padding: 0 10px; content: "SAME MATERIAL  /  m ∝ V  /  ρ=m÷V"; color: #ad9be2; border: 1px solid rgba(159,137,221,.55); background: rgba(5,25,32,.86); font-size: 9px; font-weight: 800; letter-spacing: .1em; }
+.mv-sample-cutter { position: absolute; z-index: 5; top: 115px; left: 6%; width: 300px; height: 250px; display: grid; place-items: center; border: 1px solid #405d64; background: rgba(5,23,30,.9); }
+.mv-sample-cutter > span { position: absolute; top: 12px; left: 14px; color: #806db1; font: 8px var(--mono); }
+.mv-sample-cutter > div { border: 3px solid rgba(255,255,255,.3); box-shadow: inset -13px -11px rgba(0,0,0,.16),0 14px 20px rgba(0,0,0,.3); transition: width .3s ease,height .3s ease,background .3s ease; transform: skewY(-3deg); }
+.mv-sample-cutter > b { position: absolute; right: 0; bottom: 16px; left: 0; color: #abbcba; font: 9px var(--mono); text-align: center; }
+.mv-digital-balance { position: absolute; z-index: 5; bottom: 70px; left: 6%; width: 330px; min-height: 150px; display: grid; grid-template-columns: 33px 1fr auto; align-items: center; gap: 8px; padding: 18px; border: 2px solid #62777b; border-radius: 7px; background: linear-gradient(#30494f,#192f35); box-shadow: 0 16px 23px rgba(0,0,0,.35); }
+.mv-digital-balance::before { position: absolute; top: -16px; right: 28px; left: 28px; height: 17px; content: ""; border: 2px solid #829496; background: #455d61; }
+.mv-digital-balance > svg { color: #a995df; }
+.mv-digital-balance small { color: #8270b3; font: 8px var(--mono); }
+.mv-digital-balance strong { grid-column: 2; color: #d3c6fa; font: 24px var(--mono); }
+.mv-digital-balance em { grid-column: 3; grid-row: 1/3; color: #9edfd2; font: normal 8px var(--mono); }
+.mv-lab-rig > svg { position: absolute; z-index: 4; top: 100px; right: 4%; width: 47%; height: 340px; border: 1px solid #405d64; background: rgba(5,23,30,.88); }
+.mv-lab-rig > svg line { stroke: #70878b; stroke-width: 1; }
+.mv-lab-rig > svg polyline { fill: none; stroke: #a995df; stroke-width: 3; }
+.mv-lab-rig > svg circle { fill: #b5a4e8; stroke: #fff; stroke-width: 2; }
+.mv-lab-rig > svg .mv-anomaly-point { fill: rgba(229,99,81,.16); stroke: #ff816f; stroke-width: 3; stroke-dasharray: 4 3; }
+.mv-lab-rig > svg text { fill: #81969a; font-size: 9px; }
+.mv-live-result { position: absolute; z-index: 6; right: 4%; bottom: 70px; width: 47%; display: grid; gap: 6px; padding: 15px; border: 1px solid #405d64; background: rgba(5,23,30,.94); }
+.mv-live-result small { color: #806db1; font: 8px var(--mono); }
+.mv-live-result strong { color: #d3c6fa; font: 12px var(--mono); }
+.mv-live-result em { color: #87a0a4; font: normal 9px/1.5 var(--mono); }
+.mv-lab-rig.show-zero-error .mv-digital-balance strong { color: #ff9d8d; }
+.mv-lab-rig.show-zero-error .mv-digital-balance em { color: #ff9d8d; }
+.mv-controls { display: grid; grid-template-columns: .8fr 1.3fr 1.4fr .7fr; border-bottom: 1px solid #c9c3b8; background: #e7e2d7; }
+.mv-controls > section,.mv-controls > aside { min-width: 0; display: grid; gap: 7px; padding: 13px; border-right: 1px solid #c9c3b8; }
+.mv-controls > *:last-child { border-right: 0; }
+.mv-controls b { color: #65787b; font: 800 9px var(--mono); }
+.mv-controls section > div { display: flex; flex-wrap: wrap; gap: 4px; }
+.mv-controls button { min-height: 37px; flex: 1; color: #5e7073; border: 1px solid #c2bcb0; background: #f5f1e8; cursor: pointer; font-size: 8px; }
+.mv-controls button small { display: block; margin-top: 2px; color: inherit; font: 7px var(--mono); opacity: .72; }
+.mv-controls > section:nth-child(3) button { flex-basis: calc(33.333% - 4px); }
+.mv-controls button.active { color: #fff; border-color: #7561a9; background: #7561a9; }
+.mv-controls button.done { color: #2e685c; border-color: #65a799; background: #e4f2ed; }
+.mv-controls button:disabled { cursor: not-allowed; opacity: .5; }
+.mv-controls aside { align-content: end; gap: 5px; }
+.mv-controls aside button { display: flex; align-items: center; justify-content: center; gap: 6px; color: #fff; border: 0; background: #6f5c9f; }
+.mv-controls aside button + button { color: #607174; border: 1px solid #c2bcb0; background: #f5f1e8; }
+.mv-zero-error-lab { padding: 17px; border-bottom: 1px solid #c9c3b8; background: #f6f2e9; }
+.mv-zero-error-lab > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.mv-zero-error-lab > header span { display: flex; align-items: center; gap: 7px; color: #795f9e; font-size: 10px; }
+.mv-zero-error-lab > header small { color: #7b8889; font-size: 9px; }
+.mv-zero-error-body { display: grid; grid-template-columns: 1.5fr .8fr .8fr .8fr .7fr; gap: 7px; align-items: stretch; }
+.mv-zero-error-body > span { display: grid; align-content: center; gap: 4px; padding: 10px 12px; border-left: 3px solid #d97867; background: #fffaf2; }
+.mv-zero-error-body > span strong { color: #6a4b47; font-size: 10px; }
+.mv-zero-error-body > span em { color: #8b7772; font: normal 8px/1.45 var(--mono); }
+.mv-zero-error-body > button { color: #714f49; border: 1px solid #d3aaa2; background: #fff5ed; cursor: pointer; font-size: 8px; font-weight: 800; }
+.mv-zero-error-body > button.done { color: #266b5f; border-color: #77b6a8; background: #e6f3ee; }
+.mv-zero-error-body > button:disabled { cursor: not-allowed; opacity: .48; }
+.mv-zero-error-lab .evidence-verdict { margin: 10px 0 0; }
+.mv-evidence-ledger { min-height: 76px; display: grid; grid-template-columns: repeat(5,1fr); align-content: start; border-top: 1px solid #c9c3b8; background: #f5f1e8; color: #748184; font-size: 9px; }
+.mv-evidence-ledger > b { padding: 9px 14px; background: #e7e2d7; }
+.mv-evidence-ledger > div { display: contents; }
+.mv-evidence-ledger > div > * { padding: 9px 14px; border-top: 1px solid #d1cbc0; font: 9px var(--mono); }
+.mv-evidence-ledger > div strong { color: #7561a9; }
+.mv-evidence-ledger > p { grid-column: 1 / -1; margin: 0; padding: 18px; color: #788588; text-align: center; }
+.density-sim { min-height: 440px; }
+.density-sample-selector { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid #c9c3b8; border-bottom: 1px solid #c9c3b8; background: #e7e2d7; }
+.liquid-density-selector { display: grid; grid-template-columns: 1.3fr .8fr .9fr; border-top: 1px solid #c9c3b8; border-bottom: 1px solid #c9c3b8; background: #e7e2d7; }
+.liquid-density-selector > section { min-width: 0; display: grid; align-content: center; gap: 7px; padding: 14px 16px; border-right: 1px solid #c9c3b8; }
+.liquid-density-selector > section:last-child { border-right: 0; }
+.liquid-density-selector section > span { display: flex; align-items: center; gap: 7px; color: #4e6265; font-size: 11px; font-weight: 850; }
+.liquid-density-selector section > span b { display: grid; width: 24px; height: 24px; place-items: center; color: white; background: #6d6098; font: 800 9px var(--mono); }
+.liquid-density-selector section > div { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }
+.liquid-density-selector button { min-height: 39px; display: grid; place-content: center; color: #607174; border: 1px solid #c3bdb1; background: #f5f1e8; cursor: pointer; font-size: 9px; }
+.liquid-density-selector section:first-child button { grid-template-columns: 15px 1fr; grid-template-rows: auto auto; text-align: left; }
+.liquid-density-selector button > i { grid-row: 1 / 3; width: 12px; height: 25px; align-self: center; border-radius: 3px; }
+.liquid-density-selector button small { color: #879294; font-size: 7px; }
+.liquid-density-selector button.active { color: white; border-color: #66598f; background: #66598f; }
+.liquid-density-selector button.active small { color: #d4cdea; }
+.liquid-density-selector section > strong { color: #4d6265; font-size: 11px; }
+.liquid-density-selector section > small { color: #788587; font-size: 9px; }
+.liquid-density-sim { position: relative; min-height: 690px; overflow: hidden; color: white; background: radial-gradient(circle at 57% 55%,rgba(159,137,221,.11),transparent 34%),linear-gradient(145deg,#071b23,#102f38 65%,#071a21); }
+.liquid-density-sim::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(159,137,221,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(159,137,221,.04) 1px,transparent 1px); background-size: 24px 24px; }
+.liquid-density-sim::after { content: "LIQUID DENSITY  /  ρ=(m₂−m₁)÷V"; position: absolute; z-index: 9; top: 18px; right: 19px; min-height: 31px; display: flex; align-items: center; padding: 0 10px; color: #a895df; border: 1px solid rgba(159,137,221,.55); background: rgba(5,25,32,.82); font-size: 9px; font-weight: 800; letter-spacing: .09em; }
+.liquid-density-procedure { position: absolute; z-index: 9; top: 18px; left: 20px; display: flex; align-items: center; gap: 4px; }
+.liquid-density-procedure span { min-height: 31px; display: flex; align-items: center; gap: 5px; padding: 0 8px; color: #718b90; border: 1px solid #35545c; background: rgba(5,22,29,.84); font-size: 8px; }
+.liquid-density-procedure span b { color: #7a9499; font: 800 7px var(--mono); }
+.liquid-density-procedure span.active { color: #e5ddf6; border-color: #7566a2; }
+.liquid-density-procedure span.done { color: #98e2d3; border-color: #397568; }
+.liquid-balance-station { position: absolute; z-index: 6; top: 145px; left: 4%; width: 270px; }
+.liquid-digital-balance { position: relative; height: 260px; display: grid; place-content: end center; padding-bottom: 25px; border-radius: 12px 12px 5px 5px; background: linear-gradient(#51686d,#293f44); box-shadow: 0 18px 25px rgba(0,0,0,.3); }
+.liquid-digital-balance > svg { position: absolute; top: 125px; left: 50%; color: #91a6a8; transform: translateX(-50%); }
+.liquid-beaker-on-scale { position: absolute; top: 45px; left: 50%; width: 115px; height: 110px; overflow: hidden; border: 5px solid #afc0c0; border-top: 0; border-radius: 0 0 18px 18px; transform: translateX(-50%); }
+.liquid-beaker-on-scale::after { content: ""; position: absolute; top: -2px; right: -30px; width: 55px; height: 42px; border: 5px solid #afc0c0; border-left: 0; border-radius: 0 50% 50% 0; }
+.liquid-beaker-on-scale > i { position: absolute; right: 0; bottom: 0; left: 0; height: 0; background: color-mix(in srgb,var(--liquid-density-color) 68%,transparent); transition: height .45s ease; }
+.liquid-beaker-on-scale.filled > i { height: 58%; }
+.liquid-digital-balance output { min-width: 130px; padding: 7px 10px; color: #c2f0e1; border: 1px solid #55766f; background: #10282c; font: 16px var(--mono); text-align: center; }
+.liquid-digital-balance small { margin-top: 5px; color: #718b8f; font: 8px var(--mono); text-align: center; }
+.liquid-balance-station > div:last-child { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin-top: 8px; }
+.liquid-balance-station button { min-height: 42px; color: #d9d2ec; border: 1px solid #6f6393; background: #4b4365; cursor: pointer; font-size: 8px; }
+.liquid-balance-station button:disabled { color: #748789; border-color: #3d565c; background: #243a40; cursor: not-allowed; }
+.liquid-transfer-path { position: absolute; z-index: 6; top: 240px; left: 38%; width: 180px; display: grid; grid-template-columns: 80px 30px; align-items: center; gap: 8px; }
+.transfer-beaker { position: relative; width: 75px; height: 90px; overflow: hidden; border: 5px solid #aabcbc; border-top: 0; border-radius: 0 0 14px 14px; transition: transform .55s ease; }
+.transfer-beaker > i { position: absolute; right: 0; bottom: 0; left: 0; height: 60%; background: color-mix(in srgb,var(--liquid-density-color) 70%,transparent); transition: height .45s ease; }
+.transfer-beaker.pouring { transform: rotate(65deg) translate(15px,-5px); transform-origin: right bottom; }
+.transfer-beaker.pouring > i { height: 0; }
+.liquid-transfer-path > svg { color: #a895df; }
+.liquid-transfer-path > small { grid-column: 1 / 3; color: #779095; font: 8px var(--mono); text-align: center; }
+.liquid-cylinder-station { position: absolute; z-index: 5; top: 135px; right: 24%; width: 135px; }
+.liquid-density-cylinder { position: relative; height: 350px; overflow: hidden; border: 6px solid #a7babb; border-top: 0; border-radius: 0 0 18px 18px; }
+.liquid-density-cylinder > span { position: absolute; right: 0; bottom: 0; left: 0; background: color-mix(in srgb,var(--liquid-density-color) 70%,transparent); transition: height .55s ease; }
+.liquid-density-cylinder > span::before { content: ""; position: absolute; top: -5px; right: -3px; left: -3px; height: 10px; border-radius: 50%; background: color-mix(in srgb,var(--liquid-density-color) 78%,white 22%); }
+.liquid-density-cylinder > i { position: absolute; z-index: 3; right: 5px; width: 20px; height: 1px; background: #a9bcbe; }
+.liquid-density-cylinder > i.major { width: 36px; background: #e0e9e6; }
+.liquid-density-cylinder > b { position: absolute; z-index: 4; top: 12px; right: 8px; padding: 5px 6px; color: #c5edf0; border: 1px solid #55737a; background: rgba(5,27,34,.82); font: 8px var(--mono); }
+.liquid-eye-console { position: absolute; z-index: 7; top: 150px; right: 3%; width: 270px; display: grid; grid-template-columns: 34px 1fr; gap: 8px; padding: 14px; border: 1px solid #405d64; background: rgba(5,23,30,.93); }
+.liquid-eye-console > svg { grid-row: 1 / 3; align-self: center; color: #a895df; }
+.liquid-eye-console > span { display: grid; gap: 3px; }
+.liquid-eye-console small { color: #80969a; font-size: 8px; }
+.liquid-eye-console strong { font-size: 10px; }
+.liquid-eye-console > div { grid-column: 1 / 3; display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; }
+.liquid-eye-console button { min-height: 30px; color: #829599; border: 1px solid #405b62; background: #173039; cursor: pointer; font-size: 8px; }
+.liquid-eye-console button.active { color: white; border-color: #7665a6; background: #5d527e; }
+.liquid-eye-console > button { grid-column: 1 / 3; min-height: 37px; color: white; border-color: #7565a5; background: #5a4e7b; }
+.liquid-eye-console > button:disabled { color: #718589; border-color: #40585e; background: #243a40; cursor: not-allowed; }
+.liquid-density-result { position: absolute; z-index: 8; right: 3%; bottom: 25px; width: 270px; display: grid; gap: 4px; padding: 13px 15px; border: 1px solid #536178; background: rgba(5,23,30,.93); }
+.liquid-density-result small { color: #766a9d; font: 8px var(--mono); }
+.liquid-density-result strong { color: #ddd5ef; font: 20px var(--serif); }
+.liquid-density-result span { color: #87999c; font: 9px var(--mono); }
+.liquid-density-result.complete { border-color: #438e7f; }
+.liquid-density-result.complete strong { color: #9de6d8; }
+.liquid-density-calculation { display: grid; grid-template-columns: repeat(4,1fr) 1.15fr .9fr; border-bottom: 1px solid #c8c2b6; background: #e7e2d7; }
+.liquid-density-calculation .science-result-cell { min-height: 100px; }
+.liquid-density-calculation > button { display: flex; align-items: center; justify-content: center; gap: 6px; color: white; border: 0; border-right: 1px solid #c8c2b6; background: #5d517d; cursor: pointer; font-size: 9px; }
+.liquid-density-calculation > button:disabled { color: #7c8989; background: #d0cbc0; cursor: not-allowed; }
+.liquid-density-evidence { padding: 18px 20px 21px; background: #f5f1e8; }
+.liquid-density-evidence > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.liquid-density-evidence > header span { display: flex; align-items: center; gap: 7px; color: #5e527f; }
+.liquid-density-evidence > header small { color: #7b8889; font-size: 9px; }
+.liquid-density-evidence > p { margin: 0; padding: 14px; color: #748184; border: 1px dashed #bfb9ad; font-size: 10px; text-align: center; }
+.liquid-density-evidence > div { display: grid; grid-template-columns: 1.1fr repeat(5,.8fr); border: 1px solid #c9c3b7; }
+.liquid-density-evidence > div > b { padding: 8px 9px; color: #748285; border-right: 1px solid #d1cbc0; background: #e7e2d7; font: 800 9px var(--mono); }
+.liquid-density-row { display: contents; }
+.liquid-density-row > * { padding: 9px; color: #506467; border-top: 1px solid #d1cbc0; border-right: 1px solid #d1cbc0; font: 10px var(--mono); }
+.liquid-density-row > strong:last-child { color: #6655a0; }
+.density-sample-selector button { min-height: 64px; display: flex; align-items: center; justify-content: center; gap: 10px; color: #596d70; border: 0; border-right: 1px solid #c9c3b8; background: transparent; cursor: pointer; }
+.density-sample-selector button:last-child { border-right: 0; }
+.density-sample-selector button.active { color: white; background: #4d446d; }
+.density-sample-selector button > b { color: #8f80bd; font: 800 9px var(--mono); }
+.density-sample-selector button > i { width: 30px; height: 30px; border-radius: 5px; box-shadow: inset 0 0 0 2px rgba(255,255,255,.18); }
+.density-sample-selector button > span { display: grid; gap: 2px; text-align: left; }
+.density-sample-selector button strong { font-size: 13px; }
+.density-sample-selector button small { color: #879395; font-size: 9px; }
+.density-sample-selector button.active small { color: #bdb5d7; }
+.density-measurement-line { min-height: 650px; background: radial-gradient(circle at 56% 55%,rgba(159,137,221,.1),transparent 35%),linear-gradient(145deg,#071b23,#102f38 65%,#071b22); }
+.density-measurement-line::before { background-size: 24px 24px; opacity: .55; }
+.density-measurement-line::after { content: "DENSITY  /  ρ = m ÷ (V₂−V₁)"; }
+.density-procedure-strip { position: absolute; z-index: 7; top: 18px; left: 20px; display: flex; align-items: center; gap: 5px; }
+.density-procedure-strip span { min-height: 31px; display: flex; align-items: center; gap: 6px; padding: 0 9px; color: #6e888c; border: 1px solid #355159; background: rgba(5,22,29,.82); font-size: 9px; }
+.density-procedure-strip span b { color: #7c9297; font: 800 8px var(--mono); }
+.density-procedure-strip span.active { color: #e5dafa; border-color: #7f70ac; }
+.density-procedure-strip span.done { color: #91ddce; border-color: #397368; }
+.density-balance-station { position: absolute; z-index: 5; top: 25%; left: 5%; width: 265px; text-align: center; }
+.density-digital-scale { position: relative; height: 210px; display: grid; place-content: end center; padding-bottom: 25px; border-radius: 12px 12px 5px 5px; background: linear-gradient(#51686d,#293f44); box-shadow: 0 18px 25px rgba(0,0,0,.3); }
+.density-digital-scale > svg { position: absolute; top: 92px; left: 50%; color: #91a6a8; transform: translateX(-50%); }
+.scale-platform { position: absolute; top: 42px; left: 50%; width: 175px; height: 27px; border: 3px solid #9cadad; border-radius: 50%; background: #71868a; transform: translateX(-50%); }
+.scale-platform i { position: absolute; left: 50%; bottom: 8px; width: 58px; height: 58px; border-radius: 7px; transform: translateX(-50%); box-shadow: inset 0 0 0 2px rgba(255,255,255,.18),0 8px 12px rgba(0,0,0,.3); }
+.density-digital-scale output { min-width: 125px; padding: 7px 10px; color: #bbf1df; border: 1px solid #55766f; background: #10282c; font: 17px var(--mono); }
+.density-digital-scale small { margin-top: 5px; color: #718b8f; font: 8px var(--mono); }
+.density-balance-station > button, .density-cylinder-station > button { min-height: 35px; width: 100%; margin-top: 8px; color: #d9d2ec; border: 1px solid #6f6393; background: #4b4365; cursor: pointer; font-size: 10px; }
+.density-balance-station > button:disabled, .density-cylinder-station > button:disabled { color: #748789; border-color: #3d565c; background: #243a40; cursor: default; }
+.density-cylinder-station { position: absolute; z-index: 5; top: 18%; left: 41%; width: 165px; text-align: center; }
+.density-graduated-cylinder { position: relative; height: 330px; overflow: hidden; border: 6px solid #a7babb; border-top: 0; border-radius: 0 0 18px 18px; background: rgba(149,193,204,.05); }
+.density-water { position: absolute; right: 0; bottom: 0; left: 0; background: rgba(80,178,217,.6); transition: height .55s ease; }
+.density-water::before { content: ""; position: absolute; top: -4px; right: -2px; left: -2px; height: 8px; border-radius: 50%; background: rgba(145,225,247,.75); }
+.density-drop-object { position: absolute; z-index: 3; top: -52px; left: 50%; width: 42px; height: 42px; border-radius: 6px; transform: translateX(-50%); transition: top .7s cubic-bezier(.2,.8,.2,1); }
+.density-drop-object::before { content: ""; position: absolute; left: 50%; bottom: 100%; width: 1px; height: 120px; background: #b5c5c4; }
+.density-drop-object.immersed { top: 205px; }
+.density-measurement-line.immersion-partial .density-drop-object.immersed { top: 146px; }
+.density-measurement-line.immersion-bubbles .density-drop-object.immersed { box-shadow: 0 0 0 3px rgba(145,225,247,.2),0 0 18px rgba(145,225,247,.35); }
+.density-attached-bubble { position: absolute; z-index: 5; top: calc(4px + var(--bubble-index) * 7px); left: calc(-7px + (var(--bubble-index) % 2) * 48px); width: calc(7px + var(--bubble-index) * 1px); height: calc(7px + var(--bubble-index) * 1px); border: 1px solid #d5f7fb; border-radius: 50%; background: rgba(211,247,252,.22); box-shadow: inset 1px 1px rgba(255,255,255,.7); }
+.density-graduated-cylinder > b { position: absolute; z-index: 4; right: 7px; width: 23px; height: 1px; color: #aabcbc; background: currentColor; font: 7px var(--mono); text-align: right; }
+.density-graduated-cylinder > b.major { width: 37px; color: #d4e0dd; }
+.density-graduated-cylinder > em { position: absolute; z-index: 6; right: 8px; top: 10px; padding: 5px 7px; color: #bceaf2; border: 1px solid #4f747a; background: rgba(6,28,35,.8); font: normal 9px var(--mono); }
+.density-eye-reader { position: absolute; z-index: 6; top: 23%; right: 4%; width: 310px; display: grid; grid-template-columns: 35px 1fr; gap: 8px; padding: 15px; border: 1px solid #405b62; background: rgba(7,28,35,.91); }
+.density-eye-reader > svg { grid-row: 1 / 3; align-self: center; color: #a992e5; }
+.density-eye-reader > i { position: absolute; left: -170px; top: 61px; width: 170px; border-top: 1px dashed #ad99e6; transition: top .2s ease; }
+.density-eye-reader.eye-high > i { top: 25px; transform: rotate(10deg); transform-origin: right; }
+.density-eye-reader.eye-low > i { top: 96px; transform: rotate(-10deg); transform-origin: right; }
+.density-eye-reader > span { display: grid; gap: 3px; }
+.density-eye-reader small { color: #899ca0; font-size: 9px; }
+.density-eye-reader strong { color: #e8e2f4; font-size: 12px; }
+.density-eye-reader > div { grid-column: 1 / 3; display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin-top: 6px; }
+}

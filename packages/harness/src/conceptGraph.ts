@@ -224,11 +224,11 @@ const soundConcepts: HarnessConceptNode[] = [
 const mechanicsConcepts: HarnessConceptNode[] = [
   domainConcept("mechanics", {
     id: "mechanics.speed", module: "mechanics-speed", title: "运动与平均速度",
-    inquiryQuestion: "通过不同路程并经历不同时间时，怎样比较运动的快慢？",
+    inquiryQuestion: "光电门间路程不变时，提高轨道高度会怎样改变小车的通过时间和平均速度？",
     prerequisites: ["路程", "时间测量"],
-    evidenceCriteria: ["路程与时间来自同一段运动", "统一单位后计算", "平均速度用总路程除以总时间"],
-    misconceptions: [{ id: "average-of-speeds", claim: "平均速度就是各段速度直接相加再平均", triggers: ["速度直接平均", "各段速度平均", "平均速度取平均"], correction: "一般情况下应使用总路程除以总时间；只有各段时间相等时，速度的算术平均才恰好适用。", probe: "设置两段路程相等但速度不同，比较两种算法的结果。" }],
-    hintLadder: ["先圈出同一段运动对应的路程和时间。", "把各段路程、时间分别相加。", "用总路程除以总时间，并写清单位。"],
+    evidenceCriteria: ["两组保持光电门间路程不变，轨道高度至少相差0.1 m", "每次装好起终点门，小车从静止释放并完成计时", "分别保存s、h、t和s/t；时间是测量结果，不能独立设定"],
+    misconceptions: [{ id: "average-of-speeds", claim: "平均速度就是各段速度直接相加再平均", triggers: ["速度直接平均", "各段速度平均", "平均速度取平均"], correction: "一般情况下应使用总路程除以总时间；只有各段时间相等时，速度的算术平均才恰好适用。", probe: "先用一条已保存记录的s和t重算平均速度。若把两次独立运动的数据作汇总练习，应计算(s₁+s₂)/(t₁+t₂)，再与两个速度的算术平均比较；这是数据汇总，不是要求装置设置连续两段运动。" }],
+    hintLadder: ["先固定光电门间路程，安装起点门、终点门，再让小车就位。", "从静止释放并保存基准；保持路程不变，让轨道高度至少变化0.1 m，重新安装光电门并完成第二次计时。", "用各组路程除以本组计时，比较高度变化与平均速度变化；只改变路程不能替代高度对照。"],
     connections: ["交通测速", "运动图像", "百米赛跑"]
   }),
   domainConcept("mechanics", {
@@ -259,12 +259,12 @@ const mechanicsConcepts: HarnessConceptNode[] = [
     connections: ["履带", "针尖", "雪橇"]
   }),
   domainConcept("mechanics", {
-    id: "mechanics.buoyancy", module: "mechanics-buoyancy", title: "浮力与物体浮沉",
-    inquiryQuestion: "物体和液体的密度关系怎样影响物体上浮、悬浮或下沉？",
+    id: "mechanics.buoyancy", module: "mechanics-buoyancy", title: "称重法测浮力与液体密度",
+    inquiryQuestion: "保持物体不变、完全浸没且不碰底时，更换液体会怎样改变浮力？",
     prerequisites: ["重力", "液体密度"],
-    evidenceCriteria: ["物体自由浸没且不受外力", "比较浮力与重力或平均密度", "区分运动过程与最终漂浮状态"],
+    evidenceCriteria: ["测力计校零并记录空气中重力G", "物体完全浸没、静止且不碰底，记录液中拉力F′", "保持物体不变，只更换液体，比较G−F′"],
     misconceptions: [{ id: "floating-no-gravity", claim: "物体漂浮时不再受到重力", triggers: ["漂浮没有重力", "浮起来重力消失", "水上不受重力"], correction: "漂浮物仍受重力，静止时浮力与重力大小相等、方向相反。", probe: "给漂浮物画受力图，检查竖直方向合力为何为零。" }],
-    hintLadder: ["先画出物体受到的重力和浮力。", "保持物体不变，只改变液体密度。", "分别记录初始运动方向和最终状态。"],
+    hintLadder: ["先记录物体静止悬挂在空气中的测力计示数G。", "完全浸没且不碰底时，记录F′并计算G−F′。", "保持物体不变，只改变液体密度；碰底时还存在支持力，不能把G−F′都当作浮力。"],
     connections: ["轮船", "潜水艇", "热气球类比"]
   })
 ];
@@ -290,11 +290,11 @@ const circuitConcepts: HarnessConceptNode[] = [
   }),
   domainConcept("circuit", {
     id: "circuit.power", module: "circuit-power", title: "电功率与电能",
-    inquiryQuestion: "用电器做功的快慢与消耗电能的多少有什么区别？",
+    inquiryQuestion: "同一用电器的电压和工作时间，分别怎样影响实际功率与消耗电能？",
     prerequisites: ["电压与电流", "时间"],
-    evidenceCriteria: ["功率用同一时刻的电压和电流计算", "比较电能时同时记录时间", "区分额定功率与实际功率"],
-    misconceptions: [{ id: "power-equals-energy", claim: "功率越大的电器一定越费电", triggers: ["功率大一定费电", "瓦数大耗电一定多", "功率就是电能"], correction: "功率表示用电器做功的快慢，消耗电能还取决于使用时间，关系为 W=Pt。", probe: "比较大功率短时间与小功率长时间工作的电能。" }],
-    hintLadder: ["先区分功率单位瓦和电能单位焦耳或千瓦时。", "固定工作时间比较不同功率，或固定功率比较时间。", "用 W=Pt 计算并说明比较条件。"],
+    evidenceCriteria: ["同一用电器、同一时间，安全电压至少相差1.5 V，比较P=UI", "同一用电器、同一电压，工作时间至少相差10 s，比较W=Pt", "保存计时完成快照中的U、I、P、t和W；只换用电器不计入核心对照，断电后的实时零值不改写已完成测量", "区分额定与实际功率，观察7.5 V保护锁定后恢复6 V或更低"],
+    misconceptions: [{ id: "power-equals-energy", claim: "功率越大的电器一定越费电", triggers: ["功率大一定费电", "瓦数大耗电一定多", "功率就是电能"], correction: "功率表示用电器做功的快慢，消耗电能还取决于使用时间，关系为 W=Pt。", probe: "先完成同一用电器的电压对照和时间对照；再把6 V、10 s与4.5 V、60 s的完成记录作拓展比较。后两组同时改变电压和时间，不替代前两类单变量证据。" }],
+    hintLadder: ["先断开开关，按铭牌选择安全电压，接好串联电流表、并联电压表和电能计时器。", "保持同一用电器：先固定时间，只改变安全电压；再固定电压，只改变工作时间。电流随电压改变，是测得的读数。", "每轮计时结束后保存完成快照，补齐电压—功率和时间—电能两类证据；只换用电器不算完成。最后选择7.5 V观察锁定，再恢复安全电压。"],
     connections: ["电费", "灯具能效", "家电铭牌"]
   }),
   domainConcept("circuit", {
@@ -322,9 +322,9 @@ const thermalConcepts: HarnessConceptNode[] = [
     id: "thermal.boiling", module: "thermal-boiling", title: "观察水的沸腾",
     inquiryQuestion: "水达到沸点前后，温度和气泡运动怎样变化？",
     prerequisites: ["温度测量", "汽化"],
-    evidenceCriteria: ["连续等时间间隔记录温度", "同时观察气泡变化", "确认继续加热且温度平台稳定出现"],
+    evidenceCriteria: ["记录升温段及相隔至少10秒的沸腾平台温度", "确认继续加热且平台稳定，保存完整曲线", "保持水量和功率不变，比较至少两种气压下的沸点"],
     misconceptions: [{ id: "boiling-keeps-rising", claim: "水沸腾后继续加热，温度会一直升高", triggers: ["沸腾后温度继续升", "越烧越热", "沸腾温度一直上升"], correction: "在气压稳定且水未烧干时，水沸腾过程中继续吸热，温度保持在沸点附近。", probe: "继续加热并按相同时间间隔记录沸腾后的温度。" }],
-    hintLadder: ["从沸腾前开始连续记录，不只测一个时刻。", "观察气泡在水中上升时大小怎样改变。", "结合温度—时间曲线平台和继续吸热两个证据解释。"],
+    hintLadder: ["沸腾前记录升温点，沸腾后记录相隔至少10秒的平台点，并观察气泡。", "结合温度—时间曲线平台和继续吸热的证据，保存当前曲线。", "保持水量和功率不变，切换气压、重新组装和记录，再比较两条曲线的沸点。"],
     connections: ["高压锅", "高原煮食", "蒸汽利用"]
   }),
   domainConcept("thermal", {
@@ -340,9 +340,9 @@ const thermalConcepts: HarnessConceptNode[] = [
     id: "thermal.evaporation", module: "thermal-evaporation", title: "影响蒸发快慢的因素",
     inquiryQuestion: "温度、液面面积和液面上方空气流动怎样影响蒸发？",
     prerequisites: ["汽化", "控制变量"],
-    evidenceCriteria: ["初始液体质量或体积相同", "一次只改变一个主要因素", "在相同时间内比较减少量"],
+    evidenceCriteria: ["初始液体质量或体积相同", "一次只改变一个主要因素", "记录失重和时长；同时间比较失重，不同时长先换算平均速率"],
     misconceptions: [{ id: "evaporation-only-hot", claim: "液体只有达到沸点才会蒸发", triggers: ["沸腾才蒸发", "不到沸点不蒸发", "加热后才能蒸发"], correction: "蒸发可在任何温度下发生，只在液体表面进行；升温通常只是使蒸发加快。", probe: "观察室温下敞口水面经过一段时间是否也有减少。" }],
-    hintLadder: ["先让两组液体初始量相同。", "温度、表面积、空气流动三者中只改变一个。", "在相同时间内比较液体减少量，并重复一次。"],
+    hintLadder: ["先让两组液体初始量相同。", "温度、表面积、空气流动三者中只改变一个。", "优先在相同时间内比较失重；若时长不同，用失重÷秒数×60换算g/min，再重复测量。"],
     connections: ["晾衣服", "吹风降温", "保鲜膜"]
   })
 ];

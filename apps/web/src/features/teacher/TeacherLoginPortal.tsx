@@ -1,14 +1,18 @@
 import { FormEvent, useState } from "react";
 import { Atom, Database, Fingerprint, KeyRound, LoaderCircle, LogIn, Orbit, ShieldCheck, WifiOff } from "lucide-react";
 
+import { useTeacherSessionGuard } from "./useTeacherSessionGuard";
+
 type ConnectionState = "checking" | "online" | "offline";
 
-export function TeacherLoginPortal({ connection, onLogin, onRetry, onOffline }: {
+export function TeacherLoginPortal({ connection, onLogin, onRetry, onOffline, sessionNotice }: {
   connection: ConnectionState;
+  sessionNotice?: string;
   onLogin: (email: string, password: string) => Promise<void>;
   onRetry: () => Promise<void>;
   onOffline: () => void;
 }) {
+  const canAct = useTeacherSessionGuard();
   const [email, setEmail] = useState("teacher@physics.local");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -16,14 +20,16 @@ export function TeacherLoginPortal({ connection, onLogin, onRetry, onOffline }: 
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!canAct(false)) return;
     setSubmitting(true);
     setMessage("");
     try {
       await onLogin(email, password);
     } catch (error) {
+      if (!canAct(false)) return;
       setMessage(error instanceof Error ? error.message : "登录失败，请检查账号信息");
     } finally {
-      setSubmitting(false);
+      if (canAct(false)) setSubmitting(false);
     }
   }
 
@@ -59,6 +65,7 @@ export function TeacherLoginPortal({ connection, onLogin, onRetry, onOffline }: 
           <span>{connection === "checking" ? "正在校验后台数据通道" : connection === "online" ? "数据服务已连接 · 身份认证可用" : "后台暂时离线 · 可进入本地演示模式"}</span><i />
         </div>
 
+        {sessionNotice && <p className="teacher-login-message" role="status">{sessionNotice}</p>}
         {connection !== "offline" ? <form onSubmit={submit}>
           <label><span><Fingerprint size={14} />教师 / 管理员账号</span><input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" required disabled={connection === "checking"} /></label>
           <label><span><KeyRound size={14} />登录密码</span><input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" placeholder="请输入登录密码" required disabled={connection === "checking"} /></label>

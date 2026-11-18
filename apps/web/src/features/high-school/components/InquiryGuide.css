@@ -1,0 +1,40 @@
+.hs-inquiry-guide { margin: 18px 0; border: 1px solid #2b435b; border-radius: 10px; background: #101c2d; color: #d4e5f2; }
+.hs-experiment-page .hs-prelab-guide .hs-inquiry-guide { margin: 0; border: 0; background: transparent; }
+.hs-inquiry-guide header { padding: 22px 24px 0; }
+.hs-inquiry-guide header > span { display: flex; gap: 9px; align-items: center; color: #eec78a; font-size: 12px; letter-spacing: .08em; }
+.hs-inquiry-guide h2 { margin: 10px 0 0; color: #e5f2ff; font-size: 21px; line-height: 1.6; font-weight: 600; }
+.hs-inquiry-guide ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 22px 24px 24px; list-style: none; }
+.hs-inquiry-guide li { display: flex; gap: 12px; padding: 16px; border: 1px solid #2b435b; border-radius: 8px; background: #0b1626; }
+.hs-inquiry-guide li > b { flex: 0 0 auto; padding-top: 2px; color: #eec78a; font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.hs-inquiry-guide li p { margin: 0; color: #b1c8dc; font-size: 14px; line-height: 1.8; }
+.hs-inquiry-guide details { padding: 0 24px 18px; border-top: 1px solid #2b435b; }
+.hs-inquiry-guide summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 52px; color: #c5eaf4; cursor: pointer; font-size: 14px; list-style: none; }
+.hs-inquiry-guide summary::-webkit-details-marker { display: none; }
+.hs-inquiry-guide summary svg { flex: 0 0 auto; }
+.hs-inquiry-guide details[open] > summary svg { transform: rotate(180deg); }
+.hs-inquiry-guide details label { display: block; margin: 12px 0; font-size: 14px; line-height: 1.8; }
+.hs-inquiry-guide textarea { width: 100%; box-sizing: border-box; min-height: 110px; padding: 14px; border: 1px solid #47647d; border-radius: 7px; background: #091422; color: #dbedf9; font: inherit; font-size: 15px; line-height: 1.8; resize: vertical; }
+.hs-inquiry-guide textarea::placeholder { color: #8fa8bf; }
+.hs-inquiry-guide textarea:focus-visible, .hs-inquiry-guide summary:focus-visible { outline: 2px solid #67ddf3; outline-offset: 3px; }
+.hs-inquiry-guide small { display: block; margin-top: 10px; color: #a1b5cb; font-size: 12px; line-height: 1.8; }
+.hs-inquiry-guide details > p { color: #b1c8dc; font-size: 14px; line-height: 1.9; }
+.hs-inquiry-guide details > p strong { color: #dbeaf5; font-weight: 600; }
+@media (max-width: 800px) { .hs-inquiry-guide ol { grid-template-columns: minmax(0, 1fr); gap: 10px; } }
+@media (max-width: 600px) { .hs-inquiry-guide header { padding: 18px 16px 0; } .hs-inquiry-guide ol { padding: 18px 16px; } .hs-inquiry-guide details { padding-inline: 16px; } .hs-inquiry-guide h2 { font-size: 19px; } }
+
+/* Independent read-the-scale practice still uses its pale instrument worksheet. */
+.hs-inquiry-guide.hs-precision-practice {
+  --hs-ink: #263f4b;
+  padding: 18px 20px;
+  border-color: #c6d3d8;
+  background: #f5f8fa;
+  color: #263f4b;
+  color-scheme: light;
+}
+.hs-precision-practice h2 { color: #1b3c4e; }
+.hs-precision-practice > p { color: #4e6572; line-height: 1.8; }
+.hs-precision-inputs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0; }
+.hs-precision-inputs label { display: grid; gap: 7px; color: var(--hs-ink, #173f38); font-size: 13px; }
+.hs-precision-inputs input { width: 100%; box-sizing: border-box; min-height: 44px; border: 1px solid #a0b3c0; border-radius: 7px; background: #fff; color: #263f4b; padding: 10px; font: inherit; }
+.hs-precision-inputs input:focus-visible { outline: 2px solid #235e57; outline-offset: 2px; }
+@media (max-width: 600px) { .hs-precision-inputs { grid-template-columns: 1fr; } }

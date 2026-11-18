@@ -1,0 +1,24 @@
+@layer pages {
+  .hs-multimeter-console { margin-block: 14px; border: 1px solid #cbd6c2; border-radius: 12px; padding: 18px; background: #f7f6ed; color: #284c36; }
+  .hs-multimeter-console > header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .hs-multimeter-console h3 { margin: 4px 0 0; font-size: 17px; }
+  .hs-multimeter-eyebrow { color: #65785c; font-size: 12px; }
+  .hs-multimeter-output { min-width: 150px; padding: 12px 18px; border: 5px solid #46624c; border-radius: 8px; background: #e1e8cd; font: 600 24px ui-monospace, monospace; text-align: center; font-variant-numeric: tabular-nums; }
+  .hs-multimeter-output.is-invalid { color: #8c4b25; font-size: 20px; }
+  .hs-multimeter-selectors { display: grid; grid-template-columns: 1fr minmax(135px, .6fr) 1.4fr; gap: 14px; margin-top: 18px; }
+  .hs-multimeter-console fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+  .hs-multimeter-console legend, .hs-multimeter-range > span { padding: 0 0 8px; font-size: 13px; font-weight: 600; }
+  .hs-multimeter-options { display: flex; gap: 6px; flex-wrap: wrap; }
+  .hs-multimeter-console button, .hs-multimeter-console select { min-height: 44px; min-width: 44px; border: 1px solid #98aa89; border-radius: 6px; padding: 9px 11px; background: #fffdf5; color: #284c36; font: inherit; font-size: 13px; touch-action: manipulation; cursor: pointer; }
+  .hs-multimeter-console button[aria-pressed="true"] { background: #365f44; color: #fffef3; border-color: #365f44; }
+  .hs-multimeter-console button:focus-visible, .hs-multimeter-console select:focus-visible { outline: 3px solid #b46a38; outline-offset: 3px; }
+  .hs-multimeter-console button:disabled, .hs-multimeter-console select:disabled, .hs-multimeter-console fieldset:disabled button { opacity: .55; cursor: default; }
+  .hs-multimeter-range { display: flex; flex-direction: column; gap: 0; }
+  .hs-multimeter-range small { margin-top: 7px; font-size: 11px; color: #63755a; }
+  .hs-multimeter-switches { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+  .hs-multimeter-feedback { margin-top: 16px; padding: 12px 14px; border-left: 3px solid #5b8055; background: #e9efdf; font-size: 13px; }
+  .hs-multimeter-feedback.is-invalid { background: #f5ebda; border-left-color: #ad6434; color: #774626; }
+  .hs-multimeter-feedback p { margin: 5px 0 0; line-height: 1.65; }
+  .hs-multimeter-boundary { margin: 10px 0 0; color: #65775b; font-size: 11px; line-height: 1.6; }
+  @media (max-width: 720px) { .hs-multimeter-selectors { grid-template-columns: 1fr; } .hs-multimeter-console { padding: 14px; } .hs-multimeter-options button { flex: 1 1 90px; } .hs-multimeter-connections button { flex-basis: 130px; } .hs-multimeter-switches button { flex: 1 1 140px; } }
+}

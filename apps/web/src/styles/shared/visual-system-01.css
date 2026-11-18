@@ -1,0 +1,162 @@
+/* Frontend system v4: legible scientific editorial UI across every product surface. */
+
+@layer overhaul {
+  :root {
+    --font-display: "Songti SC", "STSong", "Noto Serif CJK SC", serif;
+    --font-body: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --font-data: "SFMono-Regular", "Cascadia Code", "Roboto Mono", monospace;
+    --surface-0: #f3f7f8;
+    --surface-1: rgba(255,255,255,.82);
+    --surface-2: #e8f1f4;
+    --ui-line: rgba(24,80,100,.17);
+    --ui-line-strong: rgba(52,154,193,.34);
+    --ui-blue: #58c8ef;
+    --ui-cyan: #75e0f6;
+    --ui-teal: #38bca9;
+    --ui-radius: 6px;
+    --ui-radius-lg: 12px;
+    --ui-focus: 0 0 0 3px rgba(88,200,239,.18);
+  }
+
+  body { font-family: var(--font-body); font-weight: 400; letter-spacing: 0; }
+  body *:not(:where(.hs-page, .hs-page *, .lili-assistant, .lili-assistant *)),
+  body *:not(:where(.hs-page, .hs-page *, .lili-assistant, .lili-assistant *))::before,
+  body *:not(:where(.hs-page, .hs-page *, .lili-assistant, .lili-assistant *))::after { font-family: inherit !important; }
+  body :is(h1,h2,h3,.brand-words strong,.hero-copy h1,.section-heading h2,.architecture-title h2,.discovery-home-copy h1,.discovery-section-title h2,.teacher-workspace-header h1,.teacher-view-toolbar h2,.student-login-copy h1,.student-login-card h2):not(:where(.hs-page, .hs-page *, .lili-assistant, .lili-assistant *)) { font-family: var(--font-display) !important; }
+  body :is(code,kbd,pre,.version-chip,[class*="eyebrow"],small,[class*="number"],[class*="coordinate"],[class*="status"] span):not(:where(.hs-page, .hs-page *, .lili-assistant, .lili-assistant *)) { font-family: var(--font-data) !important; }
+  body :is(p,li,span,small,label,input,textarea,select,option,output,dt,dd,th,td,a):not(:where(.hs-page, .hs-page *, .lili-assistant, .lili-assistant *)) { font-weight: 400 !important; }
+  body :is(h1,h2,h3,strong,b,button,th):not(:where(.hs-page, .hs-page *, .lili-assistant, .lili-assistant *)) { font-weight: 700 !important; }
+  body :is(input,textarea,select,button):not(:where(.hs-page, .hs-page *, .lili-assistant, .lili-assistant *)) { font-family: var(--font-body) !important; }
+  body :is(input,textarea,select) { min-height: 42px; font-size: max(13px,1em); }
+  body :is(button,a,[role="button"]) { touch-action: manipulation; }
+  body :is(button,a,input,textarea,select):focus-visible { outline: 0; box-shadow: var(--ui-focus); }
+  ::placeholder { color: #78909a; opacity: .82; }
+
+  .home-nav,.explore-header,.workbench-header { min-height: 72px; backdrop-filter: blur(18px) saturate(1.25); }
+  .home-nav nav,.explore-header nav { gap: clamp(8px,1.5vw,22px); }
+  .home-nav nav a,.explore-header nav a { position: relative; min-height: 44px; padding-inline: 4px; font-size: 12px; }
+  .home-nav nav a::after,.explore-header nav a::after { position: absolute; right: 50%; bottom: 4px; left: 50%; height: 2px; content: ""; background: currentColor; transition: right .2s ease,left .2s ease; }
+  .home-nav nav a:hover::after,.explore-header nav a:hover::after,.explore-header nav a.active::after { right: 3px; left: 3px; }
+  .brand-symbol { border-radius: var(--ui-radius); }
+
+  .home-page .hero-lab { min-height: min(820px,calc(100vh - 72px)); }
+  .home-page .hero-copy { align-self: center; }
+  .home-page .hero-description { color: #a8c1d1; font-size: clamp(14px,1.25vw,18px); line-height: 1.85; }
+  .home-page .portal-entry { min-height: 116px; border-radius: var(--ui-radius-lg); }
+  .home-page .portal-entry strong { font-size: 17px; }
+  .home-page .portal-entry em { font-size: 11px; line-height: 1.5; }
+  .home-page .hero-instrument { overflow: hidden; border-radius: var(--ui-radius-lg); }
+  .home-page .lab-card { border-radius: var(--ui-radius-lg); clip-path: none; }
+  .home-page .lab-card::after { border-radius: inherit; }
+  .home-page .lab-card h3 { font-size: clamp(21px,2vw,27px); }
+  .home-page .lab-card p,.home-page .section-heading p { font-size: 13px; line-height: 1.75; }
+  .home-page .architecture-steps div { border-radius: var(--ui-radius); }
+  .home-page .home-footer { min-height: 94px; }
+
+  .student-login-card,.teacher-login-panel,.student-flight-deck,.discovery-home-hero,.discovery-field-card,.science-field-hero,.science-module-card-grid > button,.science-lab,.workbench-layout { border-radius: var(--ui-radius-lg); }
+  .student-login-copy > p,.teacher-login-panel > header p { font-size: 13px; }
+  .student-login-copy article b { font-size: 12px; }
+  .student-login-copy article small { font-size: 10px; }
+  .student-login-card form label,.teacher-login-panel form label { font-size: 12px; }
+  .student-login-card form input,.teacher-login-panel form input { font-size: 14px; }
+  .student-login-card form > button,.teacher-login-submit { min-height: 52px; border-radius: var(--ui-radius); }
+  .discovery-home-copy > span { font-size: 14px; line-height: 1.85; }
+  .discovery-route-line { flex-wrap: wrap; row-gap: 10px; }
+  .discovery-field-card { overflow: hidden; transition: transform .24s ease,box-shadow .24s ease,border-color .24s ease; }
+  .discovery-field-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px rgba(28,77,90,.14); }
+  .discovery-field-card p,.discovery-section-title p { font-size: 12px; line-height: 1.7; }
+  .student-mobile-dock { display: none; }
+  .student-flight-deck { border-radius: var(--ui-radius-lg); }
+  .student-focus-mission,.student-learning-snapshot,.student-mission-grid > article,.student-session-history > article { border-radius: var(--ui-radius); }
+  .student-flight-tools button,.student-flight-tabs button,.student-live-ribbon button,.student-mission-grid article > button { min-height: 40px; font-size: 11px; border-radius: 4px; }
+  .student-mission-grid h3 { font-size: 18px; }
+  .student-mission-grid article > p,.student-session-history span em { font-size: 10px; }
+
+  .teacher-console { --tc-radius: 6px; }
+  .teacher-sidebar nav { gap: 5px; }
+  .teacher-sidebar nav a { min-height: 58px; padding: 9px 11px; border-radius: var(--tc-radius); }
+  .teacher-sidebar nav a small { font-size: 9px; }
+  .teacher-sidebar nav a b { font-size: 14px; }
+  .teacher-workspace { min-width: 0; }
+  .teacher-workspace-header { min-height: 150px; align-items: center; }
+  .teacher-workspace-header h1 { font-size: clamp(30px,3vw,44px); }
+  .teacher-workspace-header p { max-width: 680px; font-size: 12px; line-height: 1.7; }
+  .teacher-route-stage { min-width: 0; }
+  .teacher-view > :is(section,article),.teacher-view-toolbar,.teacher-account-console,.teacher-real-class-grid > article,.teacher-flow-library,.teacher-flow-lessons,.teacher-task-board,.teacher-report-sheet { border-radius: var(--tc-radius); }
+  .teacher-view-toolbar p { max-width: 720px; font-size: 12px; line-height: 1.65; }
+  .teacher-button { min-height: 42px; padding-inline: 14px; border-radius: 4px; font-size: 11px; }
+  .teacher-account-row { min-height: 58px; }
+  .teacher-account-row span,.teacher-task-board article,.teacher-real-class-card p { font-size: 10px; }
+  .teacher-backend-login { border-radius: var(--tc-radius); }
+  .teacher-backend-login > label { font-size: 11px; }
+  .teacher-backend-login > label input,.teacher-backend-login > label select,.teacher-backend-login > label textarea { font-size: 13px; }
+  .teacher-guangguang-trigger,.harness-dock-trigger { border-radius: 10px; }
+  .teacher-guangguang-panel,.harness-panel { border-radius: 12px; overflow: hidden; }
+
+  .science-header { min-height: 72px; }
+  .science-nav > a { min-height: 64px; }
+  .science-module-bar,.science-field-context,.science-field-hero,.science-textbook-chain,.science-curriculum-note,.science-lab,.open-module-intro { border-radius: var(--ui-radius); }
+  .science-module-bar nav button { font-size: 11px; }
+  .science-lab > header p,.open-module-intro p,.science-field-hero p { font-size: 12px; line-height: 1.7; }
+  .science-controls button,.open-control-deck button,.science-lab button { min-height: 38px; }
+  .workbench-layout { overflow: hidden; }
+  .workbench-actions button,.workbench-actions a { min-height: 40px; border-radius: 4px; }
+
+  .harness-panel { box-shadow: 0 26px 70px rgba(3,24,34,.26),0 0 0 1px rgba(112,210,237,.12); }
+  .harness-panel > header { min-height: 66px; }
+  .harness-panel-nav button { min-height: 52px; }
+  .harness-dialogue-body { background-size: 100% 32px; }
+  .harness-message p,.harness-smart-coach p,.harness-long-memory p,.harness-session-summary p { font-size: 11px; line-height: 1.65; }
+  .harness-composer textarea { min-height: 74px; font-size: 13px; line-height: 1.55; }
+  .harness-composer button { min-height: 42px; font-size: 10px; }
+  .harness-draft-intelligence small { font-size: 9px; }
+
+  @media (max-width: 900px) {
+    .explore-header nav { display: none; }
+    .discovery-home > main { padding-bottom: 78px; }
+    .student-mobile-dock { position: fixed; z-index: 78; right: max(10px,env(safe-area-inset-right)); bottom: max(9px,env(safe-area-inset-bottom)); left: max(10px,env(safe-area-inset-left)); height: 60px; display: grid; grid-template-columns: repeat(5,1fr); overflow: hidden; color: #dffaff; border: 1px solid rgba(117,224,246,.38); border-radius: 12px; background: rgba(7,35,49,.94); box-shadow: 0 16px 50px rgba(3,21,31,.32),inset 0 1px rgba(255,255,255,.05); backdrop-filter: blur(18px) saturate(1.3); }
+    .student-mobile-dock a { min-width: 0; display: grid; place-items: center; align-content: center; gap: 3px; color: #8eb8c6; border-right: 1px solid rgba(117,224,246,.1); font-size: 9px; }
+    .student-mobile-dock a:last-child { border-right: 0; }
+    .student-mobile-dock a:nth-child(3) { color: #78e6d1; background: rgba(56,188,169,.09); }
+    .student-mobile-dock a:active { color: white; background: rgba(117,224,246,.12); }
+    .harness-dock-trigger { bottom: 78px; }
+    .student-flight-header,.teacher-workspace-header { align-items: flex-start; flex-direction: column; }
+    .teacher-header-actions { width: 100%; justify-content: space-between; }
+    .teacher-account-console { overflow-x: auto; }
+    .teacher-account-table { min-width: 850px; }
+  }
+
+  @media (max-width: 640px) {
+    :root { --ui-radius-lg: 8px; }
+    .home-nav,.explore-header,.workbench-header { min-height: 64px; }
+    .home-page .hero-lab { min-height: 0; }
+    .home-page .portal-entry-grid { grid-template-columns: 1fr; }
+    .home-page .portal-entry { min-height: 102px; }
+    .home-page .hero-stats dt { font-size: 19px; }
+    .home-page .hero-stats dd { font-size: 10px; }
+    .student-login-portal { padding: 14px; }
+    .student-login-copy { margin-top: 18px; }
+    .student-login-copy > p { font-size: 12px; }
+    .student-flight-tools { width: 100%; }
+    .student-flight-tools button { flex: 1; justify-content: center; }
+    .student-focus-mission { padding: 24px 22px; }
+    .student-focus-orbit { opacity: .22; }
+    .student-flight-tabs { align-items: stretch; overflow-x: auto; }
+    .student-flight-tabs button { flex: 0 0 auto; }
+    .student-live-ribbon { grid-template-columns: 36px 1fr; }
+    .student-live-ribbon button { justify-content: center; }
+    .student-live-ribbon button:first-of-type { grid-column: 1/2; }
+    .student-live-ribbon button:last-of-type { grid-column: 2/3; }
+    .teacher-workspace-header { padding-top: 66px; }
+    .teacher-header-actions { align-items: stretch; flex-direction: column; }
+    .teacher-header-status { width: 100%; }
+    .science-lab > header,.open-module-intro { padding: 20px 16px; }
+    .harness-long-memory-signals { grid-template-columns: repeat(3,1fr); }
+    .harness-review-schedule { grid-template-columns: 19px 1fr; }
+    .harness-review-schedule button { grid-column: 1/-1; justify-content: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+}

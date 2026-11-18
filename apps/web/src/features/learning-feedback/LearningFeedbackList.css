@@ -1,0 +1,20 @@
+@layer components {
+  .learning-feedback-list { --feedback-ink: var(--tc-text, #283b38); --feedback-muted: var(--tc-muted, #60706a); --feedback-line: var(--tc-line, #d7ded3); --feedback-accent: var(--tc-cyan, #286b60); display: grid; gap: 14px; padding: 0; margin: 18px 0 0; list-style: none; }
+  .learning-feedback-entry { min-width: 0; padding: 18px; border: 1px solid var(--feedback-line); border-left: 3px solid var(--feedback-accent); color: var(--feedback-ink); }
+  .learning-feedback-entry > header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 18px; }
+  .learning-feedback-entry > header strong { overflow-wrap: anywhere; font-size: 14px; }
+  .learning-feedback-entry > header strong span { margin-left: 10px; color: var(--feedback-muted); font-size: 11px; font-weight: 400; }
+  .learning-feedback-entry > header time, .learning-feedback-entry > header > span { color: var(--feedback-muted); font-size: 11px; }
+  .learning-feedback-entry .learning-feedback-version { margin: 8px 0 12px; color: var(--feedback-muted); font-size: 12px; line-height: 1.7; }
+  .learning-feedback-entry .learning-feedback-body { margin: 0; color: var(--feedback-ink); font-size: 14px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .learning-feedback-snapshot { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--feedback-line); }
+  .learning-feedback-snapshot > button { min-height: 44px; padding: 8px 0; border: 0; color: var(--feedback-accent); background: transparent; font: inherit; font-size: 12px; text-align: left; line-height: 1.6; cursor: pointer; }
+  .learning-feedback-snapshot > button:focus-visible { outline: 2px solid var(--feedback-accent); outline-offset: 3px; }
+  .learning-feedback-snapshot > div > p { margin: 8px 0 12px; color: var(--feedback-muted); font-size: 12px; line-height: 1.8; }
+  .learning-feedback-snapshot dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+  .learning-feedback-snapshot dl > div { min-width: 0; padding: 12px; border: 1px solid var(--feedback-line); background: transparent; }
+  .learning-feedback-snapshot dt { margin: 0 0 8px; color: var(--feedback-accent); font-size: 12px; font-weight: 600; }
+  .learning-feedback-snapshot dd { margin: 0; color: var(--feedback-ink); font-size: 13px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .learning-feedback-snapshot dd.is-empty { color: var(--feedback-muted); }
+  @media (max-width: 700px) { .learning-feedback-entry { padding: 14px; } .learning-feedback-snapshot dl { grid-template-columns: 1fr; } }
+}

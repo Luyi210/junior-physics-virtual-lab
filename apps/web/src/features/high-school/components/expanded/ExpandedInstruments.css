@@ -1,0 +1,12 @@
+@layer pages {
+  .hs-diagram[data-expanded-instrument] { width: 100%; min-width: 0; height: 100%; min-height: 260px; }
+  .hs-diagram .hs-expanded-caption { font-size: 12px; fill: #64765d; }
+  .hs-diagram .hs-expanded-number { font-size: 17px; font-variant-numeric: tabular-nums; fill: #244735; }
+  .hs-diagram .hs-expanded-note { font-size: 11px; fill: #66775e; }
+  .hs-expanded-action { cursor: pointer; touch-action: manipulation; outline: none; }
+  .hs-expanded-action text { font-size: 12px; }
+  .hs-expanded-action:focus-visible rect { stroke: #b7683b; stroke-width: 3; }
+  .hs-expanded-action[aria-disabled="true"] { cursor: default; opacity: .6; }
+  .hs-expanded-3d-action { border: 1px solid #87997c; border-radius: 5px; background: #f4efdf; color: #355d44; padding: 7px 10px; font-size: 12px; white-space: nowrap; }
+  .hs-expanded-3d-action:focus-visible { outline: 2px solid #b7683b; outline-offset: 2px; }
+}

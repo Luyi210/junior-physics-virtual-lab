@@ -1,0 +1,21 @@
+/* Guided experience system v3: onboarding is separate from task context and operation tutorials. */
+
+@layer components {
+  .page-guide-dialog { width:min(940px,100%);min-height:520px;grid-template-columns:310px 1fr }
+  .page-guide-content { justify-content:flex-start;padding-top:42px }
+  .page-guide-progress { display:flex;align-items:center;gap:10px;margin:0 48px 24px 0;color:#667d83;font:700 8px var(--mono);letter-spacing:.08em }.page-guide-progress > i{height:3px;flex:1;overflow:hidden;background:rgba(16,41,48,.1);font-style:normal}.page-guide-progress > i b{display:block;height:100%;background:var(--intro-accent);transition:width .28s ease}
+  .page-guide-actions{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:12px}.page-guide-actions .page-intro-enter{margin-left:auto}.page-guide-later,.page-guide-previous{min-height:39px;display:inline-flex;align-items:center;gap:5px;padding:0 10px;color:#687b7e;border:1px solid rgba(16,41,48,.14);background:transparent;font-size:10px;cursor:pointer}.page-guide-previous{color:#284f57}
+  .page-guide-visual > header{position:absolute;z-index:4;top:20px;right:18px;left:18px;display:flex;justify-content:space-between;gap:10px;color:#739ba2;font:700 7px var(--mono);letter-spacing:.1em}.page-guide-visual > header b{color:var(--intro-accent);font:inherit}.page-guide-coordinate{position:absolute;z-index:4;bottom:20px;left:18px;display:flex;align-items:center;gap:6px;color:#7fa3a8;font:700 8px var(--mono)}.page-guide-visual.visual-teacher{background-color:#071d30}.page-guide-visual.visual-student{background-color:#123f48}
+  .guide-variant-teacher .page-guide-dialog{color:#eaf8ff;border-color:rgba(120,221,255,.32);background:#081c2d;box-shadow:14px 14px 0 rgba(120,221,255,.26),0 34px 90px rgba(0,5,12,.6)}.guide-variant-teacher .page-guide-content{background:radial-gradient(circle at 100% 0,rgba(120,221,255,.08),transparent 30%),#091e31}.guide-variant-teacher .page-intro-content > p{color:#87a9ba}.guide-variant-teacher .page-intro-content li{color:#c9e0e9;border-color:rgba(120,221,255,.12)}.guide-variant-teacher .page-intro-close,.guide-variant-teacher .page-guide-later,.guide-variant-teacher .page-guide-previous{color:#89adbd;border-color:rgba(120,221,255,.18)}.guide-variant-teacher .page-guide-progress{color:#668b9d}.guide-variant-teacher .page-guide-progress > i{background:rgba(120,221,255,.1)}.guide-variant-teacher .page-intro-enter{color:#071a29;border-color:var(--intro-accent);background:var(--intro-accent)}.guide-variant-teacher .page-intro-hint{color:#587b8e}
+  .guide-variant-student .page-guide-dialog{background:#f2f9f5;box-shadow:14px 14px 0 rgba(54,191,168,.42),0 34px 90px rgba(3,31,34,.35)}
+  .teacher-console > .page-intro-trigger{right:28px;bottom:22px;color:#dff6ff;border-color:rgba(120,221,255,.45);background:#0a2135;box-shadow:4px 4px 0 rgba(120,221,255,.45)}
+
+  .cat-tutorial-cover > span:first-of-type{color:#bc6b2f;font-weight:800}.cat-tutorial-cover li{align-items:flex-start}.cat-tutorial-finish p{line-height:1.6}
+}
+
+@layer responsive {
+  @media(max-width:760px){
+    .page-guide-dialog{grid-template-columns:1fr}.page-guide-content{padding-top:28px}.page-guide-progress{margin-right:42px;margin-bottom:15px}.page-guide-actions{display:grid;grid-template-columns:1fr 1fr}.page-guide-actions .page-intro-enter{grid-column:1/-1;grid-row:1;margin:0}.page-guide-later,.page-guide-previous{justify-content:center}.page-guide-visual > header,.page-guide-coordinate{display:none}
+  }
+  @media(prefers-reduced-motion:reduce){.page-guide-dialog *{animation:none!important;transition:none!important}}
+}

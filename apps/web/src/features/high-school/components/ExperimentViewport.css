@@ -1,0 +1,123 @@
+@layer pages {
+  .hs-experiment-page .hs-viewport {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #39556f;
+    border-radius: 12px 12px 0 0;
+    background: #101c2d;
+    box-shadow: 0 18px 48px #00000026;
+  }
+  .hs-experiment-page .hs-viewport > header {
+    display: block;
+    padding: 18px 20px;
+    border-color: #314b63;
+    background: linear-gradient(110deg, #182b40, #101c2d 70%);
+  }
+  .hs-viewport-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-bottom: 14px;
+  }
+  .hs-viewport-heading > span { color: #e2f2ff; font-size: 15px; font-weight: 600; letter-spacing: .08em; }
+  .hs-viewport-heading > small { color: #9fb9cf; font-size: 12px; }
+  /* Drei Html uses large z-indices for depth sorting. Keep them inside the
+     apparatus so annotations cannot cover the tutor, navigation or dialogs. */
+  .hs-viewport-stage { position: relative; isolation: isolate; }
+  .hs-viewport-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .hs-experiment-page .hs-view-switch { padding: 3px; gap: 3px; border: 1px solid #344e66; border-radius: 8px; background: #091422; }
+  .hs-experiment-page .hs-view-switch button {
+    min-height: 44px;
+    padding: 8px 13px;
+    border-radius: 5px;
+    color: #b1c9da;
+    font-size: 13px;
+  }
+  .hs-experiment-page .hs-view-switch button[aria-pressed="true"] { color: #092331; background: #8be4f4; box-shadow: 0 2px 12px #67ddf31a; font-weight: 600; }
+  .hs-experiment-page .hs-view-switch button:disabled { opacity: .4; }
+  .hs-camera-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .hs-experiment-page .hs-camera-tools select {
+    min-height: 44px;
+    max-width: 150px;
+    padding: 8px 10px;
+    border: 1px solid #3c5972;
+    border-radius: 6px;
+    color: #d2e5f4;
+    background: #13253a;
+    color-scheme: dark;
+    font: inherit;
+    font-size: 13px;
+  }
+  .hs-experiment-page :is(.hs-camera-reset, .hs-diagram-zoom, .hs-touch-rotation) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    gap: 7px;
+    padding: 8px 10px;
+    border: 1px solid #3c5972;
+    border-radius: 6px;
+    color: #c3e6f1;
+    background: #13253a;
+    font-size: 13px;
+  }
+  .hs-experiment-page :is(.hs-camera-reset, .hs-diagram-zoom, .hs-touch-rotation):hover { background: #203b53; border-color: #67ddf3; }
+  .hs-experiment-page .hs-touch-rotation[aria-pressed="true"] { color: #082734; background: #8be4f4; border-color: #8be4f4; }
+  .hs-viewport button:focus-visible, .hs-camera-tools select:focus-visible, .hs-viewport-stage:focus-visible { outline: 2px solid #67ddf3; outline-offset: 3px; }
+  .hs-experiment-page .hs-viewport-stage:not(.hs-force-viewport-stage):not(.hs-capacitor-viewport-stage):not(.hs-pendulum-viewport-stage):not(.is-magnified) { height: clamp(400px, 37vw, 600px); }
+  .hs-viewport .hs-pendulum-viewport-stage { height: auto; min-height: 420px; }
+  .hs-viewport .hs-pendulum-viewport-stage.is-magnified { height: min(65vh, 600px); }
+  .hs-diagram-surface { height: 100%; width: 100%; }
+  .hs-experiment-page .hs-diagram-surface { color-scheme: light; background: #edf2f5; }
+  .hs-experiment-page .hs-diagram-surface button { color-scheme: light; }
+  .hs-viewport .hs-viewport-stage.is-magnified { height: min(65vh, 600px); min-height: 300px; overflow: auto; overscroll-behavior: contain; }
+  .hs-diagram-surface.is-magnified { width: max(100%, 800px); height: auto; min-height: 100%; }
+  .hs-diagram-surface.is-magnified .hs-diagram { height: auto; min-height: 430px; }
+  .hs-experiment-page .hs-viewport > footer {
+    flex-wrap: wrap;
+    align-items: start;
+    gap: 8px 20px;
+    padding: 13px 20px;
+    border-color: #314b63;
+    color: #acc4d8;
+    background: #0d192a;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .hs-experiment-page .hs-viewport > footer > span { flex: 1 1 230px; }
+  .hs-experiment-page .hs-viewport > footer > span:last-child { color: #91adc4; }
+  .hs-experiment-page .hs-3d-label { padding: 6px 9px; border-color: #aabcc9; border-radius: 5px; color: #234854; background: #f5f8faf0; box-shadow: 0 3px 9px #102e3320; font-size: 12px; }
+  .hs-experiment-page .hs-render-notice { margin: 0; padding: 12px 20px; color: #eed0a5; background: #25252c; font-size: 12px; line-height: 1.8; }
+  .hs-experiment-page .hs-scene-loading { color: #daf4fc; border: 1px solid #43637e; border-radius: 7px; background: #101c2df2; }
+  /* Keep in-scene controls readable against the dark three-dimensional stage. */
+  .hs-experiment-page .hs-pendulum-three-controls {
+    width: min(460px, 78vw);
+    padding: 9px 12px;
+    border-color: #46647a;
+    background: #122236f5;
+    color: #d9edf5;
+    box-shadow: 0 8px 24px #00000030;
+  }
+  .hs-experiment-page .hs-pendulum-three-controls .hs-pendulum-controlbar { gap: 6px; }
+  .hs-experiment-page .hs-pendulum-three-controls button { padding: 7px 9px; background: #1a3349; border-color: #4b687d; color: #d4e8f2; }
+  .hs-experiment-page .hs-pendulum-three-controls button[aria-pressed="true"] { color: #082734; background: #8be4f4; border-color: #8be4f4; }
+  .hs-experiment-page .hs-pendulum-three-controls button:focus-visible { outline-color: #8be4f4; }
+  .hs-experiment-page .hs-pendulum-three-controls p { color: #abc2d3; line-height: 1.7; }
+  @media (max-width: 600px) {
+    .hs-experiment-page .hs-viewport > header { padding: 14px 12px; }
+    .hs-viewport-toolbar { gap: 10px; }
+    .hs-experiment-page .hs-view-switch { width: 100%; }
+    .hs-experiment-page .hs-view-switch button { flex: 1; justify-content: center; padding: 8px 5px; gap: 6px; }
+    .hs-camera-tools { width: 100%; justify-content: space-between; }
+    .hs-experiment-page .hs-viewport-stage:not(.hs-force-viewport-stage):not(.hs-capacitor-viewport-stage):not(.hs-pendulum-viewport-stage):not(.is-magnified) { height: clamp(280px, 78vw, 420px); min-height: 280px; }
+    .hs-experiment-page .hs-viewport > footer { padding: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hs-experiment-page .hs-scene-loading svg { animation: none; } }
+}
+
+/* OrbitControls sets touch-action inline on its canvas. While touch rotation is
+   off, page scrolling/pinch zoom must win over that imperative style. */
+.hs-viewport[data-camera-interactive="false"] .hs-three-canvas,
+.hs-viewport[data-camera-interactive="false"] .hs-three-canvas canvas { touch-action: pan-y pinch-zoom !important; }

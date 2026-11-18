@@ -1,0 +1,65 @@
+@layer pages {
+  .hs-experiment-page .hs-life-connection {
+    position: relative;
+    overflow: hidden;
+    margin-top: 30px;
+    padding: 25px 27px 27px;
+    border: 1px solid #35546b;
+    border-radius: 12px;
+    background: radial-gradient(circle at 4% 0, #2e5c6044, transparent 34%), #101c2d;
+    color: #dcecf7;
+  }
+  .hs-life-connection::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(#67ddf3, #eec78a);
+  }
+  .hs-life-connection header > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #eec78a;
+    font-size: 12px;
+    letter-spacing: .09em;
+  }
+  .hs-life-connection h2 {
+    margin: 8px 0 22px;
+    color: #eaf5ff;
+    font-size: clamp(19px, 2vw, 24px);
+    font-weight: 600;
+  }
+  .hs-life-connection-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .hs-life-connection-grid > div {
+    min-width: 0;
+    padding: 16px 18px;
+    border: 1px solid #2b435b;
+    border-radius: 8px;
+    background: #0b1626bb;
+  }
+  .hs-life-connection h3 {
+    margin: 0 0 10px;
+    color: #9be2e8;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .hs-life-connection p {
+    margin: 0;
+    color: #bdd0df;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  @media (max-width: 800px) {
+    .hs-life-connection-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  }
+  @media (max-width: 600px) {
+    .hs-experiment-page .hs-life-connection { margin-top: 22px; padding: 20px 16px; }
+    .hs-life-connection h2 { margin-bottom: 16px; }
+    .hs-life-connection-grid > div { padding: 13px 14px; }
+  }
+}

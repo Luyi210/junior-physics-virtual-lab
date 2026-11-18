@@ -1,0 +1,80 @@
+/* Scoped to the senior pages. Unlayered to override the existing type system
+   and numeric editors, without changing the junior page or floating tutor. */
+@media (max-width: 760px), (pointer: coarse) {
+  .hs-page.hs-lab-theme :is(input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    font-size: 16px;
+    min-height: 44px;
+    max-width: 100%;
+  }
+  .hs-page.hs-lab-theme :is(button, summary) { min-height: 44px; }
+  .hs-page.hs-lab-theme input[type="range"] { min-height: 44px; touch-action: pan-y; }
+  .hs-page.hs-lab-theme .hs-parameter .hs-parameter-number { font-size: 16px; }
+  .hs-page.hs-lab-theme .hs-camera-tools select { font-size: 16px; }
+  .hs-page.hs-lab-theme :is(.hs-table-scroll, .hs-collision-comparison) {
+    max-width: 100%;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 760px) {
+  .hs-page.hs-lab-theme { box-sizing: border-box; padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px); }
+  .hs-page.hs-lab-theme :is(main, section, fieldset, .hs-apparatus-column, .hs-lab-layout > *, .hs-records-empty > div) { min-width: 0; }
+  .hs-page.hs-lab-theme :is(.hs-record-actions, .hs-confirm-clear, .hs-analysis-conditions dl > div) { flex-wrap: wrap; }
+  .hs-page.hs-lab-theme :is(.hs-record-notice, .hs-storage-error, .hs-analysis-conditions dd, .hs-control-note) { overflow-wrap: anywhere; }
+  .hs-page.hs-lab-theme .hs-header nav { flex-wrap: wrap; }
+  .hs-page.hs-lab-theme .hs-header nav button { display: inline-flex; }
+  .hs-page.hs-lab-theme .hs-header nav :is(a, button) { flex: 1 1 auto; justify-content: center; }
+  .hs-page.hs-lab-theme .hs-footer { padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px)); }
+  .hs-page.hs-lab-theme .hs-showcase-readings strong { white-space: normal; overflow-wrap: anywhere; }
+}
+
+@media (max-width: 600px) {
+  .hs-experiment-page.hs-lab-theme .hs-header { display: flex; flex-wrap: nowrap; min-height: 64px; padding-block: 8px; gap: 10px; }
+  .hs-experiment-page.hs-lab-theme .hs-brand { gap: 8px; }
+  .hs-experiment-page.hs-lab-theme .hs-brand > svg { width: 32px; height: 32px; padding: 4px; }
+  .hs-experiment-page.hs-lab-theme .hs-brand > span { display: block; font-size: 20px; }
+  .hs-experiment-page.hs-lab-theme .hs-brand small { display: none; }
+  .hs-experiment-page.hs-lab-theme .hs-header nav { width: auto; flex: 1; padding: 0; border: 0; gap: 6px; flex-wrap: nowrap; justify-content: flex-end; }
+  .hs-experiment-page.hs-lab-theme .hs-header nav :is(a, button) { flex: 0 1 auto; gap: 4px; padding-inline: 7px; font-size: 12px; }
+  .hs-experiment-page.hs-lab-theme .hs-breadcrumb { padding: 12px 0 8px; font-size: 11px; }
+  .hs-experiment-page.hs-lab-theme .hs-experiment-heading { margin-bottom: 12px; padding: 0 0 12px; }
+  .hs-experiment-page.hs-lab-theme .hs-experiment-heading h1 { margin: 6px 0; font-size: 25px; line-height: 1.45; }
+  .hs-experiment-page.hs-lab-theme .hs-experiment-heading p { font-size: 13px; line-height: 1.7; }
+  .hs-experiment-page.hs-lab-theme .hs-record-scope[data-mode] { margin-bottom: 12px; padding: 12px; gap: 6px; }
+  .hs-experiment-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions { display: flex; gap: 6px; padding-top: 0; }
+  .hs-experiment-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions :is(button, a) { flex: 1 1 110px; padding: 7px 8px; }
+  .hs-experiment-page.hs-lab-theme .hs-workbench-nav { gap: 6px; margin: 12px 0; }
+  .hs-experiment-page.hs-lab-theme .hs-workbench-nav button { min-height: 44px; padding: 7px 5px; }
+  .hs-experiment-page.hs-lab-theme .hs-prelab-guide { margin-bottom: 12px; }
+  .hs-experiment-page.hs-lab-theme .hs-prelab-guide > summary { min-height: 44px; padding: 8px 12px; }
+  .hs-page.hs-lab-theme .hs-camera-tools { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+  .hs-page.hs-lab-theme .hs-camera-tools .hs-touch-rotation { grid-column: 1 / -1; }
+  .hs-page.hs-lab-theme .hs-camera-tools :is(label, select) { min-width: 0; width: 100%; max-width: none; }
+  .hs-page.hs-lab-theme .hs-parameter-inputs { grid-template-columns: minmax(0, 1fr) 96px; gap: 12px; }
+  .hs-page.hs-lab-theme .hs-range-bounds { width: calc(100% - 108px); }
+  .hs-page.hs-lab-theme .hs-parameter label { font-size: 14px; }
+  .hs-page.hs-lab-theme .hs-analysis-selectors { grid-template-columns: minmax(0, 1fr); }
+  .hs-page.hs-lab-theme .hs-records-empty { align-items: flex-start; }
+  .hs-page.hs-lab-theme .hs-records-empty button { margin-left: 0; width: 100%; }
+  .hs-page.hs-lab-theme .hs-record-actions { width: 100%; gap: 8px; }
+  .hs-page.hs-lab-theme .hs-record-actions .hs-button { flex: 1 1 120px; justify-content: center; }
+}
+
+/* These controls are outside the camera projection, so every release-angle
+   action stays visible even when the phone is narrow or the view rotates. */
+.hs-page.hs-lab-theme .hs-pendulum-touch-controls { padding: 10px 12px; border-top: 1px solid #314b63; background: #122236; color: #d9edf5; }
+.hs-page.hs-lab-theme .hs-pendulum-touch-controls .hs-pendulum-controlbar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.hs-page.hs-lab-theme .hs-pendulum-touch-controls .hs-pendulum-controlbar > span { grid-column: 1 / -1; text-align: center; }
+.hs-page.hs-lab-theme .hs-pendulum-touch-controls button { min-width: 0; min-height: 44px; padding: 6px 3px; color: #d4e8f2; border-color: #4b687d; background: #1a3349; font-size: 12px; }
+.hs-page.hs-lab-theme .hs-pendulum-touch-controls button[aria-pressed="true"] { color: #082734; background: #8be4f4; border-color: #8be4f4; }
+.hs-page.hs-lab-theme .hs-pendulum-touch-controls > p { margin: 7px 0 0; font-size: 11px; text-align: center; }
+@media (max-width: 760px), (pointer: coarse) {
+  .hs-page.hs-lab-theme .hs-3d-label { padding: 3px 5px; font-size: 10px; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .hs-page.hs-lab-theme .hs-viewport-stage:not(.hs-force-viewport-stage):not(.hs-capacitor-viewport-stage):not(.hs-pendulum-viewport-stage):not(.is-magnified) { height: 65svh; min-height: 220px; }
+  .hs-page.hs-lab-theme .hs-viewport-stage.is-magnified { height: 65svh; min-height: 220px; }
+  .hs-page.hs-lab-theme .hs-camera-tools { flex-wrap: wrap; }
+}

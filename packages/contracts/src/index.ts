@@ -146,6 +146,69 @@ export interface StudentExperimentSession extends ExperimentSession {
   observationCount: number;
 }
 
+export const LEARNING_RECORD_FIELD_LIMITS = {
+  prediction: 4000,
+  measurements: 12000,
+  conclusion: 8000,
+  question: 4000
+} as const;
+
+export interface LearningRecordContent {
+  prediction: string;
+  measurements: string;
+  conclusion: string;
+  question: string;
+}
+
+export interface LearningRecord extends LearningRecordContent {
+  sessionId: string;
+  learnerId: string;
+  revision: number;
+  lastMutationId: string;
+  updatedAt: string;
+}
+
+export interface SaveLearningRecordRequest extends LearningRecordContent {
+  expectedRevision: number;
+  mutationId: string;
+}
+
+export interface SessionLearningRecord {
+  session: ExperimentSession;
+  learnerName: string;
+  taskTitle: string;
+  className: string;
+  lessonTitle: string;
+  record: LearningRecord | null;
+}
+
+export const LEARNING_FEEDBACK_BODY_LIMIT = 4000;
+
+export interface CreateLearningFeedbackRequest {
+  body: string;
+  expectedRevision: number;
+  mutationId: string;
+}
+
+/** Append-only teacher feedback, including the report version actually read by the server. */
+export interface LearningFeedback {
+  id: string;
+  schoolId: string;
+  classId: string;
+  taskId: string;
+  sessionId: string;
+  learnerId: string;
+  authorId: string;
+  authorName: string;
+  authorRole: "teacher" | "admin";
+  body: string;
+  reportRevision: number;
+  reportUpdatedAt: string;
+  reportSnapshot: LearningRecordContent;
+  mutationId: string;
+  createdAt: string;
+}
+
 export interface ApiHealth {
   status: "ok";
   service: "physics-lab-api";
@@ -153,6 +216,12 @@ export interface ApiHealth {
   compatibility: "desktop-managed-accounts-v1";
   capabilities: string[];
   database: "sqlite" | "postgresql";
+  lili?: {
+    enabled: boolean;
+    persona?: "lili";
+    fallback?: "guided";
+    model?: string | null;
+  };
   guangguang?: {
     enabled: boolean;
     provider: string;
@@ -200,4 +269,71 @@ export interface GuangguangKnowledgeCitation {
   source: string;
   route?: string;
   score: number;
+}
+
+export type CapacitorMode = "charge" | "discharge" | "open";
+
+/** One ideal RC run, with fixed R/C/E and a complete, ordered switch history.
+ * Segment starting voltages are derived from this history, never supplied by a client.
+ */
+export interface CapacitorHistory {
+  kind: "capacitor-rc-v1";
+  runId: string;
+  initialVoltage: 0;
+  segments: { startTimeSeconds: number; mode: CapacitorMode }[];
+}
+
+/** Virtual apparatus settings, never evidence that a student performed a real experiment. */
+export interface LiliSimulationSample {
+  id: string;
+  parameters: Record<string, number>;
+  timeSeconds: number;
+  capacitorHistory?: CapacitorHistory;
+}
+
+/** User-operated virtual instrument readings; never real-apparatus measurements. */
+export interface LiliManualSample {
+  id: string;
+  kind: "pendulum-timing" | "double-slit-positions" | "mechanical-energy-tape";
+  parameters: Record<string, number>;
+  /** Original displayed readings and counted intervals; no client-derived metrics or prose. */
+  readings: Record<string, number>;
+  timeSeconds: number;
+}
+
+export interface LiliExperimentContext {
+  experimentId: string;
+  parameters: Record<string, number>;
+  timeSeconds: number;
+  recordCount: number;
+  /** Required for capacitor-charge, including the current run and every saved sample. */
+  capacitorHistory?: CapacitorHistory;
+  /** At most the 30 latest local simulation settings; readings are recomputed by the service. */
+  samples?: LiliSimulationSample[];
+  /** Counted separately from automatic model samples; count is not evidence of mastery. */
+  manualRecordCount?: number;
+  /** At most the 10 latest saved virtual instrument operations, preserving original readings. */
+  manualSamples?: LiliManualSample[];
+}
+
+/** Recent completed turns are conversational context, not verified observations. */
+export interface LiliDialogueTurn {
+  experimentId: string | null;
+  question: string;
+  answer: string;
+}
+
+export interface LiliChatRequest {
+  conversationId: string;
+  question: string;
+  context: LiliExperimentContext | null;
+  /** At most three completed turns from this experiment and current identity. */
+  recentDialogue?: LiliDialogueTurn[];
+}
+
+export interface LiliChatReply {
+  text: string;
+  mode: "guided" | "ai";
+  suggestions: string[];
+  sources: { title: string; url: string }[];
 }

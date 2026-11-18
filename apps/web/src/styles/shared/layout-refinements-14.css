@@ -1,0 +1,48 @@
+@layer pages {
+  .science-structure-v2 .science-field-hero { min-height: 240px; grid-template-columns: 1fr 170px; gap: 20px; padding: 32px 40px; }
+  .science-structure-v2 .science-field-hero h1 { margin-top: 9px; font-size: clamp(34px,4vw,49px); }
+  .science-structure-v2 .science-field-hero p { max-width: 760px; margin-top: 10px; font-size: 15px; line-height: 1.72; }
+  .science-structure-v2 .science-field-emblem { width: 135px; height: 135px; }
+  .science-structure-v2 .science-field-emblem strong { font-size: 30px; }
+  .science-structure-v2 .science-overview-heading { padding: 32px 4px 17px; }
+  .science-structure-v2 .science-overview-heading h2 { font-size: 27px; }
+  .science-structure-v2 .science-module-card-grid > button { min-height: 260px; padding: 23px 25px; }
+  .science-structure-v2 .science-module-card-grid > button > i { width: 42px; height: 42px; }
+  .science-structure-v2 .science-module-card-grid > button > small { margin-top: 15px; }
+  .science-structure-v2 .science-module-card-grid h3 { margin-top: 5px; font-size: 22px; }
+  .science-structure-v2 .science-module-card-grid blockquote { margin-top: 12px; }
+  .science-structure-v2 .science-module-card-grid > button > b { margin-top: 14px; }
+  .optics-structure-v2 .science-header > p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .optics-structure-v2 .optics-field-nav { position: sticky; top: 0; height: calc(100vh - 76px); }
+  .optics-field-nav .optics-precision-link { margin-top: 15px; color: #355f66; border-top: 1px dashed #aaa69c; background: #eee8dd; }
+  .optics-module-switcher { max-width: 1120px; }
+  .optics-module-switcher nav button { min-width: 112px; }
+  .optics-structure-stage .explore-module-content { background: transparent; }
+  .optics-structure-stage :is(.island-overview,.open-experience) { padding-top: 8px; }
+}
+
+@layer responsive {
+  @media (max-width: 900px) {
+    .science-structure-v2 .science-field-hero { grid-template-columns: 1fr 170px; padding: 30px; }
+    .optics-structure-v2 .optics-field-nav { position: static; height: auto; }
+  }
+  @media (max-width: 640px) {
+    .science-structure-v2 .science-field-hero { grid-template-columns: 1fr; padding: 28px 22px; }
+    .science-structure-v2 .science-field-emblem { display: none; }
+    .optics-structure-stage :is(.island-overview,.open-experience) { padding-right: 0; padding-left: 0; }
+  }
+}
+
+@layer components {
+  .harness-dock-trigger.harness-dialogue-trigger { min-width: 210px; }
+  .harness-dock-trigger.harness-dialogue-trigger > svg { color: #f0bd55; }
+  .harness-panel.harness-dialogue-panel { width: min(448px,calc(100vw - 36px)); }
+  .harness-assurance.harness-dialogue-assurance { background: linear-gradient(90deg,#e0f3e9,#eef5e9); }
+}
+
+@layer responsive {
+  @media (max-width: 640px) {
+    .harness-dock-trigger.harness-dialogue-trigger { width: 42px; min-width: 42px; }
+    .harness-panel.harness-dialogue-panel { inset: 8px; width: auto; }
+  }
+}

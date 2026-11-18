@@ -32,7 +32,7 @@
 旧版整理材料：
 
 ```text
-/Users/g/Desktop/初中物理实验平台软件/初中物理虚拟实验平台_重做源码元件/web/platform.html
+/Users/g/Desktop/初中物理实验平台软件/02_参赛与提交/参赛要求/初中物理虚拟实验平台_重做源码元件/web/platform.html
 ```
 
 旧版 `platform.html` 不是当前产品源码。除非用户明确要求分析旧版，否则所有新增开发都应进入 `初中物理虚拟实验平台_V2`。
@@ -240,25 +240,27 @@ docs                  架构和项目交接文档
 
 ## 7. 关键源码位置
 
+当前模块边界与开发方式见 [代码架构说明](CODE_ARCHITECTURE.md)。实验实现已按领域拆分，下面的入口负责页面组合。
+
 ### 页面和路由
 
-- `apps/web/src/App.tsx`
+- `apps/web/src/app/App.tsx`
 - `apps/web/src/main.tsx`
 - `apps/web/src/features/home/HomePage.tsx`
-- `apps/web/src/features/student/StudentDashboard.tsx`
-- `apps/web/src/features/student/StudentExperimentNotebook.tsx`
+- `apps/web/src/features/student/pages/StudentDashboard.tsx`
+- `apps/web/src/features/student/pages/StudentExperimentNotebook.tsx`
 - `apps/web/src/features/teacher/TeacherDashboard.tsx`
-- `apps/web/src/features/teacher/TeacherSections.tsx`
+- `apps/web/src/features/teacher/sections/index.ts`
 - `apps/web/src/features/teacher/TeacherGuangguang.tsx`
 - `apps/web/src/features/teacher/TeacherCommandCenter.tsx`
 - `apps/web/src/features/teacher/TeacherBackendStatus.tsx`
 - `apps/web/src/features/teacher/TeacherRealClasses.tsx`
 - `apps/web/src/features/teacher/TeacherTeachingFlow.tsx`
-- `apps/web/src/features/student/StudentIdentityPortal.tsx`
-- `apps/web/src/features/student/StudentTaskCenter.tsx`
+- `apps/web/src/features/student/components/StudentIdentityPortal.tsx`
+- `apps/web/src/features/student/components/StudentTaskCenter.tsx`
 - `apps/web/src/features/teacher/teacherWorkspace.ts`
-- `apps/web/src/services/teacherApi.ts`
-- `apps/web/src/services/studentSessionSync.ts`
+- `apps/web/src/data/teacherApi.ts`
+- `apps/web/src/data/studentSessionSync.ts`
 
 ### 后台 API
 
@@ -274,22 +276,22 @@ docs                  架构和项目交接文档
 
 ### 实验页面
 
-- `apps/web/src/features/student/StudentLensExplore.tsx`
-- `apps/web/src/features/student/StudentScienceExplore.tsx`
-- `apps/web/src/features/student/OpticsLawScene3D.tsx`
-- `apps/web/src/features/student/BlackHoleLightExtension.tsx`
-- `apps/web/src/features/lens/LensWorkbench.tsx`
-- `apps/web/src/features/lens/LensCanvas.tsx`
-- `apps/web/src/features/lens/lensStore.ts`
+- `apps/web/src/features/experiments/optics/OpticsExplorePage.tsx`
+- `apps/web/src/features/experiments/ScienceExplorePage.tsx`
+- `apps/web/src/features/experiments/optics/components/OpticsLawScene3D.tsx`
+- `apps/web/src/features/experiments/optics/components/BlackHoleLightExtension.tsx`
+- `apps/web/src/features/experiments/optics/workbench/LensWorkbench.tsx`
+- `apps/web/src/features/experiments/optics/workbench/LensCanvas.tsx`
+- `apps/web/src/features/experiments/optics/workbench/lensStore.ts`
 
 ### 光光和 Harness
 
-- `apps/web/src/features/harness/HarnessRuntime.tsx`
-- `apps/web/src/features/harness/harnessStore.ts`
-- `apps/web/src/features/harness/opticsTutorials.ts`
-- `apps/web/src/features/harness/tutorialBridge.ts`
-- `apps/web/src/features/harness/useApparatusDomSync.ts`
-- `apps/web/src/features/harness/OrangeCatAvatar.tsx`
+- `apps/web/src/features/assistant/HarnessRuntime.tsx`
+- `apps/web/src/features/assistant/harnessStore.ts`
+- `apps/web/src/features/assistant/opticsTutorials.ts`
+- `apps/web/src/features/assistant/tutorialBridge.ts`
+- `apps/web/src/features/assistant/useApparatusDomSync.ts`
+- `apps/web/src/features/assistant/OrangeCatAvatar.tsx`
 - `packages/harness/src/dialogue.ts`
 - `packages/harness/src/rules.ts`
 - `packages/harness/src/conceptGraph.ts`
@@ -304,10 +306,10 @@ docs                  架构和项目交接文档
 
 ### 数据保存
 
-- `apps/web/src/services/localDatabase.ts`
-- `apps/web/src/services/projectRepository.ts`
-- `apps/web/src/services/harnessSessionRepository.ts`
-- `apps/web/src/services/experimentNotebookRepository.ts`
+- `apps/web/src/data/localDatabase.ts`
+- `apps/web/src/data/projectRepository.ts`
+- `apps/web/src/data/harnessSessionRepository.ts`
+- `apps/web/src/data/experimentNotebookRepository.ts`
 
 ### 样式
 
@@ -328,7 +330,7 @@ docs                  架构和项目交接文档
 - 斯涅尔折射定律和全反射判断
 - 凹面镜、凸面镜成像公式
 
-部分趋势模型仍直接写在 `StudentScienceExplore.tsx`，例如摩擦。蒸发和电磁铁模型已迁入 `packages/physics`；页面仍应明确这些是教学趋势模型，不代表真实仪器绝对测量值。
+部分趋势模型仍写在对应实验组件中，例如 `apps/web/src/features/experiments/mechanics/FrictionLab.tsx`。蒸发和电磁铁模型已迁入 `packages/physics`；页面仍应明确这些是教学趋势模型，不代表真实仪器绝对测量值。
 
 ## 9. 光光当前能力和边界
 
@@ -367,7 +369,7 @@ docs                  架构和项目交接文档
 - `volume = 0.95`
 - 界面显示“指导老师讲解中”
 
-实现位置：`apps/web/src/features/harness/HarnessRuntime.tsx`。
+实现位置：`apps/web/src/features/assistant/tutorials/TutorialExperience.tsx` 和 `apps/web/src/features/assistant/tutorials/speech.ts`。
 
 当前仍使用浏览器 `speechSynthesis`，实际音质取决于设备安装的系统语音。若要求所有设备音质一致，需要后端神经 TTS 或预生成音频。
 
@@ -489,8 +491,8 @@ npm run build
 
 仍需注意：
 
-- `StudentLensExplore.tsx` 体积较大，应按实验模块拆分
-- `global.css` 超过 5000 行，应按组件或页面拆分
+- 光学及其他领域实验已按模块拆分，修改入口见 `docs/CODE_ARCHITECTURE.md`
+- `global.css` 已改为样式导入清单，后续调整应保持覆盖顺序
 - 三维依赖体积较大，低性能设备需要继续优化
 
 ## 15. 页面介绍和全屏约定
@@ -553,11 +555,11 @@ git status --short
 
 ### 第二优先级：代码架构
 
-1. 拆分 `StudentLensExplore.tsx`
-2. 拆分 `StudentScienceExplore.tsx`
-3. 拆分 `global.css`
-4. 把趋势模型逐步迁入 `packages/physics`
-5. 为每个实验建立统一的状态适配器，不长期依赖 DOM 自动抓取
+光学页面、其他领域实验、助手、教师分区和全局样式已完成模块拆分；共享知识已移入 `packages/knowledge`。后续重点：
+
+1. 把剩余趋势模型逐步迁入 `packages/physics`
+2. 为每个实验建立统一的状态适配器，不长期依赖 DOM 自动抓取
+3. 新增模块遵守 `docs/CODE_ARCHITECTURE.md` 的依赖边界，并运行 `npm run architecture:check`
 
 ### 第三优先级：后台生产化
 

@@ -14,11 +14,12 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import { BrandMark } from "../../components/BrandMark";
-import { PageIntroduction } from "../../components/PageIntroduction";
-import { PhysicsFieldMotif } from "../../components/PhysicsFieldMotif";
-import type { PhysicsField } from "../../components/PhysicsFieldMotif";
-import { DashboardPhysicsCanvas } from "../student/DashboardPhysicsCanvas";
+import { BrandMark } from "../../shared/components/BrandMark";
+import { PageIntroduction } from "../../shared/components/PageIntroduction";
+import { PhysicsFieldMotif } from "../../shared/components/PhysicsFieldMotif";
+import type { PhysicsField } from "../../shared/components/PhysicsFieldMotif";
+import { DashboardPhysicsCanvas } from "../student/components/DashboardPhysicsCanvas";
+import "./SchoolStageEntry.css";
 
 interface LabCard {
   title: string;
@@ -62,10 +63,11 @@ export function HomePage() {
       <header className="home-nav">
         <BrandMark />
         <nav aria-label="主导航">
-          <Link to="/student">学生端</Link>
+          <Link to="/student">初中探索</Link>
+          <Link to="/high-school">高中实验室</Link>
           <Link to="/teacher">教师端</Link>
-          <a href="#labs">探索领域</a>
-          <a href="#architecture">探究方式</a>
+          <a href="#/?section=labs" onClick={(event) => { event.preventDefault(); document.getElementById("labs")?.scrollIntoView({ behavior: "smooth" }); }}>探索领域</a>
+          <a href="#/?section=architecture" onClick={(event) => { event.preventDefault(); document.getElementById("architecture")?.scrollIntoView({ behavior: "smooth" }); }}>探究方式</a>
           <span className="version-chip"><span /> 六大领域开放探索</span>
         </nav>
       </header>
@@ -83,7 +85,7 @@ export function HomePage() {
             <b className="energy-node node-two" />
           </div>
           <div className="hero-copy">
-            <p className="eyebrow"><Sparkles size={16} /> PHYSICS OBSERVATORY / 初中物理探索平台</p>
+            <p className="eyebrow"><Sparkles size={16} /> PHYSICS OBSERVATORY / 物理实验与探究</p>
             <h1>让规律不再只是<br /><em>写在黑板上。</em></h1>
             <p className="hero-description">
               拖动、连接、测量、记录。把每一个抽象公式，变成学生可以亲手改变的实验现场。
@@ -91,7 +93,7 @@ export function HomePage() {
             <div className="portal-entry-grid" aria-label="选择使用身份">
               <Link className="portal-entry student-entry" to="/student">
                 <i><GraduationCap size={22} /></i>
-                <span><small>FOR STUDENTS / 学生</small><strong>进入探索空间</strong><em>选择感兴趣的领域，马上动手实验</em></span>
+                <span><small>初中 · 自由探索</small><strong>进入初中探索空间</strong><em>从光、声、力、电、热开始动手实验</em></span>
                 <ArrowRight size={19} />
               </Link>
               <Link className="portal-entry teacher-entry" to="/teacher">
@@ -120,11 +122,17 @@ export function HomePage() {
           </div>
         </section>
 
+        <section className="school-stage-entry" aria-label="高中实验室入口">
+          <div className="school-stage-instrument" aria-hidden="true"><i /><b /><span /><em>F = ma</em></div>
+          <div className="school-stage-copy"><small>从现象出发，向模型更进一步</small><h2>高中实验室<span>与力力一起，用证据推理。</span></h2><p>沿人教版教材的课程脉络，研究运动、力、电路与光的干涉。改变参数，比较图像，让每一次判断都有依据。</p></div>
+          <Link to="/high-school">进入高中专区<ArrowRight size={19} /></Link>
+        </section>
+
         <section className="lab-library" id="labs">
           <div className="section-heading">
             <div>
               <span>CHOOSE YOUR CURIOSITY / 选择你的好奇</span>
-              <h2>从哪一种现象开始探索？</h2>
+              <h2>初中探索，从哪一种现象开始？</h2>
             </div>
             <p>光为什么会转弯？声音怎样传到耳边？物体为什么浮起？选择一个领域，从真实可操作的现象中寻找答案。</p>
           </div>

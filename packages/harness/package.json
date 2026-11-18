@@ -4,11 +4,22 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./lili": "./src/highSchool/lili.ts",
+    "./lili-manual": "./src/highSchool/liliManual.ts",
+    "./lili-expansion": "./src/highSchool/liliExpansion.ts",
+    "./lili-scaffolding": "./src/highSchool/liliScaffolding.ts",
+    "./lili-dialogue": "./src/highSchool/liliDialogue.ts",
+    "./lili-evidence-coach": "./src/highSchool/liliEvidenceCoach.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@physics-lab/contracts": "*",
+    "@physics-lab/knowledge": "*",
+    "@physics-lab/physics": "*"
   },
   "devDependencies": {
     "typescript": "^5.8.3",

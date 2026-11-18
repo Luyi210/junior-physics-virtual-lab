@@ -1,0 +1,53 @@
+@layer pages {
+  .hs-flagship-learning { --flag-ink: #294b38; --flag-copper: #a86037; margin: 0; padding: 20px 24px 23px; background: #f8f6ed; border-top: 1px solid #d5ddc9; color: var(--flag-ink); }
+  .hs-flagship-learning header { max-width: 72ch; }
+  .hs-flagship-eyebrow { font-size: 10px; letter-spacing: .12em; color: #8b6c48; }
+  .hs-flagship-learning h3 { margin: 6px 0 8px; font: 600 20px/1.5 Georgia, "Noto Serif SC", "Songti SC", serif; color: var(--flag-ink); }
+  .hs-flagship-learning p { margin: 8px 0; font-size: 12px; line-height: 1.8; color: #5b6e51; }
+  .hs-flagship-learning button { min-height: 44px; padding: 9px 13px; border: 1px solid #a5b297; border-radius: 4px; color: var(--flag-ink); background: #fffdf4; font-size: 12px; cursor: pointer; touch-action: manipulation; }
+  .hs-flagship-learning button[aria-pressed="true"] { color: #fff9e9; background: #355d44; border-color: #355d44; }
+  .hs-flagship-learning button:disabled { opacity: .45; cursor: default; }
+  .hs-flagship-learning button:focus-visible, .hs-flagship-learning input:focus-visible, .hs-flagship-learning summary:focus-visible { outline: 2px solid var(--flag-copper); outline-offset: 3px; }
+  .hs-flagship-buttons { display: flex; flex-wrap: wrap; gap: 7px; }
+  .hs-collision-comparison { overflow-x: auto; margin: 17px 0 10px; }
+  .hs-collision-comparison table { width: 100%; min-width: 360px; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .hs-collision-comparison caption { caption-side: bottom; padding: 9px 0 0; text-align: left; font-size: 10px; color: #718268; }
+  .hs-collision-comparison th, .hs-collision-comparison td { padding: 9px 12px; border-bottom: 1px solid #d9dfcf; text-align: right; white-space: nowrap; }
+  .hs-collision-comparison th:first-child { text-align: left; font-weight: 500; }
+  .hs-collision-comparison thead { font-size: 10px; color: #748165; }
+  .hs-collision-comparison .hs-collision-total { background: #eaf0e0; }
+  .hs-flagship-learning .hs-flagship-comparison-note { padding-left: 12px; border-left: 2px solid #b47a4b; font-size: 11px; }
+  .hs-flagship-controls { min-width: 0; border: 0; margin: 19px 0 0; padding: 0; }
+  .hs-flagship-controls legend { margin-bottom: 9px; font-size: 12px; font-weight: 600; }
+  .hs-flagship-controls small { display: block; margin-top: 8px; color: #718268; font-size: 10px; line-height: 1.7; }
+  .hs-flagship-examples { margin-top: 17px; border-top: 1px dashed #ccd5bd; padding-top: 12px; font-size: 12px; }
+  .hs-flagship-examples summary { cursor: pointer; padding: 6px 0; }
+  .hs-flagship-examples > div { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+  .hs-flagship-examples > div span { font-size: 11px; line-height: 1.7; color: #6b7d60; }
+  .hs-refraction-readings { display: grid; grid-template-columns: repeat(3, 1fr); margin: 18px 0; border-block: 1px solid #d4ddc7; }
+  .hs-refraction-readings > div { min-width: 0; padding: 13px 8px; }
+  .hs-refraction-readings > div + div { border-left: 1px solid #d4ddc7; padding-left: 16px; }
+  .hs-refraction-readings span { display: block; font-size: 10px; color: #758368; }
+  .hs-refraction-readings strong { display: block; margin-top: 5px; font: 500 21px/1.4 Georgia, "Songti SC", serif; color: var(--flag-ink); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .hs-refraction-slider { display: block; margin-bottom: 10px; font-size: 12px; }
+  .hs-refraction-slider > span:first-child { display: flex; justify-content: space-between; }
+  .hs-refraction-slider input { width: 100%; min-height: 44px; accent-color: #a86037; touch-action: pan-y; }
+  .hs-refraction-bounds { display: flex; justify-content: space-between; margin-top: -5px; color: #7b886e; }
+  .hs-refraction-critical { margin-top: 18px; padding: 15px 0 4px; border-top: 1px dashed #cbd5bd; }
+  .hs-refraction-critical h4 { margin: 0; font-size: 13px; font-weight: 600; }
+  .hs-refraction-source { cursor: grab; touch-action: none; outline: none; }
+  .hs-refraction-source:active { cursor: grabbing; }
+  .hs-refraction-source:focus-visible circle:nth-child(2) { stroke: #234b36; stroke-width: 4; }
+  .hs-refraction-source[aria-disabled="true"] { cursor: default; }
+  .hs-diagram .hs-refraction-tick { font-size: 9px; fill: #8d9c7d; }
+  .hs-diagram .hs-collision-heading text { fill: #58754c; font-size: 11px; }
+  @media (max-width: 600px) {
+    .hs-flagship-learning { padding: 16px; }
+    .hs-flagship-learning h3 { font-size: 18px; }
+    .hs-flagship-buttons > button { flex-grow: 1; }
+    .hs-refraction-readings strong { font-size: 17px; }
+    .hs-refraction-readings > div + div { padding-left: 9px; }
+    .hs-flagship-examples > div { align-items: start; }
+    .hs-flagship-examples button { flex-shrink: 0; }
+  }
+}

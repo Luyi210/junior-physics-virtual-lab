@@ -1,0 +1,45 @@
+# NOT ENABLED: all directives below are comments, even if accidentally included.
+# The reviewed dedicated subdomain is physics.xianghuiacademy.cn.
+# Requires DNS control and a matching TLS certificate before activation.
+# Never use the parent domain or another product's sibling subdomain here.
+# DO NOT replace the default server or another product's server block.
+# Review existing listeners/default servers first. Do not add default_server.
+# Manually copy and uncomment only after checking the existing Nginx sites,
+# matching certificate and test-site access restriction.
+#
+# server {
+#     listen 80;
+#     server_name physics.xianghuiacademy.cn;
+#     return 301 https://physics.xianghuiacademy.cn$request_uri;
+# }
+#
+# server {
+#     listen 443 ssl;
+#     server_name physics.xianghuiacademy.cn;
+#     ssl_certificate /etc/ssl/physics-lab/REPLACE_WITH_FULLCHAIN.pem;
+#     ssl_certificate_key /etc/ssl/physics-lab/REPLACE_WITH_PRIVATE_KEY.pem;
+#     ssl_protocols TLSv1.2 TLSv1.3;
+#     client_max_body_size 2m;
+#     access_log /var/log/nginx/physics-lab.access.log;
+#     error_log /var/log/nginx/physics-lab.error.log;
+#     # Required during restricted preview; provision this file privately.
+#     auth_basic "Physics Lab Preview";
+#     auth_basic_user_file /etc/nginx/physics-lab.preview.htpasswd;
+#
+#     location / {
+#         proxy_pass http://127.0.0.1:18080;
+#         proxy_http_version 1.1;
+#         proxy_set_header Host $host;
+#         proxy_set_header X-Real-IP $remote_addr;
+#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#         proxy_set_header X-Forwarded-Proto $scheme;
+#         proxy_set_header Connection "";
+#         proxy_connect_timeout 5s;
+#         proxy_read_timeout 180s;
+#         proxy_cache off;
+#     }
+# }
+#
+# Web serves apps/web/dist and proxies /api internally; no public API listener.
+# Nginx timeouts/body limit do not override the application's stricter limits.
+# After future installation: nginx -t before an explicit reviewed reload.

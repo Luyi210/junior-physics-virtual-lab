@@ -1,0 +1,176 @@
+import { useEffect, useMemo, useState } from "react";
+import { calculateLens } from "@physics-lab/physics";
+import type { ExperimentProject } from "@physics-lab/contracts";
+import { ArrowLeft, Check, Download, FlaskConical, Home, Redo2, RotateCcw, Save, Undo2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { BrandMark } from "../../../../shared/components/BrandMark";
+import { ExperimentFullscreenButton } from "../../shared/ExperimentFullscreenButton";
+import { localProjectRepository } from "../../../../data/projectRepository";
+import { useHarnessStore } from "../../../assistant/harnessStore";
+import { publishApparatusSnapshot } from "../../../assistant/tutorialBridge";
+import { LensCanvas } from "./LensCanvas";
+import { LensInspector } from "./LensInspector";
+import { useLensStore } from "./lensStore";
+import type { LensSceneState } from "./lensStore";
+
+interface LensRecord {
+  id: string;
+  u: number;
+  v: number;
+  m: number;
+  nature: string;
+}
+
+export function LensWorkbench() {
+  const scene = useLensStore((state) => state.scene);
+  const past = useLensStore((state) => state.past);
+  const future = useLensStore((state) => state.future);
+  const undo = useLensStore((state) => state.undo);
+  const redo = useLensStore((state) => state.redo);
+  const reset = useLensStore((state) => state.reset);
+  const update = useLensStore((state) => state.update);
+  const recordHarness = useHarnessStore((state) => state.record);
+  const [records, setRecords] = useState<LensRecord[]>([]);
+  const [saved, setSaved] = useState(false);
+  const [activated, setActivated] = useState(false);
+  const result = useMemo(() => calculateLens(scene), [scene]);
+
+  useEffect(() => {
+    publishApparatusSnapshot({
+      module: "bench", capturedAt: new Date().toISOString(), origin: activated ? "learner" : "system",
+      controls: [
+        { id: "focal-length", label: "焦距", value: scene.focalLength, unit: "cm", source: "control" },
+        { id: "object-position", label: "物体位置", value: scene.objectX, unit: "cm", source: "control" },
+        { id: "screen-position", label: "光屏位置", value: scene.screenX, unit: "cm", source: "control" }
+      ],
+      apparatus: [
+        { id: "object-distance", label: "物距u", value: result.objectDistance, unit: "cm", source: "apparatus" },
+        { id: "screen-focused", label: "光屏对焦", value: result.screenFocused, source: "apparatus" }
+      ],
+      readings: [
+        { id: "image-distance", label: "理论像距v", value: result.finite ? result.imageDistance : "∞", unit: "cm", source: "reading" },
+        { id: "magnification", label: "放大率m", value: result.finite ? result.magnification : "∞", source: "reading" },
+        { id: "image-nature", label: "成像性质", value: activated ? result.nature : "等待操作", source: "reading" },
+        { id: "screen-error", label: "光屏离清晰像面", value: result.real ? result.screenError : "虚像不可承接", unit: result.real ? "cm" : undefined, source: "reading" }
+      ],
+      derived: [{ id: "conclusion", label: "薄透镜模型解释", value: result.conclusion, source: "model" }],
+      validity: { ready: activated, issues: activated ? result.real && !result.screenFocused ? ["当前能形成实像，但光屏还没有移到清晰像面。"] : [] : ["先拖动物体、光屏或调节焦距。"] }
+    });
+  }, [activated, result.conclusion, result.finite, result.imageDistance, result.magnification, result.nature, result.objectDistance, result.real, result.screenError, result.screenFocused, scene.focalLength, scene.objectX, scene.screenX]);
+
+  const focusScreen = () => {
+    if (result.real && result.finite) {
+      update({ screenX: Math.max(4, Math.min(95, result.imageX)) });
+      setActivated(true);
+      recordHarness("control.changed", { experiment: "bench", control: "自动对焦", value: result.imageX, unit: "cm" });
+    }
+  };
+
+  const handleInteraction = () => {
+    setActivated(true);
+    recordHarness("control.changed", { experiment: "bench", control: "精密实验台器材或参数", value: "已调整" });
+  };
+
+  const addRecord = () => setRecords((rows) => [...rows, {
+    id: crypto.randomUUID(),
+    u: result.objectDistance,
+    v: result.imageDistance,
+    m: result.magnification,
+    nature: result.nature
+  }]);
+
+  const saveProject = async () => {
+    const now = new Date().toISOString();
+    const project: ExperimentProject<LensSceneState> = {
+      id: "lens-default-project",
+      title: "凸透镜成像实验",
+      kind: "lens",
+      schemaVersion: 1,
+      state: scene,
+      createdAt: now,
+      updatedAt: now
+    };
+    await localProjectRepository.save(project);
+    setSaved(true);
+    window.setTimeout(() => setSaved(false), 1800);
+  };
+
+  const exportCsv = () => {
+    const lines = [
+      ["序号", "物距u/cm", "像距v/cm", "放大率m", "成像性质"],
+      ...records.map((row, index) => [index + 1, row.u.toFixed(1), Number.isFinite(row.v) ? row.v.toFixed(1) : "∞", Number.isFinite(row.m) ? row.m.toFixed(2) : "∞", row.nature])
+    ];
+    const csv = lines.map((line) => line.map((cell) => `"${cell}"`).join(",")).join("\n");
+    const url = URL.createObjectURL(new Blob([`\ufeff${csv}`], { type: "text/csv;charset=utf-8" }));
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "凸透镜成像实验-V2.csv";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="workbench-page">
+      <header className="workbench-header">
+        <div className="workbench-brand"><Link to="/" aria-label="返回平台总入口"><BrandMark compact /></Link><span /><div><small>ADVANCED TOOL / 独立高级工具</small><strong>凸透镜精密实验工作台</strong></div></div>
+        <div className="workbench-actions">
+          <button title="撤销" disabled={!past.length} onClick={undo}><Undo2 size={17} /><span>撤销</span></button>
+          <button title="重做" disabled={!future.length} onClick={redo}><Redo2 size={17} /><span>重做</span></button>
+          <button title="复位" onClick={() => { reset(); setActivated(false); }}><RotateCcw size={17} /><span>复位</span></button>
+          <i />
+          <button className={saved ? "saved" : ""} onClick={saveProject}>{saved ? <Check size={17} /> : <Save size={17} />}<span>{saved ? "已保存" : "保存"}</span></button>
+          <ExperimentFullscreenButton targetSelector=".workbench-page" experiment="lens-professional-workbench" className="workbench-fullscreen-button" label="全屏" hint="保留全部仪器" />
+          <Link className="exit-button" to="/student/explore/light?mode=bench"><Home size={17} /><span>返回光现象</span></Link>
+        </div>
+      </header>
+
+      <main className="workbench-layout">
+        <aside className="component-rail" data-tutorial-spotlight="module">
+          <div className="rail-title"><span>器材</span><small>3 ITEMS</small></div>
+          <button className="rail-item active"><span className="candle-glyph">↑</span><b>发光物</b><small>可拖动</small></button>
+          <button className="rail-item"><span className="lens-glyph">)(</span><b>凸透镜</b><small>固定光心</small></button>
+          <button className="rail-item active"><span className="screen-glyph" /><b>光屏</b><small>可拖动</small></button>
+          <div className="rail-note"><FlaskConical size={17} /><span>V2 元件模型<br />属性与视图分离</span></div>
+        </aside>
+
+        <section className="experiment-stage" data-tutorial-spotlight="visual">
+          <div className="stage-heading">
+            <div><span className="live-dot" />实时光路演算</div>
+            <p>拖动发光物和光屏，观察成像变化</p>
+            <button onClick={focusScreen} disabled={!result.real}><span>自动对焦</span><ArrowLeft size={15} /></button>
+          </div>
+          <LensCanvas scene={scene} result={result} onInteract={handleInteraction} revealResult={activated} />
+          {!activated && <div className="interaction-cue workbench-cue"><FlaskConical size={18} /><span><small>实验台尚未开始测量</small><strong>拖动物体、光屏，或调节右侧参数</strong></span></div>}
+        </section>
+
+        <LensInspector scene={scene} result={result} revealed={activated} onInteract={handleInteraction} />
+      </main>
+
+      <section className="data-dock">
+        <div className="dock-summary">
+          <span>实验数据 / DATA LOG</span>
+          <strong>{records.length.toString().padStart(2, "0")}</strong>
+          <small>组已记录</small>
+        </div>
+        <div className="dock-table">
+          {records.length === 0 ? (
+            <div className="empty-log">移动元件，找到一种成像状态，然后记录本组数据。</div>
+          ) : (
+            <table>
+              <thead><tr><th>#</th><th>物距 u</th><th>像距 v</th><th>放大率 m</th><th>成像性质</th></tr></thead>
+              <tbody>{records.slice(-4).map((row, index) => <tr key={row.id}><td>{records.length - Math.min(4, records.length) + index + 1}</td><td>{row.u.toFixed(1)} cm</td><td>{Number.isFinite(row.v) ? `${row.v.toFixed(1)} cm` : "∞"}</td><td>{Number.isFinite(row.m) ? row.m.toFixed(2) : "∞"}</td><td>{row.nature}</td></tr>)}</tbody>
+            </table>
+          )}
+        </div>
+        <div className="dock-actions">
+          <button className="button-record" onClick={addRecord} disabled={!activated}>记录本组数据</button>
+          <button onClick={exportCsv} disabled={!records.length}><Download size={16} />导出 CSV</button>
+        </div>
+      </section>
+      <section className="workbench-applications" data-tutorial-spotlight="application" aria-label="凸透镜成像的生活应用">
+        <span>同一条成像规律，三种生活装置</span>
+        <p>照相机常用倒立缩小实像；投影仪利用倒立放大实像；放大镜在焦点以内形成正立放大虚像。返回光现象模块可继续比较。</p>
+      </section>
+    </div>
+  );
+}

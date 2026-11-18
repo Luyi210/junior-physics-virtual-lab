@@ -17,6 +17,21 @@ describe("core experiment calculations", () => {
     expect(result.branchCurrents[1]).toBeCloseTo(0.9);
     expect(result.totalCurrent).toBeCloseTo(0.9);
   });
+  it("闭合电路的等效电阻由连接结构决定，零电源电压不等于断路", () => {
+    expect(calculateTwoLoadCircuit("series", 0, 20, 10).equivalentResistance).toBe(30);
+    expect(calculateTwoLoadCircuit("parallel", 0, 20, 10).equivalentResistance).toBeCloseTo(20 / 3, 12);
+    expect(calculateTwoLoadCircuit("parallel", 0, 20, 10, true, false, true).equivalentResistance).toBe(10);
+    expect(calculateTwoLoadCircuit("parallel", 0, 20, 10, true, false, false).equivalentResistance).toBe(Infinity);
+    expect(calculateTwoLoadCircuit("series", 0, 20, 10).energized).toBe(false);
+  });
+  it("两负载模型满足电源与负载功率守恒，并拒绝非有限输入", () => {
+    for (const topology of ["series", "parallel"] as const) {
+      const result = calculateTwoLoadCircuit(topology, 9, 20, 10);
+      expect(result.loadPowers[0] + result.loadPowers[1]).toBeCloseTo(9 * result.totalCurrent, 12);
+    }
+    expect(() => calculateTwoLoadCircuit("series", NaN, 20, 10)).toThrow(RangeError);
+    expect(() => calculateTwoLoadCircuit("parallel", 9, Infinity, 10)).toThrow(RangeError);
+  });
   it("电源短路时预期电流远大于正常工作电流并触发保护", () => {
     const fault = calculateProtectedShortCircuit(9,.8,5);
     expect(fault.prospectiveCurrent).toBeCloseTo(11.25);
@@ -101,6 +116,13 @@ describe("core experiment calculations", () => {
     expect(start.frictionForce).toBeCloseTo(2.5);
     expect(start.accelerationTrend).toBe("accelerating");
     expect(calculateFrictionRegime(10, .25, 2.5, true).accelerationTrend).toBe("uniform");
+  });
+  it("滑动时非零合力不会因为测力计刻度较粗而被判为匀速", () => {
+    expect(calculateFrictionRegime(10, .25, 2.6, true).accelerationTrend).toBe("accelerating");
+    expect(calculateFrictionRegime(10, .25, 2.4, true).accelerationTrend).toBe("slowing");
+    expect(calculateFrictionRegime(15, .25, 3.75, true).accelerationTrend).toBe("uniform");
+    expect(calculateFrictionRegime(15, .25, 3.8, true).accelerationTrend).toBe("accelerating");
+    expect(() => calculateFrictionRegime(10, NaN, 2, true)).toThrow(RangeError);
   });
   it("固体压强随压力增大而增大、随受力面积增大而减小", () => {
     expect(calculateSolidPressure(100, 20).pressurePascals).toBe(50000);

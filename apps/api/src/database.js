@@ -1,12 +1,11 @@
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { setTimeout as delay } from "node:timers/promises";
 import { hashPassword } from "./security.js";
+import { countInvalidDatabaseIdentities, initializationResult, planDatabaseInitialization } from "./database-initialization.js";
 
 const schema = `
-  PRAGMA foreign_keys = ON;
-  PRAGMA journal_mode = WAL;
-
   CREATE TABLE IF NOT EXISTS schools (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
@@ -89,6 +88,40 @@ const schema = `
     completed_at TEXT
   );
 
+  CREATE TABLE IF NOT EXISTS session_learning_records (
+    session_id TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE,
+    learner_id TEXT NOT NULL REFERENCES users(id),
+    prediction TEXT NOT NULL,
+    measurements TEXT NOT NULL,
+    conclusion TEXT NOT NULL,
+    question TEXT NOT NULL,
+    revision INTEGER NOT NULL CHECK(revision > 0),
+    last_mutation_id TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS session_learning_feedback (
+    id TEXT PRIMARY KEY,
+    school_id TEXT NOT NULL REFERENCES schools(id),
+    class_id TEXT NOT NULL REFERENCES classes(id),
+    task_id TEXT NOT NULL REFERENCES tasks(id),
+    session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+    learner_id TEXT NOT NULL REFERENCES users(id),
+    author_id TEXT NOT NULL REFERENCES users(id),
+    author_name TEXT NOT NULL,
+    author_role TEXT NOT NULL CHECK(author_role IN ('teacher','admin')),
+    body TEXT NOT NULL CHECK(length(body) BETWEEN 1 AND 4000),
+    report_revision INTEGER NOT NULL CHECK(report_revision > 0),
+    report_updated_at TEXT NOT NULL,
+    report_prediction TEXT NOT NULL,
+    report_measurements TEXT NOT NULL,
+    report_conclusion TEXT NOT NULL,
+    report_question TEXT NOT NULL,
+    mutation_id TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    UNIQUE(author_id, session_id, mutation_id)
+  );
+
   CREATE TABLE IF NOT EXISTS session_events (
     id TEXT PRIMARY KEY,
     session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
@@ -119,6 +152,7 @@ const schema = `
   CREATE INDEX IF NOT EXISTS idx_lessons_school ON lessons(school_id);
   CREATE INDEX IF NOT EXISTS idx_tasks_class ON tasks(class_id, status);
   CREATE INDEX IF NOT EXISTS idx_sessions_class_status ON sessions(class_id, status);
+  CREATE INDEX IF NOT EXISTS idx_feedback_session ON session_learning_feedback(session_id, created_at, id);
   CREATE INDEX IF NOT EXISTS idx_events_session ON session_events(session_id, occurred_at);
   CREATE INDEX IF NOT EXISTS idx_observations_session ON observations(session_id, created_at);
 `;
@@ -129,16 +163,14 @@ function migrateDatabase(db) {
   if (!userColumns.has("last_login_at")) db.exec("ALTER TABLE users ADD COLUMN last_login_at TEXT");
 }
 
-function seedDatabase(db, config) {
+function initializeDatabase(db, plan) {
   const now = new Date().toISOString();
-  const insertSchool = db.prepare("INSERT OR IGNORE INTO schools (id, name, created_at) VALUES (?, ?, ?)");
-  const insertUser = db.prepare("INSERT OR IGNORE INTO users (id, school_id, email, password_hash, name, role, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
+  const insertSchool = db.prepare("INSERT INTO schools (id, name, created_at) VALUES (?, ?, ?)");
+  const insertUser = db.prepare("INSERT INTO users (id, school_id, email, password_hash, name, role, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-  if (!config.seedDemoData) {
-    insertSchool.run("school-primary", config.bootstrapSchoolName, now);
-    if (config.bootstrapAdminEmail && config.bootstrapAdminPassword) {
-      insertUser.run("user-admin", "school-primary", config.bootstrapAdminEmail.toLowerCase(), hashPassword(config.bootstrapAdminPassword), config.bootstrapAdminName, "admin", now);
-    }
+  if (plan.mode === "bootstrap") {
+    insertSchool.run("school-primary", plan.schoolName, now);
+    insertUser.run("user-admin", "school-primary", plan.adminEmail, hashPassword(plan.adminPassword), plan.adminName, "admin", now);
     return;
   }
 
@@ -147,20 +179,19 @@ function seedDatabase(db, config) {
   insertUser.run("user-admin", "school-demo", "admin@physics.local", hashPassword("Admin123!"), "学校管理员", "admin", now);
   insertUser.run("user-teacher", "school-demo", "teacher@physics.local", hashPassword("Teacher123!"), "李老师", "teacher", now);
   const demoStudents = ["陈一诺", "王子墨", "林书言", "周予安", "许星遥", "宋知远", "江雨桐", "沈嘉树", "叶可欣", "顾言川"];
-  const upsertStudent = db.prepare(`INSERT INTO users (id, school_id, email, password_hash, name, role, created_at)
-    VALUES (?, 'school-demo', ?, ?, ?, 'student', ?)
-    ON CONFLICT(id) DO UPDATE SET email=excluded.email, password_hash=excluded.password_hash, name=excluded.name`);
+  const insertStudent = db.prepare(`INSERT INTO users (id, school_id, email, password_hash, name, role, created_at)
+    VALUES (?, 'school-demo', ?, ?, ?, 'student', ?)`);
   demoStudents.forEach((name, index) => {
     const number = index + 1;
-    upsertStudent.run(`user-student-${number}`, `student${String(number).padStart(2, "0")}@physics.local`, hashPassword("Student123!"), name, now);
+    insertStudent.run(`user-student-${number}`, `student${String(number).padStart(2, "0")}@physics.local`, hashPassword("Student123!"), name, now);
   });
 
-  const insertClass = db.prepare("INSERT OR IGNORE INTO classes (id, school_id, name, grade, join_code, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
+  const insertClass = db.prepare("INSERT INTO classes (id, school_id, name, grade, join_code, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
   insertClass.run("class-801", "school-demo", "八年级（1）班", "八年级", "PHY801", "user-teacher", now);
-  const insertMember = db.prepare("INSERT OR IGNORE INTO class_members (class_id, user_id, joined_at) VALUES (?, ?, ?)");
+  const insertMember = db.prepare("INSERT INTO class_members (class_id, user_id, joined_at) VALUES (?, ?, ?)");
   demoStudents.forEach((_, index) => insertMember.run("class-801", `user-student-${index + 1}`, now));
 
-  const insertLesson = db.prepare(`INSERT OR IGNORE INTO lessons
+  const insertLesson = db.prepare(`INSERT INTO lessons
     (id, school_id, created_by, experiment_id, title, objective, inquiry_question, prediction_prompt, controlled_variable, evidence_requirement, reflection_prompt, duration_minutes, status, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
   const seededLessons = [
@@ -168,23 +199,23 @@ function seedDatabase(db, config) {
     ["lesson-lens-image", "lens", "凸透镜成像：像的位置由什么决定？", "通过移动物体和光屏，建立物距、像距与成像性质的联系。", "物体从二倍焦距外逐渐靠近焦点，像会怎样移动和变化？", "先预测物体跨过二倍焦距时像的大小和位置。", "固定透镜焦距，每轮只改变物距并重新对焦。", "记录三组物距、像距、正倒与大小，并保存清晰像证据。", "如果物体进入焦点以内，光屏为什么接不到像？", 45, "ready"],
     ["lesson-sound-medium", "sound-medium", "声音传播：抽走空气后还能听见吗？", "区分声源振动和声音传播条件，用证据说明介质的作用。", "闹钟仍在振动时，玻璃罩中的空气越少，听到的声音为何越弱？", "预测空气保留程度与接收响度之间的关系。", "固定声源与接收距离，只改变罩内空气保留程度。", "记录至少四档空气条件下的响度指标和声源振动状态。", "月球表面两名航天员为什么不能直接交谈？", 35, "ready"],
     ["lesson-sound-features", "sound-features", "看波形辨声音：响度、音调与音色", "通过单独改变振幅和频率，建立波形特征与听觉特性的对应。", "波形变高和变密，分别意味着声音发生了什么变化？", "先在图中画出更响和更高音调的预测波形。", "先固定频率改变振幅，再固定振幅改变频率。", "保存两轮对照波形，并标注振幅、频率与听觉变化。", "频率相同的钢琴和小提琴为何听起来仍不一样？", 35, "ready"],
-    ["lesson-motion-speed", "mechanics-speed", "运动快慢：怎样进行公平比较？", "统一单位并利用路程与时间的比值比较运动快慢。", "两名同学路程和用时都不同时，怎样判断谁运动得更快？", "先选择相同时间或相同路程提出比较方案。", "统一路程和时间单位，每次只比较同一时间区间。", "记录三组路程和时间，计算速度并解释排序依据。", "平均速度能否说明运动过程中的每一时刻都一样快？", 35, "ready"],
+    ["lesson-motion-speed", "mechanics-speed", "光电门测速：高度怎样影响平均速度？", "固定光电门间路程，比较轨道高度对计时和平均速度的影响。", "路程不变，提高轨道高度后，小车通过时间和平均速度怎样变化？", "先预测路程不变时，提高高度会使平均速度增大、不变还是减小。", "固定同一小车与光电门间路程，只改变轨道高度至少0.1 m；每次装好两门、小车从静止释放。时间是测量结果，不能直接设定。", "保存同一路程的两组高度h、路程s、计时t和s/t，核对高度与速度变化方向；只改变路程不计高度证据。", "区间平均速度能否说明小车每一时刻都同样快？", 35, "ready"],
     ["lesson-friction", "mechanics-friction", "滑动摩擦：重一点还是粗一点影响更大？", "用控制变量法研究压力和接触面粗糙程度对滑动摩擦力的影响。", "木块更重或桌面更粗糙时，匀速拉动所需的力怎样变化？", "分别预测增大压力和增大粗糙程度的结果。", "保持匀速，每轮只改变压力或接触面粗糙程度。", "每种条件测量三次拉力，比较稳定示数并说明误差。", "自行车刹车和轴承润滑分别利用了哪条摩擦规律？", 40, "ready"],
     ["lesson-lever", "mechanics-lever", "杠杆平衡：小力怎样撬起重物？", "通过改变力和力臂，归纳杠杆平衡条件。", "动力变小时，动力作用点应向哪个方向移动才能保持平衡？", "先用转动效果预测杠杆会向哪一侧倾斜。", "固定阻力和阻力臂，每轮只改变动力臂。", "记录四组力与力臂，比较两侧乘积。", "为什么省力杠杆往往需要移动更长距离？", 40, "ready"],
-    ["lesson-buoyancy", "mechanics-buoyancy", "浮与沉：同一物体为何有不同结局？", "比较物体重力与浮力，并联系物体和液体密度解释浮沉。", "同一个物体放入水和盐水，最终状态为什么可能不同？", "预测提高液体密度后物体浸入体积和浮沉状态。", "保持物体不变，每轮只改变液体密度。", "记录液体密度、浸入比例和最终状态，画出受力方向。", "潜水艇改变自身重量时，浮力是否一定同时改变？", 40, "ready"],
+    ["lesson-buoyancy", "mechanics-buoyancy", "称重法测浮力：更换液体后示数怎样变？", "用空气中与液中的测力计示数差求浮力，研究液体密度的影响。", "同一物体完全浸没且不碰底时，提高液体密度会怎样改变液中拉力？", "预测液中拉力F′和浮力G−F′的变化方向。", "保持同一物体完全浸没、静止且不碰底，每轮只改变液体密度。", "记录液体密度、空气中重力G、液中拉力F′和浮力G−F′；完成碰底误差演练。", "物体碰底后，为什么不能再把G−F′都当成浮力？", 40, "ready"],
     ["lesson-circuit-basic", "circuit-basic", "串联与并联：电流到底有几条路？", "通过搭建、断开和追踪路径，辨认串并联电路的结构特点。", "取下一只灯泡后，另一只灯泡能否继续发光取决于什么？", "分别预测串联和并联电路断开一个支路后的现象。", "保持电源和灯泡不变，只改变连接方式。", "画出两种电路图，记录断开前后各灯泡状态。", "家庭照明为什么通常采用并联而不是串联？", 40, "ready"],
     ["lesson-ohm", "circuit-ohm", "欧姆定律：电流怎样响应电压和电阻？", "通过两轮控制变量实验建立电流、电压和电阻的定量关系。", "保持电阻不变时增大电压，电流会按什么规律变化？", "先画出电流随电压变化的预测图像。", "第一轮固定电阻改变电压，第二轮固定电压改变电阻。", "每轮记录至少四组数据，绘图并检查 I、U、R 的关系。", "更换另一只电阻后，电流—电压图像的斜率为何改变？", 45, "ready"],
-    ["lesson-electric-power", "circuit-power", "电功率：谁消耗电能更快？", "利用电压、电流和时间数据理解电功率及电能。", "相同时间内，大功率用电器为什么消耗更多电能？", "根据用电器铭牌预测一分钟内的耗电差异。", "固定用电时间，分别比较不同电压和电流组合。", "记录 P=UI 与 W=Pt 的计算过程，并检查单位。", "节能灯功率小，是否意味着完成相同照明一定更省电？", 40, "ready"],
+    ["lesson-electric-power", "circuit-power", "电功率与电能：两类对照怎样建立？", "固定同一用电器，分别研究电压对功率、时间对电能的影响。", "同一用电器改变电压或工作时间，实际功率和电能分别怎样变化？", "根据铭牌预测安全欠压时的功率，再预测同一电压下延长时间的耗电变化。", "同一用电器、同一时间下只改变安全电压至少1.5 V；同一用电器、同一电压下只改变时间至少10 s。电流是读数，不能独立设定；改动前断开开关。", "计时结束保存完成快照中的U、I、P、t、W，补齐两类对照；只换用电器不算完成。选择7.5 V只观察保护锁定，再恢复6 V或更低。", "功率较大的短时运行与功率较小的长时运行，哪组电能更多？这种双变量拓展为什么不能替代核心单变量对照？", 40, "ready"],
     ["lesson-electromagnet", "circuit-magnet", "电磁铁：怎样吸起更多铁钉？", "分别研究电流、线圈匝数和铁芯对电磁铁强弱的影响。", "增加线圈匝数和增大电流，哪一种变化更容易增强磁性？", "为两种增强方案分别作出预测。", "每轮只改变电流或匝数，保持铁芯和被吸物一致。", "用吸起铁钉数量记录至少三档条件下的磁性强弱。", "电磁起重机为什么能迅速吸起又放下钢铁？", 40, "ready"],
-    ["lesson-boiling", "thermal-boiling", "水的沸腾：持续吸热为何不再升温？", "连续记录温度和状态，识别沸腾过程中的温度平台。", "水沸腾后继续加热，能量去了哪里？", "画出从室温加热到沸腾后的温度—时间预测曲线。", "保持水量和加热功率不变，按固定时间间隔读数。", "记录完整温度曲线，并同时描述气泡和水面现象。", "高原上水的沸点降低，会怎样影响煮熟食物的时间？", 40, "ready"],
-    ["lesson-evaporation", "thermal-evaporation", "蒸发降温：怎样让湿衣服干得更快？", "比较温度和空气流动对蒸发快慢的影响。", "升高温度和加快空气流动，都会怎样改变蒸发速度？", "先排列不同晾晒条件下衣物变干的快慢。", "固定液体种类和表面积，每轮只改变温度或空气流动。", "比较相同时间内液体减少量，并记录环境条件。", "刚游泳上岸时有风为什么会感觉更冷？", 35, "ready"],
+    ["lesson-boiling", "thermal-boiling", "水的沸腾：持续吸热为何不再升温？", "记录升温段与沸腾平台，比较同水量、同功率下气压对沸点的影响。", "水沸腾后继续加热，温度为何稳定；更换气压后平台又会怎样变化？", "画出从室温加热到沸腾后的预测曲线，再预测升高气压的影响。", "保持水量和加热功率不变，每轮只更换气压环境。", "保存升温点和相隔至少10秒的平台点，完成至少两种气压下的完整曲线对照。", "高原上水的沸点降低，会怎样影响煮熟食物的时间？", 40, "ready"],
+    ["lesson-evaporation", "thermal-evaporation", "蒸发快慢：怎样让湿衣服干得更快？", "用定时称量分别比较温度、液面面积和空气流动对蒸发快慢的影响。", "升温、展开液面和加快空气流动，分别会怎样改变蒸发速率？", "分别预测改变三种因素后的失重和速率变化。", "统一使用50 g水样，每轮只改变温度、液面面积或空气流动之一。", "保存初末质量、失重与计时时长；同时间比较失重，不同时长换算平均g/min，补齐三因素对照。", "刚游泳上岸时有风为什么会感觉更冷？请区分本次称量证据与降温原理的解释。", 35, "ready"],
     ["lesson-density", "measurement-density", "不规则石块：体积和密度怎样测？", "综合使用天平和排水法测量不规则固体密度。", "不能用刻度尺直接计算体积的石块，怎样获得它的体积？", "先写出测量质量、体积和计算密度的操作顺序。", "天平测量和量筒读数使用同一石块，完全浸没且不触底。", "保存砝码、游码和两次液面读数，写出密度计算式。", "如果先测体积后测质量，石块表面的水会带来什么误差？", 45, "ready"]
   ];
   seededLessons.forEach(([id, experimentId, title, objective, inquiryQuestion, predictionPrompt, controlledVariable, evidenceRequirement, reflectionPrompt, durationMinutes, status]) => {
     insertLesson.run(id, "school-demo", "user-teacher", experimentId, title, objective, inquiryQuestion, predictionPrompt, controlledVariable, evidenceRequirement, reflectionPrompt, durationMinutes, status, now, now);
   });
 
-  const insertTask = db.prepare(`INSERT OR IGNORE INTO tasks
+  const insertTask = db.prepare(`INSERT INTO tasks
     (id, school_id, class_id, lesson_id, title, mode, status, opens_at, due_at, allow_retry, created_by, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
   const seededTasks = [
@@ -232,6 +263,22 @@ function wrapSqlite(nativeDb) {
   };
 }
 
+async function execInitializationLock(nativeDb, sql, deadline) {
+  // Changing journal mode can return SQLITE_BUSY immediately even with a busy
+  // handler installed. Retry only lock contention, sharing one bounded deadline
+  // with BEGIN IMMEDIATE so another initializer can finish without an unbounded
+  // startup wait. Schema and business data are still untouched at this point.
+  while (true) {
+    const remaining = Math.max(0, Math.ceil(deadline - performance.now()));
+    nativeDb.exec(`PRAGMA busy_timeout = ${remaining}`);
+    try { nativeDb.exec(sql); return; }
+    catch (error) {
+      if ((error.errcode & 0xff) !== 5 || performance.now() >= deadline) throw error;
+      await delay(Math.min(25, Math.max(1, deadline - performance.now())));
+    }
+  }
+}
+
 export async function openDatabase(config) {
   if (config.databaseUrl) {
     const { openPostgresDatabase } = await import("./database-postgres.js");
@@ -239,8 +286,38 @@ export async function openDatabase(config) {
   }
   if (config.databasePath !== ":memory:") mkdirSync(dirname(config.databasePath), { recursive: true });
   const nativeDb = new DatabaseSync(config.databasePath);
-  nativeDb.exec(schema);
-  migrateDatabase(nativeDb);
-  seedDatabase(nativeDb, config);
-  return wrapSqlite(nativeDb);
+  let transactionOpen = false;
+  try {
+    // Connection/journal settings must precede the transaction. A bounded busy
+    // wait allows a different process to finish its first initialization.
+    nativeDb.exec("PRAGMA foreign_keys = ON;");
+    const deadline = performance.now() + 5000;
+    await execInitializationLock(nativeDb, "PRAGMA journal_mode = WAL", deadline);
+    await execInitializationLock(nativeDb, "BEGIN IMMEDIATE", deadline);
+    transactionOpen = true;
+    nativeDb.exec("PRAGMA busy_timeout = 5000");
+    nativeDb.exec(schema);
+    migrateDatabase(nativeDb);
+    const state = {
+      dialect: "sqlite",
+      schoolCount: nativeDb.prepare("SELECT COUNT(*) AS total FROM schools").get().total,
+      userCount: nativeDb.prepare("SELECT COUNT(*) AS total FROM users").get().total,
+      orphanUserCount: nativeDb.prepare("SELECT COUNT(*) AS total FROM users u LEFT JOIN schools s ON s.id=u.school_id WHERE s.id IS NULL").get().total,
+      invalidIdentityCount: countInvalidDatabaseIdentities(
+        nativeDb.prepare("SELECT id FROM schools").all(),
+        nativeDb.prepare("SELECT id, school_id FROM users").all()
+      ),
+      administrators: nativeDb.prepare("SELECT email, password_hash AS passwordHash FROM users WHERE role='admin'").all()
+    };
+    const plan = planDatabaseInitialization(state, config);
+    if (plan.mode !== "existing") initializeDatabase(nativeDb, plan);
+    const initialization = initializationResult(plan);
+    nativeDb.exec("COMMIT");
+    transactionOpen = false;
+    return { ...wrapSqlite(nativeDb), initialization };
+  } catch (error) {
+    if (transactionOpen) { try { nativeDb.exec("ROLLBACK"); } catch { /* retain the original initialization failure */ } }
+    try { nativeDb.close(); } catch { /* retain the original failure even if close also fails */ }
+    throw error;
+  }
 }

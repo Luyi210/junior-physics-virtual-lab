@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { dirname, extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { apiProxyTimeoutMs } from "./lib/api-proxy-timeout.mjs";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const publicRoot = resolve(projectRoot, "apps/web/dist");
@@ -77,7 +78,7 @@ async function proxyApi(request, response, url) {
       method: request.method,
       headers,
       body,
-      signal: AbortSignal.timeout(url.pathname === "/api/guangguang/chat" ? 165_000 : 15_000)
+      signal: AbortSignal.timeout(apiProxyTimeoutMs(url.pathname))
     });
     const responseBody = request.method === "HEAD" ? undefined : Buffer.from(await upstreamResponse.arrayBuffer());
     const responseHeaders = {

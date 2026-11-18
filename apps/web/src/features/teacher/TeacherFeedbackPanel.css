@@ -1,0 +1,33 @@
+@layer components {
+  .teacher-feedback-panel { min-width: 0; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--tc-line); }
+  .teacher-feedback-toggle { flex-wrap: wrap; }
+  .teacher-feedback-toggle span { color: var(--tc-amber); font-size: 11px; }
+  .teacher-feedback-body { display: grid; gap: 18px; padding-top: 20px; }
+  .teacher-feedback-body > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+  .teacher-feedback-body h4 { margin: 0 0 7px; color: var(--tc-text); font: 700 17px var(--serif); }
+  .teacher-feedback-body p { margin: 0; color: var(--tc-muted); font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
+  .teacher-feedback-body > header > button { flex-shrink: 0; }
+  .teacher-feedback-compose { display: grid; gap: 12px; min-width: 0; padding: 18px; border: 1px solid var(--tc-line-bright); background: rgba(120, 221, 255, .025); }
+  .teacher-feedback-compose > button { justify-self: start; }
+  .teacher-feedback-compose label { color: var(--tc-text); font-size: 13px; font-weight: 700; }
+  .teacher-feedback-compose textarea { box-sizing: border-box; width: 100%; min-width: 0; min-height: 132px; resize: vertical; padding: 12px; border: 1px solid var(--tc-line-bright); border-radius: 0; color: var(--tc-text); background: var(--tc-panel-solid); font: inherit; font-size: 14px; line-height: 1.8; }
+  .teacher-feedback-compose textarea:read-only { color: var(--tc-muted); }
+  .teacher-feedback-compose textarea:disabled { opacity: .55; }
+  .teacher-feedback-compose-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; color: var(--tc-muted); font-size: 11px; }
+  .teacher-feedback-body .teacher-feedback-version { color: var(--tc-cyan); }
+  .teacher-feedback-body .teacher-feedback-draft-note { color: var(--tc-amber); }
+  .teacher-feedback-body .teacher-feedback-error { color: #ffb8ac; }
+  .teacher-feedback-body .teacher-feedback-message { color: var(--tc-green); }
+  .teacher-feedback-report { min-width: 0; border: 1px solid var(--tc-line); }
+  .teacher-feedback-report > button { display: block; width: 100%; min-height: 44px; padding: 12px; border: 0; color: var(--tc-muted); background: transparent; cursor: pointer; text-align: left; font: inherit; font-size: 12px; }
+  .teacher-feedback-report > div > dl { padding: 0 12px 12px; }
+  .teacher-feedback-review { display: grid; gap: 12px; padding: 14px; border: 1px solid rgba(255, 211, 106, .4); }
+  .teacher-feedback-review > button { justify-self: start; }
+  .teacher-feedback-panel :is(button, textarea, summary):focus-visible { outline: 2px solid var(--tc-cyan); outline-offset: 3px; }
+  @media (max-width: 640px) {
+    .teacher-feedback-body > header { flex-direction: column; }
+    .teacher-feedback-compose { padding: 12px; }
+    .teacher-feedback-compose > button, .teacher-feedback-review > button { max-width: 100%; white-space: normal; text-align: left; }
+    .teacher-feedback-compose textarea { font-size: 16px; }
+  }
+}

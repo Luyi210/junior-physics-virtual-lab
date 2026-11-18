@@ -1,7 +1,8 @@
 import { FormEvent, useMemo, useState } from "react";
+import { useTeacherSessionGuard } from "./useTeacherSessionGuard";
 import { Activity, BookOpenCheck, Bot, Check, ChevronDown, Lightbulb, MessageSquareText, Radio, Send, ShieldCheck, Sparkles, X } from "lucide-react";
-import { OrangeCatAvatar } from "../harness/OrangeCatAvatar";
-import { teacherApi } from "../../services/teacherApi";
+import { OrangeCatAvatar } from "../assistant/OrangeCatAvatar";
+import { teacherApi } from "../../data/teacherApi";
 import { TeacherWorkspace, teacherExperimentCatalog } from "./teacherWorkspace";
 
 type TeacherGuangguangProps = {
@@ -149,6 +150,7 @@ function answerQuestion(question: string, workspace: TeacherWorkspace, insight: 
 }
 
 export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherGuangguangProps) {
+  const guard = useTeacherSessionGuard();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const [question, setQuestion] = useState("");
@@ -160,7 +162,7 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
 
   async function ask(text: string) {
     const clean = text.trim();
-    if (!clean || responding) return;
+    if (!guard(false) || !clean || responding) return;
     const localReply = answerQuestion(clean, workspace, insight);
     setMessages((current) => [
       ...current,
@@ -172,7 +174,7 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
     let citations: string[] = [];
     let provider: "rules" | "deepseek-harness" = "rules";
     try {
-      if (teacherApi.hasSession()) {
+      if (guard() && teacherApi.hasSession()) {
         const lesson = currentLesson(workspace);
         const aiReply = await teacherApi.askGuangguang({
           conversationId: `teacher-${insight.mode}`,
@@ -189,13 +191,16 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
             } : null
           }
         });
+        if (!guard()) return;
         reply = aiReply.text;
         citations = aiReply.citations?.slice(0, 2).map((citation) => `${citation.title}·${citation.section}`) ?? [];
         provider = "deepseek-harness";
       }
     } catch {
+      if (!guard(false)) return;
       provider = "rules";
     }
+    if (!guard(false)) return;
     setMessages((current) => [
       ...current,
       { id: `assistant-${Date.now()}-${current.length}`, role: "assistant", text: reply, citations }
@@ -210,14 +215,17 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
   }
 
   function broadcast() {
-    if (!insight.prompt) return;
+    if (!guard(false) || !insight.prompt) return;
     const sent = onBroadcast(insight.prompt);
+    if (!guard(false)) return;
     setBroadcastStatus(sent ? "已由教师确认并发布到当前课堂" : "请先启动课堂，再发布这条追问");
   }
 
+  if (!guard(false)) return null;
+
   return (
     <>
-      <button className={`teacher-guangguang-trigger ${open ? "is-open" : ""}`} type="button" onClick={() => setOpen((value) => !value)} aria-label={open ? "收起光光教学副驾" : "打开光光教学副驾"}>
+      <button className={`teacher-guangguang-trigger ${open ? "is-open" : ""}`} type="button" onClick={() => guard(false) && setOpen((value) => !value)} aria-label={open ? "收起光光教学副驾" : "打开光光教学副驾"}>
         <OrangeCatAvatar mood={open ? "listening" : "idle"} compact />
         <span><small>TEACHING COPILOT</small><b>问问光光</b></span>
         <i>{open ? <X size={17} /> : <Sparkles size={17} />}</i>
@@ -227,13 +235,13 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
         <header className="teacher-guangguang-header">
           <div className="teacher-guangguang-avatar"><OrangeCatAvatar mood="listening" /></div>
           <div><span>GUANGGUANG / T-COPILOT</span><h2>光光教学副驾</h2><p><i />{dialogueProvider === "deepseek-harness" ? "DeepSeek Harness 已连接" : "规则诊断在线 · AI 自动兜底"}</p></div>
-          <button type="button" onClick={() => setOpen(false)} aria-label="关闭光光教学副驾"><X size={19} /></button>
+          <button type="button" onClick={() => guard(false) && setOpen(false)} aria-label="关闭光光教学副驾"><X size={19} /></button>
         </header>
 
         <div className="teacher-guangguang-boundary"><ShieldCheck size={15} /><p><strong>辅助边界</strong> 光光引用当前页面证据提出建议，不代替教师评价，也不改变物理模型结果。</p></div>
 
         <section className={`teacher-guangguang-insight mode-${insight.mode}`}>
-          <button className="teacher-guangguang-insight-head" type="button" onClick={() => setExpanded((value) => !value)}>
+          <button className="teacher-guangguang-insight-head" type="button" onClick={() => guard(false) && setExpanded((value) => !value)}>
             <span><small>{insight.eyebrow}</small><b>{insight.title}</b></span><ChevronDown size={17} className={expanded ? "is-rotated" : ""} />
           </button>
           {expanded && <div className="teacher-guangguang-insight-body">
@@ -252,12 +260,12 @@ export function TeacherGuangguang({ workspace, pathname, onBroadcast }: TeacherG
             {messages.map((message) => <article key={message.id} className={`role-${message.role}`}>{message.role === "assistant" && <OrangeCatAvatar mood="speaking" compact />}<div><span>{message.role === "teacher" ? "我" : "光光"}</span><p>{message.text}</p>{message.citations?.length ? <small className="teacher-guangguang-sources"><BookOpenCheck size={10} />知识依据：{message.citations.join("；")}</small> : null}</div></article>)}
             {responding && <div className="teacher-guangguang-welcome"><Bot size={19} /><p>光光正在结合当前教学证据思考……</p></div>}
           </div>
-          <form onSubmit={submit}><textarea value={question} disabled={responding} onChange={(event) => setQuestion(event.target.value)} placeholder="问光光：这节课什么时候适合介入？" /><button type="submit" disabled={responding || !question.trim()} aria-label="发送问题"><Send size={17} /></button></form>
+          <form onSubmit={submit}><textarea value={question} disabled={responding} onChange={(event) => guard(false) && setQuestion(event.target.value)} placeholder="问光光：这节课什么时候适合介入？" /><button type="submit" disabled={responding || !question.trim()} aria-label="发送问题"><Send size={17} /></button></form>
         </section>
 
         <footer><Activity size={13} /><span>依据：课例、课堂进程、观察记录与报告数据</span><em>{dialogueProvider === "deepseek-harness" ? "DEEPSEEK HARNESS" : "RULE FALLBACK"}</em></footer>
       </aside>
-      {open && <button className="teacher-guangguang-scrim" type="button" onClick={() => setOpen(false)} aria-label="关闭光光教学副驾" />}
+      {open && <button className="teacher-guangguang-scrim" type="button" onClick={() => guard(false) && setOpen(false)} aria-label="关闭光光教学副驾" />}
     </>
   );
 }

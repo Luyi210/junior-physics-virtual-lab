@@ -1,0 +1,44 @@
+# TEMPLATE ONLY. Copy to /etc/physics-lab/physics-lab.env only after review.
+# root:root 0600; do not put real credentials in the repository or shell history.
+# This is systemd EnvironmentFile syntax, not a shell script. No export/$VAR/$(...).
+NODE_ENV=production
+NODE_OPTIONS=
+RENDER=
+RENDER_EXTERNAL_HOSTNAME=
+
+# PROPOSED ONLY: check these ports on the target host before use.
+# Never expose these ports through a security group/firewall.
+PORT=18080
+PHYSICS_WEB_HOST=127.0.0.1
+PHYSICS_RENDER_API_PORT=18787
+PHYSICS_API_HOST=127.0.0.1
+PHYSICS_API_PORT=18787
+PHYSICS_DEMO_ONLY=false
+# The exact reviewed HTTPS subdomain and optional loopback tunnel origin only.
+# DNS, certificate and Nginx access controls must be checked separately.
+PHYSICS_API_ALLOWED_ORIGINS=http://127.0.0.1:18080,https://physics.xianghuiacademy.cn
+
+# Independent SQLite state; never point at another product's data.
+DATABASE_URL=
+PHYSICS_API_DATA_DIR=/var/lib/physics-lab/data
+PHYSICS_API_DATABASE=/var/lib/physics-lab/data/physics-lab.sqlite
+PHYSICS_API_SEED_DEMO=false
+PHYSICS_API_TOKEN_SECRET=__REPLACE_WITH_PRIVATE_RANDOM_64_HEX__
+PHYSICS_API_TOKEN_TTL=28800
+
+# Empty NEW database only: inject four private first-admin values safely.
+# After successful initial admin sign-in these can be removed/left empty.
+# Existing databases are preserved; changing these does not reset an account.
+PHYSICS_BOOTSTRAP_SCHOOL_NAME=
+PHYSICS_BOOTSTRAP_ADMIN_NAME=
+PHYSICS_BOOTSTRAP_ADMIN_EMAIL=
+PHYSICS_BOOTSTRAP_ADMIN_PASSWORD=
+
+# No paid AI or external vector/database requests in this baseline.
+PHYSICS_GUANGGUANG_AI_ENABLED=false
+PHYSICS_LILI_AI_ENABLED=false
+PHYSICS_VECTOR_RAG_ENABLED=false
+PHYSICS_VECTOR_RAG_SYNC_ON_START=false
+PHYSICS_RERANK_ENABLED=false
+DEEPSEEK_API_KEY=
+SILICONFLOW_API_KEY=

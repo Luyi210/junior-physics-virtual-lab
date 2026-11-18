@@ -1,0 +1,17 @@
+@layer pages {
+  .hs-spring-load { padding: 22px 25px; border-top: 1px solid #d8decf; background: #f8f6ec; }
+  .hs-spring-load-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+  .hs-spring-load-heading h3 { margin: 6px 0 0; font-size: 20px; color: #294536; }
+  .hs-spring-load-heading output { flex-shrink: 0; font-size: 30px; color: #a95d34; font-variant-numeric: tabular-nums; }
+  .hs-spring-load-heading output small { font-size: 14px; }
+  .hs-spring-load > p { max-width: 65ch; margin: 13px 0; color: #596b59; font-size: 13px; line-height: 1.7; }
+  .hs-spring-load-presets { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 7px; }
+  .hs-spring-load button { min-height: 44px; border: 1px solid #c9d1bf; border-radius: 5px; background: #fffdf5; color: #354f3b; font: inherit; font-size: 12px; cursor: pointer; }
+  .hs-spring-load button[aria-pressed="true"] { background: #345940; color: #fff9e9; border-color: #345940; }
+  .hs-spring-load button:focus-visible { outline: 2px solid #a95d34; outline-offset: 3px; }
+  .hs-spring-load button:disabled { opacity: .45; cursor: default; }
+  .hs-spring-load-steps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .hs-spring-load-steps button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 0 12px; }
+  .hs-spring-load > .hs-spring-load-note { margin-bottom: 0; font-size: 11px; color: #72816b; }
+  @media (max-width: 600px) { .hs-spring-load { padding: 18px 15px; } .hs-spring-load-presets { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+}

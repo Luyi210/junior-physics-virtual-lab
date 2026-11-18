@@ -1,0 +1,32 @@
+# TEMPLATE ONLY. Do not install/start until the independent deployment review.
+[Unit]
+Description=Independent Physics Lab (loopback web and API)
+After=network.target
+ConditionPathExists=/etc/physics-lab/deployment-reviewed
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=exec
+User=physics-lab
+Group=physics-lab
+WorkingDirectory=/srv/physics-lab/current
+EnvironmentFile=/etc/physics-lab/physics-lab.env
+ExecStartPre=/opt/node-v24.22.2-linux-x64/bin/node /srv/physics-lab/current/deploy/linux/preflight.mjs
+ExecStart=/opt/node-v24.22.2-linux-x64/bin/node /srv/physics-lab/current/scripts/serve-render.mjs
+Restart=on-failure
+RestartSec=5
+KillMode=control-group
+TimeoutStopSec=20
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/physics-lab
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=physics-lab
+
+[Install]
+WantedBy=multi-user.target

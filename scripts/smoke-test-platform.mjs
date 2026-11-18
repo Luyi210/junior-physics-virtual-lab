@@ -19,6 +19,7 @@ const scienceModules = {
 
 const routes = [
   "/", "/student", "/student/notebook", "/student/textbook", "/lab/lens", "/student/explore/lens",
+  "/high-school", "/high-school/experiments/pendulum", "/high-school/experiments/force-composition", "/high-school/experiments/emf-internal-resistance",
   ...teacherRoutes,
   ...lightModes.map((mode) => `/student/explore/light${mode === "overview" ? "" : `?mode=${mode}`}`),
   ...Object.entries(scienceModules).flatMap(([field, modules]) => [

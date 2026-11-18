@@ -1,0 +1,638 @@
+@layer responsive {
+
+@media (max-width: 640px) {
+    .open-module-intro > div:first-child { max-width: none; }
+    .physics-header-motif { display: none; }
+    .physics-reticle { display: none; }
+    .physics-law-plate { top: 72px; left: 12px; min-width: 160px; padding: 8px 10px; }
+    .physics-axis-ruler { right: 12px; bottom: 12px; left: 12px; }
+    .home-field-atlas { display: none; }
+    .lab-card-physics { right: -42px; opacity: .13; }
+    .science-lab > header > div:first-child { max-width: none; }
+    .science-lab-physics { display: none; }
+    .science-field-physics { right: -90px; bottom: -10px; width: 340px; height: 200px; opacity: .12; }
+    .sound-sim::after, .lever-sim::after, .circuit-sim::after, .thermal-sim::after, .density-sim::after { top: 78px; right: 12px; }
+    .concept-sim::after { display: none; }
+    .harness-dock-trigger { right: 13px; bottom: 66px; width: 42px; min-width: 42px; height: 42px; min-height: 42px; display: grid; grid-template-columns: 1fr; place-items: center; padding: 0; border-radius: 50%; box-shadow: 3px 3px 0 rgba(83,216,192,.66); }
+    .harness-dock-trigger > span { display: none; }
+    .harness-dock-trigger > b { position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; }
+    .harness-panel { inset: 10px; width: auto; box-shadow: 6px 6px 0 #53d8c0; }
+    .harness-panel > header { min-height: 62px; }
+    .harness-assurance { min-height: 48px; }
+    .harness-metrics > div { min-height: 61px; }
+    .page-intro-backdrop { align-items: end; padding: 12px; }
+    .page-intro-dialog { width: calc(100vw - 24px); min-width: 0; min-height: 0; max-height: calc(100dvh - 24px); grid-template-columns: minmax(0, 1fr); overflow-x: hidden; overflow-y: auto; box-shadow: 7px 7px 0 color-mix(in srgb, var(--intro-accent) 72%, transparent); }
+    .page-intro-visual { min-height: 116px; place-content: center; }
+    .page-intro-visual.optics-intro-visual { min-height: 170px; }
+    .optics-intro-visual .optics-art-title { display: none; }
+    .page-intro-visual > svg.optics-intro-diagram { inset: -72px 0 auto; height: 360px; }
+    .page-intro-visual::before { width: 108px; height: 108px; }
+    .page-intro-visual.optics-intro-visual::before { top: -35px; width: 240px; height: 240px; }
+    .page-intro-visual > i { width: 48px; height: 48px; }
+    .page-intro-visual > i::before { height: 70px; left: 23px; top: -11px; }
+    .page-intro-visual > i::after { width: 70px; left: -11px; top: 23px; }
+    .page-intro-visual > small { display: none; }
+    .page-intro-orbit.orbit-a { width: 125px; height: 55px; }
+    .page-intro-orbit.orbit-b { width: 62px; height: 135px; }
+    .page-intro-content { justify-content: flex-start; padding: 28px 23px 25px; }
+    .page-intro-close { top: 12px; right: 12px; color: #eaf8f4; border-color: rgba(234,248,244,.35); transform: translateY(-116px); }
+    .optics-intro-visual + .page-intro-content .page-intro-close { transform: translateY(-170px); }
+    .page-intro-close:hover { color: #66f2d5; background: rgba(255,255,255,.08); }
+    .page-intro-eyebrow { margin-bottom: 11px; font-size: 8px; }
+    .page-intro-content h2 { padding-right: 5px; font-size: 24px; }
+    .page-intro-content > p { margin-top: 12px; font-size: 12px; line-height: 1.72; }
+    .page-intro-content ul { margin: 17px 0 19px; }
+    .page-intro-content li { font-size: 11px; }
+    .page-intro-enter { align-self: stretch; }
+    .page-intro-hint { text-align: center; }
+    .page-intro-trigger { right: 13px; bottom: 13px; width: 42px; height: 42px; min-height: 42px; justify-content: center; padding: 0; border-radius: 50%; box-shadow: 3px 3px 0 rgba(41,216,187,.75); }
+    .page-intro-trigger span { display: none; }
+    .home-nav { min-height: 72px; }
+    .home-nav .brand-words small, .version-chip { display: none; }
+    .hero-copy { padding-top: 52px; padding-bottom: 45px; }
+    .hero-copy h1 { font-size: 43px; }
+    .hero-description { font-size: 15px; }
+    .hero-stats { margin-top: 45px; }
+    .hero-stats div { min-width: 0; flex: 1; margin-right: 13px; padding-right: 13px; }
+    .hero-stats dt { font-size: 17px; }
+    .hero-instrument { min-height: 420px; margin-top: 0; }
+    .formula-plate { grid-template-columns: 1fr; }
+    .formula-plate strong { grid-row: auto; font-size: 18px; }
+    .lab-library { padding-top: 70px; padding-bottom: 70px; }
+    .lab-grid { grid-template-columns: 1fr; }
+    .lab-card { min-height: 210px; }
+    .architecture-steps { grid-template-columns: 1fr; }
+    .architecture-steps div { border-right: 0; border-bottom: 1px solid var(--line); }
+    .home-footer { align-items: flex-start; flex-direction: column; gap: 20px; }
+    .workbench-brand > span, .workbench-brand > div { display: none; }
+    .workbench-layout { grid-template-columns: 1fr; }
+    .component-rail { display: none; }
+    .experiment-stage { min-height: 520px; }
+    .stage-heading { grid-template-columns: 1fr auto; }
+    .stage-heading p { display: none; }
+    .lens-inspector { display: block; }
+    .display-options { display: grid; }
+    .data-dock { grid-template-columns: 1fr; }
+    .dock-summary { display: none; }
+    .dock-actions { grid-column: auto; }
+    .student-header { padding: 0 14px; }
+    .student-header .brand-words small, .student-profile span, .student-profile b { display: none; }
+    .student-profile { display: block; }
+    .student-shell { padding: 35px 14px 70px; }
+    .student-welcome h1 { font-size: 34px; }
+    .study-streak { width: 100%; overflow-x: auto; }
+    .study-streak div { flex: 0 0 39px; }
+    .current-lesson { grid-template-columns: 1fr; }
+    .lesson-cover { min-height: 240px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.16); }
+    .lesson-brief { padding: 28px 24px; }
+    .lesson-brief h2 { font-size: 25px; }
+    .student-columns { margin-top: 40px; }
+    .student-side { grid-template-columns: 1fr; }
+    .journey-list article { grid-template-columns: 38px 1fr 24px; padding: 0 13px; }
+    .journey-list article > small { display: none; }
+    .lesson-header { grid-template-columns: 54px 1fr 100px; }
+    .lesson-breadcrumb span { display: none; }
+    .lesson-breadcrumb { padding-left: 12px; }
+    .lesson-progress { padding: 0 10px; }
+    .lesson-stepper { padding: 12px 8px; overflow-x: auto; }
+    .stepper-title { display: none; }
+    .step-list { min-width: 530px; }
+    .lesson-content { padding: 22px 12px 50px; }
+    .lesson-intro { padding: 26px 22px 22px; }
+    .observation-tabs { padding: 14px; }
+    .observation-scene { min-height: 300px; margin: 0 14px; }
+    .stamp { left: 6%; transform: scale(.75) rotate(-4deg); }
+    .magnifier { left: 34%; transform: scale(.7); }
+    .enlarged-stamp { right: 3%; transform: scale(.7); }
+    .window-view { left: 2%; transform: scale(.67); transform-origin: left center; }
+    .mini-lens { left: 42%; }
+    .white-card { right: 1%; transform: scale(.67); transform-origin: right center; }
+    .discovery-strip, .prediction-saved, .law-feedback, .extension-strip { margin: 14px; }
+    .lesson-next { align-items: stretch; flex-direction: column; padding: 14px; }
+    .lesson-next button, .lesson-next .back-link { width: 100%; }
+    .prediction-question { padding: 24px 20px; }
+    .prediction-question > div { grid-template-columns: 1fr; }
+    .experiment-mission-bar { align-items: flex-start; flex-direction: column; }
+    .student-canvas { height: 470px; min-height: 420px; overflow: auto; }
+    .experiment-reading { grid-template-columns: 1fr 1fr; }
+    .experiment-reading div:nth-child(2) { border-right: 0; }
+    .mission-progress { grid-template-columns: 1fr 1fr; }
+    .law-table { margin: 18px 12px; overflow-x: auto; }
+    .law-row { min-width: 590px; }
+    .application-grid { grid-template-columns: 1fr; padding: 20px 14px; }
+    .explore-header { padding: 0 14px; }
+    .explore-header .brand-words small, .explorer-id span, .explorer-id b { display: none; }
+    .explorer-id { display: block; }
+    .explore-hero { padding: 45px 16px 60px; }
+    .explore-hero-copy h1 { font-size: 43px; }
+    .explore-search { grid-template-columns: 25px 1fr; padding-right: 10px; }
+    .explore-search button { display: none; }
+    .discovery-orbit { transform: scale(.86); margin: -25px 0; }
+    .explore-section-heading { grid-template-columns: 1fr; gap: 15px; }
+    .optics-island, .field-map { padding: 65px 16px 75px; }
+    .optics-module-grid, .field-grid { grid-template-columns: 1fr; }
+    .optics-module { min-height: 210px; }
+    .curiosity-strip { padding: 50px 16px; }
+    .curiosity-items { grid-template-columns: 1fr; border-top: 1px solid rgba(26,52,65,.25); }
+    .curiosity-items a { min-height: 90px; }
+    .student-explore-header { grid-template-columns: 54px 1fr 42px; }
+    .student-explore-header > a:last-child { font-size: 0; }
+    .experiment-fullscreen-trigger { top: 30px; right: 20px; width: 43px; min-width: 43px; height: 43px; min-height: 43px; justify-content: center; padding: 0; }
+    .experiment-fullscreen-trigger > span { display: none; }
+    .explore-breadcrumb { padding-left: 11px; }
+    .explore-breadcrumb a, .explore-breadcrumb span, .explore-breadcrumb svg { display: none; }
+    .student-space-context { grid-template-columns: 1fr; gap: 7px; margin: 0 14px; padding: 13px 14px; }
+    .student-space-context > div { flex-wrap: wrap; }
+    .student-space-context > span { font-size: 7px; }
+    .island-overview, .open-experience { padding: 22px 10px 50px; }
+    .page-position-map { grid-template-columns: 1fr; padding: 15px; }
+    .page-position-map ol { grid-template-columns: 1fr 1fr; }
+    .page-position-map li:nth-child(3) { border-top: 1px solid #c7c2b7; }
+    .page-position-map li:nth-child(4) { border-top: 1px solid #c7c2b7; }
+    .page-position-map li::after { display: none; }
+    .page-position-map > p { grid-column: 1; }
+    .island-intro { grid-template-columns: 1fr; padding: 25px; }
+    .island-lens-art { height: 210px; }
+    .light-journey-art { height: 220px; }
+    .optics-strand { grid-template-columns: 1fr; }
+    .optics-strand > header { border-right: 0; border-bottom: 1px solid #c5c0b5; }
+    .strand-module-grid { grid-template-columns: 1fr 1fr; }
+    .strand-module-grid button { min-height: 120px; }
+    .island-module-grid { grid-template-columns: 1fr 1fr; }
+    .open-module-intro { flex-direction: column; padding: 24px 20px; }
+    .dispersion-toolbar { grid-template-columns: 1fr 1fr; }
+    .dispersion-toolbar > span { grid-column: 1 / -1; grid-row: 2; justify-content: center; padding: 4px 0; }
+    .dispersion-light-picker { grid-template-columns: 1fr; }
+    .dispersion-light-picker > div { border-right: 0; border-bottom: 1px solid #c6c1b6; }
+    .dispersion-light-picker nav { min-width: 670px; }
+    .dispersion-light-picker { overflow-x: auto; }
+    .experience-canvas { height: 500px; overflow: auto; }
+    .ray-law-lab { min-height: 450px; overflow-x: auto; }
+    .ray-law-lab > svg { min-width: 720px; height: 450px; }
+    .optics-3d-lab { min-height: 500px; overflow: hidden; }
+    .optics-3d-stage { height: 500px; }
+    .optics-3d-toolbar { right: 12px; left: 12px; grid-template-columns: repeat(3,1fr); }
+    .optics-3d-toolbar button { padding: 0 5px; font-size: 11px; }
+    .optics-3d-badges { top: 69px; right: 12px; left: 12px; max-width: none; justify-content: flex-start; }
+    .optics-3d-help { right: 12px; bottom: 14px; left: 12px; justify-content: center; }
+    .optics-3d-help span { font-size: 10px; }
+    .color-mix-lab, .celestial-lab, .plane-mirror-lab, .curved-mirror-lab, .invisible-light-lab { min-height: 450px; overflow-x: auto; }
+    .color-mix-lab > svg, .celestial-lab > svg, .plane-mirror-lab > svg, .curved-mirror-lab > svg, .invisible-light-lab > svg { min-width: 720px; height: 450px; }
+    .curved-mirror-lab.view-3d { min-height: 500px; overflow: hidden; }
+    .lens-system-3d-lab { min-height: 500px; overflow: hidden; }
+    .lens-reading-strip { grid-template-columns: 1fr 1fr; }
+    .lens-reading-strip > div:nth-child(2) { border-right: 0; }
+    .lens-reading-strip > div:nth-child(-n+2) { border-bottom: 1px solid #314d56; }
+    .invisible-spectrum-ruler { min-width: 672px; }
+    .invisible-application-picker { grid-template-columns: 1fr; }
+    .invisible-application-picker button { min-height: 82px; border-right: 0; border-bottom: 1px solid #c6c1b6; }
+    .invisible-application-picker button:last-child { border-bottom: 0; }
+    .invisible-spectrum-tabs button { gap: 5px; padding: 0 7px; }
+    .celestial-space-view { min-height: 520px; }
+    .celestial-space-view > svg { min-width: 800px; height: 520px; }
+    .celestial-view-toolbar { align-items: flex-start; flex-direction: column; right: auto; }
+    .celestial-light-legend { right: 16px; bottom: 13px; left: 16px; }
+    .electromagnetic-map > header { grid-template-columns: 1fr; gap: 6px; padding: 16px; }
+    .electromagnetic-map > div { grid-template-columns: 1fr; gap: 4px; }
+    .visible-band { min-height: 58px; box-shadow: none; }
+    .visible-band span { writing-mode: horizontal-tb; }
+    .invisible-meter-rack { grid-template-columns: 1fr; }
+    .invisible-meter-rack > div { min-height: 88px; border-right: 0; border-bottom: 1px solid #36505a; }
+    .invisible-meter-rack > div:last-child { border-bottom: 0; }
+    .invisible-choice-control, .invisible-method-card { border-right: 0; border-bottom: 1px solid #c6c1b6; }
+    .rgb-controls { grid-template-columns: 1fr; }
+    .rgb-controls .observation-output { grid-column: auto; }
+    .micro-display-technology > header { padding: 26px 20px; }
+    .micro-display-technology > header h2 { font-size: 25px; }
+    .micro-operation-guide { grid-template-columns: 1fr; padding: 8px 18px; }
+    .micro-operation-guide > span { min-height: 62px; border-bottom: 1px solid #cbc5b9; }
+    .micro-operation-guide > span:last-child { border-bottom: 0; }
+    .micro-operation-guide > i { display: none; }
+    .micro-local-controller { position: relative; top: auto; }
+    .micro-local-controller > header { align-items: flex-start; flex-direction: column; }
+    .micro-local-controller nav { justify-content: flex-start; }
+    .micro-local-controller > div { grid-template-columns: 1fr; }
+    .micro-local-controller .open-range { border-right: 0; }
+    .micro-tech-switch { grid-template-columns: 1fr; }
+    .micro-tech-switch button { border-right: 0; border-bottom: 1px solid #2c4650; }
+    .micro-tech-switch button:last-child { border-bottom: 0; }
+    .micro-screen-observer { min-height: 470px; overflow-x: auto; }
+    .micro-observer-toolbar { align-items: flex-start; flex-direction: column; }
+    .micro-pixel-field { margin-top: 45px; }
+    .micro-rgb-live-meter { grid-template-columns: 1fr 1fr; }
+    .micro-rgb-live-meter > div:nth-child(2) { border-right: 0; }
+    .micro-rgb-live-meter > div:nth-child(-n+2) { border-bottom: 1px solid #2e4852; }
+    .micro-tech-comparison article { padding: 21px 19px; }
+    .micro-display-technology > footer { align-items: flex-start; flex-direction: column; }
+    .law-readout { position: sticky; left: 12px; right: auto; bottom: 12px; width: calc(100vw - 44px); min-width: 0; margin: -94px 12px 12px; }
+    .medium-tabs button { min-height: 52px; font-size: 8px; }
+    .curved-view-switch { align-items: stretch; flex-direction: column; gap: 12px; padding: 16px; }
+    .curved-view-switch > div { grid-template-columns: 1fr; gap: 4px; }
+    .curved-view-switch > div span { grid-column: auto; }
+    .curved-view-switch nav { width: 100%; }
+    .curved-view-switch button { min-width: 0; min-height: 48px; }
+    .law-dimension-switch { align-items: stretch; flex-direction: column; gap: 12px; padding: 16px; }
+    .law-dimension-switch > div { grid-template-columns: 1fr; gap: 4px; }
+    .law-dimension-switch > div span { grid-column: auto; }
+    .law-dimension-switch nav { width: 100%; }
+    .law-dimension-switch button { min-width: 0; min-height: 48px; }
+    .law-presets { grid-template-columns: 1fr; }
+    .law-presets > div { border-right: 0; border-bottom: 1px solid #c5bfb3; }
+    .law-presets nav { overflow-x: auto; }
+    .law-presets button { min-width: 130px; min-height: 58px; }
+    .curved-3d-legend { display: none; }
+    .curved-2d-legend { left: 12px; }
+    .lens-dimension-switch { align-items: stretch; flex-direction: column; gap: 12px; padding: 16px; }
+    .lens-dimension-switch > div { grid-template-columns: 1fr; gap: 4px; }
+    .lens-dimension-switch > div > span { grid-column: auto; }
+    .lens-dimension-actions { width: 100%; display: grid; grid-template-columns: 1fr auto; }
+    .lens-dimension-switch nav { width: 100%; }
+    .lens-dimension-switch button { min-width: 0; min-height: 48px; }
+    .lens-dimension-switch .lens-fullscreen-inline { min-width: 48px; width: 48px; padding: 0; }
+    .lens-fullscreen-inline > span { display: none; }
+    .lens-3d-legend { display: none; }
+    .correction-lens-deck { grid-template-columns: 1fr; }
+    .correction-lens-deck > span { min-height: 48px; border-right: 0; border-bottom: 1px solid #c6c1b6; }
+    .correction-lens-choices button { min-height: 62px; padding: 6px; }
+    .lens-reading-strip > div { min-height: 92px; padding: 14px; }
+    .lens-reading-strip strong { font-size: 15px; }
+    .index-comparison { border-right: 0; border-bottom: 1px solid #c6c1b6; }
+    .open-control-deck, .bench-control-grid { grid-template-columns: 1fr; }
+    .dispersion-controls { grid-template-columns: 1fr; }
+    .open-range { border-right: 0; border-bottom: 1px solid #c6c1b6; }
+    .dispersion-guide > header { grid-template-columns: 1fr; gap: 10px; padding: 22px 19px; }
+    .dispersion-guide > div { grid-template-columns: 1fr; }
+    .dispersion-guide article { min-height: 0; border-right: 0; border-bottom: 1px solid #d2ccbf; }
+    .dispersion-guide article:last-child { border-bottom: 0; }
+    .rainbow-life-section > header { grid-template-columns: 1fr; align-items: start; padding: 25px 20px; }
+    .rainbow-life-grid { grid-template-columns: 1fr; }
+    .rainbow-life-grid article { border-right: 0; border-bottom: 1px solid #c9c3b7; }
+    .rainbow-life-grid article:last-child { border-bottom: 0; }
+    .rainbow-life-grid article > div { min-height: 0; }
+    .rainbow-mechanism-strip { grid-template-columns: 1fr; padding: 5px 18px; }
+    .rainbow-mechanism-strip span { min-height: 70px; padding: 12px 0; border-bottom: 1px solid #c9d1ca; }
+    .rainbow-mechanism-strip span:last-child { border-bottom: 0; }
+    .rainbow-mechanism-strip i { display: none; }
+    .euv-path-lab { grid-template-columns: 1fr; }
+    .euv-path-copy { border-right: 0; border-bottom: 1px solid #2c4354; }
+    .euv-path-visual svg { min-height: 270px; }
+    .negative-path-lab { grid-template-columns: 1fr; }
+    .negative-path-copy { border-right: 0; border-bottom: 1px solid #354247; }
+    .negative-mode-tabs { grid-template-columns: 1fr; }
+    .negative-mode-tabs button { border-right: 0; border-bottom: 1px solid #465357; }
+    .negative-mode-tabs button:last-child { border-bottom: 0; }
+    .negative-path-visual svg { min-height: 285px; }
+    .camera-lab, .eye-lab, .correction-lab, .instrument-lab { min-height: 520px; }
+    .camera-body { right: 4%; transform: scale(.75); transform-origin: right center; }
+    .camera-object { left: 5%; transform: scale(.8); }
+    .eyeball { width: 330px; transform: translate(-50%,-42%) scale(.85); }
+    .eye-control { grid-template-columns: 1fr; }
+    .correction-eye { right: 0; transform: scale(.75); transform-origin: right center; }
+    .trial-lens { left: 2%; transform: scale(.8); }
+    .lens-choices { right: 15px; left: 15px; bottom: 86px; }
+    .correction-feedback { right: 15px; bottom: 16px; left: 15px; width: auto; }
+    .instrument-object { left: 3%; transform: scale(.75); }
+    .double-lens { left: 25%; right: 28%; }
+    .instrument-view { right: 2%; transform: scale(.75); transform-origin: right center; }
+    .science-header { grid-template-columns: 54px 1fr; }
+    .science-header > p { display: none; }
+    .science-stage { padding: 22px 10px 50px; }
+    .science-field-context { grid-template-columns: 1fr; gap: 8px; }
+    .science-field-context > div { overflow-x: auto; white-space: nowrap; }
+    .science-field-context > p { font-size: 11px; }
+    .science-module-tabs { margin-bottom: 17px; }
+    .science-module-tabs button, .science-module-tabs button:first-child { min-width: 155px; }
+    .science-field-hero { min-height: 0; grid-template-columns: 1fr; padding: 33px 23px 39px; }
+    .science-field-hero h1 { font-size: 33px; }
+    .science-field-hero p { font-size: 14px; }
+    .science-field-emblem { display: none; }
+    .science-textbook-chain > header { padding: 18px; }
+    .science-textbook-chain > header h2 { font-size: 17px; }
+    .science-textbook-chain > div { grid-template-columns: 1fr; }
+    .science-textbook-chain > div > span { border-right: 0; border-bottom: 1px solid #d2ccc0; }
+    .science-textbook-chain > div > span:last-child { border-bottom: 0; }
+    .science-textbook-chain > div i { display: none; }
+    .science-overview-heading { padding: 38px 5px 18px; }
+    .science-overview-heading h2 { font-size: 25px; }
+    .science-module-card-grid { grid-template-columns: 1fr; }
+    .science-module-card-grid > button { min-height: 285px; padding: 25px 22px; }
+    .science-lab > header { flex-direction: column; padding: 24px 20px; }
+    .science-lab-header-actions { width: 100%; }
+    .science-lab-header-actions > button { flex: 1; justify-content: center; }
+    .science-controls, .science-controls.four { grid-template-columns: 1fr; }
+    .science-range, .science-result-cell { border-right: 0; border-bottom: 1px solid #c6c1b6; }
+    .sound-sim, .lever-sim, .circuit-sim, .thermal-sim, .density-sim { min-height: 520px; }
+    .circuit-bench-toolbar { right: 12px; left: 12px; align-items: flex-start; flex-direction: column; gap: 5px; }
+    .circuit-bench-toolbar > div { flex-wrap: wrap; }
+    .circuit-guidance { top: 128px; width: calc(100% - 24px); }
+    .circuit-live-readouts { grid-template-columns: 1fr 1fr; }
+    .circuit-live-readouts > div:nth-child(2) { border-right: 0; }
+    .circuit-live-readouts > div:nth-child(-n+2) { border-bottom: 1px solid #36545d; }
+    .circuit-short-safety > div:first-of-type { grid-template-columns: 1fr; }
+    .circuit-short-safety article { border-right: 0; border-bottom: 1px solid #31535c; }
+    .circuit-short-safety article:last-child { border-bottom: 0; }
+    .circuit-short-actions { grid-template-columns: 1fr; }
+    .speaker { left: 2%; transform: scale(.75); }
+    .sound-sim svg { left: 8%; width: 90%; }
+    .lever-beam { width: 90%; }
+    .speed-setup-console { grid-template-columns: 1fr; }
+    .speed-setup-console > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .speed-lab-sim { min-height: 940px; }
+    .speed-lab-sim::after { top: 72px; right: 12px; }
+    .speed-procedure-strip { right: 12px; left: 12px; overflow-x: auto; }
+    .speed-procedure-strip span { flex: 0 0 auto; }
+    .speed-inclined-track { top: 210px; left: 2%; width: 96%; height: 210px; transform: rotate(calc(var(--track-height) * 3deg)) scale(.85); }
+    .speed-height-gauge { top: 110px; right: 12px; width: 140px; height: 170px; }
+    .speed-timer-console { right: 12px; bottom: 275px; left: 12px; width: auto; }
+    .speed-gate-install { right: 12px; bottom: 155px; left: 12px; display: grid; grid-template-columns: 1fr; }
+    .speed-gate-install > span, .speed-gate-install button { justify-content: center; }
+    .speed-live-result { right: 12px; bottom: 18px; left: 12px; width: auto; }
+    .speed-operation-dock { grid-template-columns: 1fr; }
+    .speed-operation-dock .science-result-cell { min-height: 76px; border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .speed-operation-dock > button { min-height: 48px; border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .speed-evidence-ledger > div { grid-template-columns: repeat(5,minmax(65px,1fr)); overflow-x: auto; }
+    .speed-evidence-ledger > div > b, .speed-evidence-row > * { padding-inline: 5px; font-size: 8px; }
+    .pressure-inquiry-console { grid-template-columns: 1fr; }
+    .pressure-inquiry-console > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .pressure-inquiry-console > section:last-child { border-bottom: 0; }
+    .pressure-lab-sim { min-height: 980px; }
+    .pressure-lab-sim::after { top: 72px; right: 12px; }
+    .pressure-procedure-strip { right: 12px; left: 12px; overflow-x: auto; }
+    .pressure-procedure-strip span { flex: 0 0 auto; }
+    .pressure-loading-frame { top: 170px; left: 2%; width: 96%; height: 480px; transform: scale(.83); transform-origin: top center; }
+    .pressure-force-vector { top: 175px; left: 72%; transform: scale(.78); transform-origin: top; }
+    .pressure-depth-gauge { top: 655px; right: 51%; width: calc(49% - 18px); height: 150px; }
+    .pressure-area-readout { top: 655px; right: 12px; width: calc(49% - 18px); min-height: 150px; }
+    .pressure-depth-gauge > b { display: none; }
+    .pressure-live-result { right: 12px; bottom: 18px; left: 12px; width: auto; }
+    .pressure-operation-dock { grid-template-columns: 1fr; }
+    .pressure-operation-dock > section,.pressure-operation-dock > aside { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .pressure-operation-dock > aside { border-bottom: 0; }
+    .pressure-evidence-ledger > div { grid-template-columns: repeat(5,minmax(65px,1fr)); overflow-x: auto; }
+    .pressure-evidence-ledger > div > b,.pressure-evidence-row > * { padding-inline: 5px; font-size: 8px; }
+    .evidence-verdict { grid-template-columns: 24px 1fr; margin-top: 9px; padding: 11px; }
+    .evidence-verdict em { font-size: 8px; }
+    .buoyancy-selection-console { grid-template-columns: 1fr; }
+    .buoyancy-selection-console > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .buoyancy-lab-sim { min-height: 930px; }
+    .buoyancy-lab-sim::after { top: 72px; right: 12px; }
+    .buoyancy-procedure-strip { right: 12px; left: 12px; overflow-x: auto; }
+    .buoyancy-procedure-strip span { flex: 0 0 auto; }
+    .buoyancy-spring-scale { top: 120px; left: 25%; transform: translateX(-50%) scale(.75); transform-origin: top; }
+    .buoyancy-thread { top: 316px; left: 25%; }
+    .buoyancy-object { top: var(--buoyancy-object-top-mobile); left: 25%; transform: translateX(-50%) scale(.72); transform-origin: center; }
+    .buoyancy-vessel { top: 390px; left: 42%; width: 190px; height: 290px; transform: translateX(-50%); }
+    .buoyancy-force-vectors { top: 400px; left: calc(25% + 43px); transform: scale(.72); transform-origin: top left; }
+    .buoyancy-depth-meter { top: 130px; right: 12px; width: 190px; }
+    .buoyancy-depth-meter i::before { width: 22px; }
+    .buoyancy-live-reading { right: 12px; bottom: 18px; left: 12px; width: auto; }
+    .buoyancy-operation-dock { grid-template-columns: 1fr; }
+    .buoyancy-operation-dock > section, .buoyancy-operation-dock > aside { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .buoyancy-bottom-diagnostic > div { grid-template-columns: 1fr; }
+    .buoyancy-bottom-diagnostic article { border-right: 0; border-bottom: 1px solid #31535c; }
+    .buoyancy-bottom-diagnostic article:last-child { border-bottom: 0; }
+    .buoyancy-evidence-ledger > div { grid-template-columns: repeat(6,minmax(65px,1fr)); overflow-x: auto; }
+    .buoyancy-evidence-ledger > div > b, .buoyancy-evidence-row > * { padding-inline: 5px; font-size: 8px; }
+    .friction-inquiry-console { grid-template-columns: 1fr; }
+    .friction-inquiry-console > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .friction-lab-sim { min-height: 690px; }
+    .friction-lab-sim::after { top: 70px; right: 12px; }
+    .friction-procedure { right: 12px; left: 12px; overflow-x: auto; }
+    .friction-procedure span { flex: 0 0 auto; }
+    .friction-spring-gauge { top: 31%; left: 1%; transform: scale(.65); transform-origin: left center; }
+    .friction-lab-sim.pulling .friction-spring-gauge { animation: none; }
+    .friction-string { top: calc(31% + 39px); left: 160px; width: 70px; }
+    .friction-test-block { top: calc(31% - 8px); left: 230px; transform: scale(.78); transform-origin: left bottom; }
+    .friction-lab-sim.pulling .friction-test-block { animation: friction-pull-block var(--friction-speed) linear infinite; }
+    .friction-test-surface { top: calc(31% + 72px); right: 3%; left: 3%; }
+    .friction-force-vectors { top: calc(31% - 70px); left: 210px; transform: scale(.7); transform-origin: left; }
+    .friction-motion-readout { right: 12px; bottom: 15px; left: 12px; width: auto; }
+    .friction-operation-dock { grid-template-columns: 1fr; }
+    .friction-operation-dock > section, .friction-operation-dock > aside { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .friction-breakaway-console > div:first-of-type { grid-template-columns: 1fr; }
+    .friction-breakaway-console article { border-right: 0; border-bottom: 1px solid #31535c; }
+    .friction-breakaway-console article:last-child { border-bottom: 0; }
+    .friction-evidence-ledger > header { align-items: flex-start; flex-direction: column; }
+    .friction-evidence-ledger > div { grid-template-columns: .4fr .8fr .7fr .95fr .95fr; overflow-x: auto; }
+    .friction-evidence-ledger > div > b, .friction-evidence-row > * { padding-inline: 5px; font-size: 8px; }
+    .lever-challenge-tabs { grid-template-columns: 1fr; }
+    .lever-challenge-tabs button { justify-content: flex-start; border-right: 0; border-bottom: 1px solid #c9c4b8; }
+    .lever-procedure { right: 12px; left: 12px; overflow-x: auto; }
+    .lever-procedure span { flex: 0 0 auto; }
+    .lever-balance-bench { min-height: 590px; }
+    .lever-balance-bench .lever-scale { right: 3%; left: 3%; }
+    .lever-balance-bench .lever-scale::before { display: none; }
+    .lever-balance-bench .lever-beam { top: 42%; width: 92%; }
+    .lever-balance-bench .fulcrum { top: 43%; transform: translateX(-50%) scale(.8); transform-origin: top; }
+    .lever-plumb-line { top: 43%; }
+    .lever-hanger { transform: translateX(-50%) scale(.78); transform-origin: top; }
+    .lever-calibration-panel { bottom: 92px; grid-template-columns: 1fr; }
+    .lever-calibration-panel > div { justify-content: center; }
+    .lever-balance-bench .balance-status { right: 12px; bottom: 15px; left: 12px; }
+    .lever-manual-controls { grid-template-columns: 1fr; }
+    .lever-manual-controls > article, .lever-manual-controls > aside { border-right: 0; border-bottom: 1px solid #c8c2b6; }
+    .lever-table { grid-template-columns: .45fr repeat(4,.75fr) 1.3fr; overflow-x: auto; }
+    .lever-table > b, .lever-table-row > * { padding-inline: 6px; font-size: 8px; }
+    .lever-force-line-body { grid-template-columns: 1fr; }
+    .lever-force-line-body > svg,.lever-force-line-controls { border-right: 0; border-bottom: 1px solid #31535c; }
+    .lever-force-line-readings { grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .lever-force-line-readings article { border-right: 1px solid #31535c; border-bottom: 0; }
+    .lever-force-line-readings article:last-child { border-right: 0; }
+    .circuit-meter { right: 12px; }
+    .power-inquiry-console { grid-template-columns: 1fr; }
+    .power-inquiry-console > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .power-inquiry-console > section:last-child { border-bottom: 0; }
+    .power-lab-rig { min-height: 1060px; }
+    .power-lab-rig::after { top: 72px; right: 12px; max-width: calc(100% - 24px); }
+    .power-procedure-strip { right: 12px; left: 12px; overflow-x: auto; }
+    .power-procedure-strip span { flex: 0 0 auto; }
+    .power-supply-unit { top: 122px; left: 12px; width: 185px; }
+    .power-circuit-board { top: 205px; left: -8%; width: 116%; height: 380px; }
+    .power-nameplate { top: 590px; right: 51%; width: calc(49% - 18px); min-height: 153px; }
+    .power-meter-bank { top: 590px; right: 12px; width: calc(49% - 18px); }
+    .power-meter-bank article { min-height: 50px; }
+    .power-energy-meter { right: 12px; bottom: 155px; left: 12px; width: auto; }
+    .power-live-result { right: 12px; bottom: 18px; left: 12px; width: auto; }
+    .power-operation-dock { grid-template-columns: 1fr; }
+    .power-operation-dock > section,.power-operation-dock > aside { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .power-operation-dock > aside { border-bottom: 0; }
+    .power-evidence-ledger > div { grid-template-columns: repeat(7,minmax(64px,1fr)); overflow-x: auto; }
+    .power-evidence-ledger > div > b,.power-evidence-row > * { padding-inline: 5px; font-size: 8px; }
+    .magnet-inquiry-console { grid-template-columns: 1fr; }
+    .magnet-inquiry-console > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .magnet-lab-sim { min-height: 940px; }
+    .magnet-lab-sim::after { top: 72px; right: 12px; max-width: calc(100% - 24px); }
+    .magnet-procedure-strip { right: 12px; left: 12px; overflow-x: auto; }
+    .magnet-procedure-strip span { flex: 0 0 auto; }
+    .magnet-power-supply { top: 120px; left: 4%; transform: scale(.76); transform-origin: top left; }
+    .magnet-wire-path { display: none; }
+    .magnet-coil-rig { top: 265px; left: 35%; width: 240px; transform: translateX(-50%) scale(.78); }
+    .magnet-field-rings { top: 235px; left: 35%; width: 280px; height: 210px; }
+    .magnet-nail-tray { top: 445px; right: 50%; width: 210px; height: 185px; transform: translateX(50%) scale(.88); }
+    .magnet-nail-tray > i.picked { top: -125px; left: calc(75px + (var(--nail-index) % 4) * 13px); }
+    .magnet-compass { top: 640px; right: 8px; transform: scale(.8); transform-origin: top right; }
+    .magnet-thermal-gauge { right: 12px; bottom: 150px; left: 12px; width: auto; }
+    .magnet-live-result { right: 12px; bottom: 18px; left: 12px; width: auto; }
+    .magnet-operation-dock { grid-template-columns: 1fr; }
+    .magnet-operation-dock > section, .magnet-operation-dock > aside { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .magnet-polarity-lab > header { align-items: flex-start; flex-direction: column; }
+    .magnet-polarity-lab > div { grid-template-columns: 1fr; }
+    .magnet-evidence-ledger > header { align-items: flex-start; flex-direction: column; }
+    .magnet-evidence-ledger > div { grid-template-columns: repeat(5,minmax(65px,1fr)); overflow-x: auto; }
+    .magnet-evidence-ledger > div > b, .magnet-evidence-row > * { padding-inline: 5px; font-size: 8px; }
+    .ohm-task-tabs { grid-template-columns: 1fr; }
+    .ohm-task-tabs button { justify-content: flex-start; padding-left: 22px; border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .ohm-lab-sim { min-height: 790px; }
+    .ohm-lab-sim::after { top: 78px; right: 12px; }
+    .ohm-control-lock { right: 12px; left: 12px; }
+    .ohm-lab-sim > svg { top: 105px; left: -5%; width: 110%; height: 380px; }
+    .ohm-connection-dock { right: 12px; bottom: 225px; left: 12px; display: grid; grid-template-columns: 1fr; }
+    .ohm-connection-dock > span, .ohm-connection-dock button { justify-content: center; }
+    .ohm-safety-readout { right: 12px; bottom: 15px; left: 12px; width: auto; }
+    .ohm-variable-console { grid-template-columns: 1fr; }
+    .ohm-variable-console > header, .ohm-variable-console > div { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .ohm-variable-console > div { grid-template-columns: repeat(5,1fr); }
+    .ohm-variable-console > button { min-height: 48px; }
+    .ohm-evidence-panel { grid-template-columns: 1fr; }
+    .ohm-evidence-panel > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .thermal-sim svg { top: 45%; right: 4%; width: 90%; }
+    .beaker-water { left: 8%; transform: scale(.75); transform-origin: bottom left; }
+    .thermometer { left: 48%; transform: scale(.75); transform-origin: bottom; }
+    .thermal-setup-console { grid-template-columns: 1fr; }
+    .thermometer-selection-console { grid-template-columns: 1fr; }
+    .thermometer-selection-console > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .thermometer-lab-sim { min-height: 1040px; }
+    .thermometer-lab-sim::after { top: 72px; right: 12px; }
+    .thermometer-procedure-strip { right: 12px; left: 12px; overflow-x: auto; }
+    .thermometer-procedure-strip span { flex: 0 0 auto; }
+    .thermometer-vessel-rig { top: 200px; left: 4%; width: 210px; height: 310px; transform: scale(.82); transform-origin: top left; }
+    .thermometer-instrument-rig { left: 28%; transform: scale(.72); transform-origin: top; }
+    .thermometer-lab-sim.position-wall .thermometer-instrument-rig { left: 38%; transform: rotate(5deg) scale(.72); }
+    .thermometer-position-console { top: 540px; right: 12px; left: 12px; width: auto; }
+    .thermometer-stability-meter { top: 680px; right: 12px; left: 12px; width: auto; }
+    .thermometer-eye-console { top: 810px; right: 12px; left: 12px; width: auto; }
+    .thermometer-final-reading { right: 12px; bottom: 18px; left: 12px; width: auto; }
+    .thermometer-evidence-workbench { grid-template-columns: 1fr; }
+    .thermometer-evidence-workbench > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .thermometer-evidence-workbench section > div { grid-template-columns: repeat(4,minmax(78px,1fr)); overflow-x: auto; }
+    .melting-setup-console { grid-template-columns: 1fr; }
+    .melting-setup-console > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .melting-lab-sim { min-height: 960px; }
+    .melting-lab-sim::after { top: 72px; right: 12px; }
+    .melting-procedure-strip { right: 12px; left: 12px; overflow-x: auto; }
+    .melting-procedure-strip span { flex: 0 0 auto; }
+    .melting-water-bath { top: 125px; left: 6%; width: 235px; height: 330px; transform: scale(.82); transform-origin: top left; }
+    .melting-heater-live { top: 420px; left: 10%; transform: scale(.85); }
+    .melting-lab-sim > svg { top: 475px; right: 4%; width: 92%; height: 250px; }
+    .melting-phase-meter { right: 12px; bottom: 150px; left: 12px; width: auto; }
+    .melting-live-reading { right: 12px; bottom: 18px; left: 12px; width: auto; grid-template-columns: 24px 1fr; }
+    .melting-live-reading button { grid-column: 1 / 3; justify-content: center; }
+    .melting-evidence-workbench { grid-template-columns: 1fr; }
+    .melting-evidence-workbench > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .melting-evidence-workbench section > div { grid-template-columns: .55fr .7fr 1.35fr .7fr; overflow-x: auto; }
+    .evap-inquiry-console { grid-template-columns: 1fr; }
+    .evap-inquiry-console section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .evap-factor-status { grid-template-columns: 1fr; gap: 5px; }
+    .evap-factor-status > i { width: 1px; height: 10px; justify-self: center; }
+    .evap-mass-rig { min-height: 830px; }
+    .evap-fan-live { top: 120px; left: 7%; transform: scale(.72); transform-origin: top left; }
+    .evap-fan-live::after { right: -190px; width: 175px; }
+    .evap-tray-live { bottom: 360px; }
+    .evap-balance-live { right: 12px; bottom: 235px; left: 12px; width: auto; transform: none; }
+    .evap-live-result { top: auto; right: 12px; bottom: 30px; left: 12px; width: auto; }
+    .evap-controls { grid-template-columns: 1fr; }
+    .evap-controls > section,.evap-controls > aside { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .evap-controls > aside { border-bottom: 0; }
+    .mv-inquiry-console { grid-template-columns: 1fr; }
+    .mv-inquiry-console section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .mv-procedure-strip { padding: 0 10px; }
+    .mv-procedure-strip span { min-width: 78px; flex-basis: 78px; }
+    .mv-lab-rig { min-height: 940px; }
+    .mv-sample-cutter { top: 100px; left: 12px; width: calc(100% - 24px); height: 260px; }
+    .mv-digital-balance { top: 395px; right: 12px; bottom: auto; left: 12px; width: auto; }
+    .mv-lab-rig > svg { top: 585px; right: 12px; left: 12px; width: auto; height: 220px; }
+    .mv-live-result { right: 12px; bottom: 18px; left: 12px; width: auto; }
+    .mv-controls { grid-template-columns: 1fr; }
+    .mv-controls > section,.mv-controls > aside { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .mv-controls > aside { border-bottom: 0; }
+    .mv-zero-error-lab > header { align-items: flex-start; flex-direction: column; }
+    .mv-zero-error-body { grid-template-columns: 1fr 1fr; }
+    .mv-zero-error-body > span { grid-column: 1 / -1; }
+    .mv-evidence-ledger { overflow-x: auto; grid-template-columns: repeat(5,minmax(90px,1fr)); }
+    .thermal-setup-console > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .thermal-observation-station { min-height: 720px; }
+    .thermal-observation-station .beaker-water { left: 5%; bottom: 45%; transform: scale(.72); }
+    .thermal-observation-station .flame { left: 17%; bottom: 34%; transform: scale(.72); }
+    .thermal-observation-station .thermometer, .thermal-observation-station .thermometer.parked { left: 47%; bottom: 45%; transform: scale(.68); }
+    .thermal-observation-station svg { top: 47%; right: 4%; width: 92%; height: 250px; }
+    .thermal-live-reading { grid-template-columns: 23px 1fr; }
+    .thermal-live-reading button { grid-column: 1 / 3; justify-content: center; }
+    .thermal-evidence-workbench { grid-template-columns: 1fr; }
+    .boiling-pressure-evidence > div { grid-template-columns: repeat(6,minmax(70px,1fr)); overflow-x: auto; }
+    .boiling-pressure-evidence > div > b,.boiling-run-row > * { padding-inline: 5px; font-size: 8px; }
+    .thermal-reading-ledger { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .balance { left: 0; transform: scale(.68); transform-origin: top left; }
+    .cylinder { right: 5%; transform: scale(.8); transform-origin: bottom right; }
+    .density-result { right: 30%; bottom: 15px; }
+    .density-sample-selector { grid-template-columns: 1fr; }
+    .liquid-density-selector { grid-template-columns: 1fr; }
+    .liquid-density-selector > section { border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .liquid-density-sim { min-height: 1010px; }
+    .liquid-density-sim::after { top: 72px; right: 12px; }
+    .liquid-density-procedure { right: 12px; left: 12px; overflow-x: auto; }
+    .liquid-density-procedure span { flex: 0 0 auto; }
+    .liquid-balance-station { top: 125px; left: 4%; width: 215px; transform: scale(.82); transform-origin: top left; }
+    .liquid-transfer-path { top: 425px; left: 8%; transform: scale(.85); transform-origin: top left; }
+    .liquid-cylinder-station { top: 390px; right: 7%; width: 115px; transform: scale(.85); transform-origin: top right; }
+    .liquid-eye-console { top: 695px; right: 12px; left: 12px; width: auto; }
+    .liquid-density-result { right: 12px; bottom: 18px; left: 12px; width: auto; }
+    .liquid-density-calculation { grid-template-columns: 1fr; }
+    .liquid-density-calculation .science-result-cell { min-height: 76px; border-right: 0; border-bottom: 1px solid #c8c2b6; }
+    .liquid-density-calculation > button { min-height: 48px; border-right: 0; border-bottom: 1px solid #c8c2b6; }
+    .liquid-density-evidence > div { grid-template-columns: repeat(6,minmax(65px,1fr)); overflow-x: auto; }
+    .liquid-density-evidence > div > b, .liquid-density-row > * { padding-inline: 5px; font-size: 8px; }
+    .density-sample-selector button { justify-content: flex-start; padding-left: 22px; border-right: 0; border-bottom: 1px solid #c9c3b8; }
+    .density-measurement-line { min-height: 940px; }
+    .density-procedure-strip { right: 12px; left: 12px; overflow-x: auto; }
+    .density-procedure-strip span { flex: 0 0 auto; }
+    .density-balance-station { top: 14%; left: 3%; width: 190px; transform: scale(.82); transform-origin: top left; }
+    .density-cylinder-station { top: 14%; right: 4%; left: auto; width: 135px; transform: scale(.82); transform-origin: top right; }
+    .density-eye-reader { top: 56%; right: 12px; left: 12px; width: auto; }
+    .density-eye-reader > i { display: none; }
+    .density-measurement-line .density-result { right: 12px; bottom: 16px; left: 12px; min-width: 0; transform: none; }
+    .density-calculation-console { grid-template-columns: 1fr; }
+    .density-calculation-console .science-result-cell { min-height: 76px; border-right: 0; border-bottom: 1px solid #c8c2b6; }
+    .density-calculation-console > button { min-height: 48px; border-right: 0; border-bottom: 1px solid #c8c2b6; }
+    .density-evidence-ledger > div { grid-template-columns: repeat(6,minmax(65px,1fr)); overflow-x: auto; }
+    .density-evidence-ledger > div > b, .density-evidence-row > * { padding-inline: 5px; font-size: 8px; }
+    .concept-sim { min-height: 550px; }
+    .concept-axis { right: 18px; left: 18px; }
+    .concept-value { top: 83px; min-width: 0; max-width: 45%; padding: 10px; }
+    .concept-value.value-a { left: 16px; } .concept-value.value-b { right: 16px; }
+    .concept-value strong { font-size: 14px; }
+    .concept-apparatus { top: 33%; right: 4%; left: 4%; grid-template-columns: 55px 1fr 55px; gap: 7px; }
+    .apparatus-source, .apparatus-target { width: 52px; height: 52px; }
+    .concept-reading { grid-template-columns: 1fr; gap: 6px; }
+    .concept-reading > strong { font-size: 22px; }
+    .concept-reading > p { grid-column: auto; }
+    .science-experiment-guide > header { grid-template-columns: 1fr; padding: 23px 19px; }
+    .science-experiment-guide > header span { grid-column: auto; }
+    .science-experiment-guide > div, .science-life-application > div { grid-template-columns: 1fr; }
+    .science-experiment-guide article, .science-life-application article { min-height: 0; border-right: 0; border-bottom: 1px solid #d2ccbf; }
+    .science-experiment-guide article:last-child, .science-life-application article:last-child { border-bottom: 0; }
+    .science-life-application > header { align-items: start; padding: 23px 19px; }
+    .science-life-application > header h2 { font-size: 22px; }
+    .mirror-life-technology > header { min-height: 0; padding: 28px 20px; }
+    .mirror-life-technology > header h2 { font-size: 27px; }
+    .mirror-life-route { grid-template-columns: 1fr; }
+    .mirror-life-route button { min-height: 88px; padding: 14px 19px; border-right: 0; border-bottom: 1px solid #34515b; }
+    .mirror-life-route button:last-child { border-bottom: 0; }
+    .mirror-life-visual { min-height: 410px; overflow-x: auto; }
+    .mirror-life-visual > svg { min-width: 720px; min-height: 410px; height: 410px; }
+    .mirror-life-live-label { position: sticky; left: 12px; width: max-content; margin: -66px 12px 12px; }
+    .mirror-life-controller { padding: 25px 20px; }
+    .mirror-life-result { margin-right: -20px; margin-bottom: -25px; margin-left: -20px; padding-right: 20px; padding-left: 20px; }
+    .mirror-life-comparison article { padding: 21px 19px; }
+    .mirror-life-note { padding: 19px; }
+  }
+}

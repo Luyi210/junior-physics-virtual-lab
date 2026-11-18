@@ -10,3 +10,6 @@ export * from "./tutorialScript";
 export * from "./understanding";
 export * from "./apparatusState";
 export * from "./coach";
+export * from "./juniorTroubleshooting";
+export * from "./juniorFollowUp";
+export * from "./juniorCoaching";

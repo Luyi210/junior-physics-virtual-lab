@@ -1,0 +1,61 @@
+/* Junior experiment controls stay reachable without capturing page swipes. */
+.optics-3d-stage { isolation: isolate; }
+.optics-mobile-view-note { display: none; }
+.optics-3d-recovery-actions { width: min(100%,440px); display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+.optics-3d-recovery-actions button { min-height: 46px; justify-content: center; }
+.optics-3d-recovery-actions button.secondary { color: #b7d6dc; border-color: #52737d; background: #102d38; box-shadow: none; }
+@media (max-width: 760px), (pointer: coarse) {
+  .optics-mobile-view-note { display: block; grid-column: 1 / -1; max-width: 560px; margin: 6px 0 0; padding-left: 10px; color: #3d6469; border-left: 2px solid #3a9894; font-size: 13px; line-height: 1.65; }
+  .optics-3d-recovery-actions { flex-direction: column; }
+}
+.optics-3d-stage.is-scrollable canvas { touch-action: pan-y pinch-zoom !important; cursor: auto; }
+.optics-3d-stage.is-navigable canvas { touch-action: none !important; }
+.optics-touch-mode { position: absolute; z-index: 8; right: 14px; bottom: 62px; min-height: 44px; padding: 10px 14px; border: 1px solid #7ce4d1; color: #dffaf5; background: #133c46; font-size: 14px; font-weight: 700; cursor: pointer; }
+.optics-touch-mode[aria-pressed="true"] { color: #07242c; background: #7ce4d1; }
+.black-hole-touch-controls { display: grid; gap: 8px; padding: 12px 14px; color: #a7c5d5; background: #0c2331; border-bottom: 1px solid #315265; }
+.black-hole-touch-controls button { min-height: 44px; padding: 10px 14px; color: #dcfff7; border: 1px solid #659d9d; background: #163c49; font-size: 14px; cursor: pointer; }
+.black-hole-touch-controls button[aria-pressed="true"] { color: #082832; background: #7cebd4; }
+.black-hole-touch-controls span { font-size: 13px; line-height: 1.6; }
+.optics-touch-mode:focus-visible,.black-hole-touch-controls button:focus-visible { outline: 3px solid #ffd36b; outline-offset: 3px; }
+
+@media (max-width: 760px) {
+  :is(.science-stage,.explore-module-content,.workbench-layout,.experiment-stage,.open-control-deck,.science-controls) { min-width: 0; }
+  .science-module-bar nav { overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: 10px; }
+  .science-module-bar nav button { flex-shrink: 0; min-height: 52px; scroll-snap-align: start; }
+  :is(.science-range,.open-range,.instrument-control) { min-width: 0; }
+  :is(.science-range,.open-range) > span { gap: 10px; flex-wrap: wrap; }
+  :is(.science-range,.open-range,.instrument-control,.black-hole-controls) input[type="range"] { min-width: 0; min-height: 44px; margin-block: 4px; touch-action: pan-y pinch-zoom; }
+  :is(.science-range,.open-range) output { white-space: nowrap; }
+  .open-range-scale { gap: 8px; font-size: 11px; }
+  .open-range-scale > b { display: none; }
+  .science-lab button,.open-experience button,.lens-inspector button,.workbench-actions button,.dock-actions button { min-height: 44px; }
+  .experiment-evidence-ledger button { font-size: 13px; }
+  .evidence-table { max-width: 100%; overscroll-behavior-x: contain; }
+  .evidence-table :is(span,strong,em),.evidence-table > div:first-child { font-size: 12px; }
+  .evidence-table > div { min-height: 48px; }
+  .experiment-evidence-ledger :is(header strong,footer b) { font-size: 14px; }
+  .experiment-evidence-ledger :is(header small,footer small) { font-size: 12px; line-height: 1.6; }
+  .science-lab :is(input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),select,textarea),.open-experience :is(input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),select,textarea) { font-size: 16px; }
+  .science-lab :is(p,small),.open-module-intro p { overflow-wrap: anywhere; }
+  .physics-inquiry-ribbon article { flex-basis: min(265px, 84vw); }
+  .physics-inquiry-ribbon article :is(strong,p) { font-size: 13px; line-height: 1.7; }
+  .workspace-dock-identity em { font-size: 12px; line-height: 1.65; }
+  .workspace-dock-actions > :is(button,a) > span strong { font-size: 13px; }
+  .workbench-header { flex-wrap: wrap; }
+  .workbench-actions { min-width: 0; flex-wrap: wrap; gap: 6px; }
+  .workbench-actions > button { min-width: 44px; }
+  .lens-canvas-host .canvas-scale-note { right: 10px; bottom: 64px; left: 10px; font-size: 11px; line-height: 1.6; text-align: center; }
+  .lens-canvas-host .canvas-motion-toggle { right: 10px; bottom: 10px; left: 10px; min-height: 44px; justify-content: center; font-size: 14px; }
+  .optics-3d-toolbar { top: 12px; right: 12px; left: 12px; grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .optics-3d-toolbar button { min-height: 44px; padding-inline: 4px; font-size: 13px; }
+  .optics-3d-badges { top: 68px; right: 12px; left: 12px; max-width: none; justify-content: flex-start; }
+  .optics-3d-help { right: 12px; bottom: 12px; left: 12px; min-height: 42px; padding: 8px 10px; }
+  .optics-3d-help b { flex: 0 0 28px; }
+  .optics-3d-help span { font-size: 12px; line-height: 1.55; }
+  .optics-touch-mode { right: 12px; bottom: 72px; left: 12px; }
+  .sound-particle-microscope > header button,.particle-snapshot-ledger > header button,.particle-propagation-question button { font-size: 13px; }
+  .particle-equilibrium-track { grid-template-columns: repeat(15,44px); overflow-x: auto; overscroll-behavior-x: contain; }
+  .particle-equilibrium-track > button { min-width: 44px; }
+  .particle-equilibrium-track > button em { font-size: 10px; }
+  .particle-propagation-question :is(strong,em),.particle-displacement-plot em { font-size: 13px; line-height: 1.65; }
+}

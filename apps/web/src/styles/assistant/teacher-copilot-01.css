@@ -1,0 +1,121 @@
+/* Guangguang teaching copilot — a contextual instrument bay, not a generic chat bubble. */
+
+@layer components {
+  .teacher-guangguang-trigger { position: fixed; z-index: 82; right: 24px; bottom: 20px; min-width: 195px; height: 66px; display: grid; grid-template-columns: 67px 1fr 33px; align-items: center; gap: 7px; padding: 0 9px 0 0; overflow: visible; color: #dff7ff; border: 1px solid rgba(120, 221, 255, .5); background: linear-gradient(100deg, rgba(8, 29, 47, .97), rgba(12, 49, 72, .97)); box-shadow: 0 13px 45px rgba(0, 0, 0, .38), 0 0 24px rgba(120, 221, 255, .12), inset 0 0 18px rgba(120, 221, 255, .06); cursor: pointer; transition: border-color .2s ease, transform .2s ease, opacity .2s ease; }
+  .teacher-guangguang-trigger::before, .teacher-guangguang-trigger::after { content: ""; position: absolute; pointer-events: none; }
+  .teacher-guangguang-trigger::before { top: -5px; right: 13px; left: 70px; height: 1px; opacity: .6; background: linear-gradient(90deg, transparent, var(--tc-cyan), transparent); box-shadow: 0 0 9px var(--tc-cyan); }
+  .teacher-guangguang-trigger::after { inset: 4px; border: 1px solid rgba(120, 221, 255, .08); }
+  .teacher-guangguang-trigger:hover { border-color: var(--tc-cyan); transform: translateY(-3px); }
+  .teacher-guangguang-trigger.is-open { opacity: 0; pointer-events: none; transform: translateY(8px); }
+  .teacher-guangguang-trigger > .orange-cat-avatar { width: 73px; height: 73px; margin: -13px 0 -5px -4px; }
+  .teacher-guangguang-trigger > span { position: relative; z-index: 2; display: grid; justify-items: start; gap: 2px; }
+  .teacher-guangguang-trigger > span small { color: var(--tc-cyan); font: 700 7px var(--mono); letter-spacing: .1em; }
+  .teacher-guangguang-trigger > span b { font: 700 14px var(--serif); }
+  .teacher-guangguang-trigger > i { position: relative; z-index: 2; width: 29px; height: 29px; display: grid; place-items: center; color: #061a29; border-radius: 50%; background: var(--tc-cyan); box-shadow: 0 0 14px rgba(120, 221, 255, .3); font-style: normal; }
+
+  .teacher-guangguang-scrim { position: fixed; z-index: 70; inset: 0; border: 0; background: rgba(1, 8, 15, .38); backdrop-filter: blur(2px); cursor: default; animation: teacher-copilot-fade .2s ease both; }
+  .teacher-guangguang-panel { position: fixed; z-index: 80; top: 14px; right: 14px; bottom: 14px; width: min(430px, calc(100vw - 28px)); display: grid; grid-template-rows: auto auto minmax(0, auto) minmax(240px, 1fr) auto; overflow: hidden; color: var(--tc-text); border: 1px solid var(--tc-line-bright); background: radial-gradient(circle at 72% -6%, rgba(120, 221, 255, .15), transparent 24%), linear-gradient(180deg, rgba(10, 34, 54, .99), rgba(5, 20, 34, .995)); box-shadow: -22px 0 70px rgba(0, 0, 0, .5), 0 0 42px rgba(120, 221, 255, .1), inset 0 0 45px rgba(38, 125, 166, .04); opacity: 0; pointer-events: none; transform: translateX(calc(100% + 28px)); transition: opacity .24s ease, transform .32s cubic-bezier(.2,.75,.25,1); }
+  .teacher-guangguang-panel::before { content: ""; position: absolute; z-index: -1; inset: 0; opacity: .22; pointer-events: none; background-image: linear-gradient(rgba(120, 221, 255, .06) 1px, transparent 1px), linear-gradient(90deg, rgba(120, 221, 255, .05) 1px, transparent 1px); background-size: 27px 27px; mask-image: linear-gradient(#000, transparent 80%); }
+  .teacher-guangguang-panel::after { content: ""; position: absolute; top: -20%; left: 0; width: 1px; height: 28%; opacity: .8; background: var(--tc-cyan); box-shadow: 0 0 16px var(--tc-cyan); animation: teacher-copilot-scan 4.8s linear infinite; }
+  .teacher-guangguang-panel.is-open { opacity: 1; pointer-events: auto; transform: none; }
+  .teacher-guangguang-header { min-height: 91px; display: grid; grid-template-columns: 73px 1fr auto; align-items: center; gap: 10px; padding: 10px 14px 8px 7px; border-bottom: 1px solid var(--tc-line); background: linear-gradient(90deg, rgba(120, 221, 255, .07), transparent); }
+  .teacher-guangguang-avatar { width: 71px; height: 71px; display: grid; place-items: center; overflow: hidden; border: 1px solid rgba(120, 221, 255, .25); border-radius: 50%; background: radial-gradient(circle, rgba(120, 221, 255, .12), transparent 68%); }
+  .teacher-guangguang-avatar > .orange-cat-avatar { width: 76px; height: 68px; margin-top: 8px; }
+  .teacher-guangguang-header > div:nth-child(2) { display: grid; gap: 2px; }
+  .teacher-guangguang-header > div:nth-child(2) > span { color: var(--tc-cyan); font: 700 7px var(--mono); letter-spacing: .13em; }
+  .teacher-guangguang-header h2 { font: 700 19px var(--serif); }
+  .teacher-guangguang-header p { display: inline-flex; align-items: center; gap: 6px; color: #6f94a7; font-size: 8px; }
+  .teacher-guangguang-header p i { width: 5px; height: 5px; border-radius: 50%; background: var(--tc-green); box-shadow: 0 0 8px var(--tc-green); animation: teacher-signal-pulse 1.8s ease-in-out infinite; }
+  .teacher-guangguang-header > button { width: 34px; height: 34px; display: grid; place-items: center; color: #749daf; border: 1px solid var(--tc-line); background: rgba(120, 221, 255, .03); cursor: pointer; }
+  .teacher-guangguang-header > button:hover { color: var(--tc-cyan); border-color: var(--tc-line-bright); }
+  .teacher-guangguang-boundary { min-height: 48px; display: flex; align-items: center; gap: 9px; padding: 8px 14px; color: var(--tc-amber); border-bottom: 1px solid rgba(255, 211, 106, .16); background: rgba(255, 211, 106, .035); }
+  .teacher-guangguang-boundary > svg { flex: 0 0 auto; }
+  .teacher-guangguang-boundary p { color: #8e947f; font-size: 8px; line-height: 1.55; }
+  .teacher-guangguang-boundary strong { color: #d7c88e; }
+
+  .teacher-guangguang-insight { margin: 10px 10px 0; border: 1px solid var(--tc-line); background: rgba(5, 21, 36, .7); }
+  .teacher-guangguang-insight.mode-live { border-color: rgba(85, 229, 193, .27); }
+  .teacher-guangguang-insight.mode-report { border-color: rgba(140, 167, 255, .25); }
+  .teacher-guangguang-insight-head { width: 100%; min-height: 57px; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 9px 12px; color: #cce8f2; text-align: left; border: 0; background: linear-gradient(90deg, rgba(120, 221, 255, .065), transparent); cursor: pointer; }
+  .teacher-guangguang-insight-head > span { min-width: 0; display: grid; gap: 3px; }
+  .teacher-guangguang-insight-head small { color: var(--tc-cyan); font: 700 7px var(--mono); letter-spacing: .1em; }
+  .teacher-guangguang-insight-head b { overflow: hidden; font: 700 13px var(--serif); text-overflow: ellipsis; white-space: nowrap; }
+  .teacher-guangguang-insight-head svg { flex: 0 0 auto; color: #6d9aad; transition: transform .2s ease; }
+  .teacher-guangguang-insight-head svg.is-rotated { transform: rotate(180deg); }
+  .teacher-guangguang-insight-body { padding: 0 12px 12px; border-top: 1px solid rgba(120, 221, 255, .09); animation: teacher-copilot-body .22s ease both; }
+  .teacher-guangguang-insight-body > p { padding: 10px 0 8px; color: #91afbd; font-size: 9px; line-height: 1.65; }
+  .teacher-guangguang-insight-body > div:nth-of-type(1) { display: grid; gap: 5px; }
+  .teacher-guangguang-insight-body > div:nth-of-type(1) > span { display: flex; align-items: flex-start; gap: 7px; color: #6e93a5; font-size: 8px; line-height: 1.45; }
+  .teacher-guangguang-insight-body > div:nth-of-type(1) > span i { width: 4px; height: 4px; flex: 0 0 auto; margin-top: 4px; border-radius: 50%; background: var(--tc-cyan); box-shadow: 0 0 7px var(--tc-cyan); }
+  .teacher-guangguang-insight-body > blockquote { display: flex; gap: 9px; margin-top: 10px; padding: 9px 10px; color: var(--tc-amber); border-left: 2px solid var(--tc-amber); background: rgba(255, 211, 106, .045); }
+  .teacher-guangguang-insight-body > blockquote svg { flex: 0 0 auto; margin-top: 1px; }
+  .teacher-guangguang-insight-body > blockquote span { display: grid; gap: 3px; color: #a8ad98; font-size: 8px; line-height: 1.55; }
+  .teacher-guangguang-insight-body > blockquote small { color: #d6c783; font: 700 7px var(--mono); letter-spacing: .08em; }
+  .teacher-guangguang-broadcast { margin-top: 9px; padding: 10px; border: 1px solid rgba(85, 229, 193, .18); background: rgba(85, 229, 193, .035); }
+  .teacher-guangguang-broadcast > span { display: flex; align-items: center; gap: 6px; color: var(--tc-green); font: 700 7px var(--mono); letter-spacing: .08em; }
+  .teacher-guangguang-broadcast > p { margin-top: 6px; color: #a9c9c2; font-size: 8px; line-height: 1.55; }
+  .teacher-guangguang-broadcast > button { min-height: 31px; display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; padding: 0 10px; color: #05261f; border: 1px solid var(--tc-green); background: var(--tc-green); font-size: 8px; font-weight: 800; cursor: pointer; }
+  .teacher-guangguang-broadcast > small { display: flex; align-items: center; gap: 4px; margin-top: 7px; color: var(--tc-green); font-size: 7px; }
+
+  .teacher-guangguang-dialogue { min-height: 0; display: grid; grid-template-rows: auto auto minmax(78px, 1fr) auto; margin: 10px; overflow: hidden; border: 1px solid var(--tc-line); background: rgba(3, 16, 28, .66); }
+  .teacher-guangguang-dialogue > header { min-height: 47px; display: flex; align-items: center; gap: 8px; padding: 8px 11px; color: var(--tc-cyan); border-bottom: 1px solid var(--tc-line); }
+  .teacher-guangguang-dialogue > header > span { display: grid; gap: 1px; }
+  .teacher-guangguang-dialogue > header b { color: #c6e2ec; font-size: 10px; }
+  .teacher-guangguang-dialogue > header small { color: #557d91; font-size: 7px; }
+  .teacher-guangguang-chips { display: flex; gap: 5px; padding: 8px 9px; overflow-x: auto; border-bottom: 1px solid rgba(120, 221, 255, .08); scrollbar-width: none; }
+  .teacher-guangguang-chips::-webkit-scrollbar { display: none; }
+  .teacher-guangguang-chips button { min-height: 26px; flex: 0 0 auto; padding: 0 8px; color: #7fa6b8; border: 1px solid rgba(120, 221, 255, .16); background: rgba(120, 221, 255, .035); font-size: 7px; cursor: pointer; }
+  .teacher-guangguang-chips button:hover { color: var(--tc-cyan); border-color: var(--tc-line-bright); }
+  .teacher-guangguang-messages { min-height: 0; overflow-y: auto; padding: 10px; scrollbar-color: rgba(120, 221, 255, .2) transparent; }
+  .teacher-guangguang-welcome { display: flex; align-items: flex-start; gap: 8px; padding: 9px; color: var(--tc-cyan); border: 1px dashed rgba(120, 221, 255, .17); background: rgba(120, 221, 255, .025); }
+  .teacher-guangguang-welcome svg { flex: 0 0 auto; }
+  .teacher-guangguang-welcome p { color: #789dad; font-size: 8px; line-height: 1.6; }
+  .teacher-guangguang-messages article { display: flex; align-items: flex-end; gap: 6px; margin-top: 9px; }
+  .teacher-guangguang-messages article.role-teacher { justify-content: flex-end; }
+  .teacher-guangguang-messages article > .orange-cat-avatar { width: 42px; height: 39px; flex: 0 0 auto; }
+  .teacher-guangguang-messages article > div { max-width: 84%; }
+  .teacher-guangguang-messages article > div > span { display: block; margin-bottom: 3px; color: #5f8497; font-size: 7px; }
+  .teacher-guangguang-messages article.role-teacher > div > span { text-align: right; }
+  .teacher-guangguang-messages article p { padding: 8px 9px; color: #9fc0ce; border: 1px solid rgba(120, 221, 255, .13); background: #0b263c; font-size: 8px; line-height: 1.6; }
+  .teacher-guangguang-sources { display: flex; align-items: flex-start; gap: 4px; margin-top: 4px; color: #6ea8b8; font-size: 7px; line-height: 1.45; }
+  .teacher-guangguang-sources svg { flex: 0 0 auto; margin-top: 1px; }
+  .teacher-guangguang-messages article.role-teacher p { color: #062132; border-color: rgba(120, 221, 255, .55); background: #8bdcf5; }
+  .teacher-guangguang-dialogue > form { min-height: 58px; display: grid; grid-template-columns: 1fr 38px; align-items: center; gap: 7px; padding: 8px; border-top: 1px solid var(--tc-line); background: rgba(6, 24, 39, .95); }
+  .teacher-guangguang-dialogue > form textarea { min-height: 40px; max-height: 78px; padding: 8px 9px; resize: none; color: #c6e2ec; outline: 0; border: 1px solid rgba(120, 221, 255, .16); background: rgba(1, 12, 22, .7); font: 500 8px/1.5 inherit; }
+  .teacher-guangguang-dialogue > form textarea:focus { border-color: var(--tc-cyan); box-shadow: 0 0 0 2px rgba(120, 221, 255, .06); }
+  .teacher-guangguang-dialogue > form button { width: 38px; height: 38px; display: grid; place-items: center; color: #052033; border: 1px solid var(--tc-cyan); background: var(--tc-cyan); cursor: pointer; }
+  .teacher-guangguang-panel > footer { min-height: 35px; display: flex; align-items: center; gap: 6px; padding: 0 11px; color: #50778b; border-top: 1px solid var(--tc-line); font-size: 7px; }
+  .teacher-guangguang-panel > footer em { margin-left: auto; color: var(--tc-green); font: 700 7px var(--mono); font-style: normal; letter-spacing: .08em; }
+}
+
+@layer polish {
+  @keyframes teacher-copilot-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes teacher-copilot-body { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  @keyframes teacher-copilot-scan { from { top: -20%; } to { top: 115%; } }
+}
+
+@layer responsive {
+  @media (max-width: 650px) {
+    .teacher-guangguang-trigger { right: 10px; bottom: 10px; min-width: 178px; height: 59px; grid-template-columns: 59px 1fr 29px; }
+    .teacher-guangguang-trigger > .orange-cat-avatar { width: 65px; height: 65px; }
+    .teacher-guangguang-panel { inset: 6px; width: auto; grid-template-rows: auto auto minmax(0, auto) minmax(210px, 1fr) auto; }
+    .teacher-guangguang-header { min-height: 78px; grid-template-columns: 59px 1fr auto; padding-left: 5px; }
+    .teacher-guangguang-avatar { width: 56px; height: 56px; }
+    .teacher-guangguang-avatar > .orange-cat-avatar { width: 62px; height: 57px; }
+    .teacher-guangguang-insight { margin: 7px 7px 0; }
+    .teacher-guangguang-insight-body > p { font-size: 8px; }
+    .teacher-guangguang-dialogue { margin: 7px; }
+  }
+  @media (max-height: 720px) {
+    .teacher-guangguang-panel { grid-template-rows: auto auto minmax(0, auto) minmax(160px, 1fr) auto; }
+    .teacher-guangguang-header { min-height: 72px; }
+    .teacher-guangguang-avatar { width: 55px; height: 55px; }
+    .teacher-guangguang-avatar > .orange-cat-avatar { width: 61px; height: 57px; }
+    .teacher-guangguang-boundary { min-height: 38px; }
+    .teacher-guangguang-insight-head { min-height: 48px; }
+    .teacher-guangguang-insight-body > p { padding-block: 7px 5px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .teacher-guangguang-panel, .teacher-guangguang-panel::after, .teacher-guangguang-panel *, .teacher-guangguang-trigger, .teacher-guangguang-scrim { animation: none !important; transition: none !important; }
+  }
+}

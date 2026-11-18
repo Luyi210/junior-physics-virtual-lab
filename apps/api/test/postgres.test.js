@@ -1,17 +1,17 @@
 import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 import { Readable } from "node:stream";
-import { newDb } from "pg-mem";
+import { createMemoryPostgres } from "./helpers/postgres-memory.js";
 import { createApiHandler } from "../src/app.js";
 import { loadConfig } from "../src/config.js";
 import { openPostgresDatabase } from "../src/database-postgres.js";
 
 let database;
 let handler;
+let pool;
 
 before(async () => {
-  const memoryPostgres = newDb();
-  const { Pool } = memoryPostgres.adapters.createPg();
+  ({ pool } = createMemoryPostgres());
   database = await openPostgresDatabase(loadConfig({
     databaseUrl: "postgresql://memory/test",
     tokenSecret: "postgres-test-secret",
@@ -21,12 +21,12 @@ before(async () => {
     bootstrapAdminName: "测试管理员",
     bootstrapAdminEmail: "admin@example.com",
     bootstrapAdminPassword: "PostgresTest123!"
-  }), { pool: new Pool() });
+  }), { pool });
   handler = createApiHandler({ db: database, config: loadConfig({ tokenSecret: "postgres-test-secret", allowedOrigins: ["https://example.onrender.com"] }) });
 });
 
 after(async () => {
-  await database.close();
+  try { await database?.close(); } finally { await pool?.end(); }
 });
 
 async function request(path, options = {}) {

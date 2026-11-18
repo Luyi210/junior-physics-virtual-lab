@@ -17,11 +17,17 @@
     "stop:platform": "node scripts/stop-platform.mjs",
     "smoke:platform": "node scripts/smoke-test-platform.mjs",
     "knowledge:evaluate": "node scripts/evaluate-rag.mjs",
-    "build": "npm run build --workspace @physics-lab/web && node scripts/prepare-sites-build.mjs",
+    "build": "npm run architecture:check && npm run build --workspace @physics-lab/web && node scripts/prepare-sites-build.mjs",
     "build:optics": "npm run build --workspace @physics-lab/optics-research",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
-    "verify": "npm run typecheck && npm test && npm run knowledge:evaluate && npm run build"
+    "test": "npm run test:workflow && npm run test --workspaces --if-present",
+    "test:workflow": "node --test scripts/test/*.test.mjs",
+    "verify": "npm run typecheck && npm test && npm run knowledge:evaluate && npm run build",
+    "quality:checkpoint": "node scripts/quality-checkpoint.mjs",
+    "db:backup": "node scripts/database-backup.mjs backup",
+    "db:verify-backup": "node scripts/database-backup.mjs verify",
+    "db:restore": "node scripts/database-backup.mjs restore",
+    "architecture:check": "node scripts/check-architecture.mjs"
   },
   "engines": {
     "node": ">=24 <25"

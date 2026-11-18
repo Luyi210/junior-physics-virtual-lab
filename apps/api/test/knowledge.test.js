@@ -93,6 +93,66 @@ test("retrieval moves from setup guidance to evidence reasoning when the apparat
   assert.equal(retrieval.results[0].contentType, "evidence");
 });
 
+test("an outstanding page warning takes priority over a ready flag when choosing the next step", () => {
+  const retrieval = retrievePhysicsKnowledge({
+    question: "下一步做什么？", audience: "student",
+    context: { module: "bench", apparatus: { current: {
+      module: "bench", origin: "learner", controls: [], apparatus: [],
+      readings: [{ id: "image", label: "理论像距", value: 30, unit: "cm", source: "model" }], derived: [],
+      validity: { ready: true, issues: ["光屏没有对焦"] }
+    } } }
+  });
+  assert.equal(retrieval.contextSummary.apparatusReady, true);
+  assert.equal(retrieval.contextSummary.evidenceStatus, "incomplete");
+  assert.equal(retrieval.contextSummary.stage, "collecting");
+  assert.equal(retrieval.plan.answerStrategy, "guided-next-step");
+  assert.deepEqual(retrieval.contextSummary.issues, ["光屏没有对焦"]);
+});
+
+test("retrieval retains source labels and distinguishes reported observations from verified measurements", () => {
+  const snapshot = (value) => ({
+    module: "bench", controls: [{ id: "distance", label: "物距", value, unit: "cm", source: "control" }],
+    apparatus: [{ id: "screen", label: "已放置光屏", value: true, source: "apparatus" }],
+    readings: [{ id: "screenDistance", label: "光屏位置", value: 30, unit: "cm", source: "reading" },
+      { id: "unknown", label: "未知项", value: 1, source: "toString" }],
+    derived: [{ id: "image", label: "理论像距", value: 30, unit: "cm", source: "model" }],
+    validity: { ready: true, issues: [] }
+  });
+  const retrieval = retrievePhysicsKnowledge({
+    question: "我的记录能说明什么？", audience: "student",
+    context: { module: "bench", apparatus: { current: snapshot(60), previous: snapshot(50) }, observations: [{ text: "我认为实像清晰" }] }
+  });
+  const summary = retrieval.contextSummary;
+  assert.equal(summary.provenance, "client-reported");
+  assert.match(summary.note, /未独立核验实测/);
+  assert.ok(summary.facts.includes("模型推导·理论像距:30cm"));
+  assert.ok(summary.facts.includes("页面读数·光屏位置:30cm"));
+  assert.ok(summary.facts.includes("装置状态·已放置光屏:是"));
+  assert.ok(summary.facts.includes("来源未标注·未知项:1"));
+  assert.deepEqual(summary.changes, ["控件设置·物距:50→60cm"]);
+  assert.deepEqual(summary.observations, ["我认为实像清晰"]);
+});
+
+test("retrieval ignores a current snapshot from another experiment and never compares across experiments", () => {
+  const current = {
+    module: "reflection", controls: [{ id: "distance", label: "另一个实验值", value: 10, source: "control" }],
+    validity: { ready: false, issues: ["另一个实验的提醒"] }
+  };
+  const mismatched = retrievePhysicsKnowledge({ question: "下一步做什么？", context: { module: "bench", apparatus: { current } } });
+  assert.equal(mismatched.contextSummary.module, "bench");
+  assert.equal(mismatched.contextSummary.evidenceStatus, "unknown");
+  assert.deepEqual(mismatched.contextSummary.facts, []);
+  assert.deepEqual(mismatched.contextSummary.issues, []);
+  const otherPrevious = retrievePhysicsKnowledge({
+    question: "刚才有什么变化？", context: { module: "bench", apparatus: {
+      previous: current,
+      current: { ...current, module: "bench", controls: [{ id: "distance", label: "物距", value: 20, source: "control" }], validity: { ready: true, issues: [] } }
+    } }
+  });
+  assert.deepEqual(otherPrevious.contextSummary.changes, []);
+  assert.deepEqual(otherPrevious.contextSummary.facts, ["控件设置·物距:20"]);
+});
+
 test("retrieval asks for missing context instead of guessing and prioritizes safety when needed", () => {
   const ambiguous = retrievePhysicsKnowledge({ question: "现在怎么办？", audience: "student" });
   assert.equal(ambiguous.plan.clarificationRequired, true);

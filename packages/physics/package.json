@@ -4,11 +4,16 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./high-school": "./src/highSchool/index.ts",
+    "./high-school/*": "./src/highSchool/*.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@physics-lab/contracts": "*"
   },
   "devDependencies": {
     "typescript": "^5.8.3",

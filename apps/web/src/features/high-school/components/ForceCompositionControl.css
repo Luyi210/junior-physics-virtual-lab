@@ -1,0 +1,51 @@
+@layer pages {
+  .hs-force-board { display: flex; flex-direction: column; width: 100%; height: auto; min-width: 0; background: #f7f5eb; }
+  .hs-force-handle-select { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; padding: 12px 12px 0; }
+  .hs-force-handle-select button { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 7px 12px; border: 1px solid #cdd6c0; border-radius: 4px; background: #fffdf5; color: #344e3b; font: inherit; font-size: 12px; cursor: pointer; }
+  .hs-force-handle-select button i { width: 7px; height: 7px; border-radius: 50%; background: var(--force-ink); }
+  .hs-force-handle-select button span { color: var(--force-ink); font-variant-numeric: tabular-nums; }
+  .hs-force-handle-select button[aria-pressed="true"] { border-color: var(--force-ink); box-shadow: inset 0 -2px var(--force-ink); }
+  .hs-force-handle-select button:focus-visible, .hs-force-control button:focus-visible { outline: 2px solid #b5663a; outline-offset: 3px; }
+  .hs-force-board .hs-diagram { flex: 0 0 auto; width: 100%; height: clamp(280px, 30vw, 380px); min-height: 0; touch-action: auto; user-select: none; }
+  .hs-force-board .hs-diagram .hs-force-grid path { stroke: #dbe1d2; stroke-width: 1; }
+  .hs-force-board .hs-diagram text { font-family: "PingFang SC", "Noto Sans CJK SC", sans-serif; fill: #69785f; font-size: 11px; }
+  .hs-force-board .hs-diagram text.hs-force-reference-label { fill: #263f32; font-weight: 600; }
+  .hs-force-board .hs-diagram .hs-force-handle { cursor: grab; outline: none; touch-action: none; }
+  .hs-force-board .hs-diagram .hs-force-handle:active { cursor: grabbing; }
+  .hs-force-board .hs-diagram .hs-force-handle:focus-visible .hs-force-handle-ring { stroke-width: 4; stroke-dasharray: 3 2; }
+  .hs-force-board .hs-diagram .hs-force-handle[aria-disabled="true"] { cursor: default; }
+  .hs-force-keyboard-help { flex: 0 0 auto; max-width: 76ch; margin: 0 auto; padding: 4px 16px 12px; color: #68775f; font-size: 10px; line-height: 1.65; }
+  .hs-force-control { padding: 23px 25px; border: 1px solid #d4ddc7; border-top: 0; background: #f9f6ec; }
+  .hs-force-control > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+  .hs-force-control h3 { margin: 6px 0 0; color: #294536; font: 500 23px/1.5 Georgia, "Noto Serif SC", serif; }
+  .hs-force-control > p { max-width: 75ch; margin: 14px 0 18px; color: #63715d; font-size: 12px; line-height: 1.85; }
+  .hs-force-residual { display: grid; flex-shrink: 0; gap: 4px; text-align: right; }
+  .hs-force-residual > span { color: #68775e; font-size: 10px; }
+  .hs-force-residual output { color: #a55630; font: 500 30px/1.2 Georgia, serif; font-variant-numeric: tabular-nums; }
+  .hs-force-residual small { font-size: 13px; }
+  .hs-force-presets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .hs-force-control button { min-height: 44px; border: 1px solid #cbd4bd; border-radius: 4px; background: #fffdf5; color: #36513c; font: inherit; cursor: pointer; }
+  .hs-force-control button:disabled { opacity: .5; cursor: default; }
+  .hs-force-presets button { display: grid; gap: 4px; padding: 11px 8px; text-align: left; }
+  .hs-force-presets strong { font-weight: 500; font-size: 15px; }
+  .hs-force-presets span { color: #78816a; font-size: 10px; line-height: 1.5; }
+  .hs-force-presets button[aria-pressed="true"] { border-color: #3c6347; background: #edf1e4; box-shadow: inset 0 -2px #3c6347; }
+  .hs-force-comparison { display: flex; align-items: center; gap: 13px; margin: 17px 0; padding: 13px 15px; border-left: 3px solid #b56b40; background: #f2ecde; }
+  .hs-force-comparison > span { color: #ad6339; font: 30px/1 Georgia, serif; }
+  .hs-force-comparison p { margin: 0; color: #5e604e; font-size: 12px; line-height: 1.7; }
+  .hs-force-comparison small { display: block; margin-top: 5px; color: #7b7a66; font-size: 10px; }
+  .hs-force-comparison.is-close { border-left-color: #426449; background: #eef1e4; }
+  .hs-force-comparison.is-close > span { color: #426449; }
+  .hs-force-control > footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; }
+  .hs-force-control > footer > span { color: #76816a; font-size: 10px; line-height: 1.7; }
+  .hs-force-control > footer button { display: inline-flex; justify-content: center; align-items: center; gap: 7px; padding: 8px 14px; border-color: #3c5f43; color: #fffaf0; background: #3c5f43; font-size: 12px; }
+  @media (max-width: 600px) {
+    .hs-force-control { padding: 19px 15px; }
+    .hs-force-control > header { flex-wrap: wrap; }
+    .hs-force-residual { text-align: left; }
+    .hs-force-presets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .hs-force-handle-select { gap: 5px; padding-inline: 7px; }
+    .hs-force-handle-select button { gap: 5px; padding: 6px 8px; font-size: 11px; }
+    .hs-force-keyboard-help { padding-inline: 12px; }
+  }
+}

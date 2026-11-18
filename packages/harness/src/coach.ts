@@ -1,6 +1,7 @@
 import type { HarnessApparatusContext, HarnessArea, HarnessSession } from "./types";
 import { diagnoseHarnessExperiment, getHarnessLearnerModel } from "./dialogue";
 import { findHarnessMisconception } from "./conceptGraph";
+import { countHarnessLearnerReasoning } from "./juniorEvidence";
 import { reviewHarnessConclusionText, reviewHarnessEvidenceText, reviewHarnessHypothesisText, reviewHarnessReasoningText, understandHarnessQuestion } from "./understanding";
 
 export type HarnessCoachTarget = "controls" | "visual" | "explanation";
@@ -78,10 +79,6 @@ const intentLabels = {
   application: "生活迁移", misconception: "概念辨析", summary: "实验小结", "direct-answer": "答案请求", unknown: "自由表达"
 } as const;
 
-function currentModuleReasoningTurns(session: HarnessSession, module: string) {
-  return (session.dialogue ?? []).filter((message) => message.module === module && message.role === "assistant" && (message.intent === "explain" || message.intent === "predict" || message.intent === "reflect")).length;
-}
-
 function historicalModuleEvents(session: HarnessSession, module: string) {
   let activeModule: string | undefined;
   return session.events.filter((event) => {
@@ -117,8 +114,8 @@ export function getHarnessKnowledgeMastery(session: HarnessSession, module: stri
   }
   const comparisons = [...controlValues.values()].filter((values) => values.size >= 2).length;
   const eventIds = new Set(events.map((event) => event.id));
-  const observations = session.observations.filter((observation) => observation.relatedEventId && eventIds.has(observation.relatedEventId)).length;
-  const reasoningTurns = currentModuleReasoningTurns(session, module);
+  const observations = session.observations.filter((observation) => observation.relatedEventId && eventIds.has(observation.relatedEventId) && !/^【.+探究小结】/.test(observation.text)).length;
+  const reasoningTurns = countHarnessLearnerReasoning(session, module, "history");
   const misconception = misconceptionMemory(session, module);
   const recurrence = visits >= 2 && observations > 0 ? 1 : 0;
   const score = Math.round(
@@ -130,20 +127,22 @@ export function getHarnessKnowledgeMastery(session: HarnessSession, module: stri
   );
   const evidenceCount = Math.min(5, (operations > 0 ? 1 : 0) + (comparisons > 0 ? 1 : 0) + (observations > 0 ? 1 : 0) + (reasoningTurns > 0 ? 1 : 0) + recurrence);
   const band: HarnessMasteryBand = score >= 80 ? "transfer" : score >= 55 ? "stable" : score >= 25 ? "forming" : "new";
-  const bandLabel = { new: "刚刚建立经验", forming: "证据正在形成", stable: "探究链较稳定", transfer: "可以尝试迁移" }[band];
+  const bandLabel = { new: "开始积累记录", forming: "继续补充线索", stable: "继续核对证据", transfer: "已记录多类线索" }[band];
   const signals = [
-    { ready: operations > 0, label: "真实操作" },
-    { ready: comparisons > 0, label: "公平对照" },
-    { ready: observations > 0, label: "观察记录" },
-    { ready: reasoningTurns > 0, label: "解释推理" },
-    { ready: recurrence > 0, label: "再次验证" }
+    { ready: operations > 0, label: "操作轨迹" },
+    { ready: comparisons > 0, label: "对照线索" },
+    { ready: observations > 0, label: "观察描述" },
+    { ready: reasoningTurns > 0, label: "本人解释尝试" },
+    { ready: recurrence > 0, label: "再次进入记录" }
   ];
-  const strength = signals.filter((signal) => signal.ready).map((signal) => signal.label).slice(-2).join("、") || "进入实验并开始探索";
+  const strength = `${signals.filter((signal) => signal.ready).map((signal) => signal.label).slice(-2).join("、") || "进入实验并开始探索"}；这些是活动线索，不认证结论或掌握程度`;
   const missing = signals.find((signal) => !signal.ready)?.label;
   const nextReview = misconception && misconception.count >= 2
     ? `先重新核验“${misconception.claim}”这个反复出现的判断`
     : missing ? `下一次优先补充${missing}证据` : "换一个情境检验规律是否仍成立";
-  const confidence = Math.min(.95, .3 + Math.min(10, operations + observations + reasoningTurns + visits) * .06);
+  // Kept under the existing contract field; this is category coverage, not a
+  // probability that the learner understands physics. Repeated clicks add none.
+  const confidence = evidenceCount / signals.length;
   return { score, band, bandLabel, confidence, evidenceCount, visits, operations, comparisons, observations, reasoningTurns, strength, nextReview, misconception };
 }
 
@@ -167,7 +166,7 @@ export function getHarnessReviewSchedule(session: HarnessSession, module: string
     elapsedDays,
     dueAt: new Date(dueTime).toISOString(),
     label: status === "due" ? "建议现在做一次无提示回忆" : `${Math.max(1, intervalDays - elapsedDays)} 天后再回访`,
-    reason: status === "due" ? `距离上次有效探究已约 ${elapsedDays} 天，先回忆证据再看提示。` : `依据当前证据阶段，暂定 ${intervalDays} 天回访一次。`,
+    reason: status === "due" ? `距离上次实验活动已约 ${elapsedDays} 天，先回忆证据再看提示。` : `依据当前记录类别，暂定 ${intervalDays} 天回访一次。`,
     prompt: "先不要给提示，请让我回忆这个实验的变量、证据和结论，再逐项检查。"
   };
 }
@@ -179,7 +178,7 @@ export function getHarnessCoachAlert(session: HarnessSession, module: string, ap
     id: `apparatus-${module}-${apparatusIssue}`,
     severity: "warning",
     eyebrow: "LIVE DIAGNOSIS / 装置实时诊断",
-    title: "当前装置还不具备有效读数条件",
+    title: "当前页面有一项待核对提示",
     message: apparatusIssue,
     prompt: "结合当前装置告诉我哪里还没准备好？",
     actionLabel: "请光光逐项排查",
@@ -219,13 +218,13 @@ export function getHarnessCoachAlert(session: HarnessSession, module: string, ap
     prompt: "根据当前实验告诉我第一步操作什么？",
     actionLabel: "生成第一步",
     target: "controls",
-    evidence: "当前实验尚未检测到有效操作"
+    evidence: "当前实验尚未检测到操作记录"
   };
   if (!diagnosis.comparisonReady) return {
     id: `compare-${module}-${diagnosis.operationCount}`,
     severity: diagnosis.activeControls.length > 1 ? "warning" : "notice",
     eyebrow: "CONTROL CHECK / 控制变量诊断",
-    title: diagnosis.activeControls.length > 1 ? "操作过多个条件，但还没形成公平对照" : "已经有第一组，还缺少可比较的第二组",
+    title: diagnosis.activeControls.length > 1 ? "操作过多个条件，请先核对完整对照条件" : "已有操作轨迹，还需核对两组条件与现象",
     message: diagnosis.nextMove,
     prompt: "怎样用我刚才的操作补一组公平对照？",
     actionLabel: "设计第二组",
@@ -236,19 +235,19 @@ export function getHarnessCoachAlert(session: HarnessSession, module: string, ap
     id: `evidence-${module}-${diagnosis.operationCount}`,
     severity: "notice",
     eyebrow: "EVIDENCE GATE / 证据缺口",
-    title: "两组条件已经形成，现在要把差异写具体",
-    message: "不要只写“变了”或“成功了”；记录两组条件以及对应的数值、方向、状态或曲线差异。",
+    title: "已有不同取值，先核对条件再记录现象",
+    message: "先确认其他条件相同，再记录两组条件及对应的数值、方向、状态或曲线差异；操作轨迹不能代替观察。",
     prompt: "根据当前实验告诉我应该记录哪些直接证据？",
     actionLabel: "检查证据项",
     target: "visual",
-    evidence: "已形成对比，但当前实验还没有学生观察记录"
+    evidence: "同一控制项出现不同取值，但当前实验还没有学生观察记录"
   };
-  if (currentModuleReasoningTurns(session, module) === 0) return {
+  if (countHarnessLearnerReasoning(session, module) === 0) return {
     id: `reason-${module}-${diagnosis.observationCount}`,
     severity: "notice",
     eyebrow: "REASONING LINK / 推理连接",
-    title: "你已经留下证据，还差“证据为什么支持规律”",
-    message: "把直接观察和物理解释分开，再用“因为……所以……”连接；光光会检查中间是否跳步。",
+    title: "已有观察描述，试着用自己的话解释",
+    message: "把直接观察和物理解释分开，再用“因为……所以……”连接；阅读助手答案不算本人解释，句子结构完整也不代表结论正确。",
     prompt: "帮我检查我的观察为什么可能支持当前规律？",
     actionLabel: "检查推理链",
     target: "explanation",
@@ -258,12 +257,12 @@ export function getHarnessCoachAlert(session: HarnessSession, module: string, ap
     id: `ready-${module}-${diagnosis.observationCount}`,
     severity: "ready",
     eyebrow: "TRANSFER READY / 可继续挑战",
-    title: "本轮已具备操作、对比、证据与解释",
-    message: "可以复现实验、寻找反例，或把规律迁移到一个生活科技情境中。",
+    title: "已有观察和本人解释尝试，继续核验",
+    message: "完整对照与解释内容仍需核验。可以复现实验、寻找反例，再尝试联系生活科技情境。",
     prompt: "根据我的记录给我一个迁移挑战，不要直接给答案。",
     actionLabel: "生成迁移挑战",
     target: "visual",
-    evidence: "依据当前完整探究链判断"
+    evidence: "依据当前操作、观察描述与本人解释结构线索，不认证完成或掌握"
   };
 }
 

@@ -10,3 +10,6 @@ apps/api/data/*.sqlite*
 apps/api/data/backups/
 .runtime/
 tmp/
+docs/presentation/**/.build/
+docs/DEMO_ACCOUNTS.md
+**/.~*

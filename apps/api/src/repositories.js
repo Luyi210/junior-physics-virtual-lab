@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { getClassroomExperiment } from "@physics-lab/knowledge/classroom";
 import { ApiError } from "./http.js";
 import { hashPassword } from "./security.js";
 
@@ -150,6 +151,7 @@ export async function listLessons(db, user) {
 }
 
 export async function createLesson(db, user, input) {
+  requireClassroomExperiment(input.experimentId);
   const id = randomUUID();
   const now = new Date().toISOString();
   await db.run(`INSERT INTO lessons (id, school_id, created_by, experiment_id, title, objective, inquiry_question, prediction_prompt, controlled_variable, evidence_requirement, reflection_prompt, duration_minutes, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -166,9 +168,11 @@ export async function listTasks(db, user, classId) {
 }
 
 export async function createTask(db, user, input) {
-  await getClass(db, input.classId, user.schoolId);
-  const lesson = await db.get("SELECT id FROM lessons WHERE id=? AND school_id=?", [input.lessonId, user.schoolId]);
+  const classItem = await getClass(db, input.classId, user.schoolId);
+  requireTaskClassOwner(user, classItem.createdBy);
+  const lesson = await db.get("SELECT id, experiment_id FROM lessons WHERE id=? AND school_id=?", [input.lessonId, user.schoolId]);
   if (!lesson) throw new ApiError(404, "LESSON_NOT_FOUND", "没有找到这份课例");
+  requireClassroomExperiment(lesson.experiment_id);
   const id = randomUUID();
   const now = new Date().toISOString();
   await db.run(`INSERT INTO tasks (id, school_id, class_id, lesson_id, title, mode, status, opens_at, due_at, allow_retry, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -177,6 +181,9 @@ export async function createTask(db, user, input) {
 }
 
 export async function updateTaskStatus(db, user, taskId, status) {
+  const task = await db.get("SELECT c.created_by class_owner FROM tasks t JOIN classes c ON c.id=t.class_id WHERE t.id=? AND t.school_id=? AND c.school_id=?", [taskId, user.schoolId, user.schoolId]);
+  if (!task) throw new ApiError(404, "TASK_NOT_FOUND", "没有找到这个教学任务");
+  requireTaskClassOwner(user, task.class_owner);
   const result = await db.run("UPDATE tasks SET status=?, updated_at=? WHERE id=? AND school_id=?", [status, new Date().toISOString(), taskId, user.schoolId]);
   if (!result.changes) throw new ApiError(404, "TASK_NOT_FOUND", "没有找到这个教学任务");
   return (await listTasks(db, user, null)).find((item) => item.id === taskId);
@@ -190,7 +197,30 @@ export async function getStudentTaskLesson(db, user, taskId) {
   return { title: row.title, objective: row.objective, inquiryQuestion: row.inquiry_question, predictionPrompt: row.prediction_prompt, controlledVariable: row.controlled_variable, evidenceRequirement: row.evidence_requirement, reflectionPrompt: row.reflection_prompt };
 }
 
+const sessionStarts = new WeakMap();
+
 export async function createSession(db, user, input) {
+  // Keep one in-process start per learner/task. The database checks below also
+  // protect separate connections; this queue alone is not a cross-server lock.
+  let starts = sessionStarts.get(db);
+  if (!starts) { starts = new Map(); sessionStarts.set(db, starts); }
+  const key = JSON.stringify([user.schoolId, input.taskId, user.id]);
+  const previous = starts.get(key) ?? Promise.resolve();
+  const pending = previous.catch(() => undefined).then(() => {
+    if (db.dialect !== "postgresql") return createSessionAfterLock(db, user, input);
+    return db.transaction(async (transaction) => {
+      // PostgreSQL workers serialize starts for this task on its existing row.
+      // Re-read permissions, dates and attempts only after acquiring the lock.
+      await transaction.get("SELECT id FROM tasks WHERE id=? AND school_id=? FOR UPDATE", [input.taskId, user.schoolId]);
+      return createSessionAfterLock(transaction, user, input);
+    });
+  });
+  starts.set(key, pending);
+  try { return await pending; }
+  finally { if (starts.get(key) === pending) starts.delete(key); }
+}
+
+async function createSessionAfterLock(db, user, input) {
   const task = await db.get("SELECT t.*, l.experiment_id FROM tasks t JOIN lessons l ON l.id=t.lesson_id JOIN class_members cm ON cm.class_id=t.class_id WHERE t.id=? AND t.school_id=? AND t.status='published' AND cm.user_id=?", [input.taskId, user.schoolId, user.id]);
   if (!task) throw new ApiError(403, "TASK_NOT_AVAILABLE", "这个任务未发布或不属于当前学生");
   const nowMs = Date.now();
@@ -198,12 +228,36 @@ export async function createSession(db, user, input) {
   if (task.due_at && new Date(task.due_at).getTime() < nowMs) throw new ApiError(403, "TASK_EXPIRED", "这个实验任务已经截止");
   const existing = await db.get("SELECT * FROM sessions WHERE task_id=? AND learner_id=? AND status='active'", [input.taskId, user.id]);
   if (existing) return mapSession(existing);
+  // Existing sessions remain readable/resumable; only new classroom work needs
+  // an experiment currently supported by the shared classroom catalogue.
+  requireClassroomExperiment(task.experiment_id);
   const completed = await db.get("SELECT id FROM sessions WHERE task_id=? AND learner_id=? AND status='completed' LIMIT 1", [input.taskId, user.id]);
   if (completed && !task.allow_retry) throw new ApiError(409, "TASK_ALREADY_COMPLETED", "这个任务已经完成，教师未开启重复探究");
   const id = randomUUID();
   const now = new Date().toISOString();
-  await db.run("INSERT INTO sessions (id, school_id, task_id, class_id, learner_id, experiment_id, status, started_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, 'active', ?, ?)", [id, user.schoolId, input.taskId, task.class_id, user.id, task.experiment_id, now, now]);
-  return mapSession(await db.get("SELECT * FROM sessions WHERE id=?", [id]));
+  // SQLite serializes writers for this single statement, including when they
+  // use independent connections. Check both active and retry-disabled completed
+  // attempts at insertion time rather than relying on the earlier SELECT.
+  await db.run(`INSERT INTO sessions (id, school_id, task_id, class_id, learner_id, experiment_id, status, started_at, updated_at)
+    SELECT ?, ?, ?, ?, ?, ?, 'active', ?, ? WHERE NOT EXISTS (
+      SELECT 1 FROM sessions WHERE task_id=? AND learner_id=? AND (status='active' OR (?=0 AND status='completed'))
+    )`, [id, user.schoolId, input.taskId, task.class_id, user.id, task.experiment_id, now, now, input.taskId, user.id, task.allow_retry ? 1 : 0]);
+  const created = await db.get("SELECT * FROM sessions WHERE id=?", [id]);
+  if (created) return mapSession(created);
+  const winner = await db.get("SELECT * FROM sessions WHERE task_id=? AND learner_id=? AND status='active'", [input.taskId, user.id]);
+  if (winner) return mapSession(winner);
+  if (!task.allow_retry && await db.get("SELECT id FROM sessions WHERE task_id=? AND learner_id=? AND status='completed' LIMIT 1", [input.taskId, user.id])) {
+    throw new ApiError(409, "TASK_ALREADY_COMPLETED", "这个任务已经完成，教师未开启重复探究");
+  }
+  throw new ApiError(409, "SESSION_START_CONFLICT", "课堂会话状态刚刚发生变化，请重新开始任务");
+}
+
+function requireClassroomExperiment(experimentId) {
+  if (!getClassroomExperiment(experimentId)) throw new ApiError(422, "EXPERIMENT_NOT_AVAILABLE", "这个实验尚未开放课堂任务，请选择已开放的实验");
+}
+
+function requireTaskClassOwner(user, classOwner) {
+  if (user.role === "teacher" && classOwner !== user.id) throw new ApiError(403, "TASK_FORBIDDEN", "教师只能管理自己班级的教学任务");
 }
 
 function mapSession(row) {

@@ -1,0 +1,11 @@
+@layer pages {
+  .hs-classroom-panel { padding: 24px 28px; margin: 0 0 24px; border: 1px solid #c7d1bd; border-left: 4px solid #375d43; border-radius: 8px; background: #f5f6ec; color: #304b38; }
+  .hs-classroom-panel header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .hs-classroom-panel h2 { margin: 7px 0; font-size: 22px; }
+  .hs-classroom-panel p { font-size: 13px; line-height: 1.8; color: #596e59; }
+  .hs-classroom-panel dl { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; margin: 20px 0; }
+  .hs-classroom-panel dt { color: #9b5e35; font-size: 11px; margin-bottom: 6px; }
+  .hs-classroom-panel dd { margin: 0; font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
+  .hs-classroom-back { margin-left: 18px; font-size: 12px; color: #446747; text-decoration: underline; text-underline-offset: 4px; }
+  @media (max-width: 600px) { .hs-classroom-panel { padding: 20px 16px; } .hs-classroom-panel dl { grid-template-columns: 1fr; } .hs-classroom-back { display: inline-block; margin: 14px 0 0; } }
+}

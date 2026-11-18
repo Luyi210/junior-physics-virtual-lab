@@ -1,17 +1,18 @@
 import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
+import { spawnSync } from "node:child_process";
 import { Readable } from "node:stream";
-import { loadConfig } from "../src/config.js";
 import { openDatabase } from "../src/database.js";
 import { createApiHandler } from "../src/app.js";
 import { guangguangRoutingHints } from "../src/guangguang.js";
+import { isolatedSqliteConfig } from "./helpers/isolated-config.js";
 
 let db;
 let handler;
 const guangguangRequests = [];
 
 before(async () => {
-  const config = loadConfig({ databasePath: ":memory:", tokenSecret: "test-secret", allowedOrigins: ["http://127.0.0.1:5173"] });
+  const config = isolatedSqliteConfig();
   db = await openDatabase(config);
   handler = createApiHandler({
     db,
@@ -27,7 +28,7 @@ before(async () => {
 });
 
 after(async () => {
-  await db.close();
+  await db?.close();
 });
 
 async function request(path, options = {}) {
@@ -85,9 +86,44 @@ test("Guangguang routes complex questions through a bounded specialist team", ()
   );
 });
 
+test("SQLite fixtures remain isolated under inherited production database and AI settings", () => {
+  // A separate process avoids mutating any other test's environment or reading real deployment values.
+  const source = `
+    import assert from "node:assert/strict";
+    import { openDatabase } from ${JSON.stringify(new URL("../src/database.js", import.meta.url).href)};
+    import { isolatedSqliteConfig } from ${JSON.stringify(new URL("./helpers/isolated-config.js", import.meta.url).href)};
+    const config = isolatedSqliteConfig();
+    assert.equal(config.databaseUrl, "");
+    assert.equal(config.databasePath, ":memory:");
+    assert.equal(config.seedDemoData, true);
+    assert.equal(config.deepseekApiKey, "");
+    assert.equal(config.siliconflowApiKey, "");
+    assert.equal(config.guangguangEnabled, false);
+    assert.equal(config.liliEnabled, false);
+    assert.equal(config.vectorRagEnabled, false);
+    const db = await openDatabase(config);
+    try {
+      assert.equal(db.dialect, "sqlite");
+      assert.equal((await db.all("PRAGMA database_list"))[0].file, "");
+      assert.equal((await db.all("SELECT id FROM users WHERE school_id = 'school-demo'")).length, 12);
+    } finally { await db.close(); }
+  `;
+  const child = spawnSync(process.execPath, ["--input-type=module", "--eval", source], {
+    encoding: "utf8", timeout: 15_000,
+    env: {
+      DATABASE_URL: "postgresql://127.0.0.1:1/not-a-real-database",
+      PHYSICS_API_DATABASE: "/must-not-write/test.sqlite",
+      NODE_ENV: "production", RENDER: "true", PHYSICS_API_SEED_DEMO: "false",
+      DEEPSEEK_API_KEY: "fake-environment-key", SILICONFLOW_API_KEY: "fake-environment-key",
+      PHYSICS_GUANGGUANG_AI_ENABLED: "true", PHYSICS_LILI_AI_ENABLED: "true", PHYSICS_VECTOR_RAG_ENABLED: "true"
+    }
+  });
+  assert.equal(child.error, undefined);
+  assert.equal(child.status, 0, child.stderr);
+});
+
 test("production bootstrap creates only the configured administrator", async () => {
-  const productionDb = await openDatabase(loadConfig({
-    databasePath: ":memory:",
+  const productionDb = await openDatabase(isolatedSqliteConfig({
     tokenSecret: "production-test-secret",
     allowedOrigins: ["https://example.onrender.com"],
     seedDemoData: false,
@@ -96,13 +132,14 @@ test("production bootstrap creates only the configured administrator", async () 
     bootstrapAdminEmail: "OWNER@EXAMPLE.COM",
     bootstrapAdminPassword: "Production12345!"
   }));
-  const users = await productionDb.all("SELECT email, name, role, password_hash FROM users ORDER BY email");
-  assert.equal(users.length, 1);
-  assert.equal(users[0].email, "owner@example.com");
-  assert.equal(users[0].name, "首位管理员");
-  assert.equal(users[0].role, "admin");
-  assert.doesNotMatch(users[0].password_hash, /Production12345/);
-  await productionDb.close();
+  try {
+    const users = await productionDb.all("SELECT email, name, role, password_hash FROM users ORDER BY email");
+    assert.equal(users.length, 1);
+    assert.equal(users[0].email, "owner@example.com");
+    assert.equal(users[0].name, "首位管理员");
+    assert.equal(users[0].role, "admin");
+    assert.doesNotMatch(users[0].password_hash, /Production12345/);
+  } finally { await productionDb.close(); }
 });
 
 test("protected endpoints require a valid token", async () => {

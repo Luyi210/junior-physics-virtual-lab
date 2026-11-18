@@ -10,6 +10,10 @@ import type {
   HarnessValue
 } from "./types";
 import { answerFromHarnessApparatus, summarizeHarnessApparatus } from "./apparatusState";
+import { createHarnessApparatusCheck, isHarnessApparatusCheckQuestion } from "./juniorTroubleshooting";
+import { explicitJuniorHint, resolveHarnessFollowUp } from "./juniorFollowUp";
+import { createHarnessNextStep, createHarnessPlainExplanation, isHarnessNextStepQuestion } from "./juniorCoaching";
+import { countHarnessLearnerReasoning } from "./juniorEvidence";
 import { findHarnessMisconception, getHarnessConceptNode } from "./conceptGraph";
 import { reviewHarnessConclusionText, reviewHarnessEvidenceText, reviewHarnessHypothesisText, reviewHarnessReasoningText, understandHarnessQuestion } from "./understanding";
 
@@ -53,19 +57,19 @@ const moduleProfiles: Record<string, Partial<ModuleProfile> & Pick<ModuleProfile
   "sound-features": { title: "声音三要素", focus: "波形的高度、疏密与声音特性的对应关系", principle: "振幅主要影响响度，频率主要影响音调", action: "固定振幅改变频率，再反过来操作" },
   "sound-noise": { title: "噪声的产生与控制", focus: "接收处声级随声源和衰减量怎样变化", principle: "控制噪声可以从声源、传播途中和接收端入手", action: "固定声源处声级，只改变一种控制措施的等效衰减量" },
   "sound-echo": { title: "回声测距", focus: "声速、往返时间与目标距离", principle: "回声走过往返路程，目标距离等于声速乘往返时间的一半", action: "固定介质声速，只改变回声往返时间" },
-  "mechanics-speed": { title: "运动与速度", focus: "路程、时间和平均速度的对应关系", principle: "平均速度等于通过的路程除以所用时间", action: "先固定路程改变时间，再固定时间改变路程" },
+  "mechanics-speed": { title: "运动与速度", focus: "固定路程下，轨道高度与光电门计时、平均速度的对应关系", principle: "区间平均速度等于光电门间路程除以通过该区间的时间", action: "先设定光电门间路程1.2 m、轨道高度0.1 m；安装起点门和终点门，把小车放到起点，从静止释放并保存计时。保持路程不变，只把轨道高度从0.1 m改为0.2 m，重新安装光电门、小车就位后释放并保存；时间是测量结果，不能直接设定", compare: "保持光电门间路程和同一小车不变，每次从静止释放；只改变轨道高度至少0.1 m，保存两组路程s、高度h、计时t和平均速度s/t。时间是测量结果，不能独立设定；只改变路程不计入高度对照" },
   "mechanics-friction": { title: "滑动摩擦力", focus: "匀速拉动时测力计示数随压力和接触面怎样变化", principle: "水平匀速时拉力与滑动摩擦力平衡", action: "保持接触面不变改变压力，再换接触面进行比较" },
   "mechanics-lever": { title: "杠杆平衡", focus: "左右两侧力与力臂的乘积", principle: "杠杆平衡时动力乘动力臂等于阻力乘阻力臂", action: "只移动一侧钩码，观察哪一端下沉" },
   "mechanics-pressure": { title: "压力作用效果与压强", focus: "压力和受力面积共同决定的压强", principle: "压强等于压力除以受力面积", action: "先固定受力面积改变压力，再固定压力改变受力面积" },
-  "mechanics-buoyancy": { title: "浮力与浮沉", focus: "物体平均密度与液体密度的大小关系", principle: "自由浸没物体的浮沉取决于浮力与重力的关系", action: "保持物体不变更换液体，再保持液体不变改变物体平均密度" },
+  "mechanics-buoyancy": { title: "称重法测浮力", focus: "同一物体在空气中和液体中的测力计示数差", principle: "物体静止悬挂且不碰底时，浮力等于重力减去液中拉力", action: "先记录空气中重力G，再完全浸没且不碰底记录F′；保持物体不变，只更换液体比较G−F′", compare: "保持同一物体，正式读数时完全浸没、静止且不碰底；只更换液体，比较各组G−F′，不要把碰底时的示数作为正式读数" },
   "circuit-basic": { title: "串联与并联电路", focus: "开关闭合后电流有几条完整路径", principle: "串联只有一条电流路径，并联有多条支路", action: "先闭合开关，再保持电阻不变切换连接方式" },
   "circuit-ohm": { title: "欧姆定律", focus: "电流随电压或电阻变化的方向", principle: "同一导体中电流与电压成正比、与电阻成反比", action: "固定电阻改变电压，再固定电压改变电阻" },
-  "circuit-power": { title: "电功率", focus: "电压、电流与电流做功快慢", principle: "用电器的实际电功率等于其两端电压与通过电流的乘积", action: "固定电压改变电流，再用相同时间比较电能" },
+  "circuit-power": { title: "电功率", focus: "同一用电器的电压—功率、时间—电能两类对照", principle: "实际功率P=UI；条件恒定时，消耗电能W=Pt", action: "先断开开关，接入串联电流表、并联电压表和电能计时器。固定同一用电器，先测6 V、30 s并保存完成快照，再测4.5 V、30 s比较功率，最后测6 V、60 s与基准比较电能；每轮调整前断开，计时结束后保存。完成两类对照后，选择7.5 V只观察保护锁定，再恢复6 V或更低", compare: "两类对照都保持同一用电器：固定工作时间，只改变安全电压至少1.5 V比较功率；固定电压，只改变工作时间至少10 s比较电能。电流是读数，不能独立设定；只换用电器不计入核心对照。计时结束后保存完成快照，断电后的实时零读数不替代该组测量；最后观察7.5 V保护锁定并恢复安全电压" },
   "circuit-magnet": { title: "电流的磁效应", focus: "线圈匝数和电流改变时磁性强弱的趋势", principle: "其他条件相同时，匝数增加或电流增大通常会增强电磁铁磁性", action: "固定铁芯和匝数改变电流，再固定电流改变匝数" },
   "thermal-thermometer": { title: "温度计的使用", focus: "量程、分度值和液柱末端的读数", principle: "测温前要看量程和分度值，读数时视线与液柱末端相平", action: "先判断量程和分度值，再读取液柱末端位置" },
-  "thermal-boiling": { title: "观察水的沸腾", focus: "达到沸点前后温度曲线的斜率", principle: "水沸腾时继续吸热，但温度保持在沸点附近", action: "启动加热并连续观察曲线直到出现平台" },
+  "thermal-boiling": { title: "观察水的沸腾", focus: "升温段、沸腾平台与不同气压下的沸点", principle: "气压稳定时水沸腾仍吸热，温度保持在对应沸点附近", action: "记录升温点和相隔至少10秒的平台点，保存曲线；保持水量和功率不变，更换气压完成第二条曲线", compare: "保持水量、加热功率和初温不变，只更换气压至少相差20 kPa的环境；每轮保存升温段和沸腾平台，再比较两种气压下的沸点" },
   "thermal-melting": { title: "冰的熔化", focus: "固态、熔化和液态阶段的温度变化", principle: "晶体熔化时继续吸热，但温度保持在熔点附近", action: "连续观察升温段和熔化平台，不只读取一个时刻" },
-  "thermal-evaporation": { title: "影响蒸发快慢的因素", focus: "温度、表面积和空气流动对蒸发快慢的影响", principle: "温度升高、表面积增大或空气流动加快通常会加快蒸发", action: "固定表面积，只比较温度或空气流动中的一个变量" },
+  "thermal-evaporation": { title: "影响蒸发快慢的因素", focus: "温度、表面积和空气流动对蒸发快慢的影响", principle: "温度升高、表面积增大或空气流动加快通常会加快蒸发", action: "温度、液面面积、空气流动中只改变一个，记录失重和计时时长；同时间比较失重，不同时长先换算g/min", compare: "统一使用50 g水样，每次只改变温度、液面面积、空气流动中的一个，其余两个保持不变；分别保存三因素的对照，同时间比较失重，不同时长先换算平均g/min" },
   "measurement-balance": { title: "托盘天平测质量", focus: "调平、砝码、游码和指针位置", principle: "平衡时物体质量等于砝码总质量与游码示数之和", action: "先空载归零调平，再由大到小加砝码并用游码微调" },
   "measurement-mass-volume": { title: "质量与体积的关系", focus: "同种材料的质量、总体积及二者比值", principle: "同种物质在状态不变时质量与体积成正比，质量体积比保持不变", action: "改变样品总体积，记录对应质量并比较比值" },
   "measurement-density": { title: "测量固体密度", focus: "天平质量与量筒前后体积差", principle: "密度等于质量除以体积", action: "先选样品称量，再完全浸没读取排水体积" },
@@ -161,16 +165,32 @@ function currentModuleEvents(session: HarnessSession, module: string): HarnessEv
   let entryIndex = -1;
   for (let index = session.events.length - 1; index >= 0; index -= 1) {
     const event = session.events[index];
-    if (event?.type === "module.entered" && event.payload.module === module) {
+    if (event?.type === "module.entered") {
+      if (event.payload.module !== module) return [];
       entryIndex = index;
       break;
     }
   }
-  return entryIndex < 0 ? session.events : session.events.slice(entryIndex + 1);
+  return (entryIndex < 0 ? session.events : session.events.slice(entryIndex + 1))
+    .filter((event) => !event.payload.module || event.payload.module === module);
 }
 
 function currentModuleEntryTime(session: HarnessSession, module: string): string | undefined {
   return [...session.events].reverse().find((event) => event.type === "module.entered" && event.payload.module === module)?.occurredAt;
+}
+
+function currentModuleObservations(session: HarnessSession, module: string) {
+  let lastEntryIndex = -1;
+  session.events.forEach((event, index) => { if (event.type === "module.entered") lastEntryIndex = index; });
+  const lastEntry = session.events[lastEntryIndex];
+  if (lastEntry && lastEntry.payload.module !== module) return [];
+  return session.observations.filter((observation) => {
+    if (isGeneratedSummary(observation.text) || (lastEntry && observation.createdAt < lastEntry.occurredAt)) return false;
+    if (!observation.relatedEventId) return true;
+    const relatedIndex = session.events.findIndex((event) => event.id === observation.relatedEventId);
+    const related = session.events[relatedIndex];
+    return relatedIndex >= lastEntryIndex && (!related?.payload.module || related.payload.module === module);
+  });
 }
 
 function eventControl(event: HarnessEvent): string {
@@ -200,40 +220,41 @@ export function diagnoseHarnessExperiment(session: HarnessSession, module: strin
       controls.set(name, values);
     });
   const activeControls = [...controls.keys()].slice(-3);
-  const comparisonReady = [...controls.values()].some((values) => values.size >= 2);
-  const entryTime = currentModuleEntryTime(session, module);
-  const observationCount = session.observations.filter((observation) => (!entryTime || observation.createdAt >= entryTime) && !isGeneratedSummary(observation.text)).length;
+  // An operation log does not reconstruct full experimental groups. Treat even
+  // repeated values of one control only as a comparison cue, never proof.
+  const comparisonReady = controls.size === 1 && [...controls.values()].some((values) => values.size >= 2);
+  const observationCount = currentModuleObservations(session, module).length;
   const progress = Math.min(4, (operations.length > 0 ? 1 : 0) + (comparisonReady ? 1 : 0) + (operations.length >= 4 ? 1 : 0) + (observationCount > 0 ? 1 : 0));
   const stage = observationCount > 0 ? "evidence" : comparisonReady ? "comparing" : operations.length > 0 ? "exploring" : "orientation";
-  const stageLabels = { orientation: "准备提问", exploring: "正在操作", comparing: "形成对比", evidence: "整理证据" } as const;
+  const stageLabels = { orientation: "准备提问", exploring: "正在操作", comparing: "核对对照条件", evidence: "整理证据" } as const;
   const latest = operations.at(-1);
   const summary = latest
     ? `最近一次操作：${eventControl(latest)} → ${eventReading(latest)}。`
     : "当前实验还没有操作记录。";
   let nextMove = "先提出一个可以通过装置检验的问题，再改变一个条件。";
-  if (operations.length > 0 && activeControls.length > 1 && !comparisonReady) nextMove = `你连续改变了${activeControls.join("、")}；下一轮请固定其中两个，只改变一个。`;
+  if (operations.length > 0 && activeControls.length > 1 && !comparisonReady) nextMove = `记录中出现${activeControls.join("、")}等不同控制项；仅凭操作记录还不能确认单变量对照，请核对每组完整条件。`;
   else if (operations.length > 0 && !comparisonReady) nextMove = `再给“${activeControls[0] ?? "同一个条件"}”设置一个不同取值，形成可比较的两组现象。`;
-  else if (comparisonReady && observationCount === 0) nextMove = "已经形成两组条件，请记录具体读数、方向或状态差异。";
+  else if (comparisonReady && observationCount === 0) nextMove = "已尝试同一条件的不同取值；请核对其他条件保持不变，再记录可比较的实际观察。";
   else if (observationCount > 0) nextMove = "已有观察记录，可以用另一组条件复现，或寻找一个反例。";
   return { stage, stageLabel: stageLabels[stage], progress, operationCount: operations.length, activeControls, comparisonReady, observationCount, summary, nextMove };
 }
 
 export function getHarnessLearnerModel(session: HarnessSession, module: string): HarnessLearnerModel {
   const diagnosis = diagnoseHarnessExperiment(session, module);
-  const reasoningTurns = (session.dialogue ?? []).filter((message) => message.module === module && message.role === "assistant" && (message.intent === "explain" || message.intent === "predict" || message.intent === "reflect")).length;
+  const reasoningTurns = countHarnessLearnerReasoning(session, module);
   const dimensions: HarnessLearnerDimension[] = [
-    { id: "operation", label: "主动操作", score: Math.min(100, diagnosis.operationCount * 24), note: diagnosis.operationCount > 0 ? `已完成 ${diagnosis.operationCount} 次有效操作` : "还没有亲手改变实验条件" },
-    { id: "comparison", label: "公平对比", score: diagnosis.comparisonReady ? (diagnosis.activeControls.length <= 1 ? 100 : 78) : Math.min(45, diagnosis.operationCount * 12), note: diagnosis.comparisonReady ? "已经形成至少两组可比较条件" : "还需要让同一个条件出现不同取值" },
-    { id: "evidence", label: "证据记录", score: Math.min(100, diagnosis.observationCount * 50), note: diagnosis.observationCount > 0 ? `已保存 ${diagnosis.observationCount} 条观察` : "还没有写下读数或现象" },
-    { id: "reasoning", label: "解释反思", score: Math.min(100, reasoningTurns * 34), note: reasoningTurns > 0 ? `已进行 ${reasoningTurns} 次预测、解释或反思` : "还没有用证据解释规律" }
+    { id: "operation", label: "操作记录", score: Math.min(80, diagnosis.operationCount * 20), note: diagnosis.operationCount > 0 ? `记录到 ${diagnosis.operationCount} 次页面操作；不代表操作正确或已经掌握` : "还没有当前实验的操作记录" },
+    { id: "comparison", label: "对照线索", score: diagnosis.comparisonReady ? 60 : 0, note: diagnosis.comparisonReady ? "同一控制项有不同取值；仍需核对完整条件与实际现象" : "还没有可核对的单变量对照线索" },
+    { id: "evidence", label: "证据记录", score: Math.min(80, diagnosis.observationCount * 40), note: diagnosis.observationCount > 0 ? `已保存 ${diagnosis.observationCount} 条观察描述；内容仍需核验` : "还没有写下读数或现象" },
+    { id: "reasoning", label: "解释尝试", score: Math.min(80, reasoningTurns * 40), note: reasoningTurns > 0 ? `有 ${reasoningTurns} 条本人解释包含证据、因果与条件；结构检查不判断物理正确性` : "还没有包含证据、因果和条件的本人解释；阅读助手答案不计入" }
   ];
   const overall = Math.round(dimensions.reduce((sum, item) => sum + item.score, 0) / dimensions.length);
-  const levels: Pick<HarnessLearnerModel, "level" | "levelLabel"> = overall >= 78
-    ? { level: "explainer", levelLabel: "物理解释者" }
-    : overall >= 58 ? { level: "investigator", levelLabel: "证据探究者" }
-      : overall >= 36 ? { level: "comparer", levelLabel: "条件比较者" }
-        : overall >= 15 ? { level: "observer", levelLabel: "现象观察者" }
-          : { level: "starter", levelLabel: "问题发现者" };
+  const levels: Pick<HarnessLearnerModel, "level" | "levelLabel"> = overall >= 70
+    ? { level: "explainer", levelLabel: "继续核对解释" }
+    : overall >= 58 ? { level: "investigator", levelLabel: "继续核对证据" }
+      : overall >= 36 ? { level: "comparer", levelLabel: "继续核对条件" }
+        : overall >= 15 ? { level: "observer", levelLabel: "继续记录现象" }
+          : { level: "starter", levelLabel: "从一个问题开始" };
   const strongest = [...dimensions].sort((a, b) => b.score - a.score)[0];
   const weakest = [...dimensions].sort((a, b) => a.score - b.score)[0];
   const challenges: Record<HarnessLearnerDimension["id"], string> = {
@@ -246,7 +267,7 @@ export function getHarnessLearnerModel(session: HarnessSession, module: string):
     ...levels,
     overall,
     dimensions,
-    strength: strongest && strongest.score > 0 ? `目前较稳定的是“${strongest.label}”` : "光光还在等待你的第一次实验操作",
+    strength: strongest && strongest.score > 0 ? `目前“${strongest.label}”的记录较多；分值只用于安排练习，不是掌握程度` : "光光还在等待你的第一次实验操作",
     nextChallenge: weakest ? challenges[weakest.id] : challenges.operation,
     memoryLine: diagnosis.activeControls.length > 0 ? `本次重点操作过：${diagnosis.activeControls.join("、")}` : "本次实验还没有形成操作记忆"
   };
@@ -256,7 +277,7 @@ export function getHarnessLearningBranch(session: HarnessSession, module: string
   const concept = getHarnessConceptNode(module);
   if (!concept) return undefined;
   const diagnosis = diagnoseHarnessExperiment(session, module);
-  const reasoningTurns = (session.dialogue ?? []).filter((message) => message.module === module && message.role === "assistant" && (message.intent === "explain" || message.intent === "reflect")).length;
+  const reasoningTurns = countHarnessLearnerReasoning(session, module);
 
   if (diagnosis.operationCount === 0) return {
     id: "observe", eyebrow: "可选支线 · 先观察", title: "让一个变量真正动起来",
@@ -270,17 +291,17 @@ export function getHarnessLearningBranch(session: HarnessSession, module: string
   };
   if (diagnosis.observationCount === 0) return {
     id: "evidence", eyebrow: "可选支线 · 留证据", title: "把看见的差异写具体",
-    reason: `两组条件已经形成，请按“${concept.evidenceCriteria[0]}”检查并保存观察。`,
+    reason: `记录到同一控制项的不同取值，请先核对其他条件相同，再按“${concept.evidenceCriteria[0]}”保存实际观察。`,
     prompt: "我现在应该记录哪些证据？"
   };
   if (reasoningTurns === 0) return {
     id: "explain", eyebrow: "可选支线 · 作解释", title: "把现象和规律连起来",
-    reason: "你已经保存观察，但还没有说明这条证据为何支持或不支持物理规律。",
+    reason: "有保存的观察描述，但还缺少包含证据、原因和条件的本人解释；阅读光光的答案不计入。",
     prompt: `为什么我的观察可能支持“${concept.title}”？`
   };
   return {
     id: "transfer", eyebrow: "可选支线 · 去迁移", title: `试着连接“${concept.connections[0] ?? "生活现象"}”`,
-    reason: "本轮已经具备操作、对比、证据和解释，可以选择迁移到生活科技，也可以寻找反例。",
+    reason: "已有观察描述和本人解释尝试，内容与对照条件仍需核验；可以试着联系生活，再检查这种联系是否成立。",
     prompt: `${concept.connections[0] ?? "生活现象"}和这个实验有什么联系？`
   };
 }
@@ -300,7 +321,7 @@ export function createHarnessExperimentSummary(session: HarnessSession, module: 
   const changedConditions = [...valuesByControl.entries()].slice(-4).map(([control, readings]) => `${control}：${readings.join(" → ")}`);
   const entryTime = currentModuleEntryTime(session, module);
   const summaryPrefix = `【${profile.title}探究小结】`;
-  const currentObservations = session.observations.filter((observation) => (!entryTime || observation.createdAt >= entryTime) && !isGeneratedSummary(observation.text));
+  const currentObservations = currentModuleObservations(session, module);
   const evidence = currentObservations.slice(-3).map((observation) => observation.text);
   const question = `改变实验条件时，${profile.focus}会怎样变化？`;
   const interpretation = evidence.length === 0
@@ -381,9 +402,38 @@ export class RuleBasedDialogueAssistant implements DialogueAssistant {
   readonly provider = "rules" as const;
 
   respondToQuestion(session: HarnessSession, module: string, rawQuestion: string, apparatus?: HarnessApparatusContext): HarnessDialogueReply {
+    const profile = profileFor(session.area, module);
+    if (isHarnessApparatusCheckQuestion(rawQuestion)) return createHarnessApparatusCheck(module, apparatus, profile);
+    if (isHarnessNextStepQuestion(rawQuestion)) return createHarnessNextStep(session, module, apparatus, profile, diagnoseHarnessExperiment(session, module));
+    const followUp = resolveHarnessFollowUp(rawQuestion, module, session.dialogue ?? []);
+    if (followUp) {
+      if (!followUp.previous || (!followUp.anchor && followUp.kind !== "hint" && followUp.kind !== "next")) return {
+        intent: "orientation", text: `我还不能确定你在追问哪一句。请说出“${profile.title}”中没看懂的操作、读数或解释；也可以先让我检查当前装置。我不会拿别的实验或以前身份的对话猜测你的意思。`,
+        followUps: ["帮我检查当前实验", "给我一级提示", "这个实验主要研究什么？"],
+      };
+      const localSession = { ...session, dialogue: [] };
+      if (followUp.kind === "hint") {
+        const hint = this.respondToQuestion(localSession, module, `给我${["一", "二", "三"][followUp.nextHintLevel - 1]}级提示`, apparatus);
+        return { ...hint, text: `按你明确请求过的提示继续；提示最多到三级，不代表你已经完成操作。\n${hint.text}` };
+      }
+      if (followUp.kind === "next") {
+        const check = createHarnessNextStep(session, module, apparatus, profile, diagnoseHarnessExperiment(session, module));
+        return { ...check, text: `接着刚才的讨论，先看装置现在需要什么，不假定你已经做完上一步。\n${check.text}` };
+      }
+      const anchor = followUp.anchor!;
+      if (followUp.kind === "simplify") return createHarnessPlainExplanation(module, anchor, followUp.previous.reply.text, apparatus, profile);
+      const previousHint = explicitJuniorHint(anchor);
+      if (previousHint) {
+        const reason = previousHint === 1 ? `先明确观察对象，才能把看见的现象和猜测的原因分开；当前重点是${profile.focus}。`
+          : previousHint === 2 ? `只改变一个研究条件，才有机会判断现象变化与它的关系；这里可以${profile.compare}。`
+            : "提示你整理证据，是为了核对条件、直接观察和结论之间是否接得上；没有真实读数时不能用模型值替你补齐。";
+        return { intent: "explain", text: `你追问的是“${anchor}”的理由。${reason}`, followUps: ["帮我检查当前实验", "再给一点提示", "我应该记录哪些证据？"] };
+      }
+      const explanation = this.respondToQuestion(localSession, module, `关于“${anchor}”，为什么会这样？`, apparatus);
+      return { ...explanation, text: `我把这句“为什么”理解为继续问“${anchor}”；如果不是，请直接指出你想问的那一句。\n${explanation.text}` };
+    }
     const understanding = understandHarnessQuestion(session.area, module, rawQuestion);
     const question = understanding.normalizedText;
-    const profile = profileFor(session.area, module);
     const intent = understanding.dialogueIntent;
     const state = summarizeHarnessApparatus(apparatus) ?? recentState(session, module);
     const diagnosis = diagnoseHarnessExperiment(session, module);
@@ -472,8 +522,8 @@ export class RuleBasedDialogueAssistant implements DialogueAssistant {
 
     if (/三级提示/.test(question)) {
       const evidenceHint = diagnosis.comparisonReady
-        ? concept?.hintLadder[2] ?? `你已经有两组条件。现在完成句子：“当我只改变____时，${profile.focus}从____变为____。”`
-        : `当前还缺少真正的对比组。${diagnosis.nextMove}`;
+        ? concept?.hintLadder[2] ?? `如已保留可比的两组条件，请按真实观察完成句子：“当我只改变____时，${profile.focus}从____变为____。”`
+        : `当前记录还不能确认完整对照。${diagnosis.nextMove}`;
       return { intent: "reflect", text: `三级提示帮助你整理证据，但仍不替你写结论：${evidenceHint}`, followUps: ["帮我检查这条证据", "这个结果能直接当作结论吗？", "怎样寻找一个反例？"] };
     }
 
@@ -632,7 +682,7 @@ export function appendDialogueExchange(session: HarnessSession, module: string, 
   };
   const messages: HarnessDialogueMessage[] = [
     { id: createDialogueId("message-learner"), role: "learner", text: question.trim(), createdAt: now, module },
-    { id: createDialogueId("message-assistant"), role: "assistant", text: reply.text, createdAt: now, module, intent: reply.intent, followUps: reply.followUps, citations: reply.citations, provider: reply.provider ?? "rules" }
+    { id: createDialogueId("message-assistant"), role: "assistant", text: reply.text, createdAt: now, module, intent: reply.intent, followUps: reply.followUps, citations: reply.citations, provider: reply.provider ?? "rules", contextSnapshot: reply.contextSnapshot ? { ...reply.contextSnapshot, evidence: [...reply.contextSnapshot.evidence] } : undefined }
   ];
   return { ...session, updatedAt: now, events: [...session.events, event], dialogue: [...(session.dialogue ?? []), ...messages] };
 }

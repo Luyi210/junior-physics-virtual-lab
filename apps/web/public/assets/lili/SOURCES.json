@@ -1,0 +1,122 @@
+{
+  "verifiedAt": "2026-11-11",
+  "purpose": "力力助手的五张轮换装饰形象；保留摄影师来源，不作为产品商标。",
+  "processing": "Built-in imagegen, transparent_background=true, one local source photograph per edit. WebP encoding by sharp.",
+  "assets": [
+    {
+      "file": "corgi-01.webp",
+      "label": "微笑相伴",
+      "author": "Thu Dung Nguyen",
+      "authorPage": "https://www.pexels.com/@thu-dung-nguyen-231602275/",
+      "title": "Portrait of a Pembroke Welsh Corgi Lying on the Floor",
+      "sourcePage": "https://www.pexels.com/photo/portrait-of-a-pembroke-welsh-corgi-lying-on-the-floor-16613108/",
+      "license": "Pexels License",
+      "licenseUrl": "https://www.pexels.com/license/",
+      "downloadUrl": "https://images.pexels.com/photos/16613108/pexels-photo-16613108.jpeg?cs=srgb&dl=pexels-thu-dung-nguyen-231602275-16613108.jpg&fm=jpg",
+      "sourceSha256": "8ecb30ae2e4a7ca06270e34932dedbd83e56b5675678305f6314c5079bd85e55",
+      "sourceDimensions": [
+        3936,
+        2624
+      ],
+      "treatment": "AI-assisted background removal using the built-in imagegen tool; resized and encoded as transparent WebP for web delivery.",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 57682,
+      "sha256": "b208f5d880f13f1b5b6a9dbbeacd3db14861449633077d7161a8ae52d2bacad8"
+    },
+    {
+      "file": "corgi-02.webp",
+      "label": "元气端坐",
+      "author": "Antoni Shkraba",
+      "authorPage": "https://www.pexels.com/@shkrabaanthony/",
+      "title": "Close-Up Shot of a Corgi Dog Sitting",
+      "sourcePage": "https://www.pexels.com/photo/close-up-shot-of-a-corgi-dog-sitting-7524676/",
+      "license": "Pexels License",
+      "licenseUrl": "https://www.pexels.com/license/",
+      "downloadUrl": "https://images.pexels.com/photos/7524676/pexels-photo-7524676.jpeg?cs=srgb&dl=pexels-shkrabaanthony-7524676.jpg&fm=jpg",
+      "sourceSha256": "51627c28ab5100d3ab135681539555e846c39684f1d907201a509155a580a1c9",
+      "sourceDimensions": [
+        3829,
+        5744
+      ],
+      "treatment": "AI-assisted background removal using the built-in imagegen tool; resized and encoded as transparent WebP for web delivery.",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 47402,
+      "sha256": "3d3f3dc8c6f7e0debf5bc376f42ae2c4f492adaf225549a692c6abdf52512ee8"
+    },
+    {
+      "file": "corgi-03.webp",
+      "label": "认真倾听",
+      "author": "Alexey K.",
+      "authorPage": "https://www.pexels.com/@alexey-k-458081116/",
+      "title": "Pembroke Welsh Corgi Dog",
+      "sourcePage": "https://www.pexels.com/photo/pembroke-welsh-corgi-dog-20382893/",
+      "license": "Pexels License",
+      "licenseUrl": "https://www.pexels.com/license/",
+      "downloadUrl": "https://images.pexels.com/photos/20382893/pexels-photo-20382893.jpeg?cs=srgb&dl=pexels-alexey-k-458081116-20382893.jpg&fm=jpg",
+      "sourceSha256": "dd79d077bb6676aa598780df2b63097db4697506e269a5209c39a6b93456f0d5",
+      "sourceDimensions": [
+        3472,
+        4640
+      ],
+      "treatment": "AI-assisted background removal using the built-in imagegen tool; resized and encoded as transparent WebP for web delivery.",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 61784,
+      "sha256": "7dd42ae8f3cb6fb8b4b06420ae4829593e21b876793fee2bb313a17501ce1017"
+    },
+    {
+      "file": "corgi-04.webp",
+      "label": "开心守候",
+      "author": "Jarrel Ng",
+      "authorPage": "https://unsplash.com/@jarrelng",
+      "title": "A happy corgi dog sits on a white background.",
+      "sourcePage": "https://unsplash.com/photos/a-happy-corgi-dog-sits-on-a-white-background-q4ISUQSjU9o",
+      "license": "Unsplash License (standard free; not Unsplash+)",
+      "licenseUrl": "https://unsplash.com/license",
+      "downloadUrl": "https://images.unsplash.com/photo-1757389328589-2b931278fe33?auto=format&fit=max&w=1600&q=90",
+      "sourceSha256": "ab57972b9a7b2824f02165f0819059534036485dd1f227edfdbbd0c83973a70e",
+      "sourceDimensions": [
+        1600,
+        2400
+      ],
+      "treatment": "AI-assisted background removal using the built-in imagegen tool; resized and encoded as transparent WebP for web delivery.",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 57218,
+      "sha256": "398a102012ebe6790bebecacd09499cc9c62772b3bf143fc2c39e9082460934c"
+    },
+    {
+      "file": "corgi-05.webp",
+      "label": "安静陪伴",
+      "author": "Irina Balashova",
+      "authorPage": "https://www.pexels.com/@irina-a-balashova/",
+      "title": "Close-Up Photo of a Cute Welsh Corgi Lying on the Floor",
+      "sourcePage": "https://www.pexels.com/photo/close-up-photo-of-a-cute-welsh-corgi-lying-on-the-floor-8445956/",
+      "license": "Pexels License",
+      "licenseUrl": "https://www.pexels.com/license/",
+      "downloadUrl": "https://images.pexels.com/photos/8445956/pexels-photo-8445956.jpeg?cs=srgb&dl=pexels-irina-a-balashova-8445956.jpg&fm=jpg",
+      "sourceSha256": "b8169df4b5153e54d8627fe57860258223df571cd788618005f4799032035bbb",
+      "sourceDimensions": [
+        6000,
+        4000
+      ],
+      "treatment": "AI-assisted background removal using the built-in imagegen tool; resized and encoded as transparent WebP for web delivery.",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 46874,
+      "sha256": "2783459821933a3840f39d4af2abde5c8502fcf396016ce861974faaf63d082d"
+    }
+  ]
+}

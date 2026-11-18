@@ -1,0 +1,11 @@
+.tone-playback-status {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-left: 3px solid #598c80;
+  background: #e8efea;
+  color: #284d45;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.tone-playback-status.error { border-color: #b47b32; background: #f5eddd; color: #70491c; }
+.tone-playback-status.starting { border-color: #567ca1; background: #e6edf3; color: #37546e; }

@@ -1,0 +1,176 @@
+@layer pages {
+
+.explore-hero { padding-top: 88px; padding-bottom: 100px; }
+.optics-module { min-height: 285px; padding: 31px; }
+.field-grid > * { min-height: 235px; padding: 29px; }
+.science-header { height: 76px; grid-template-columns: 64px 300px 1fr 140px; }
+.science-layout { min-height: calc(100vh - 76px); grid-template-columns: 230px minmax(650px,1fr); }
+.science-nav { padding: 22px 12px; }
+.science-nav > a { min-height: 72px; grid-template-columns: 32px 1fr; gap: 11px; padding: 10px 12px; }
+.science-nav .back-optics { min-height: 48px; margin-top: 24px; }
+.science-stage { padding-top: 42px; }
+.science-lab > header { min-height: 175px; padding: 34px 36px; }
+.science-controls { min-height: 122px; }
+.science-range, .science-result-cell { min-height: 122px; padding: 21px; }
+.science-reset { min-height: 122px; }
+.student-explore-header { height: 76px; grid-template-columns: 64px 1fr auto 145px; }
+.student-explore-layout { min-height: calc(100vh - 76px); grid-template-columns: 240px minmax(620px,1fr) 260px; }
+.module-rail-heading { padding: 27px 21px 23px; }
+.explore-module-rail nav { padding: 11px; max-height: calc(100vh - 235px); }
+.explore-module-rail nav button { min-height: 74px; grid-template-columns: 34px 1fr; gap: 11px; padding: 10px 12px; }
+.explore-module-rail nav button i { width: 33px; height: 33px; }
+.professional-link { margin: 18px; padding: 15px; }
+.strand-module-grid button { min-height: 135px; padding: 21px; }
+.open-module-intro { min-height: 175px; padding: 33px 35px; }
+.discovery-notebook > div { min-height: 84px; padding: 18px; }
+.discovery-notebook textarea { height: 300px; padding: 9px 6px; }
+.student-header { padding-inline: max(28px,calc((100vw - 1360px)/2)); }
+.lesson-header { height: 76px; grid-template-columns: 64px 1fr 250px 140px; }
+.lesson-layout { min-height: calc(100vh - 76px); grid-template-columns: 260px minmax(600px,1fr) 280px; }
+.stepper-title, .notebook-head { min-height: 88px; padding: 18px; }
+.step-list button { min-height: 82px; grid-template-columns: 34px 1fr 20px; gap: 11px; padding: 11px 13px; }
+.lesson-content { padding-top: 44px; }
+.application-grid article { padding: 24px; }
+.workbench-header { height: 76px; padding-inline: 22px; }
+.workbench-actions button, .exit-button { min-height: 43px; padding-inline: 14px; }
+.workbench-layout { height: calc(100vh - 256px); grid-template-columns: 132px minmax(520px,1fr) 360px; }
+.component-rail { padding: 20px 14px; }
+.rail-item { min-height: 105px; }
+.experiment-stage { grid-template-rows: 52px 1fr; }
+.stage-heading { padding-inline: 20px; }
+.inspector-heading { min-height: 78px; padding: 17px 20px; }
+.inspector-section { padding: 10px 20px; }
+.instrument-control { padding: 14px 0; }
+.range-line { grid-template-columns: 1fr 92px; }
+/* Deep-space extension: straight light paths near a black hole */
+.black-hole-extension { margin-top: 30px; overflow: hidden; color: #dbe9e9; border: 1px solid #293f4c; background: #07131e; box-shadow: 12px 12px 0 rgba(14,29,40,.14); }
+.black-hole-extension > header { min-height: 245px; display: grid; grid-template-columns: 1.08fr .92fr; align-items: end; gap: 38px; padding: 38px; background: radial-gradient(circle at 82% 30%,rgba(232,111,68,.17),transparent 24%),radial-gradient(circle at 67% 110%,rgba(126,74,180,.18),transparent 35%),linear-gradient(122deg,#101827,#07121d 60%,#120c19); }
+.black-hole-extension > header span { color: #f0a366; font: 700 11px var(--mono); letter-spacing: .13em; }
+.black-hole-extension > header h2 { margin-top: 13px; color: #fff5df; font: 700 clamp(29px,3.1vw,42px)/1.35 var(--serif); }
+.black-hole-extension > header > div:last-child { display: grid; grid-template-columns: 34px 1fr; gap: 13px; padding: 20px; color: #9db1b7; border: 1px solid rgba(240,163,102,.25); background: rgba(5,13,22,.55); }
+.black-hole-extension > header svg { color: #f0a366; }
+.black-hole-extension > header p { font-size: 14px; font-weight: 600; line-height: 1.85; }
+.black-hole-extension > header p strong { display: block; margin-bottom: 5px; color: #f6e9d5; font-size: 17px; }
+.black-hole-lab { position: relative; min-height: 760px; display: grid; grid-template-rows: 72px minmax(510px,1fr) 142px; overflow: hidden; isolation: isolate; color: #e8f2ef; border-top: 1px solid #2b414d; border-bottom: 1px solid #2b414d; background: #020912; }
+.black-hole-toolbar { position: relative; z-index: 12; display: grid; grid-template-columns: 1fr auto 170px; align-items: center; gap: 16px; padding: 10px 18px 10px 22px; border-bottom: 1px solid #253a47; background: rgba(8,22,34,.96); backdrop-filter: blur(12px); }
+.black-hole-toolbar > span { display: grid; gap: 4px; }
+.black-hole-toolbar > span b { color: #e58f5d; font: 800 9px var(--mono); letter-spacing: .13em; }
+.black-hole-toolbar > span strong { color: #edf1e8; font: 700 16px var(--serif); }
+.black-hole-toolbar nav { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #385060; }
+.black-hole-toolbar nav button { min-height: 38px; padding: 0 14px; color: #8299a1; background: #0d2230; cursor: pointer; font-size: 12px; font-weight: 700; }
+.black-hole-toolbar nav button + button { border-left: 1px solid #385060; }
+.black-hole-toolbar nav button.active { color: #1c2430; background: #efaa6e; box-shadow: inset 0 -3px 0 #ca604b; }
+.black-hole-fullscreen { min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 9px; color: #dcebe8; border: 1px solid #4f6b70; background: #112d38; cursor: pointer; }
+.black-hole-fullscreen:hover { color: #132a32; border-color: #71dec9; background: #71dec9; }
+.black-hole-fullscreen > span { display: grid; gap: 1px; text-align: left; }
+.black-hole-fullscreen strong { font-size: 12px; }
+.black-hole-fullscreen small { color: #81999d; font-size: 9px; }
+.black-hole-fullscreen:hover small { color: #3f5a59; }
+.black-hole-stage { position: relative; min-height: 510px; overflow: hidden; background: radial-gradient(circle at 61% 50%,rgba(135,49,80,.17),transparent 21%),radial-gradient(circle at 50% 100%,rgba(34,83,115,.14),transparent 45%),#020914; }
+.black-hole-stage > svg { width: 100%; height: 100%; min-height: 510px; display: block; touch-action: none; cursor: crosshair; user-select: none; }
+.black-hole-stars circle { fill: #e7eff2; opacity: .6; }
+.spacetime-grid path { fill: none; stroke: rgba(91,135,155,.13); stroke-width: 1; transition: d .45s ease, opacity .35s ease; }
+.model-flat .spacetime-grid path { stroke: rgba(91,155,165,.12); }
+.background-gravity-rays path { fill: none; stroke: rgba(131,200,201,.28); stroke-width: 1.35; stroke-dasharray: 8 9; transition: d .35s ease; animation: black-hole-ray-flow 2.3s linear infinite; }
+.black-hole-system { transition: opacity .35s ease, transform .45s ease; transform-origin: 610px 260px; }
+.model-flat .black-hole-system { opacity: .1; transform: scale(.76); }
+.disk-halo { fill: none; stroke: rgba(244,118,72,.18); stroke-width: 17; filter: blur(8px); }
+.accretion-disk { fill: none; stroke: url(#accretionDisk); stroke-width: 17; filter: url(#blackHoleDiskGlow); }
+.accretion-disk.back { opacity: .82; }
+.photon-ring { fill: url(#blackHoleGlow); stroke: #f6c37a; stroke-width: 4; filter: drop-shadow(0 0 14px rgba(255,151,75,.72)); }
+.event-horizon { fill: #000; stroke: rgba(240,184,112,.3); stroke-width: 1.5; }
+.accretion-front { fill: none; stroke: url(#accretionDisk); stroke-width: 20; stroke-linecap: round; filter: url(#blackHoleDiskGlow); }
+.horizon-label { fill: #ffc582; font: 700 12px var(--serif); paint-order: stroke; stroke: #030913; stroke-width: 5px; }
+.horizon-label.minor { fill: #9da7ab; font-size: 10px; }
+.selected-gravity-ray { fill: none; stroke: #70ecd2; stroke-width: 4.5; stroke-linecap: round; filter: url(#selectedRayGlow); transition: d .3s ease, stroke .25s ease; animation: selected-black-hole-ray 1.25s linear infinite; stroke-dasharray: 20 8; }
+.selected-gravity-ray.outcome-grazing { stroke: #ffd278; }
+.selected-gravity-ray.outcome-captured { stroke: #ff775e; }
+.ray-drag-handle { cursor: ns-resize; }
+.ray-drag-handle circle { fill: #0c3039; stroke: #72ead2; stroke-width: 2; filter: drop-shadow(0 0 9px rgba(112,236,210,.48)); }
+.ray-drag-handle path { fill: none; stroke: #c8fff4; stroke-width: 1.7; stroke-linecap: round; }
+.ray-drag-handle text { fill: #91bbb8; font: 700 11px var(--serif); paint-order: stroke; stroke: #020914; stroke-width: 4px; }
+.observer-station path { fill: #172e3c; stroke: #6f9ba6; stroke-width: 2; }
+.observer-station circle { fill: #78ead7; filter: drop-shadow(0 0 10px #78ead7); }
+.observer-station text, .space-model-label { fill: #96aeb4; font: 700 11px var(--serif); paint-order: stroke; stroke: #020914; stroke-width: 4px; }
+.space-model-label { fill: #e5a775; font-size: 12px; letter-spacing: .04em; }
+.black-hole-readout { position: absolute; z-index: 5; right: 22px; bottom: 22px; width: min(400px,43%); display: grid; gap: 6px; padding: 17px 19px; border: 1px solid rgba(112,236,210,.5); background: rgba(4,17,26,.89); box-shadow: 7px 7px 0 rgba(23,90,84,.2); backdrop-filter: blur(9px); }
+.black-hole-readout > span { color: #69d9c3; font: 800 9px var(--mono); letter-spacing: .11em; }
+.black-hole-readout strong { color: #f3f4e9; font-size: 18px; line-height: 1.4; }
+.black-hole-readout p { color: #90a7aa; font-size: 12px; font-weight: 600; line-height: 1.65; }
+.black-hole-readout.outcome-grazing { border-color: rgba(255,210,120,.6); }
+.black-hole-readout.outcome-grazing > span { color: #ffd278; }
+.black-hole-readout.outcome-captured { border-color: rgba(255,119,94,.6); }
+.black-hole-readout.outcome-captured > span { color: #ff8069; }
+.black-hole-legend { position: absolute; z-index: 5; left: 20px; bottom: 21px; display: flex; flex-wrap: wrap; gap: 7px; max-width: calc(56% - 30px); }
+.black-hole-legend span { min-height: 31px; display: flex; align-items: center; gap: 7px; padding: 0 10px; color: #8ba2a8; border: 1px solid #294450; background: rgba(4,18,28,.84); font-size: 10px; font-weight: 700; }
+.black-hole-legend i { width: 25px; height: 3px; display: block; }
+.black-hole-legend .legend-selected { background: #70ecd2; box-shadow: 0 0 7px #70ecd2; }
+.black-hole-legend .legend-rays { height: 1px; border-top: 1px dashed #79aeb2; }
+.black-hole-legend .legend-horizon { width: 14px; height: 14px; border: 2px solid #f1b875; border-radius: 50%; background: #000; }
+.black-hole-controls { position: relative; z-index: 8; display: grid; grid-template-columns: 1fr 1fr 210px; min-height: 142px; border-top: 1px solid #2a414d; background: #0b202c; }
+.black-hole-controls > label { display: grid; align-content: center; gap: 7px; padding: 17px 21px; border-right: 1px solid #2e4651; }
+.black-hole-controls label > span { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+.black-hole-controls label b { color: #dce9e6; font-size: 13px; }
+.black-hole-controls label output { color: #f0ad70; font-size: 16px; font-weight: 700; }
+.black-hole-controls input { width: 100%; accent-color: #6fe5cf; cursor: ew-resize; }
+.black-hole-controls input:disabled { opacity: .25; cursor: not-allowed; }
+.black-hole-controls label small { color: #718c92; font-size: 10px; font-weight: 600; }
+.black-hole-control-actions { display: grid; grid-template-rows: 1fr 1fr; }
+.black-hole-control-actions button { display: flex; align-items: center; justify-content: center; gap: 8px; color: #a8bcbd; border-bottom: 1px solid #2e4651; background: #112a36; cursor: pointer; font-size: 12px; font-weight: 700; }
+.black-hole-control-actions button:last-child { border-bottom: 0; }
+.black-hole-control-actions button:hover { color: #132b33; background: #efaa6e; }
+.black-hole-learning-chain { display: grid; grid-template-columns: repeat(3,1fr); color: #29464e; background: #e7e1d5; }
+.black-hole-learning-chain article { min-height: 205px; display: grid; grid-template-columns: 33px 1fr; gap: 12px; padding: 25px 23px; border-right: 1px solid #c3bdae; }
+.black-hole-learning-chain article:last-child { border-right: 0; }
+.black-hole-learning-chain article > b { color: #ce664d; font: 800 12px var(--mono); }
+.black-hole-learning-chain strong { color: #29464e; font-size: 17px; line-height: 1.45; }
+.black-hole-learning-chain p { margin-top: 10px; color: #667a7d; font-size: 13px; font-weight: 600; line-height: 1.78; }
+.black-hole-extension > aside { display: flex; align-items: center; gap: 13px; padding: 17px 23px; color: #6d4b35; background: #f5d5a2; }
+.black-hole-extension > aside svg { flex: 0 0 auto; color: #b45d41; }
+.black-hole-extension > aside p { font-size: 14px; font-weight: 600; line-height: 1.75; }
+.black-hole-extension > footer { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; min-height: 55px; padding: 12px 22px; color: #82999e; border-top: 1px solid #293f4c; background: #0a1c27; font-size: 11px; font-weight: 700; }
+.black-hole-extension > footer svg, .black-hole-extension > footer span { color: #e29a65; }
+.black-hole-extension > footer a { color: #a5b8ba; text-decoration: underline; text-underline-offset: 3px; }
+.black-hole-extension > footer a:hover { color: #73e0ca; }
+.black-hole-lab:fullscreen { width: 100vw; height: 100vh; min-height: 100vh; grid-template-rows: 72px minmax(0,1fr) 142px; border: 0; background: #020912; }
+.black-hole-lab:fullscreen .black-hole-stage { min-height: 0; }
+.black-hole-lab:fullscreen .black-hole-stage > svg { height: 100%; min-height: 0; }
+.black-hole-lab:fullscreen .black-hole-fullscreen { visibility: hidden; }
+@keyframes black-hole-ray-flow { to { stroke-dashoffset: -68; } }
+@keyframes selected-black-hole-ray { to { stroke-dashoffset: -56; } }
+@media (max-width: 900px) {
+    .black-hole-extension > header { grid-template-columns: 1fr; align-items: start; }
+    .black-hole-toolbar { grid-template-columns: 1fr auto; }
+    .black-hole-toolbar > span { display: none; }
+    .black-hole-controls { grid-template-columns: 1fr 1fr; }
+    .black-hole-control-actions { grid-column: 1 / -1; min-height: 62px; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; border-top: 1px solid #2e4651; }
+    .black-hole-control-actions button { border-right: 1px solid #2e4651; border-bottom: 0; }
+    .black-hole-lab { grid-template-rows: 72px minmax(510px,1fr) auto; }
+    .black-hole-lab:fullscreen { grid-template-rows: 72px minmax(0,1fr) 190px; }
+  }
+@media (max-width: 640px) {
+    .black-hole-extension > header { min-height: 0; padding: 28px 21px; }
+    .black-hole-extension > header h2 { font-size: 28px; }
+    .black-hole-toolbar { grid-template-columns: 1fr 48px; padding: 9px; }
+    .black-hole-toolbar nav button { padding: 0 9px; font-size: 11px; }
+    .black-hole-fullscreen { width: 44px; padding: 0; }
+    .black-hole-fullscreen > span { display: none; }
+    .black-hole-stage, .black-hole-stage > svg { min-height: 470px; }
+    .black-hole-readout { right: 12px; bottom: 14px; left: 12px; width: auto; }
+    .black-hole-legend { top: 12px; bottom: auto; left: 12px; max-width: calc(100% - 24px); }
+    .black-hole-legend span:nth-child(n+2) { display: none; }
+    .black-hole-controls { grid-template-columns: 1fr; }
+    .black-hole-controls > label { border-right: 0; border-bottom: 1px solid #2e4651; }
+    .black-hole-learning-chain { grid-template-columns: 1fr; }
+    .black-hole-learning-chain article { min-height: 0; border-right: 0; border-bottom: 1px solid #c3bdae; }
+    .black-hole-learning-chain article:last-child { border-bottom: 0; }
+    .black-hole-extension > footer { align-items: flex-start; flex-direction: column; }
+    .black-hole-lab:fullscreen { grid-template-rows: 62px minmax(0,1fr) 230px; }
+    .black-hole-lab:fullscreen .black-hole-controls > label { padding-block: 9px; }
+  }
+@keyframes signal { 0% { box-shadow: 0 0 0 0 rgba(41,216,187,.35); } 70% { box-shadow: 0 0 0 7px rgba(41,216,187,0); } 100% { box-shadow: 0 0 0 0 rgba(41,216,187,0); } }
+@keyframes reveal-left { from { opacity: 0; transform: translateX(-22px); } to { opacity: 1; transform: none; } }
+@keyframes reveal-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes draw-ray { to { stroke-dashoffset: 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+}

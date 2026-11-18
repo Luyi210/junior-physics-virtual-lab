@@ -1,3 +1,7 @@
+import { expandedProtocols } from "../high-school/experiments/expandedProtocols";
+import { classroomExperiments, getClassroomExperiment } from "@physics-lab/knowledge/classroom";
+import { getHighSchoolExperiment, highSchoolDomains } from "@physics-lab/knowledge/high-school";
+
 export type TeacherClass = {
   id: string;
   name: string;
@@ -75,6 +79,7 @@ export type TeacherWorkspace = {
 
 export type ExperimentCatalogItem = {
   id: string;
+  stage: "junior" | "high-school";
   field: string;
   title: string;
   subtitle: string;
@@ -83,7 +88,7 @@ export type ExperimentCatalogItem = {
   accent: string;
 };
 
-export const teacherExperimentCatalog: ExperimentCatalogItem[] = [
+const juniorExperimentCatalog: Omit<ExperimentCatalogItem, "stage">[] = [
   { id: "light", field: "光学", title: "光的反射与折射", subtitle: "改变入射角，比较两种传播规律", path: "/student/explore/light", formula: "∠i = ∠r", accent: "#78ddff" },
   { id: "lens", field: "光学", title: "凸透镜成像", subtitle: "移动物距，寻找清晰像与规律", path: "/lab/lens", formula: "1/f = 1/u + 1/v", accent: "#8ca7ff" },
   { id: "mechanics", field: "力学", title: "力与运动", subtitle: "控制变量，观察运动状态变化", path: "/student/explore/mechanics", formula: "F = ma", accent: "#55e5c1" },
@@ -106,6 +111,104 @@ export const teacherExperimentCatalog: ExperimentCatalogItem[] = [
   { id: "thermal-evaporation", field: "热学", title: "蒸发与蒸发降温", subtitle: "比较温度和空气流动的影响", path: "/student/explore/thermal?module=thermal-evaporation", formula: "蒸发吸热", accent: "#ffad7b" },
   { id: "measurement-density", field: "测量", title: "不规则固体密度", subtitle: "用天平和排水法完成组合测量", path: "/student/explore/measurement?module=measurement-density", formula: "ρ = m/V", accent: "#b292ff" }
 ];
+
+export const teacherStageLabels = { junior: "初中", "high-school": "高中" } as const;
+const highSchoolFormulas: Record<string, string> = {
+  "uniform-acceleration": "v = v₀ + at", "newton-second-law": "F合 = Ma", "projectile-motion": "x = v₀t",
+  pendulum: "T² ≈ 4π²L/g", "emf-internal-resistance": "U = E − Ir", "double-slit": "Δx ≈ λL/d", "spring-force": "F = k(L − L₀)", "force-composition": "F⃗合 = F⃗₁ + F⃗₂", "mechanical-energy": "ΔK 与 mgΔh 对照", "capacitor-charge": "τ = RC；断路保持电压"
+};
+export const teacherExperimentCatalog: ExperimentCatalogItem[] = [
+  ...juniorExperimentCatalog.map((item) => ({ ...item, stage: "junior" as const, path: getClassroomExperiment(item.id)?.path ?? item.path })),
+  ...classroomExperiments.filter((item) => item.stage === "high-school").flatMap((item): ExperimentCatalogItem[] => {
+    const experiment = getHighSchoolExperiment(item.id);
+    return experiment?.status === "ready" ? [{ id: item.id, stage: "high-school", title: item.title,
+      field: highSchoolDomains.find((domain) => domain.id === experiment.domain)?.name ?? "高中物理",
+      subtitle: experiment.learningGoal, path: item.path, formula: highSchoolFormulas[item.id] ?? expandedProtocols[item.id]?.formula ?? "比较变量与证据", accent: "#85c5a4" }] : [];
+  })
+];
+
+export type TeacherLessonDefaults = Pick<TeacherLesson, "title" | "objective" | "inquiryQuestion"> &
+  Required<Pick<TeacherLesson, "predictionPrompt" | "controlledVariable" | "evidenceRequirement" | "reflectionPrompt">>;
+
+const highSchoolLessonPrompts: Record<string, Pick<TeacherLessonDefaults, "inquiryQuestion" | "predictionPrompt" | "controlledVariable" | "evidenceRequirement">> = {
+  "capacitor-charge": {
+    inquiryQuestion: "为什么断开回路后电压仍可保持？接电源和经电阻放电的快慢怎样随R、C变化？",
+    predictionPrompt: "预测切换瞬间电容电压和电流是否突变，以及固定C时增大R怎样改变快慢；区分断路与暂停仿真。",
+    controlledVariable: "同一轮固定R、C、E，从零电压接电源。默认R=10 kΩ、C=470 μF、E=6 V，τ=4.7 s；在0、1、2 s各保存一次，再断路观察保持，之后经R放电。只改变R的对照须重新开始，保持C、E和零初始电压相同；切换模式延续电压，数值调参重开一轮。",
+    evidenceRequirement: "同一运行、同一充或放电段至少保存3个不同时刻，保留完整开关过程与当时条件；以ln(|U−U∞|/1V)对段内时间作带截距拟合，接电源U∞=E、放电U∞=0，斜率估计−1/τ。断路及初始已平衡的段不能估τ；另保存断路前后U、I，解释I=0但U可非零。不混合不同段，不将模型拟合称为实体实测，也不以条数判完成；当前没有独立手动电表读数工具。"
+  },
+  "mechanical-energy": {
+    inquiryQuestion: "怎样由纸带六个位置求A、B两点的速度，再比较重力势能减少量和动能增加量？",
+    predictionPrompt: "分别预测阻力比r=0与r>0时两种能量变化的关系；选取的A点已有速度，为什么不能把B点动能直接当作动能增加量？",
+    controlledVariable: "同次纸带固定质量、释放高度及恒定阻力比，虚拟同步从静止释放，采样间隔固定0.02 s。先用默认条件播放至所需邻点出现，选内部A、B且B>A；共享同一点的读数须一致，各不同点位置须严格递增。另组只改变阻力比r，不能将其称为真实空气阻力。",
+    evidenceRequirement: "独立输入A−1、A、A+1、B−1、B、B+1六个位置（mm）并保存点号、时刻和参数；用v=(x后−x前)/(2Δt)分别求vA、vB，以ΔK=½m(vB²−vA²)对照mg(xB−xA)，保留差值与读数限制。自动关系另存同条件至少3个不同时刻，分析从释放起的K—ΔEp；不得用模型答案回填手动位置或把两种来源混成实测。"
+  },
+  "uniform-acceleration": {
+    inquiryQuestion: "如何由位置和时间记录求区间平均速度，再用速度—时间图像判断加速度？",
+    predictionPrompt: "固定初速度与加速度，预测相同时间间隔内的位置变化是否相同；说明加速度改变时图像斜率怎样变化。",
+    controlledVariable: "同一组固定初速度、加速度和总时长，按相同时间间隔记录；另做一组时只改变加速度，不把不同条件混成同一条拟合线。",
+    evidenceRequirement: "同一组至少保存4个不同时刻的位置与时间，分析相邻区间平均速度及区间中点时刻；区分它与直接采样的模型瞬时速度。"
+  },
+  "newton-second-law": {
+    inquiryQuestion: "怎样分别检验系统加速度与合外力、系统总质量倒数的关系？",
+    predictionPrompt: "分别预测总质量不变时增大合外力，以及合外力不变时增大总质量，加速度怎样变化。",
+    controlledVariable: "力关系组固定小车与挂码总质量、阻力和行程，在小车与挂码间转移质量；质量倒数组固定挂码质量、阻力和行程，只改变小车质量。研究对象始终是小车与挂码整体。",
+    evidenceRequirement: "两组各保存至少3个不同横坐标的条件，分别分析a—F合与a—1/M；M包含小车和挂码，并核对挂码重力大于阻力、系统能够启动。"
+  },
+  "projectile-motion": {
+    inquiryQuestion: "平抛运动的水平位移与时间、竖直下落距离与时间平方分别有什么关系？",
+    predictionPrompt: "预测相同高度、不同水平初速度的落地时间是否相同，并分别描述水平和竖直方向的运动。",
+    controlledVariable: "把抛射角设为0°；同一轨迹固定非零初速度和正的释放高度，改变采样时刻。比较两次平抛时固定高度，只改变水平初速度；g固定。",
+    evidenceRequirement: "同一轨迹至少保存3个不同的落地前时刻，记录坐标并分析x—t、下落距离—t²；下落距离是释放高度减当前高度，不直接使用当前高度代替。"
+  },
+  pendulum: {
+    inquiryQuestion: "小摆角时周期平方与摆长有什么关系？多周期虚拟计时如何估计周期？",
+    predictionPrompt: "保持小摆角，预测摆长增加时周期如何变化；说明一个完整周期与半周期的区别。",
+    controlledVariable: "比较摆长时保持初始摆角不超过10°、摆球质量和g不变；摆长从悬点量到球心。手动计时时保持这一轮参数，起止取同一位置、同一方向。",
+    evidenceRequirement: "自动模型采样至少取3个不同摆长，分析T²—L；若使用虚拟秒表，另存起止时间和自行数出的完整周期数，不能把模型周期当作手动读数，也不与自动采样混为一组。"
+  },
+  "emf-internal-resistance": {
+    inquiryQuestion: "改变外接负载时，端电压与电流如何变化？怎样由U—I图估计电动势和内阻？",
+    predictionPrompt: "预测减小负载电阻后电流与端电压的变化，并区分电动势与端电压。",
+    controlledVariable: "固定同一电源的电动势和内阻，只改变外接负载电阻。当前采用理想电表，不能操作或假定已加入电表内阻误差。",
+    evidenceRequirement: "至少保存3个不同负载点的U、I及负载条件，横轴I、纵轴U；用截距估计E、斜率的负值估计r，说明理想电表假设。"
+  },
+  "double-slit": {
+    inquiryQuestion: "条纹间距怎样随屏距变化？如何从两条亮纹中心和间隔数估计波长？",
+    predictionPrompt: "固定波长和缝间距，预测屏距增大时条纹间距的变化；先区分亮纹条数与亮纹之间的间隔数。",
+    controlledVariable: "自动关系组固定波长和缝间距，只改变屏距；虚拟读尺每轮固定波长、缝距和屏距，自行定位两条亮纹中心并填写相邻间隔数。",
+    evidenceRequirement: "自动模型采样至少取3个不同屏距，分析条纹间距—屏距；虚拟手动读尺另存A/B坐标和间隔数、缝距与屏距，注明mm、m、nm换算及近轴条件，不用已知波长回填读数。"
+  },
+  "force-composition": {
+    inquiryQuestion: "两个共点力怎样合成为一个等效力？等效力与平衡力的方向有什么区别？",
+    predictionPrompt: "先预测同向、垂直、反向时的合力，再独立调整试配力的大小和方向；合力为零时不指定方向。",
+    controlledVariable: "关系组固定F₁=3 N、F₂=4 N及F₁方向，只改变F₂方向，使夹角依次为0°、60°、90°、120°、180°。预设不替学生调整试配力。",
+    evidenceRequirement: "保存至少3个不同cosθ条件的模型读数及原始六项参数，保留自己试配的力和残差；分析R²—cosθ的斜率2F₁F₂与截距F₁²+F₂²。0.05 N仅为教学比较阈值；模型一致性不等于橡皮条或测力计的实测验证。"
+  },
+  "spring-force": {
+    inquiryQuestion: "固定同一弹簧，弹力与伸长量有什么关系？总长为什么不能直接代替伸长量？",
+    predictionPrompt: "先预测增加含托盘的总悬挂质量后，总长和伸长量如何变化；说明零载荷时的长度。",
+    controlledVariable: "固定劲度系数和原长，只改变含托盘的总悬挂质量；g固定为9.8 m/s²，调参后直接取理想静态平衡。",
+    evidenceRequirement: "先设0 g记录原长，再设置50、100、150 g保存自动模型读数：总质量、原长、总长、伸长量和弹力；核对g转kg，以F—伸长量拟合k，截距不强制为0。可比较同条件加载和卸载；当前没有手动读尺。"
+  }
+};
+
+/** Defaults are used only when creating a new lesson; stored lessons are never rewritten. */
+export function teacherLessonDefaults(experiment: ExperimentCatalogItem): TeacherLessonDefaults {
+  const catalog = experiment.stage === "high-school" ? getHighSchoolExperiment(experiment.id) : undefined;
+  const expanded = expandedProtocols[experiment.id];
+  const prompts = catalog && (highSchoolLessonPrompts[experiment.id] ?? (expanded ? { inquiryQuestion: expanded.inquiryQuestion, predictionPrompt: expanded.predictionPrompt, controlledVariable: expanded.controlledVariable, evidenceRequirement: expanded.evidenceRequirement } : undefined));
+  if (catalog && prompts) return {
+    title: `${experiment.title}探究课`, objective: `${catalog.learningGoal} 本课使用虚拟实验，模型采样与虚拟手动读数分别标注，不称为实体器材实测。`,
+    ...prompts,
+    evidenceRequirement: `${prompts.evidenceRequirement} 目录证据：${catalog.evidence.join("；")}。本机记录需经学生核对后加入课堂档案，保存到账号才供教师查看。`,
+    reflectionPrompt: `哪些证据支持或反驳预测？结合以下条件说明模型与实物的差别：${catalog.assumptions.join("；")}。`
+  };
+  return { title: `${experiment.title}探究课`, objective: "通过改变一个关键变量、记录多组现象，用自己的证据形成物理解释。",
+    inquiryQuestion: `改变实验条件时，${experiment.title}中的关键现象会怎样变化？`, predictionPrompt: "操作前写下预测，并说明判断依据。",
+    controlledVariable: "固定其他条件，每轮只改变一个关键变量。", evidenceRequirement: "记录至少三组可比较的数据或现象，并注明实验条件。",
+    reflectionPrompt: "换一个情境或设置反例，形成的解释仍然成立吗？" };
+}
 
 const STORAGE_KEY = "physics-lab-v2-teacher-workspace";
 

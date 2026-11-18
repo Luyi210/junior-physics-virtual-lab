@@ -139,10 +139,12 @@ describe("rule based learning harness", () => {
     expect(getHarnessCoachAlert(session, "sound-features").title).toContain("变量");
     expect(getRecommendedHarnessHintLevel(session, "sound-features")).toBe(1);
     session = processHarnessEvent(session, { type: "control.changed", payload: { control: "频率", value: 300, unit: "Hz" } }, assistant);
-    expect(getHarnessCoachAlert(session, "sound-features").title).toContain("第二组");
+    expect(getHarnessCoachAlert(session, "sound-features").id).toMatch(/^compare-/);
+    expect(getHarnessCoachAlert(session, "sound-features").title).toContain("核对两组条件");
     expect(getRecommendedHarnessHintLevel(session, "sound-features")).toBe(2);
     session = processHarnessEvent(session, { type: "control.changed", payload: { control: "频率", value: 600, unit: "Hz" } }, assistant);
-    expect(getHarnessCoachAlert(session, "sound-features").title).toContain("写具体");
+    expect(getHarnessCoachAlert(session, "sound-features").id).toMatch(/^evidence-/);
+    expect(getHarnessCoachAlert(session, "sound-features").title).toContain("先核对条件");
     expect(getRecommendedHarnessHintLevel(session, "sound-features")).toBe(3);
   });
 
@@ -221,6 +223,8 @@ describe("rule based learning harness", () => {
     session = processHarnessEvent(session, { type: "control.changed", payload: { control: "频率", value: 600 }, occurredAt: "2026-01-01T00:00:03.000Z" }, assistant);
     session = createHarnessObservation(session, "保持振幅不变，频率从300Hz调到600Hz，音调更高。", assistant);
     session = appendDialogueExchange(session, "sound-features", "为什么会这样？", { intent: "explain", text: "请连接振动频率与音调。", followUps: [] }, "2026-01-01T00:00:05.000Z");
+    expect(getHarnessReviewSchedule(session, "sound-features", new Date("2027-01-10T00:00:00.000Z")).status).toBe("not-ready");
+    session = appendDialogueExchange(session, "sound-features", "我的解释：保持振幅不变，我观察到频率升高时音调升高；因为频率表示每秒振动次数，所以本次支持频率影响音调。", { intent: "reflect", text: "还需要核对观察。", followUps: [] }, "2026-01-01T00:00:06.000Z");
     const schedule = getHarnessReviewSchedule(session, "sound-features", new Date("2027-01-10T00:00:00.000Z"));
     expect(schedule.status).toBe("due");
     expect(schedule.prompt).toContain("先不要给提示");
@@ -320,7 +324,8 @@ describe("rule based learning harness", () => {
     session = processHarnessEvent(session, { type: "control.changed", payload: { control: "运动时间", value: 20, unit: "s" }, occurredAt: "2026-01-01T00:00:03.000Z" }, assistant);
     session = createHarnessObservation(session, "路程相同时，20秒对应的平均速度更小。", assistant);
     const model = getHarnessLearnerModel(session, "mechanics-speed");
-    expect(model.dimensions.find((item) => item.id === "comparison")?.score).toBe(100);
+    expect(model.dimensions.find((item) => item.id === "comparison")?.score).toBe(60);
+    expect(model.dimensions.find((item) => item.id === "comparison")?.note).toContain("仍需核对");
     expect(model.dimensions.find((item) => item.id === "evidence")?.score).toBeGreaterThan(0);
     expect(model.memoryLine).toContain("运动时间");
   });
@@ -439,6 +444,8 @@ describe("rule based learning harness", () => {
     session = createHarnessObservation(session, "振幅不变时，600Hz 比 300Hz 的音调更高。", assistant);
     expect(getHarnessLearningBranch(session, "sound-features")?.id).toBe("explain");
     session = appendDialogueExchange(session, "sound-features", "为什么这个观察支持声音特性的规律？", { intent: "explain", text: "请连接频率证据与音调。", followUps: [] });
+    expect(getHarnessLearningBranch(session, "sound-features")?.id).toBe("explain");
+    session = appendDialogueExchange(session, "sound-features", "我的解释：保持振幅不变，我观察到两组频率不同时音调不同；因为频率表示每秒振动次数，所以本次音调变化可能与振动快慢有关。", { intent: "reflect", text: "还需要核对实际证据。", followUps: [] });
     expect(getHarnessLearningBranch(session, "sound-features")?.id).toBe("transfer");
   });
 

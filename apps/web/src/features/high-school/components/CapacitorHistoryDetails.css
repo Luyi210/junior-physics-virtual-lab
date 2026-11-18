@@ -1,0 +1,8 @@
+@layer pages {
+  .hs-capacitor-history { margin: 10px 0; max-width: 100%; padding: 12px 15px; border: 1px solid #d4ddc7; border-radius: 4px; color: #5b705b; background: #f7f5eb; font-size: 12px; line-height: 1.8; }
+  .hs-capacitor-history > summary { color: #35543e; cursor: pointer; font-weight: 500; }
+  .hs-capacitor-history > summary:focus-visible { outline: 2px solid #b46a3e; outline-offset: 3px; }
+  .hs-capacitor-history p { margin: 8px 0 0; white-space: normal; }
+  .hs-capacitor-history code { overflow-wrap: anywhere; white-space: normal; }
+  .hs-capacitor-history ol { padding-left: 22px; white-space: normal; }
+}

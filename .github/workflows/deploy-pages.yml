@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -17,30 +15,45 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 24
+          node-version: "24"
           cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          mkdir -p .runtime/quality-checkpoints
+          npm ci 2>&1 | tee .runtime/quality-checkpoints/npm-ci.log
 
-      - name: Test demo API isolation
-        run: npm run test --workspace @physics-lab/web
-
-      - name: Build web application
-        run: npm run build --workspace @physics-lab/web
+      - name: Check all packages and build the demo
+        run: npm run quality:checkpoint
         env:
           VITE_DEMO_ONLY: "true"
           VITE_API_URL: ${{ vars.VITE_API_URL }}
 
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+      - name: Upload quality reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: pages-quality-logs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .runtime/quality-checkpoints/*.log
+            .runtime/quality-checkpoints/*.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -48,12 +61,19 @@ jobs:
           path: ./apps/web/dist
 
   deploy:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

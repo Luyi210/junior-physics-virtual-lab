@@ -26,8 +26,9 @@ export async function readJson(request, limitBytes) {
 }
 
 export function requiredString(body, key, options = {}) {
-  const value = typeof body?.[key] === "string" ? body[key].trim() : "";
-  if (!value) throw new ApiError(422, "VALIDATION_ERROR", `${key} 不能为空`);
+  const raw = typeof body?.[key] === "string" ? body[key] : "";
+  const value = options.trim === false ? raw : raw.trim();
+  if (!value.trim()) throw new ApiError(422, "VALIDATION_ERROR", `${key} 不能为空`);
   if (options.max && value.length > options.max) throw new ApiError(422, "VALIDATION_ERROR", `${key} 不能超过 ${options.max} 个字符`);
   return value;
 }

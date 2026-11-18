@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { PlatformUser, TeachingClass, TeachingLesson, TeachingTask } from "@physics-lab/contracts";
 import { ArrowLeft, BarChart3, BookOpenCheck, Boxes, FlaskConical, Home, Menu, Radio, UserCog, Users, X } from "lucide-react";
 import { Link, Navigate, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { BrandMark } from "../../components/BrandMark";
-import { PageIntroduction } from "../../components/PageIntroduction";
+import { BrandMark } from "../../shared/components/BrandMark";
+import { PageIntroduction } from "../../shared/components/PageIntroduction";
 import {
   createClassReport,
   createLiveSession,
@@ -20,8 +20,10 @@ import { TeacherAccountCenter } from "./TeacherAccountCenter";
 import { TeacherLoginPortal } from "./TeacherLoginPortal";
 import { TeacherRealClasses } from "./TeacherRealClasses";
 import { TeacherTeachingFlow } from "./TeacherTeachingFlow";
-import { TeacherClasses, TeacherLessons, TeacherLiveClassroom, TeacherOverview, TeacherReports } from "./TeacherSections";
-import { DEMO_ONLY, teacherApi } from "../../services/teacherApi";
+import { TeacherLearningRecords } from "./TeacherLearningRecords";
+import { TeacherClasses, TeacherLessons, TeacherLiveClassroom, TeacherOverview, TeacherReports } from "./sections/index";
+import { getTeacherSessionScope, isCurrentTeacherSessionScope, subscribeTeacherSessionScope, type TeacherSessionScope } from "../../data/teacherSessionScope";
+import { DEMO_ONLY, teacherApi, TeacherApiError } from "../../data/teacherApi";
 
 const navigation = [
   { to: "/teacher", label: "教学总览", eyebrow: "OVERVIEW", icon: Home, end: true },
@@ -42,6 +44,16 @@ const routeTitles: Record<string, { eyebrow: string; title: string; description:
 };
 
 export function TeacherDashboard() {
+  const scope = useSyncExternalStore(subscribeTeacherSessionScope, getTeacherSessionScope, getTeacherSessionScope);
+  return <TeacherDashboardContent key={`${scope.key ?? scope.mode}:${scope.revision}`} scope={scope} />;
+}
+
+export function TeacherDashboardContent({ scope }: { scope: TeacherSessionScope }) {
+  const mounted = useRef(true);
+  const checkSequence = useRef(0);
+  const refreshSequence = useRef(0);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const current = useCallback((requireAccount = true) => mounted.current && isCurrentTeacherSessionScope(scope, requireAccount), [scope]);
   const [workspace, setWorkspace] = useState<TeacherWorkspace>(() => loadTeacherWorkspace());
   const [mobileOpen, setMobileOpen] = useState(false);
   const [connection, setConnection] = useState<"checking" | "online" | "offline">(DEMO_ONLY ? "offline" : "checking");
@@ -53,37 +65,46 @@ export function TeacherDashboard() {
   const page = routeTitles[location.pathname] ?? routeTitles["/teacher"];
 
   const refreshRemoteData = useCallback(async (role: PlatformUser["role"] = "teacher") => {
+    if (!current()) return;
+    const sequence = ++refreshSequence.current;
     const [students, teachers, classes, lessons, tasks] = await Promise.all([
       teacherApi.users("student"),
       role === "admin" ? teacherApi.users("teacher") : Promise.resolve([]),
       teacherApi.classes(), teacherApi.lessons(), teacherApi.tasks()
     ]);
+    if (!current() || sequence !== refreshSequence.current) return;
     setRemoteData({ students, teachers, classes, lessons, tasks });
-  }, []);
+  }, [current]);
   const refreshCurrentRemoteData = useCallback(() => refreshRemoteData(apiUser?.role ?? "teacher"), [apiUser?.role, refreshRemoteData]);
 
   const checkBackend = useCallback(async () => {
-    if (DEMO_ONLY) return;
+    if (DEMO_ONLY || !current(false)) return;
+    const sequence = ++checkSequence.current;
+    const valid = () => current(false) && sequence === checkSequence.current;
     setConnection("checking");
     try {
       await teacherApi.health();
+      if (!valid()) return;
       setConnection("online");
-      if (!teacherApi.hasSession()) return;
-      try {
-        const current = await teacherApi.me();
-        if (current.role !== "teacher" && current.role !== "admin") throw new Error("教师端仅允许教师或管理员登录");
-        setApiUser(current);
-        setLocalMode(false);
-        await refreshRemoteData(current.role);
-      } catch {
-        teacherApi.logout();
-        setApiUser(null);
+      if (!scope.canAccess) return;
+      const user = await teacherApi.me();
+      if (!valid() || !current()) return;
+      if (user.id !== scope.userId || user.schoolId !== scope.schoolId || user.role !== scope.role) {
+        throw new TeacherApiError(401, "INVALID_SESSION", "教师登录身份与后台账号不一致，请重新登录");
       }
-    } catch {
+      setApiUser(user);
+      setLocalMode(false);
+      await refreshRemoteData(user.role);
+    } catch (error) {
+      if (!valid()) return;
+      if (error instanceof TeacherApiError && (error.status === 401 || error.status === 403)) {
+        // Only this still-current credential can be logged out by its own error.
+        teacherApi.logout();
+        return;
+      }
       setConnection("offline");
-      setApiUser(null);
     }
-  }, [refreshRemoteData]);
+  }, [current, scope, refreshRemoteData]);
 
   useEffect(() => { void checkBackend(); }, [checkBackend]);
 
@@ -93,24 +114,16 @@ export function TeacherDashboard() {
   const activeLesson = useMemo(() => workspace.lessons.find((lesson) => lesson.id === workspace.liveSession?.lessonId), [workspace.lessons, workspace.liveSession]);
 
   async function login(email: string, password: string) {
-    const session = await teacherApi.login(email, password);
-    if (session.user.role !== "teacher" && session.user.role !== "admin") {
-      teacherApi.logout();
-      throw new Error("该账号不是教师或管理员账号，请从学生端进入");
-    }
-    setApiUser(session.user);
-    setLocalMode(false);
-    setConnection("online");
-    await refreshRemoteData(session.user.role);
+    if (!current(false)) return;
+    // Successful login changes the scope and remounts this subtree. The new
+    // subtree verifies /auth/me before displaying any remote account data.
+    await teacherApi.login(email, password);
   }
 
   function logout() {
+    if (!current(false)) return;
     if (DEMO_ONLY) { navigate("/"); return; }
     teacherApi.logout();
-    setApiUser(null);
-    setLocalMode(false);
-    setRemoteData({ students: [], teachers: [], classes: [], lessons: [], tasks: [] });
-    setConnection((current) => current === "offline" ? "offline" : "online");
   }
 
   function addClass(classItem: TeacherClass) {
@@ -158,10 +171,10 @@ export function TeacherDashboard() {
     return true;
   }
 
-  if (!apiUser && !localMode) return <TeacherLoginPortal connection={connection} onLogin={login} onRetry={checkBackend} onOffline={() => setLocalMode(true)} />;
+  if (!current(false) || (!apiUser && !localMode) || (apiUser && !current())) return <TeacherLoginPortal sessionNotice={scope.mode === "blocked" || scope.mode === "expired" ? scope.label : undefined} connection={connection} onLogin={login} onRetry={checkBackend} onOffline={() => { if (current(false)) setLocalMode(true); }} />;
 
   return (
-    <div className="teacher-console">
+    <div className="teacher-console" onKeyDown={event => { if (event.key === "Escape") setMobileOpen(false); }}>
       {apiUser && <PageIntroduction
         pageKey="teacher-authenticated-workflow"
         eyebrow="TEACHER WORKFLOW / 教师教学闭环"
@@ -184,16 +197,17 @@ export function TeacherDashboard() {
         ]}
       />}
       <div className="teacher-console-grid" aria-hidden="true" />
-      <button className="teacher-mobile-menu" type="button" onClick={() => setMobileOpen((value) => !value)} aria-label="打开教师端导航">
+      <button className="teacher-mobile-menu" type="button" onClick={() => setMobileOpen((value) => !value)} aria-label={mobileOpen ? "收起教师端导航" : "打开教师端导航"} aria-expanded={mobileOpen} aria-controls="teacher-navigation">
         {mobileOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      <aside className={`teacher-sidebar ${mobileOpen ? "is-open" : ""}`}>
+      {mobileOpen && <button className="teacher-mobile-backdrop" type="button" aria-label="收起教师端导航遮罩" onClick={() => setMobileOpen(false)} />}
+      <aside id="teacher-navigation" className={`teacher-sidebar ${mobileOpen ? "is-open" : ""}`}>
         <Link className="teacher-brand" to="/"><BrandMark /></Link>
         <div className="teacher-system-id"><span>PHY EDU / {apiUser?.role === "admin" ? "A-01" : "T-01"}</span><b>{apiUser?.role === "admin" ? "平台综合管理站" : "教师教学观测站"}</b></div>
         <nav aria-label="教师工作台导航">
           {navigation.filter(({ to }) => !DEMO_ONLY || to !== "/teacher/accounts").map(({ to, label, eyebrow, icon: Icon, end }) => (
-            <NavLink key={to} to={to} end={end}>
+            <NavLink key={to} to={to} end={end} onClick={() => setMobileOpen(false)}>
               <i><Icon size={18} /></i><span><small>{eyebrow}</small><b>{label}</b></span><em>→</em>
             </NavLink>
           ))}
@@ -222,7 +236,7 @@ export function TeacherDashboard() {
             <Route path="classes" element={apiUser ? <TeacherRealClasses classes={remoteData.classes} students={remoteData.students} onRefresh={refreshCurrentRemoteData} /> : <TeacherClasses classes={workspace.classes} onAdd={addClass} />} />
             <Route path="lessons" element={apiUser ? <TeacherTeachingFlow classes={remoteData.classes} lessons={remoteData.lessons} tasks={remoteData.tasks} onRefresh={refreshCurrentRemoteData} /> : <TeacherLessons workspace={workspace} onAdd={addLesson} onLaunch={launchLesson} />} />
             <Route path="live" element={<TeacherLiveClassroom workspace={workspace} activeLesson={activeLesson} onLaunch={launchLesson} onUpdate={updateLiveSession} onEnd={endLiveSession} />} />
-            <Route path="reports" element={<TeacherReports reports={workspace.reports} />} />
+            <Route path="reports" element={apiUser ? <TeacherLearningRecords key={apiUser.id} currentUser={apiUser} /> : <TeacherReports reports={workspace.reports} />} />
             <Route path="*" element={<Navigate to="/teacher" replace />} />
           </Routes>
         </section>
