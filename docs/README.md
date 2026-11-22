@@ -7,6 +7,7 @@
 | 项目结构 | [代码架构说明](CODE_ARCHITECTURE.md)、[页面地图](PAGE_MAP.md) | 模块边界、路由与入口 |
 | 当前开发 | [开发状态](DEVELOPMENT_STATUS.md)、[开发流程](DEVELOPMENT_WORKFLOW.md) | 当前能力、检查与发布方式 |
 | 高中产品 | [高中产品设计](high-school/PRODUCT_DESIGN.md)、[实验补齐记录](high-school/EXPANSION_ACCEPTANCE.md) | 课程实验、交互与教学范围 |
+| 开源学习 | [智能体与仿真学习清单](OPEN_SOURCE_AGENT_SIMULATION_REVIEW_2026_11_22.md) | 外部项目适用性、许可边界与建议顺序 |
 | 教学后台 | [独立部署说明](backend/INDEPENDENT_SERVER_DEPLOYMENT.md)、[备份与恢复](backend/SQLITE_BACKUP_RECOVERY.md) | 服务、数据与部署边界 |
 | 阶段验收 | 根目录 `ACCEPTANCE_STAGE_*.md`、`high-school/`、`backend/` 下的验收记录 | 历次变更的检查证据；按需要查阅 |
 | 展示图与海报 | [展示资料目录](presentation/v2/README.md)、[技术路线图目录](presentation/technical-roadmap/README.md) | 演示素材与制图源文件，不参与网站运行 |
