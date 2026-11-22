@@ -2,6 +2,8 @@
 
 本文件描述 V2 主工程的源码组织。日常功能开发在这里进行，工作区外围的教材、论文副本和桌面封装工程分别维护。
 
+第一次阅读可先看更短的[代码导览](代码导览.md)。
+
 本轮网站修复沿用现有边界：学生页内导航辅助函数在 `features/student/components/scrollToStudentSection.ts`，麦克风请求与资源所有权在 `features/experiments/sound/microphoneCapture.ts`，引导偏好容错在 `shared/components/pageIntroductionStorage.ts`。页面负责显示与操作，资源控制器不依赖 React；没有新增后台或第二套身份协议。验证见[第三十阶段记录](ACCEPTANCE_STAGE_30.md)。
 
 ## 工程结构

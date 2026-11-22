@@ -1,6 +1,6 @@
 # 初中物理虚拟实验平台 V2
 
-平台代码的模块边界、目录入口和开发方式见 [代码架构说明](docs/CODE_ARCHITECTURE.md)。周边教材与参赛资料见工作区的 [目录导航](../00_目录导航.md)。本目录是继续开发的主工程。
+第一次看代码，先打开[代码导览](docs/代码导览.md)；详细的模块边界和开发方式见[代码架构说明](docs/CODE_ARCHITECTURE.md)。周边教材与参赛资料见工作区的[目录导航](../00_目录导航.md)。本目录是继续开发的主工程。
 
 持续升级的流程与当前进展见 [开发 workflow](docs/DEVELOPMENT_WORKFLOW.md) 和 [开发状态](docs/DEVELOPMENT_STATUS.md)。独立高中专区的设计、课程来源和力力助手见 [高中产品设计](docs/high-school/PRODUCT_DESIGN.md)。
 
