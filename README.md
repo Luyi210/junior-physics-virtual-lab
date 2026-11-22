@@ -12,6 +12,8 @@ GitHub Pages 初高中合版：<https://luyi210.github.io/junior-physics-virtual
 
 `main` 分支更新后，GitHub Actions 先运行类型、测试、知识评估和生产构建，再发布静态网站。学生端和教师端以演示模式打开，不需要登录或配置教学后台；演示记录保存在当前浏览器。
 
+首页的“版本更新通知”由 `apps/web/src/features/home/releaseNotes.ts` 维护。每次发布时把新版本放在数组最前面，写明实际变更；访客关闭旧版本提示后，新版本仍会重新提醒。代码仅保存在本地不会改变公开网站，需推送到 `main` 且 Pages 发布成功后才会显示。
+
 - 初中探索：<https://luyi210.github.io/junior-physics-virtual-lab/#/student>
 - 高中实验室：<https://luyi210.github.io/junior-physics-virtual-lab/#/high-school>
 - 教师演示：<https://luyi210.github.io/junior-physics-virtual-lab/#/teacher>

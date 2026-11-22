@@ -19,6 +19,7 @@ import { PageIntroduction } from "../../shared/components/PageIntroduction";
 import { PhysicsFieldMotif } from "../../shared/components/PhysicsFieldMotif";
 import type { PhysicsField } from "../../shared/components/PhysicsFieldMotif";
 import { DashboardPhysicsCanvas } from "../student/components/DashboardPhysicsCanvas";
+import { ReleaseNotice } from "./ReleaseNotice";
 import "./SchoolStageEntry.css";
 
 interface LabCard {
@@ -71,6 +72,8 @@ export function HomePage() {
           <span className="version-chip"><span /> 六大领域开放探索</span>
         </nav>
       </header>
+
+      <ReleaseNotice />
 
       <main>
         <section className="hero-lab">
