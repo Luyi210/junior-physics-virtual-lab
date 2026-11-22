@@ -1,8 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { calculateInclinedCartRun, calculateInclinedCartState } from "@physics-lab/physics";
-import { advanceExperimentClock, FIXED_TIME_STEP } from "./simulationClock";
+import { advanceExperimentClock, clockTickAtTime, FIXED_TIME_STEP } from "./simulationClock";
 
 describe("inclined-cart physics and simulation clock integration", () => {
+  it("locates a replay request on the physical time grid and reaches the exact endpoint", () => {
+    const duration = .73;
+    expect(clockTickAtTime(-1, duration)).toBe(0);
+    expect(clockTickAtTime(.36, duration) * FIXED_TIME_STEP).toBeCloseTo(.3666666667);
+    expect(Math.min(duration, clockTickAtTime(duration, duration) * FIXED_TIME_STEP)).toBe(duration);
+    expect(clockTickAtTime(Number.NaN, duration)).toBe(0);
+    expect(clockTickAtTime(.03, .06, 1 / 3000)).toBe(90);
+  });
   it("changes observation speed without changing physical time or the endpoint", () => {
     const duration = .5;
     let clock = { tick: 0, remainder: 0, finished: false };

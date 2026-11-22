@@ -97,7 +97,15 @@ function PendulumManualInstrument({ parameters, timeSeconds, simulation, clockRu
   const [periodCount, setPeriodCount] = useState("");
   const [timingNotice, setTimingNotice] = useState("");
   const parameterKey = JSON.stringify(parameters);
+  const observedResetToken = useRef(resetToken);
   useEffect(() => {
+    if (observedResetToken.current !== resetToken) {
+      observedResetToken.current = resetToken;
+      run.current = null;
+      setTiming(false); setCapture(null); setPeriodCount("");
+      setTimingNotice("物理时间已重新定位，请重新选择计时起止时刻。");
+      return;
+    }
     if (!run.current) return;
     const observed = observeVirtualTiming(run.current, timeSeconds, parameters, resetToken);
     run.current = observed.run;

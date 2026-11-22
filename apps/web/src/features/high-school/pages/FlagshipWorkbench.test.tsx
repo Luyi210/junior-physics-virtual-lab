@@ -44,6 +44,7 @@ vi.mock('../experiments/useExperimentClock', () => ({ useExperimentClock: (durat
   reset() { harness.time = 0; harness.running = false; harness.resets++; },
   toggle() { if (!harness.running && harness.time >= duration) harness.time = 0; harness.running = !harness.running; },
   step() { harness.running = false; harness.time = Math.min(duration, harness.time + 1 / 60); },
+  seek(time: number) { harness.running = false; harness.time = Math.max(0, Math.min(duration, time)); },
 }) }));
 vi.mock('../../../data/highSchoolContext', () => ({
   publishHighSchoolContext: (context: LiliExperimentContext | null) => { if (context?.experimentId !== harness.context?.experimentId) harness.visit++; harness.context = context; harness.contextListeners.forEach(listener => listener()); return true; },
@@ -126,6 +127,30 @@ function mount(id: FlagshipId, scope: HighSchoolRecordScope = { key: crypto.rand
 const cycleInput = (tree: ReactNode) => walk(tree).find(node => node.type === 'input' && node.props.placeholder === '由你计数后填写')!;
 
 describe('mobile two-dimensional workbench journeys (controlled hooks and storage, not a browser)', () => {
+  it('replays a pendulum moment and keeps the scene, plot, saved reading and Lili context on one physical time', () => {
+    const app = mount('pendulum');
+    const timeline = () => walk(app.tree).find(node => node.type === 'input' && node.props['aria-label'] === '实验时间轴')!;
+    expect(timeline()).toBeDefined();
+    fire(button(app.tree, '播放实验')); app.render();
+    fire(timeline(), 'onChange', { target: { value: '2.5' } }); app.render();
+    expect(harness.running).toBe(false);
+    expect(harness.time).toBe(2.5);
+    expect(app.state.time).toBeCloseTo(2.5);
+    expect((find(app.tree, ExperimentPlot).props.currentPoint as { x: number }).x).toBeCloseTo(2.5);
+    app.save();
+    expect(app.records()[0]!.timeSeconds).toBe(2.5);
+    expect(harness.context?.timeSeconds).toBe(2.5);
+  });
+  it('ends an in-progress pendulum stopwatch run when the time axis jumps', () => {
+    const app = mount('pendulum');
+    fire(button(app.manual(), '开始计时'));
+    expect(text(app.manual())).toContain('正在等待你选择停止时机');
+    const timeline = walk(app.tree).find(node => node.type === 'input' && node.props['aria-label'] === '实验时间轴')!;
+    fire(timeline, 'onChange', { target: { value: '3' } });
+    app.render();
+    expect(text(app.manual())).toContain('物理时间已重新定位');
+    expect(text(app.manual())).not.toContain('正在等待你选择停止时机');
+  });
   it.each(['pendulum', 'force-composition', 'emf-internal-resistance'] as const)('edits %s, asks Lili about the captured state, and reopens the saved archive', id => {
     const app = mount(id);
     expect(find(app.view(), 'section').props['data-mode']).toBe('2d');

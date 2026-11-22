@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import type { CSSProperties } from "react";
 import { ArrowLeft, ArrowRight, BookOpen, Check, ChevronDown, Download, Pause, Play, Plus, RotateCcw, SkipForward, Trash2 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { getHighSchoolExperiment, highSchoolVolumes } from "@physics-lab/knowledge/high-school";
@@ -108,6 +109,12 @@ export function HighSchoolWorkbench({ definition, scope }: { definition: HighSch
     if (!clock.running && clock.time >= initial.durationSeconds) { restartCapacitorRun(); setClockResetToken((token) => token + 1); }
     clock.toggle();
   }
+  function seekClock(time: number) {
+    if (id === "capacitor-charge" || initial.durationSeconds <= 0) return;
+    clock.seek(time);
+    // A manually timed run or paper-tape draft cannot span a time jump.
+    if (id === "pendulum" || id === "mechanical-energy") setClockResetToken((token) => token + 1);
+  }
   function changeCapacitorMode(mode: CapacitorMode) {
     if (!capacitorHistory || clock.time >= initial.durationSeconds) return;
     try { setCapacitorHistory(switchCapacitorMode({ resistanceKOhm: parameters.resistanceKOhm, capacitanceMicrofarads: parameters.capacitanceMicrofarads, emf: parameters.emf }, capacitorHistory, clock.time, mode)); }
@@ -202,6 +209,7 @@ export function HighSchoolWorkbench({ definition, scope }: { definition: HighSch
 
       <div className="hs-lab-layout" id="hs-stage"><section className="hs-lab-main hs-apparatus-console" aria-label="装置与计时"><ExperimentViewport experimentId={id} parameters={parameters} simulation={simulation} trajectory={trajectory} onParametersChange={changeParameters} capacitorMode={simulation.capacitor?.mode} onCapacitorModeChange={changeCapacitorMode} capacitorSwitchDisabled={clock.time >= initial.durationSeconds} />
         <div className="hs-playbar"><div className="hs-clock"><small>{initial.durationSeconds > 0 ? "实验时间" : "稳态实验"}</small><strong>{initial.durationSeconds > 0 ? <>{clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)}<span> / {initial.durationSeconds.toFixed(id === "transformer-ratio" ? 4 : 2)} s</span></> : "即时读数"}</strong></div><div className="hs-play-controls"><button className="hs-play-toggle" type="button" disabled={initial.durationSeconds <= 0} onClick={toggleClock} aria-label={clock.running ? "暂停实验" : "播放实验"}>{clock.running ? <Pause size={17} /> : <Play size={17} />}{clock.running ? "暂停" : "播放"}</button><button type="button" disabled={initial.durationSeconds <= 0 || clock.time >= initial.durationSeconds} onClick={clock.step} title={id === "transformer-ratio" ? "前进1/60个交流周期（按实际频率换算秒）" : "前进一个固定时间步（1/60 秒）"}><SkipForward size={16} />单步</button><button type="button" disabled={initial.durationSeconds <= 0} onClick={resetClock}><RotateCcw size={15} />重新计时</button></div>
+          {initial.durationSeconds > 0 && id !== "capacitor-charge" && <div className="hs-time-scrubber"><div><label htmlFor="hs-experiment-time">定位物理时刻</label><span>{clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)} / {initial.durationSeconds.toFixed(id === "transformer-ratio" ? 4 : 2)} s</span></div><input id="hs-experiment-time" type="range" min="0" max={initial.durationSeconds} step="any" value={clock.time} onChange={(event) => seekClock(Number(event.target.value))} aria-label="实验时间轴" aria-valuetext={`${clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)} 秒`} style={{ "--hs-time-progress": `${clock.time / initial.durationSeconds * 100}%` } as CSSProperties} /><p>拖动可暂停并回看任意时刻；画面、图像和读数按同一物理时间更新。{id === "pendulum" || id === "mechanical-energy" ? " 时间跳转会结束正在进行的手动测量。" : ""}</p></div>}
           {initial.durationSeconds > 0 && <div className="hs-speed-controls" role="group" aria-label="观察速度"><span>观察速度</span><div>{PLAYBACK_SPEEDS.map((speed) => <button key={speed} type="button" aria-pressed={playbackSpeed === speed} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}</div><p>速度设置只改变演示节奏，实验时间、图像和保存读数仍按物理秒计算。{id === "transformer-ratio" && " 变压器的 1× 演示为每秒一个交流周期。"}</p></div>}
         </div>
         <ExperimentPlaybackStatus time={clock.time} duration={initial.durationSeconds} running={clock.running} />

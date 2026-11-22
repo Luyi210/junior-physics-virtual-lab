@@ -10,6 +10,17 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.22.7",
+    date: "2026-11-22",
+    title: "高中动态实验可以拖动回看",
+    summary: "新增物理时间轴，暂停后可定位到关键时刻，装置、读数与图像同步更新。",
+    changes: [
+      "有动态过程的高中实验新增可拖动时间轴，可反复查看碰撞前后、摆动和其他短暂现象。",
+      "定位后按固定物理时间步计算，播放速度只影响观看节奏；跳转时间会结束正在进行的手动计时或纸带读数。",
+      "电容充放电保留开关历史的因果顺序，不提供倒退时间轴。"
+    ]
+  },
+  {
     version: "2026.11.22.6",
     date: "2026-11-22",
     title: "高中实验室增加题目可视化",

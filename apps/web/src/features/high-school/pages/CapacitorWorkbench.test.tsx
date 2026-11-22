@@ -31,6 +31,7 @@ vi.mock('../experiments/useExperimentClock', () => ({ useExperimentClock: (durat
     reset() { harness.time = 0; harness.running = false; },
     toggle() { if (!harness.running && harness.time >= duration) harness.time = 0; harness.running = !harness.running; },
     step() { harness.running = false; harness.time = Math.min(duration, harness.time + 1 / 60); },
+    seek(time: number) { harness.running = false; harness.time = Math.max(0, Math.min(duration, time)); },
   };
 } }));
 vi.mock('../../../data/highSchoolContext', () => ({ publishHighSchoolContext: (context: LiliExperimentContext | null) => { harness.context = context; return true; } }));
@@ -62,6 +63,10 @@ function mount() {
   cleanups.push(() => frame.slots.forEach((slot) => slot.cleanup?.())); app.render(); return app;
 }
 describe('capacitor actual workbench operation chain', () => {
+  it('keeps timeline seeking unavailable because switch history is causal', () => {
+    const app = mount();
+    expect(walk(app.tree).some(node => node.type === 'input' && node.props['aria-label'] === '实验时间轴')).toBe(false);
+  });
   it('continues charge → open → discharge without resetting time, U, Q or stored energy', () => {
     const app = mount(); app.render(2); const charged = { ...app.state }; app.switch('open');
     expect(harness.time).toBe(2); expect(app.state.voltage).toBe(charged.voltage); expect(app.state.charge).toBe(charged.charge);
