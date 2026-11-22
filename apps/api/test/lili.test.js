@@ -75,6 +75,16 @@ test("action coaching and simplified explanations stay local even with AI enable
   assert.doesNotMatch(simple.text, /旧解释/);
 });
 
+test("student draft reviews stay local even when AI is enabled", async () => {
+  let factories = 0;
+  const api = service({ runtimeFactory: async () => { factories += 1; throw new Error("draft review must stay local"); } });
+  const answer = await api.ask(input({ question: "检查这条结论：所有物体一定下落得一样快。" }));
+  assert.equal(answer.mode, "guided");
+  assert.match(answer.text, /超出当前证据范围/);
+  assert.match(answer.text, /没有核实你写的数值或操作/);
+  assert.equal(factories, 0);
+});
+
 test("explicit hint levels use validated scaffolds even with AI enabled and do not start a paid runtime", async () => {
   let factories = 0;
   const api = service({ runtimeFactory: async () => { factories += 1; throw new Error("explicit hints must stay local"); } });

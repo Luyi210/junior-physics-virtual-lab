@@ -7,9 +7,12 @@ import { expansionCurrentGuidance, expansionGuidance, expansionRequestedRelation
 import { createLiliScaffold, liliHintConstraint, liliHintLevel } from "@physics-lab/harness/lili-scaffolding";
 import { isLiliCurrentCheck, isLiliLifeConnectionRequest, resolveLiliFollowUp } from "@physics-lab/harness/lili-dialogue";
 import { createLiliEvidenceCoach, isLiliEvidenceCoachRequest } from "@physics-lab/harness/lili-evidence-coach";
+import { reviewLiliReflection } from "./liliReflection.ts";
 export { isLiliCurrentCheck, isLiliLifeConnectionRequest, isLiliSimplificationRequest, resolveLiliFollowUp } from "@physics-lab/harness/lili-dialogue";
 export { isLiliEvidenceCoachRequest } from "@physics-lab/harness/lili-evidence-coach";
 export { liliHintLevel } from "@physics-lab/harness/lili-scaffolding";
+export { isLiliReflectionRequest } from "./liliReflection.ts";
+export type { LiliReflectionKind } from "./liliReflection.ts";
 export type { LiliHintLevel } from "@physics-lab/harness/lili-scaffolding";
 
 export function prepareLiliContext(value: unknown) {
@@ -172,6 +175,44 @@ const guidance: Record<string, { next: string; variables: string; graph: string;
   }
 };
 
+export type LiliCoachState = {
+  stage: "choose" | "check" | "observe" | "record" | "review";
+  label: string;
+  summary: string;
+  next: string;
+  question: string;
+  issue: string | null;
+  modelSamples: number;
+  manualSamples: number;
+  modelRecordCount: number;
+  manualRecordCount: number;
+  timeSeconds: number;
+  evidence: readonly string[];
+};
+
+/** A live, bounded coaching snapshot. Counts describe available evidence, never mastery. */
+export function getLiliCoachState(context: LiliExperimentContext | null): LiliCoachState {
+  if (!context) return { stage: "choose", label: "先选择实验", summary: "打开一项高中实验后，我才能读取当前虚拟条件。", next: "从实验目录选择一项，先说出你想研究的变量。", question: "我应该先做哪一步？", issue: null, modelSamples: 0, manualSamples: 0, modelRecordCount: 0, manualRecordCount: 0, timeSeconds: 0, evidence: [] };
+  const experiment = getHighSchoolExperiment(context.experimentId);
+  const profile = guidance[context.experimentId];
+  const id = context.experimentId as HighSchoolExperimentId;
+  const simulation = simulateHighSchoolExperiment(id, context.parameters, context.timeSeconds, context.capacitorHistory);
+  const slitHint = id === "double-slit" && simulation.state.canMeasureFringeSpacing === 0
+    ? "当前虚拟屏内不足两条可定位的亮纹。先调整缝距或屏距，再核对两个亮纹中心；旧记录仍按原条件保留。" : null;
+  const issue = id === "capacitor-charge" && simulation.capacitor?.mode === "open"
+    ? "当前为断路保持段，不能用这一段估计充放电时间常量；请切回有效充电或放电段后另作比较。"
+    : liliHintConstraint(context, simulation.state, slitHint);
+  const modelSamples = Math.min(context.recordCount, context.samples?.length ?? 0);
+  const manualRecordCount = context.manualRecordCount ?? 0;
+  const manualSamples = Math.min(manualRecordCount, context.manualSamples?.length ?? 0);
+  const common = { issue, modelSamples, manualSamples, modelRecordCount: context.recordCount, manualRecordCount, timeSeconds: Math.min(context.timeSeconds, simulation.durationSeconds), evidence: experiment?.evidence ?? [] };
+  if (issue) return { ...common, stage: "check", label: "先核对当前条件", summary: issue, next: "按上面的条件提示调整或确认，再检查当前实验。已保存的旧记录仍使用保存时的条件。", question: "帮我检查当前实验" };
+  if (context.recordCount > modelSamples && modelSamples === 0 && manualSamples === 0) return { ...common, stage: "review", label: "记录尚未提供", summary: `页面显示 ${context.recordCount} 条模型记录，但本次没有收到具体采样。条数不能代替证据。`, next: "到实验记录区核对是否已加载具体记录，再让力力检查；不要根据总条数判断实验完成。", question: "检查我的记录" };
+  if (modelSamples || manualSamples) return { ...common, stage: "review", label: "可核对已有记录", summary: `本次可参考 ${modelSamples} 条自动模型采样、${manualSamples} 条手动虚拟读数；两类来源须分开分析。`, next: "选定一类记录，核对保存时的条件、单位和可比较的变量，再讨论结论。", question: modelSamples && manualSamples ? "检查我的记录" : manualSamples ? "看看我的手动读数" : "检查我的记录" };
+  if (context.timeSeconds > 0 && simulation.durationSeconds > 0) return { ...common, stage: "record", label: "正在观察现象", summary: `当前虚拟过程在 ${Number(context.timeSeconds.toFixed(3))} s，尚未收到具体保存读数。`, next: "在要比较的时刻保存一组条件和读数，再改变一个变量或时间作对照。", question: "我应该记录哪些证据？" };
+  return { ...common, stage: "observe", label: "先预测再操作", summary: experiment ? `当前是“${experiment.name}”，还没有收到本次的具体记录。` : "当前实验还没有具体记录。", next: profile?.next.split("。")[0] ? `${profile.next.split("。")[0]}。` : "先选择一个变量，预测现象，再保存条件和读数。", question: "给我一级提示" };
+}
+
 export function createLiliGuidance(question: string, context: LiliExperimentContext | null, recentDialogue: readonly LiliDialogueTurn[] = []): LiliChatReply {
   const resolved = resolveLiliFollowUp(question, context, recentDialogue);
   question = resolved.question;
@@ -189,6 +230,8 @@ export function createLiliGuidance(question: string, context: LiliExperimentCont
     if (/变量|保持|改变|控制/iu.test(question)) return reply("先明确要研究哪两个量，再让其他会影响结果的条件保持相同。例如研究平抛落地时间与水平初速度的关系时，固定释放高度和重力加速度，只改变水平初速度，且每组抛射角都为0°。每组保存完整条件、读数和单位，再比较结果。选择具体实验后，我可以按那项实验继续引导。", ["平抛运动怎么探究？"]);
     return reply("我是力力，你的柯基实验伙伴。先选择一个高中实验，我会和你一起明确问题、只改变一个变量，再用记录支持结论。当前提供本地实验引导，联网 AI 会单独标明。", ["平抛运动怎么探究？", "怎样控制变量？"]);
   }
+  const reflection = reviewLiliReflection(question);
+  if (reflection) return reply(reflection.text, reflection.suggestions);
   const slitScreenHint = context!.experimentId === "double-slit" && simulateHighSchoolExperiment("double-slit", context!.parameters, 0).state.canMeasureFringeSpacing === 0
     ? "当前±20 mm虚拟屏内只有中央一条亮纹，无法选出两个亮纹中心，因此暂时不能用读尺测量间距或保存这项手动读数。先保持波长不变，缩短屏距或增大缝间距，直到屏内出现至少两条亮纹；每次只调一项，确认后固定新的d、L，再开始一组读尺。已有历史记录仍按保存时的条件分析。" : null;
   if (isLiliLifeConnectionRequest(question)) {

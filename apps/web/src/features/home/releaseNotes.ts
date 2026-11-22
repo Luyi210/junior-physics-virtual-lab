@@ -10,6 +10,16 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.22.4",
+    date: "2026-11-22",
+    title: "力力增加现场判断与思路检查",
+    summary: "高中实验中可直接查看当前卡点、下一步，并检查自己写下的观察与结论。",
+    changes: [
+      "力力新增现场判断：结合当前实验条件、过程时间和可用记录提示下一步。",
+      "可检查观察、假设、推理和结论的表述结构；记录来源与物理结论仍需学生自行核实。"
+    ]
+  },
+  {
     version: "2026.11.22.3",
     date: "2026-11-22",
     title: "高中实验动态更容易观察",

@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
-import { createLiliGuidance, isLiliCurrentCheck, isLiliEvidenceCoachRequest, isLiliLifeConnectionRequest, isLiliSimplificationRequest, liliAnalysisReference, liliHintLevel, liliReferenceNotes, prepareLiliContext, resolveLiliFollowUp } from "@physics-lab/harness/lili";
+import { createLiliGuidance, isLiliCurrentCheck, isLiliEvidenceCoachRequest, isLiliLifeConnectionRequest, isLiliReflectionRequest, isLiliSimplificationRequest, liliAnalysisReference, liliHintLevel, liliReferenceNotes, prepareLiliContext, resolveLiliFollowUp } from "@physics-lab/harness/lili";
 import { liliManualReference } from "@physics-lab/harness/lili-manual";
 import { getHighSchoolExperiment, getHighSchoolLifeConnection } from "@physics-lab/knowledge/high-school";
 import { ApiError, requiredString } from "./http.js";
@@ -154,7 +154,7 @@ export function createLiliService(config, options = {}) {
     const fallback = createLiliGuidance(prepared.question, prepared.context, prepared.recentDialogue);
     // Explicit scaffold requests keep their chosen level. Sending the full
     // model snapshot to AI could turn a first hint into the complete answer.
-    if (!enabled || liliHintLevel(resolved.question) !== null || isLiliCurrentCheck(resolved.question) || isLiliEvidenceCoachRequest(resolved.question) || isLiliLifeConnectionRequest(resolved.question) || isLiliSimplificationRequest(prepared.question) || resolved.needsClarification) return fallback;
+    if (!enabled || liliHintLevel(resolved.question) !== null || isLiliCurrentCheck(resolved.question) || isLiliEvidenceCoachRequest(resolved.question) || isLiliLifeConnectionRequest(resolved.question) || isLiliReflectionRequest(resolved.question) || isLiliSimplificationRequest(prepared.question) || resolved.needsClarification) return fallback;
     if (queued >= queueLimit) throw new ApiError(429, "LILI_BUSY", "力力正在回答其他问题，请稍后再试");
     // One budget covers queueing, initialization and inference; expired queued
     // questions must not start a paid turn after the browser has stopped waiting.

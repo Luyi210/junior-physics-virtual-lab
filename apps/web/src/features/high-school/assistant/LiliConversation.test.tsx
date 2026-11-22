@@ -6,6 +6,7 @@ import { createLiliGuidance } from "@physics-lab/harness/lili";
 import { defaultHighSchoolParameters, createCapacitorHistory, simulateHighSchoolExperiment } from "@physics-lab/physics/high-school";
 import type { HighSchoolRecordScope } from "../../../data/highSchoolRecordScope";
 import { LiliAssistant } from "./LiliAssistant";
+import { LiliReviewPanel } from "./LiliReviewPanel";
 import { LiliQuestionContext } from "./LiliQuestionContext";
 import { captureLiliContext, collectLiliRecentDialogue, createLiliConversationId, liliContextChanged } from "./liliConversationContext";
 import { TutorHintLadder } from "../../../shared/components/TutorHintLadder";
@@ -98,6 +99,32 @@ beforeEach(() => {
 afterEach(() => { state.frame = null; cleanups.splice(0).forEach(cleanup => cleanup()); vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 describe("Lili action coaching and experiment visits", () => {
+  it("opens the live review and carries its condition check into the same conversation", () => {
+    state.scope = { key: "guest", mode: "guest", label: "本机访客", canWrite: true, authChannel: null, revision: 1 };
+    state.context = { experimentId: "pendulum", parameters: { ...defaultHighSchoolParameters("pendulum"), amplitudeDegrees: 20 }, timeSeconds: 0, recordCount: 0 };
+    const app = mountConversation();
+    const tab = nodes(app.tree).find(node => node.props.role === "tab" && text(node) === "现场判断")!;
+    click(tab); app.render();
+    const review = nodes(app.tree).find(node => node.type === LiliReviewPanel)!;
+    const reviewTree = LiliReviewPanel(review.props as Parameters<typeof LiliReviewPanel>[0]);
+    expect(renderToStaticMarkup(reviewTree)).toContain("摆角超过10°");
+    const check = nodes(reviewTree).find(node => node.type === "button" && text(node).includes("核对当前条件"))!;
+    click(check); app.render();
+    expect(text(replies(app).at(-1))).toContain("摆角超过10°");
+    expect(state.request).not.toHaveBeenCalled();
+    expect(nodes(app.tree).find(node => node.props.role === "tab" && text(node) === "问力力")?.props["aria-selected"]).toBe(true);
+  });
+  it("lets a student bring an observation draft into local coaching", () => {
+    const app = mountConversation();
+    click(nodes(app.tree).find(node => node.props.role === "tab" && text(node) === "现场判断")!); app.render();
+    const review = nodes(app.tree).find(node => node.type === LiliReviewPanel)!;
+    const draft = nodes(LiliReviewPanel(review.props as Parameters<typeof LiliReviewPanel>[0])).find(node => node.type === "button" && text(node) === "观察")!;
+    click(draft); app.render();
+    expect(find(app.tree, "textarea").props.value).toBe("检查这条观察：");
+    app.ask("检查这条观察：保持原长不变，把质量从 50 g 调到 100 g，弹力从 0.49 N 变为 0.98 N。");
+    expect(text(replies(app).at(-1))).toContain("观察证据的表述检查");
+    expect(state.request).not.toHaveBeenCalled();
+  });
   it("checks actual record availability locally and explains a topic more simply without another network call", async () => {
     state.context!.recordCount = 12;
     state.request.mockImplementation(({ localReply }) => Promise.resolve(localReply));
