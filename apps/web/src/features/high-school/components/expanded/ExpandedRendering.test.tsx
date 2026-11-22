@@ -130,6 +130,15 @@ describe('expanded apparatus with actual model outputs (SSR, not GPU/browser val
       const point = verticalDropPoint(end.simulation.state.position, dropHeight);
       expect(point.y + 12).toBeCloseTo(318); expect(point.world[1] - .16).toBeCloseTo(-1.06);
       expect(svg(end)).toContain('cy="306" r="12"');
+      const beginning = svg(initial), halfway = svg(model('free-fall', { dropHeight }, initial.simulation.durationSeconds / 2)), complete = svg(end);
+      expect((beginning.match(/data-fall-time-marker=/g) ?? [])).toHaveLength(1);
+      expect((halfway.match(/data-fall-time-marker=/g) ?? [])).toHaveLength(9);
+      const markerHeights = [...complete.matchAll(/data-fall-time-marker="[^"]+" cx="350" cy="([^"]+)"/g)].map(match => Number(match[1]));
+      expect(markerHeights).toHaveLength(17);
+      const gaps = markerHeights.slice(1).map((height, index) => height - markerHeights[index]!);
+      expect(gaps.every((gap, index) => index === 0 || gap > gaps[index - 1]!)).toBe(true);
+      const markers3d = nodes(MechanicsApparatus3D(end)).filter(node => node.props.userData && typeof node.props.userData === 'object' && 'fallSampleTimeSeconds' in node.props.userData);
+      expect(markers3d).toHaveLength(17);
     }
   });
 

@@ -10,6 +10,17 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.22.8",
+    date: "2026-11-22",
+    title: "高中运动过程新增动态轨迹",
+    summary: "抛体与自由落体现在随实验时间逐段显示轨迹，并用等时间隔的位置点呈现速度变化。",
+    changes: [
+      "抛体运动的二维与三维场景区分模型完整轨迹、已经过的轨迹和当前物体位置。",
+      "自由落体的二维与三维场景新增等时位置点，可直观看到相邻位置间隔逐渐增大。",
+      "拖动实验时间轴时，轨迹、位置点和读数跟随同一模型时间更新。"
+    ]
+  },
+  {
     version: "2026.11.22.7",
     date: "2026-11-22",
     title: "高中动态实验可以拖动回看",

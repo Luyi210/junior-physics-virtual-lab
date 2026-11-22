@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { calculateDoubleSlitBrightPosition, defaultHighSchoolParameters, simulateHighSchoolExperiment, type DoubleSlitParameters } from "@physics-lab/physics/high-school";
 import { ExperimentDiagram2D } from "./ExperimentDiagram2D";
+import { createTrajectory } from "../experiments/workbench";
 
 const defaultParameters = defaultHighSchoolParameters("double-slit") as unknown as DoubleSlitParameters;
 const cases: Array<{ name: string; parameters: DoubleSlitParameters }> = [
@@ -72,5 +73,21 @@ describe("double-slit diagram full-resolution intensity screen", () => {
     expect(ids).toHaveLength(2);
     expect(new Set(ids).size).toBe(2);
     for (const id of ids) expect(html).toContain(`height="250" fill="url(#${id})"`);
+  });
+});
+
+describe("projectile observed path", () => {
+  it("draws only elapsed positions over the model's full dashed trajectory", () => {
+    const parameters = defaultHighSchoolParameters("projectile-motion");
+    const first = simulateHighSchoolExperiment("projectile-motion", parameters, 0);
+    const trajectory = createTrajectory("projectile-motion", parameters, first.durationSeconds);
+    const renderAt = (time: number) => renderToStaticMarkup(<ExperimentDiagram2D experimentId="projectile-motion" parameters={parameters} simulation={simulateHighSchoolExperiment("projectile-motion", parameters, time)} trajectory={trajectory} />);
+    const start = renderAt(0), halfway = renderAt(first.durationSeconds / 2), landing = renderAt(first.durationSeconds);
+    expect(start).toContain('data-predicted-trajectory="true"');
+    expect(start).not.toContain('data-observed-trajectory="true"');
+    expect((start.match(/data-equal-time-marker=/g) ?? [])).toHaveLength(1);
+    expect(halfway).toContain('data-observed-trajectory="true"');
+    expect((halfway.match(/data-equal-time-marker=/g) ?? [])).toHaveLength(9);
+    expect((landing.match(/data-equal-time-marker=/g) ?? [])).toHaveLength(17);
   });
 });

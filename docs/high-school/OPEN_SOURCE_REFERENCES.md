@@ -55,6 +55,10 @@ MIT核对仅针对链接仓库的许可证文件，不延伸推断所有外部�
 
 工作区已有 `03_开源参考/01_PhET_物理仿真/` 等历史学习材料，可供只读比较；与主工程运行依赖分离，使用前重新核对版本。PhET品牌和素材授权还可能有独立条款，参考[官方品牌说明](https://github.com/phetsims/brand/blob/main/README.md)，不能用源码许可证概括全部资源。
 
+## 2026-11-22：运动过程的动态呈现
+
+查阅 [PhET Projectile Motion 模型说明](https://github.com/phetsims/projectile-motion/blob/main/doc/model.md) 与 [Collision Lab 模型说明](https://github.com/phetsims/collision-lab/blob/main/doc/model.md)，参考随时间形成轨迹、保留位置痕迹和用可读标记帮助观察运动的表达方式。当前公开的 Projectile Motion 仓库 README 已说明旧仓库不再维护；这些链接是设计参考，不代表使用了其当前代码。平台独立使用既有物理计算结果，在抛体与自由落体二维、三维画面中显示已走轨迹和等物理时间间隔的位置点；时间轴回看时同步更新。没有复制上游源码、图像、文案或商标，也没有新增运行依赖。
+
 ## 第十三阶段：弹簧静态实验
 
 本轮重新浏览官方仓库与说明，仅采用以下两项的设计思路，不复制实现、图像或活动题目，也不新增运行依赖。
