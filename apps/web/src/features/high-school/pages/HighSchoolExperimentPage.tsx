@@ -34,6 +34,7 @@ import { measurementColumns, measurementColumnKey, savedMetric, createTrajectory
 import { formatMetric, metricState } from "../experiments/measurementPresentation";
 import { getScopedMeasurementStore } from "../experiments/measurementStorage";
 import { useExperimentClock } from "../experiments/useExperimentClock";
+import { defaultPlaybackSpeed, physicalPlaybackRate, PLAYBACK_SPEEDS } from "../experiments/playbackSpeed";
 import { manualRecordsToContext } from "../experiments/manualContext";
 import type { ManualMeasurementRecord } from "../experiments/useManualMeasurements";
 import "./HighSchoolPages.css";
@@ -63,8 +64,10 @@ export function HighSchoolWorkbench({ definition, scope }: { definition: HighSch
   const [capacitorHistory, setCapacitorHistory] = useState<CapacitorHistory | undefined>(() => id === "capacitor-charge" ? createCapacitorHistory(crypto.randomUUID()) : undefined);
   // The observation window depends on R/C, never on a later switching segment.
   const initial = useMemo(() => simulateHighSchoolExperiment(id, parameters, 0, id === "capacitor-charge" ? createCapacitorHistory("window") : undefined), [id, parameters]);
-  const playbackRate = id === "transformer-ratio" ? 1 / parameters.frequency : 1;
-  const clock = useExperimentClock(initial.durationSeconds, playbackRate);
+  const [playbackSpeed, setPlaybackSpeed] = useState(() => defaultPlaybackSpeed(id, initial.durationSeconds));
+  const playbackRate = physicalPlaybackRate(id, playbackSpeed, parameters.frequency);
+  const clockStepSeconds = id === "transformer-ratio" ? 1 / (60 * parameters.frequency) : 1 / 60;
+  const clock = useExperimentClock(initial.durationSeconds, playbackRate, clockStepSeconds);
   const [clockResetToken, setClockResetToken] = useState(0);
   const simulation = useMemo(() => simulateHighSchoolExperiment(id, parameters, clock.time, capacitorHistory), [id, parameters, clock.time, capacitorHistory]);
   const trajectory = useMemo(() => createTrajectory(id, parameters, initial.durationSeconds), [id, parameters, initial.durationSeconds]);
@@ -81,7 +84,7 @@ export function HighSchoolWorkbench({ definition, scope }: { definition: HighSch
   const [notice, setNotice] = useState("");
   const [confirmClear, setConfirmClear] = useState(false);
   const selectedSeries = simulation.series.find((series) => seriesIdentity(series) === seriesId) ?? simulation.series[0];
-  const contextTick = clock.running ? Math.floor(clock.time / playbackRate * 5) : clock.time;
+  const contextTick = clock.running ? Math.floor(clock.time * 5) : clock.time;
   const contextSamples = useMemo(() => records.slice(-30).map(({ id: recordId, timeSeconds, parameters: recordParameters, capacitorHistory: savedHistory }) => ({ id: recordId, timeSeconds, parameters: recordParameters, ...(savedHistory ? { capacitorHistory: savedHistory } : {}) })), [records]);
   const manualContext = useMemo(() => manualRecordsToContext(id, manualRecords), [id, manualRecords]);
   const canWrite = useCallback(() => isCurrentHighSchoolRecordScope(scope, true), [scope]);
@@ -198,7 +201,9 @@ export function HighSchoolWorkbench({ definition, scope }: { definition: HighSch
       {expandedProtocols[id] && <details className="hs-prelab-guide"><summary><span><BookOpen size={16} />本次探究 · 从一个问题开始</span><small>查看步骤与预测</small><ChevronDown size={16} /></summary><InquiryGuide key={id} experimentId={id} /></details>}
 
       <div className="hs-lab-layout" id="hs-stage"><section className="hs-lab-main hs-apparatus-console" aria-label="装置与计时"><ExperimentViewport experimentId={id} parameters={parameters} simulation={simulation} trajectory={trajectory} onParametersChange={changeParameters} capacitorMode={simulation.capacitor?.mode} onCapacitorModeChange={changeCapacitorMode} capacitorSwitchDisabled={clock.time >= initial.durationSeconds} />
-        <div className="hs-playbar"><div className="hs-clock"><small>{initial.durationSeconds > 0 ? "实验时间" : "稳态实验"}</small><strong>{initial.durationSeconds > 0 ? <>{clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)}<span> / {initial.durationSeconds.toFixed(id === "transformer-ratio" ? 4 : 2)} s</span></> : "即时读数"}</strong></div><div className="hs-play-controls"><button className="hs-play-toggle" type="button" disabled={initial.durationSeconds <= 0} onClick={toggleClock} aria-label={clock.running ? "暂停实验" : "播放实验"}>{clock.running ? <Pause size={17} /> : <Play size={17} />}{clock.running ? "暂停" : "播放"}</button><button type="button" disabled={initial.durationSeconds <= 0 || clock.time >= initial.durationSeconds} onClick={clock.step} title={id === "transformer-ratio" ? "前进1/60个交流周期（按实际频率换算秒）" : "前进一个固定时间步（1/60 秒）"}><SkipForward size={16} />单步</button><button type="button" disabled={initial.durationSeconds <= 0} onClick={resetClock}><RotateCcw size={15} />重新计时</button></div></div>
+        <div className="hs-playbar"><div className="hs-clock"><small>{initial.durationSeconds > 0 ? "实验时间" : "稳态实验"}</small><strong>{initial.durationSeconds > 0 ? <>{clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)}<span> / {initial.durationSeconds.toFixed(id === "transformer-ratio" ? 4 : 2)} s</span></> : "即时读数"}</strong></div><div className="hs-play-controls"><button className="hs-play-toggle" type="button" disabled={initial.durationSeconds <= 0} onClick={toggleClock} aria-label={clock.running ? "暂停实验" : "播放实验"}>{clock.running ? <Pause size={17} /> : <Play size={17} />}{clock.running ? "暂停" : "播放"}</button><button type="button" disabled={initial.durationSeconds <= 0 || clock.time >= initial.durationSeconds} onClick={clock.step} title={id === "transformer-ratio" ? "前进1/60个交流周期（按实际频率换算秒）" : "前进一个固定时间步（1/60 秒）"}><SkipForward size={16} />单步</button><button type="button" disabled={initial.durationSeconds <= 0} onClick={resetClock}><RotateCcw size={15} />重新计时</button></div>
+          {initial.durationSeconds > 0 && <div className="hs-speed-controls" role="group" aria-label="观察速度"><span>观察速度</span><div>{PLAYBACK_SPEEDS.map((speed) => <button key={speed} type="button" aria-pressed={playbackSpeed === speed} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}</div><p>速度设置只改变演示节奏，实验时间、图像和保存读数仍按物理秒计算。{id === "transformer-ratio" && " 变压器的 1× 演示为每秒一个交流周期。"}</p></div>}
+        </div>
         <ExperimentPlaybackStatus time={clock.time} duration={initial.durationSeconds} running={clock.running} />
       </section>
       <aside className="hs-controls" id="hs-conditions" aria-labelledby="hs-controls-title"><header><span className="hs-console-label">条件控制台</span><h2 id="hs-controls-title" tabIndex={-1}>先改变一个变量。</h2><p>设定条件，观察变化，再记录一组可比较的读数。</p></header><div className="hs-parameter-list">{definition.parameters.map((parameter) => <ExperimentParameterControl key={`${parameter.key}:${parameterResetToken}`} parameter={parameter} value={parameters[parameter.key]} onChange={(value) => changeParameter(parameter.key, value)} />)}</div><button className="hs-button hs-primary hs-record-button" type="button" onClick={recordMeasurement} disabled={!scope.canWrite || retainedRecordCount >= 120 || !validInstrumentReading}><Plus size={17} />记录这组读数<span>{retainedRecordCount} / 120</span></button><button className="hs-reset-parameters" type="button" onClick={resetExperiment}><RotateCcw size={13} />恢复默认条件</button><p className="hs-control-note">{initial.durationSeconds > 0 ? "调整条件后重新计时，已有记录保留，便于比较。" : "调整条件后立即更新静态读数，已有记录保留。"}待恢复读数也计入本页新增上限。</p>{simulation.warnings.length > 0 && <div className="hs-model-warning" role="note">{simulation.warnings.map((warning) => <p key={warning}>{warning}</p>)}</div>}</aside>
@@ -208,7 +213,7 @@ export function HighSchoolWorkbench({ definition, scope }: { definition: HighSch
         {id === "momentum-conservation" && <CollisionLearningPanel parameters={parameters} simulation={simulation} onChange={changeParameters} />}
         {id === "refractive-index" && <RefractionLearningPanel parameters={parameters} simulation={simulation} onChange={changeParameters} />}
         {id === "multimeter" && <MultimeterControlPanel parameters={parameters} simulation={simulation} onChange={changeParameters} />}
-        {id === "transformer-ratio" && <p className="hs-control-note">演示速度：每秒展示 1 个交流周期；物理频率为 {parameters.frequency} Hz，单步为 1/60 周期。时间、曲线和保存读数均使用实际物理秒，三周期后停止。</p>}
+        {id === "transformer-ratio" && <p className="hs-control-note">当前每秒展示 {playbackSpeed} 个交流周期；物理频率为 {parameters.frequency} Hz，单步为 1/60 周期。时间、曲线和保存读数均使用实际物理秒，三周期后停止。</p>}
         {id === "spring-force" && <SpringLoadControl massGrams={parameters.loadMassGrams} onChange={(value) => changeParameter("loadMassGrams", value)} />}
         {id === "force-composition" && <ForceCompositionControl parameters={parameters} simulation={simulation} onChange={changeParameters} onRecord={recordMeasurement} recordDisabled={!scope.canWrite || retainedRecordCount >= 120} />}
         {id === "capacitor-charge" && capacitorHistory && simulation.capacitor && <><CapacitorSwitchControl parameters={parameters} simulation={simulation} mode={simulation.capacitor.mode} onModeChange={changeCapacitorMode} switchDisabled={clock.time >= initial.durationSeconds} /><p className="hs-control-note">切换开关保留电压与电荷；暂停只停止计时。重新计时或调整 R、C、E 会从 0 V 接电源开始新一轮，已保存记录保留。本轮观察窗为 20RC，到时不会强制充满或放空。最多保留 32 段切换，达到上限后先保存读数再重新开始。</p><CapacitorHistoryDetails history={capacitorHistory} timeSeconds={clock.time} /></>}

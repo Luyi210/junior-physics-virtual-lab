@@ -10,6 +10,16 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.22.3",
+    date: "2026-11-22",
+    title: "高中实验动态更容易观察",
+    summary: "短暂的实验现象默认慢放，并可在实验台上切换观察速度。",
+    changes: [
+      "有过程的高中实验增加 0.1× 至 2× 观察速度选择，短过程默认慢放。",
+      "高中首页的单摆、抛体和碰撞预览放慢；实验时间与读数仍使用物理秒。"
+    ]
+  },
+  {
     version: "2026.11.22.2",
     date: "2026-11-22",
     title: "初高中入口并列展示",

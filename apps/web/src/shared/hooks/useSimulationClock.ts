@@ -1,21 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { advanceExperimentClock, FIXED_TIME_STEP } from "./simulationClock";
 
-export function useSimulationClock(duration: number) {
+export function useSimulationClock(duration: number, playbackRate = 1, stepSeconds = FIXED_TIME_STEP) {
+  if (!(playbackRate > 0) || !Number.isFinite(playbackRate) || !(stepSeconds > 0) || !Number.isFinite(stepSeconds)) throw new RangeError("时钟播放速度与步长必须是有限正数。");
   const [tick, setTick] = useState(0);
   const [running, setRunning] = useState(false);
   const counter = useRef(0);
+  const remainder = useRef(0);
 
   useEffect(() => {
     if (!running || duration <= 0) return;
     let frame = 0;
     let lastTime: number | null = null;
-    let remainder = 0;
     const update = (now: number) => {
       if (lastTime !== null) {
-        const next = advanceExperimentClock(counter.current, remainder, Math.min((now - lastTime) / 1000, .25), duration);
+        const next = advanceExperimentClock(counter.current, remainder.current, Math.min((now - lastTime) / 1000, .25) * playbackRate, duration, stepSeconds);
         counter.current = next.tick;
-        remainder = next.remainder;
+        remainder.current = next.remainder;
         setTick(next.tick);
         if (next.finished) { setRunning(false); return; }
       }
@@ -26,18 +27,19 @@ export function useSimulationClock(duration: number) {
     document.addEventListener("visibilitychange", hide);
     frame = window.requestAnimationFrame(update);
     return () => { window.cancelAnimationFrame(frame); document.removeEventListener("visibilitychange", hide); };
-  }, [running, duration]);
+  }, [running, duration, playbackRate, stepSeconds]);
 
-  function reset() { setRunning(false); counter.current = 0; setTick(0); }
-  function start() { counter.current = 0; setTick(0); setRunning(duration > 0); }
+  function reset() { setRunning(false); counter.current = 0; remainder.current = 0; setTick(0); }
+  function start() { counter.current = 0; remainder.current = 0; setTick(0); setRunning(duration > 0); }
   function toggle() {
-    if (!running && counter.current * FIXED_TIME_STEP >= duration) { counter.current = 0; setTick(0); }
+    if (!running && counter.current * stepSeconds >= duration) { counter.current = 0; remainder.current = 0; setTick(0); }
     setRunning((value) => !value);
   }
   function step() {
     setRunning(false);
-    counter.current = Math.min(Math.ceil(duration / FIXED_TIME_STEP), counter.current + 1);
+    remainder.current = 0;
+    counter.current = Math.min(Math.ceil(duration / stepSeconds), counter.current + 1);
     setTick(counter.current);
   }
-  return { time: Math.min(duration, tick * FIXED_TIME_STEP), running, reset, start, toggle, step };
+  return { time: Math.min(duration, tick * stepSeconds), running, reset, start, toggle, step };
 }

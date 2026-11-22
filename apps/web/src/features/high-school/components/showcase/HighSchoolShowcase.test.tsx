@@ -65,25 +65,25 @@ describe('showcase physical preview and fixed SVG scale',()=>{
 
 describe('actual showcase component lifecycle with explicit browser substitutes',()=>{
   it('starts only when visible, stops advancing hidden/offscreen, and resumes without a time jump',()=>{
-    const env=browser(),app=mount();expect(env.frames.size).toBe(0);env.observe(true);env.frame(0);env.frame(50);app.render();expect(text(app.tree)).toContain('0.05');
-    env.hide(true);expect(env.frames.size).toBe(0);env.hide(false);env.frame(50000);app.render();expect(text(app.tree)).toContain('0.05');
-    env.frame(50050);app.render();expect(text(app.tree)).toContain('0.10');env.observe(false);expect(env.frames.size).toBe(0);env.observe(true);env.frame(90000);app.render();expect(text(app.tree)).toContain('0.10');
+    const env=browser(),app=mount();expect(env.frames.size).toBe(0);env.observe(true);env.frame(0);env.frame(50);app.render();expect(text(app.tree)).toContain('0.03');
+    env.hide(true);expect(env.frames.size).toBe(0);env.hide(false);env.frame(50000);app.render();expect(text(app.tree)).toContain('0.03');
+    env.frame(50050);app.render();expect(text(app.tree)).toContain('0.05');env.observe(false);expect(env.frames.size).toBe(0);env.observe(true);env.frame(90000);app.render();expect(text(app.tree)).toContain('0.05');
   });
   it('defaults to static for reduced motion, permits explicit play, and honors changes to that preference',()=>{
     const env=browser(true),app=mount();env.observe(true);app.render();expect(env.frames.size).toBe(0);expect(text(app.tree)).toContain('减少动态效果');
-    click(findButton(app.tree,'播放模型预览'));env.frame(0);env.frame(80);app.render();expect(env.frames.size).toBe(1);expect(text(app.tree)).toContain('0.08');
+    click(findButton(app.tree,'播放模型预览'));env.frame(0);env.frame(80);app.render();expect(env.frames.size).toBe(1);expect(text(app.tree)).toContain('0.04');
     env.reduce(false);app.render();env.reduce(true);app.render();expect(env.frames.size).toBe(0);expect(text(app.tree)).toContain('已暂停');
   });
   it('changes the phenomenon/condition from its initial state and retains the explicit pause decision',()=>{
     const env=browser(),app=mount();env.observe(true);env.frame(0);env.frame(80);app.render();click(findButton(app.tree,'暂停模型预览'));app.render();
     click(findButton(app.tree,'1.5 m'));app.render();expect(text(app.tree)).toContain('0.00');expect(env.frames.size).toBe(0);
     const apparatus=nodes(app.tree).find(n=>n.type===ShowcaseApparatus)!;expect((apparatus.props.model as ReturnType<typeof createShowcaseModel>).initial.length).toBe(1.5);
-    click(findButton(app.tree,'02抛体'));app.render();expect(text(app.tree)).toContain('0.5× 慢放');expect(nodes(app.tree).find(n=>n.type===Link)!.props.to).toBe('/high-school/experiments/projectile-motion');expect(env.frames.size).toBe(0);
+    click(findButton(app.tree,'02抛体'));app.render();expect(text(app.tree)).toContain('0.25× 慢放');expect(nodes(app.tree).find(n=>n.type===Link)!.props.to).toBe('/high-school/experiments/projectile-motion');expect(env.frames.size).toBe(0);
     click(findButton(app.tree,'55°'));app.render();const next=nodes(app.tree).find(n=>n.type===ShowcaseApparatus)!;expect((next.props.state as Record<string,number>).time).toBe(0);expect((next.props.state as Record<string,number>).y).toBe(.5);
   });
   it('stops at the collision observation endpoint and replay/condition changes use a fresh initial state',()=>{
     const env=browser(),app=mount();click(findButton(app.tree,'03碰撞'));app.render();env.observe(true);env.frame(0);
-    for(let i=1;i<=61;i+=1)env.frame(i*100);app.render();expect(text(app.tree)).toContain('本轮结束');expect(env.frames.size).toBe(0);
+    for(let i=1;i<=121;i+=1)env.frame(i*100);app.render();expect(text(app.tree)).toContain('本轮结束');expect(env.frames.size).toBe(0);
     click(findButton(app.tree,'重新播放模型预览'));app.render();expect(text(app.tree)).toContain('0.00');env.frame(10000);env.frame(10100);app.render();
     click(findButton(app.tree,'0 · 非弹性'));app.render();expect(text(app.tree)).toContain('0.00');const apparatus=nodes(app.tree).find(n=>n.type===ShowcaseApparatus)!;
     expect((apparatus.props.model as ReturnType<typeof createShowcaseModel>).choiceIndex).toBe(0);expect((apparatus.props.state as Record<string,number>).collided).toBe(0);

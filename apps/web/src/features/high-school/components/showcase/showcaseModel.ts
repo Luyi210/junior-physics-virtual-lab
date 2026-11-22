@@ -5,9 +5,9 @@ import { calculateMomentumConservation } from '@physics-lab/physics/high-school/
 export type ShowcaseKind = 'pendulum' | 'projectile' | 'collision';
 export type ShowcasePoint = { x: number; y: number; time: number };
 export const SHOWCASE_EXHIBITS = {
-  pendulum: { label: '单摆', number: '01', title: '改变摆长，观察节奏。', question: '同样的释放角，长摆与短摆谁更快？', variable: '摆长', options: ['0.5 m', '1.0 m', '1.5 m'], values: [.5, 1, 1.5], defaultIndex: 1, route: 'pendulum', rate: 1, note: '理想无阻尼单摆 · 释放角30° · 固定米比例' },
-  projectile: { label: '抛体', number: '02', title: '给初速度一个新方向。', question: '初速相同，改变角度会怎样落地？', variable: '抛射角', options: ['15°', '35°', '55°'], values: [15, 35, 55], defaultIndex: 1, route: 'projectile-motion', rate: .5, note: '忽略空气阻力 · 初速6 m/s · 初始高度0.5 m' },
-  collision: { label: '碰撞', number: '03', title: '相碰之后，哪些量没变？', question: '只改恢复系数，比较系统动量与动能。', variable: '恢复系数 e', options: ['0 · 非弹性', '0.5 · 对照', '1 · 弹性'], values: [0, .5, 1], defaultIndex: 2, route: 'momentum-conservation', rate: 1, note: '理想一维碰撞 · 两车各0.5 kg · 向右为正' },
+  pendulum: { label: '单摆', number: '01', title: '改变摆长，观察节奏。', question: '同样的释放角，长摆与短摆谁更快？', variable: '摆长', options: ['0.5 m', '1.0 m', '1.5 m'], values: [.5, 1, 1.5], defaultIndex: 1, route: 'pendulum', rate: .5, note: '理想无阻尼单摆 · 释放角30° · 固定米比例' },
+  projectile: { label: '抛体', number: '02', title: '给初速度一个新方向。', question: '初速相同，改变角度会怎样落地？', variable: '抛射角', options: ['15°', '35°', '55°'], values: [15, 35, 55], defaultIndex: 1, route: 'projectile-motion', rate: .25, note: '忽略空气阻力 · 初速6 m/s · 初始高度0.5 m' },
+  collision: { label: '碰撞', number: '03', title: '相碰之后，哪些量没变？', question: '只改恢复系数，比较系统动量与动能。', variable: '恢复系数 e', options: ['0 · 非弹性', '0.5 · 对照', '1 · 弹性'], values: [0, .5, 1], defaultIndex: 2, route: 'momentum-conservation', rate: .5, note: '理想一维碰撞 · 两车各0.5 kg · 向右为正' },
 } as const;
 
 /** Builds only a lightweight state reader and a small visual path once per setting.

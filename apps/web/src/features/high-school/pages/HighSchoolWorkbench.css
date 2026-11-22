@@ -177,6 +177,32 @@
     font-weight: 600;
   }
   .hs-experiment-page .hs-play-controls .hs-play-toggle:hover:not(:disabled) { color: #071a26; background: #a0eefa; }
+  .hs-experiment-page .hs-speed-controls {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px 14px;
+    padding-top: 14px;
+    border-top: 1px solid #30465c;
+  }
+  .hs-experiment-page .hs-speed-controls > span { color: #b8d2e2; font-size: 12px; font-weight: 600; }
+  .hs-experiment-page .hs-speed-controls > div { display: flex; flex-wrap: wrap; gap: 5px; }
+  .hs-experiment-page .hs-speed-controls button {
+    min-width: 54px;
+    min-height: 44px;
+    padding: 6px 10px;
+    color: #a9c6d8;
+    border: 1px solid #3b5770;
+    border-radius: 6px;
+    background: #152b40;
+    font: 600 12px var(--hs-mono);
+    cursor: pointer;
+  }
+  .hs-experiment-page .hs-speed-controls button[aria-pressed="true"] { color: #071a26; border-color: #92e6f3; background: #8cdded; }
+  .hs-experiment-page .hs-speed-controls button:hover:not([aria-pressed="true"]) { color: #e9f7ff; border-color: #80b6cc; }
+  .hs-experiment-page .hs-speed-controls button:focus-visible { outline: 2px solid #b9f1fb; outline-offset: 2px; }
+  .hs-experiment-page .hs-speed-controls p { flex-basis: 100%; margin: 0; color: #94afc3; font-size: 11px; line-height: 1.55; }
   .hs-playback-status {
     display: flex;
     align-items: center;
@@ -311,6 +337,8 @@
     .hs-experiment-page .hs-play-controls { display: grid; width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
     .hs-experiment-page .hs-play-controls button { min-width: 0; padding: 10px 4px; gap: 5px; }
     .hs-experiment-page .hs-play-controls .hs-play-toggle { min-width: 0; }
+    .hs-experiment-page .hs-speed-controls > div { display: grid; width: 100%; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .hs-experiment-page .hs-speed-controls button { min-width: 0; padding-inline: 3px; }
     .hs-playback-status { flex-wrap: wrap; padding: 12px 16px; gap: 10px; }
     .hs-steady-hint { flex-basis: 100%; order: 1; }
     .hs-observation-heading { align-items: flex-start; flex-direction: column; gap: 10px; }

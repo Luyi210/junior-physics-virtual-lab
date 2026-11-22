@@ -3,6 +3,17 @@ import { calculateInclinedCartRun, calculateInclinedCartState } from "@physics-l
 import { advanceExperimentClock, FIXED_TIME_STEP } from "./simulationClock";
 
 describe("inclined-cart physics and simulation clock integration", () => {
+  it("changes observation speed without changing physical time or the endpoint", () => {
+    const duration = .5;
+    let clock = { tick: 0, remainder: 0, finished: false };
+    for (let frame = 0; frame < 120; frame += 1) clock = advanceExperimentClock(clock.tick, clock.remainder, (1 / 60) * .1, duration);
+    expect(clock.tick * FIXED_TIME_STEP).toBeCloseTo(.2);
+    for (let frame = 0; frame < 72; frame += 1) clock = advanceExperimentClock(clock.tick, clock.remainder, (1 / 60) * .25, duration);
+    expect(Math.min(duration, clock.tick * FIXED_TIME_STEP)).toBeCloseTo(duration);
+    expect(clock.finished).toBe(true);
+    const transformer = advanceExperimentClock(0, 0, 1 / 100, 3 / 50, 1 / (60 * 50));
+    expect(transformer.tick / (60 * 50)).toBeCloseTo(.01);
+  });
   it.each([30, 60, 144])("reaches each track endpoint exactly once at %i fps", (framesPerSecond) => {
     for (const length of [.8, 1.2, 1.6]) {
       for (const height of [.1, .2, .3]) {

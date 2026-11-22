@@ -6,25 +6,31 @@ import { measurementsToCsv } from './workbench';
 import { createClassroomEvidencePreview } from './classroomEvidence';
 import { ExperimentParameterControl } from '../components/ExperimentParameterControl';
 import { useExperimentClock } from './useExperimentClock';
+import { defaultPlaybackSpeed, physicalPlaybackRate } from './playbackSpeed';
 
 const clock = vi.hoisted(() => ({ time: 0, use: vi.fn(), toggle: vi.fn(), reset: vi.fn(), step: vi.fn() }));
-vi.mock('../../../shared/hooks/useSimulationClock', () => ({ useSimulationClock: (duration: number) => { clock.use(duration); return {time: clock.time, running: true, toggle: clock.toggle, reset: clock.reset, step: clock.step}; } }));
+vi.mock('../../../shared/hooks/useSimulationClock', () => ({ useSimulationClock: (duration: number, rate: number, step: number) => { clock.use(duration, rate, step); return {time: clock.time, running: true, toggle: clock.toggle, reset: clock.reset, step: clock.step}; } }));
 
 describe('new instrument presentation preserves validity and physical time', () => {
-  it.each([1, 50, 100])('shows one AC cycle per wall second at %s Hz but passes actual seconds to all calculations', frequency => {
-    clock.time = .25;
-    const result = useExperimentClock(3 / frequency, 1 / frequency);
-    expect(clock.use).toHaveBeenLastCalledWith(3);
+  it.each([1, 50, 100])('keeps transformer clock and calculations in physical seconds at %s Hz', frequency => {
+    clock.time = 1 / (4 * frequency);
+    const result = useExperimentClock(3 / frequency, physicalPlaybackRate('transformer-ratio', 1, frequency), 1 / (60 * frequency));
+    expect(clock.use).toHaveBeenLastCalledWith(3 / frequency, 1 / frequency, 1 / (60 * frequency));
     expect(result.time).toBeCloseTo(1 / (4 * frequency));
     expect(result.step).toBe(clock.step);
     const state = calculateTransformerRatio({...defaultHighSchoolParameters('transformer-ratio'), frequency}, result.time);
     expect(state.secondaryVoltage).toBeCloseTo(12 * Math.SQRT2);
-    clock.time = 3;
+    clock.time = 3 / frequency;
     expect(useExperimentClock(3 / frequency, 1 / frequency).time).toBe(3 / frequency);
   });
-  it('keeps ordinary experiment seconds unchanged and rejects invalid rates', () => {
+  it('keeps ordinary experiment seconds unchanged and slows short observations', () => {
     clock.time = 2.5; expect(useExperimentClock(5).time).toBe(2.5);
-    for (const invalid of [0, -1, Infinity, NaN]) expect(() => useExperimentClock(5, invalid)).toThrow();
+    expect(defaultPlaybackSpeed('projectile-motion', .7)).toBe(.1);
+    expect(defaultPlaybackSpeed('projectile-motion', 1.5)).toBe(.25);
+    expect(defaultPlaybackSpeed('uniform-acceleration', 5)).toBe(.5);
+    expect(defaultPlaybackSpeed('refractive-index', 0)).toBe(1);
+    expect(physicalPlaybackRate('projectile-motion', .25)).toBe(.25);
+    expect(() => physicalPlaybackRate('transformer-ratio', 1, 0)).toThrow();
   });
   it.each([
     ['period', 'periodDefined', '无周期'], ['radius', 'radiusDefined', '无回旋半径'],

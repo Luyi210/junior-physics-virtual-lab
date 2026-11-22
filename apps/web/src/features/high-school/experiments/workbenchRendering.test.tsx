@@ -35,6 +35,9 @@ describe("high-school experiment route composition", () => {
       expect(html).toContain("模型与边界");
       expect(html).toContain("仿真记录分析");
       expect(html).toContain('class="hs-parameter-number"');
+      const duration = simulateHighSchoolExperiment(definition.id, defaultHighSchoolParameters(definition.id), 0, definition.id === "capacitor-charge" ? createCapacitorHistory("duration-check") : undefined).durationSeconds;
+      if (duration > 0) expect(html).toContain('aria-label="观察速度"');
+      else expect(html).not.toContain('aria-label="观察速度"');
       if (definition.id === "pendulum" || definition.id === "double-slit") expect(html).toContain("手动读数档案");
       else if (definition.id === "mechanical-energy") { expect(html).toContain("请确认当前档案归属后使用纸带读数工具"); expect(html).not.toContain("纸带手动读数档案"); }
       else expect(html).not.toContain("手动读数档案");

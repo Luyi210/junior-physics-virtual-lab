@@ -71,7 +71,7 @@ export function HighSchoolShowcase() {
     <div className="hs-showcase-tabs" role="group" aria-label="选择预览现象">{choices.map(kind => <button type="button" key={kind} aria-pressed={selection.kind === kind} aria-controls={`${id}-scene`} onClick={() => choose(kind, SHOWCASE_EXHIBITS[kind].defaultIndex)}><span>{SHOWCASE_EXHIBITS[kind].number}</span>{SHOWCASE_EXHIBITS[kind].label}</button>)}</div>
     <div className="hs-showcase-heading"><h2>{exhibit.title}</h2><p>{exhibit.question}</p></div>
     <div className="hs-showcase-stage" id={`${id}-scene`}>
-      <div className="hs-showcase-time"><span>物理时间</span><b>{clock.time.toFixed(2)}<small> s</small></b>{model.rate !== 1 && <em>0.5× 慢放</em>}</div>
+      <div className="hs-showcase-time"><span>物理时间</span><b>{clock.time.toFixed(2)}<small> s</small></b><em>{model.rate}× 慢放</em></div>
       <ShowcaseApparatus model={model} state={state} id={id} />
       <p className="hs-showcase-stage-note">{exhibit.note}</p>
     </div>
