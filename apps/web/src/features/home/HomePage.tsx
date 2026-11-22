@@ -20,7 +20,6 @@ import { PhysicsFieldMotif } from "../../shared/components/PhysicsFieldMotif";
 import type { PhysicsField } from "../../shared/components/PhysicsFieldMotif";
 import { DashboardPhysicsCanvas } from "../student/components/DashboardPhysicsCanvas";
 import { ReleaseNotice } from "./ReleaseNotice";
-import "./SchoolStageEntry.css";
 
 interface LabCard {
   title: string;
@@ -93,10 +92,15 @@ export function HomePage() {
             <p className="hero-description">
               拖动、连接、测量、记录。把每一个抽象公式，变成学生可以亲手改变的实验现场。
             </p>
-            <div className="portal-entry-grid" aria-label="选择使用身份">
+            <div className="portal-entry-grid" aria-label="选择实验专区或教学空间">
               <Link className="portal-entry student-entry" to="/student">
                 <i><GraduationCap size={22} /></i>
                 <span><small>初中 · 自由探索</small><strong>进入初中探索空间</strong><em>从光、声、力、电、热开始动手实验</em></span>
+                <ArrowRight size={19} />
+              </Link>
+              <Link className="portal-entry high-school-entry" to="/high-school">
+                <i><Atom size={22} /></i>
+                <span><small>高中 · 证据推理</small><strong>进入高中实验室</strong><em>调参数、看图像，与力力一起探究</em></span>
                 <ArrowRight size={19} />
               </Link>
               <Link className="portal-entry teacher-entry" to="/teacher">
@@ -123,12 +127,6 @@ export function HomePage() {
               <small>切换场景，发现不同领域中的物理</small>
             </div>
           </div>
-        </section>
-
-        <section className="school-stage-entry" aria-label="高中实验室入口">
-          <div className="school-stage-instrument" aria-hidden="true"><i /><b /><span /><em>F = ma</em></div>
-          <div className="school-stage-copy"><small>从现象出发，向模型更进一步</small><h2>高中实验室<span>与力力一起，用证据推理。</span></h2><p>沿人教版教材的课程脉络，研究运动、力、电路与光的干涉。改变参数，比较图像，让每一次判断都有依据。</p></div>
-          <Link to="/high-school">进入高中专区<ArrowRight size={19} /></Link>
         </section>
 
         <section className="lab-library" id="labs">

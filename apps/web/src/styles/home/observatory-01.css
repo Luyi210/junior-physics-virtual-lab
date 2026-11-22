@@ -168,6 +168,11 @@
   .home-page .portal-entry > svg { color: #9fc7dd; }
   .home-page .portal-entry:hover { color: #fff; border-color: rgba(140,221,255,.78); background: linear-gradient(135deg,rgba(32,85,119,.96),rgba(10,39,61,.94)); box-shadow: 7px 7px 0 rgba(140,221,255,.16),0 0 28px rgba(140,221,255,.11); }
   .home-page .student-entry::before { background: var(--home-cyan); }
+  .home-page .portal-entry-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .home-page .high-school-entry::before { background: #a6c7ff; }
+  .home-page .high-school-entry > i { color: #a6c7ff; border-color: rgba(166,199,255,.5); background: rgba(166,199,255,.07); }
+  .home-page .high-school-entry small { color: #a6c7ff; }
+  .home-page .teacher-entry { grid-column: 1 / -1; min-height: 82px; }
   .home-page .teacher-entry::before { background: var(--home-amber); }
   .home-page .teacher-entry::after { border-color: rgba(181,200,255,.65); }
   .home-page .teacher-entry > i { color: var(--home-amber); border-color: rgba(181,200,255,.5); background: rgba(181,200,255,.07); }
@@ -408,6 +413,7 @@
   }
   @media (max-width: 640px) {
     .home-page .home-nav { box-shadow: 0 10px 28px rgba(0,8,11,.32); }
+    .home-page .portal-entry-grid { grid-template-columns: minmax(0,1fr); }
     .home-page .hero-lab { border-right: 0; border-left: 0; }
     .home-page .hero-lab::after,.home-physics-atmosphere > span,.home-physics-atmosphere .orbit-two,.home-physics-atmosphere::before { display: none; }
     .home-page .eyebrow { width: auto; font-size: 8px; line-height: 1.5; }

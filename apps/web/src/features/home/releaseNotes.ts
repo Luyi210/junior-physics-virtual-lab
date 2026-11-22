@@ -10,6 +10,16 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.22.2",
+    date: "2026-11-22",
+    title: "初高中入口并列展示",
+    summary: "首页的初中探索与高中实验室现在并列呈现，方便直接选择。",
+    changes: [
+      "高中实验室进入首页主入口区，与初中探索并列。",
+      "移除页面下方重复的高中入口，教师空间保留独立入口。"
+    ]
+  },
+  {
     version: "2026.11.22",
     date: "2026-11-22",
     title: "版本更新通知上线",
