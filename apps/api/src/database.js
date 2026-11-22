@@ -147,6 +147,21 @@ const schema = `
     created_at TEXT NOT NULL
   );
 
+  CREATE TABLE IF NOT EXISTS learner_memories (
+    id TEXT NOT NULL,
+    school_id TEXT NOT NULL REFERENCES schools(id),
+    learner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    scope TEXT NOT NULL CHECK(scope IN ('junior','high-school')),
+    experiment_id TEXT,
+    kind TEXT NOT NULL CHECK(kind IN ('misconception','goal','strength','preference')),
+    topic TEXT NOT NULL,
+    summary TEXT NOT NULL,
+    evidence_count INTEGER NOT NULL DEFAULT 1 CHECK(evidence_count > 0),
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY(school_id, learner_id, id)
+  );
+
   CREATE INDEX IF NOT EXISTS idx_classes_school ON classes(school_id);
   CREATE INDEX IF NOT EXISTS idx_members_user ON class_members(user_id);
   CREATE INDEX IF NOT EXISTS idx_lessons_school ON lessons(school_id);
@@ -155,6 +170,7 @@ const schema = `
   CREATE INDEX IF NOT EXISTS idx_feedback_session ON session_learning_feedback(session_id, created_at, id);
   CREATE INDEX IF NOT EXISTS idx_events_session ON session_events(session_id, occurred_at);
   CREATE INDEX IF NOT EXISTS idx_observations_session ON observations(session_id, created_at);
+  CREATE INDEX IF NOT EXISTS idx_learner_memories_owner ON learner_memories(school_id, learner_id, scope, updated_at);
 `;
 
 function migrateDatabase(db) {

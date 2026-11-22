@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "typecheck": "node --check src/server.js && node --check src/server-runtime.js && node --check src/database-initialization.js && node --check src/app.js && node --check src/guangguang.js && node --check src/lili.js && node --check src/knowledge.js && node --check src/vector-knowledge.js && node --check src/database.js && node --check src/database-postgres.js && node --check src/repositories.js && node --check src/learning-records.js && node --check src/learning-feedback.js",
+    "typecheck": "node --check src/server.js && node --check src/server-runtime.js && node --check src/database-initialization.js && node --check src/app.js && node --check src/guangguang.js && node --check src/lili.js && node --check src/knowledge.js && node --check src/vector-knowledge.js && node --check src/database.js && node --check src/database-postgres.js && node --check src/repositories.js && node --check src/learning-records.js && node --check src/learning-feedback.js && node --check src/learner-memory.js",
     "test": "node --test test/*.test.js"
   },
   "engines": {

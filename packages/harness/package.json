@@ -10,7 +10,8 @@
     "./lili-expansion": "./src/highSchool/liliExpansion.ts",
     "./lili-scaffolding": "./src/highSchool/liliScaffolding.ts",
     "./lili-dialogue": "./src/highSchool/liliDialogue.ts",
-    "./lili-evidence-coach": "./src/highSchool/liliEvidenceCoach.ts"
+    "./lili-evidence-coach": "./src/highSchool/liliEvidenceCoach.ts",
+    "./agent": "./src/agent/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

@@ -1,19 +1,27 @@
 import { useHarnessStore } from "./harnessStore";
-import { useState, useRef, useMemo, useEffect } from "react";
+import { useState, useRef, useMemo, useEffect, useSyncExternalStore } from "react";
 import { useOrangeCatAvatarLabel, OrangeCatAvatar } from "./OrangeCatAvatar";
 import { diagnoseHarnessExperiment, getHarnessLearnerModel, getHarnessKnowledgeMastery, getHarnessReviewSchedule, createHarnessExperimentSummary, getHarnessConceptNode, getHarnessLearningBranch, getHarnessCoachAlert, getHarnessConceptMemory, getHarnessAdaptiveQuestions, getHarnessQuickQuestions, analyzeHarnessDraft } from "@physics-lab/harness";
+import { getBktMasterySnapshots, type BktSkillState, type LearnerMemoryItem } from "@physics-lab/harness/agent";
 import { getApparatusContext } from "./tutorialBridge";
 import { X, MessageCircle, GraduationCap, BookMarked, Activity, Sparkles, ArrowRight, ChevronDown, BrainCircuit, ShieldCheck, RotateCcw, Lightbulb, Crosshair, Network, CircleCheck, Save, UserRound, Check, SendHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
 import { DEMO_ONLY, studentApi } from "../../data/teacherApi";
+import { loadLocalLearnerMemories, removeLocalLearnerMemory } from "../../data/learnerMemoryStore";
+import { loadLocalBktStates, recordLocalBktAttempt } from "../../data/bktMasteryStore";
+import { applyAgentLabParameters } from "../../data/agentLabControlBridge";
+import { getStudentRecordScope, subscribeStudentRecordScope } from "../../data/studentRecordScope";
 import { type PanelView, areaNames, eventNames } from "./labels";
 import { type SpotlightTarget, TutorialSpotlight } from "./tutorials/TutorialSpotlight";
 import { TutorialExperience } from "./tutorials/TutorialExperience";
+import { AgentActionDeck, AgentQuickTools } from "../../shared/components/AgentActionDeck";
 import { TutorHintLadder } from "../../shared/components/TutorHintLadder";
 import { QuestionEvidence } from "./QuestionEvidence";
 import { useVisualViewportPanel } from "../../shared/hooks/useVisualViewportPanel";
 
 export function HarnessPanel() {
+  const studentScope = useSyncExternalStore(subscribeStudentRecordScope, getStudentRecordScope, getStudentRecordScope);
+  const ownerKey = studentScope.key;
   const activeArea = useHarnessStore((state) => state.activeArea);
   const activeModule = useHarnessStore((state) => state.activeModule);
   const loading = useHarnessStore((state) => state.loading);
@@ -25,6 +33,7 @@ export function HarnessPanel() {
   const cancelQuestion = useHarnessStore((state) => state.cancelQuestion);
   const dialogueProvider = useHarnessStore((state) => state.dialogueProvider);
   const dialogueFallbackReason = useHarnessStore((state) => state.dialogueFallbackReason);
+  const agentResults = useHarnessStore((state) => state.agentResults);
   const unread = useHarnessStore((state) => state.session?.insights.filter((item) => !item.read).length ?? 0);
   const setPanelOpen = useHarnessStore((state) => state.setPanelOpen);
   const askQuestion = useHarnessStore((state) => state.askQuestion);
@@ -34,6 +43,13 @@ export function HarnessPanel() {
   const [tutorialCompact, setTutorialCompact] = useState(false);
   const [tutorialMiniSide, setTutorialMiniSide] = useState<"left" | "right">("right");
   const [draft, setDraft] = useState("");
+  const [agentMemories, setAgentMemories] = useState<LearnerMemoryItem[]>(() => loadLocalLearnerMemories("junior", ownerKey));
+  const [bktStates, setBktStates] = useState<BktSkillState[]>(() => loadLocalBktStates("junior", ownerKey));
+  const [agentStateOwnerKey, setAgentStateOwnerKey] = useState(ownerKey);
+  // Hide the prior account's state during the render before the reload effect runs.
+  const visibleMemories = agentStateOwnerKey === ownerKey ? agentMemories : [];
+  const visibleBktStates = agentStateOwnerKey === ownerKey ? bktStates : [];
+  const bktSnapshots = getBktMasterySnapshots(visibleBktStates, "junior");
   const [saved, setSaved] = useState(false);
   const [historyExpanded, setHistoryExpanded] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
@@ -45,6 +61,12 @@ export function HarnessPanel() {
   const launcherRef = useRef<HTMLButtonElement>(null);
   const viewportStyle = useVisualViewportPanel(panelOpen);
   const avatarLabel = useOrangeCatAvatarLabel();
+
+  useEffect(() => {
+    setAgentMemories(loadLocalLearnerMemories("junior", ownerKey));
+    setBktStates(loadLocalBktStates("junior", ownerKey));
+    setAgentStateOwnerKey(ownerKey);
+  }, [ownerKey]);
 
   const analysis = useMemo(() => {
     if (!panelOpen || !session || !activeArea || !activeModule) return {
@@ -150,6 +172,7 @@ export function HarnessPanel() {
   const send = async (text = draft, preserveDraft = false) => {
     const question = text.trim();
     if (!question || asking || !await askQuestion(question)) return;
+    setAgentMemories(loadLocalLearnerMemories("junior", ownerKey));
     if (!preserveDraft) setDraft("");
   };
 
@@ -331,12 +354,44 @@ export function HarnessPanel() {
                           const question = dialogue[index - 1];
                           return question?.role === "learner" ? () => void send(question.text, true) : undefined;
                         })()} />}
+                        {message.role === "assistant" && agentResults[message.id] && (
+                          <AgentActionDeck
+                            result={agentResults[message.id]}
+                            tone="warm"
+                            disabled={asking}
+                            onAsk={(prompt) => void send(prompt, true)}
+                            onHint={(level) => void send(`给我${["一", "二", "三"][level - 1]}级提示`, true)}
+                            onNavigate={dismiss}
+                            onApplyParams={(experimentId, patch) => applyAgentLabParameters(experimentId, patch)}
+                            onQuizChoice={(action) => {
+                              if (ownerKey && getStudentRecordScope().key === ownerKey && action.skillId && typeof action.quizCorrect === "boolean") {
+                                setBktStates(recordLocalBktAttempt("junior", ownerKey, action.skillId, action.quizCorrect));
+                              }
+                              if (action.prompt) void send(action.prompt, true);
+                            }}
+                          />
+                        )}
                       </div>
                     </article>
                   ))}
                   {(asking || questionNotice) && <div className="harness-question-status" role="status"><span>{asking ? "光光正在根据提问时的实验信息思考…" : questionNotice}</span>{asking && <button type="button" onClick={cancelQuestion}>停止等待</button>}</div>}
                   <div ref={streamEndRef} />
                 </div>
+
+                <AgentQuickTools
+                  tone="warm"
+                  disabled={asking}
+                  memories={visibleMemories}
+                  bktSnapshots={bktSnapshots}
+                  onPrefillProblem={() => setDraft("题目：一物体放在焦距为 10cm 的凸透镜前 25cm 处，成什么像？")}
+                  onStartQuiz={() => void send("考考我", true)}
+                  onStartWeakestQuiz={() => void send("专练薄弱点", true)}
+                  onStartPeerDebate={() => void send("同桌讨论", true)}
+                  onSendScratchpad={(summary) => void send(summary, true)}
+                  onDeleteMemory={(id) => {
+                    if (ownerKey && getStudentRecordScope().key === ownerKey) setAgentMemories(removeLocalLearnerMemory("junior", ownerKey, id));
+                  }}
+                />
 
                 <div className="harness-quick-questions" aria-label="快捷提问">
                   <span>接着问</span>

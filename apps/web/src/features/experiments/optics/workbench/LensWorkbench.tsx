@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { BrandMark } from "../../../../shared/components/BrandMark";
 import { ExperimentFullscreenButton } from "../../shared/ExperimentFullscreenButton";
 import { localProjectRepository } from "../../../../data/projectRepository";
+import { registerLabParameterController } from "../../../../data/agentLabControlBridge";
 import { useHarnessStore } from "../../../assistant/harnessStore";
 import { publishApparatusSnapshot } from "../../../assistant/tutorialBridge";
 import { LensCanvas } from "./LensCanvas";
@@ -57,6 +58,26 @@ export function LensWorkbench() {
       validity: { ready: activated, issues: activated ? result.real && !result.screenFocused ? ["当前能形成实像，但光屏还没有移到清晰像面。"] : [] : ["先拖动物体、光屏或调节焦距。"] }
     });
   }, [activated, result.conclusion, result.finite, result.imageDistance, result.magnification, result.nature, result.objectDistance, result.real, result.screenError, result.screenFocused, scene.focalLength, scene.objectX, scene.screenX]);
+
+  useEffect(() => registerLabParameterController("lens", (patch) => {
+    const next: Partial<LensSceneState> = {};
+    const labels: string[] = [];
+    if (typeof patch.focalLength === "number" && Number.isFinite(patch.focalLength)) {
+      next.focalLength = Math.min(30, Math.max(5, patch.focalLength));
+      labels.push(`焦距 f=${next.focalLength}cm`);
+    }
+    if (typeof patch.objectX === "number" && Number.isFinite(patch.objectX)) {
+      next.objectX = Math.max(-80, Math.min(-4, patch.objectX));
+      labels.push(`物距 u=${Math.abs(next.objectX)}cm`);
+    }
+    if (!labels.length) return { applied: false, message: "凸透镜工作台未识别到可写入参数。" };
+    update(next);
+    setActivated(true);
+    recordHarness("control.changed", { experiment: "bench", control: "光光一键设参", value: labels.join("，") });
+    const bounded = (typeof patch.focalLength === "number" && next.focalLength !== patch.focalLength)
+      || (typeof patch.objectX === "number" && next.objectX !== patch.objectX);
+    return { applied: true, message: `${bounded ? "题目数值超出光具座范围，已按可用值设置" : "已写入光具座"}：${labels.join("，")}` };
+  }), [update, recordHarness]);
 
   const focusScreen = () => {
     if (result.real && result.finite) {

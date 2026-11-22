@@ -206,7 +206,7 @@ test("a real product database restores changed accounts, completed reports and n
   await original.run("INSERT INTO observations(id,session_id,learner_id,text,created_at) VALUES(?,?,?,?,?)", ["restore-observation", "restore-session", learner.id, "保留原始观察", now]);
   const beforeRecord = await getSessionLearningRecord(original, learner, "restore-session");
   const backup = await createSqliteBackup({ sourcePath, backupRoot: join(directory, "backups") });
-  assert.equal(backup.manifest.tables.length, 12);
+  assert.equal(backup.manifest.tables.length, 13);
   assert.equal(backup.manifest.tables.find(({ name }) => name === "session_learning_feedback").rowCount, 1);
   const copy = await restoreSqliteBackup({ directory: backup.directory, destination: join(directory, "restored") });
   restored = await openDatabase({ ...config, databasePath: copy.databasePath, seedDemoData: true, bootstrapAdminEmail: "", bootstrapAdminPassword: "" });

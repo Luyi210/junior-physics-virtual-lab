@@ -11,9 +11,14 @@ vi.mock("./harnessStore", () => ({ useHarnessStore: (selector: (state: Record<st
 vi.mock("../../shared/hooks/useVisualViewportPanel", () => ({ useVisualViewportPanel: fixture.viewport }));
 vi.mock("./OrangeCatAvatar", () => ({ OrangeCatAvatar: () => null, useOrangeCatAvatarLabel: () => "光光" }));
 vi.mock("../../data/teacherApi", () => ({ DEMO_ONLY: true, studentApi: { hasSession: () => false } }));
+vi.mock("../../data/studentRecordScope", () => ({
+  getStudentRecordScope: () => ({ key: "student:test", revision: 1 }),
+  subscribeStudentRecordScope: () => () => {},
+}));
 vi.mock("react", async original => {
   const actual = await original<typeof import("react")>();
   return { ...actual,
+    useSyncExternalStore: (_subscribe: unknown, getSnapshot: () => unknown) => getSnapshot(),
     useState: (initial: unknown) => [initial === "" ? "为什么？" : initial, fixture.setDraft],
     useRef: (initial: unknown) => ({ current: initial }),
     useMemo: (factory: () => unknown) => factory(),

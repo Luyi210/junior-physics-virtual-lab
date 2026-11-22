@@ -6,6 +6,7 @@ import { getHighSchoolExperiment, highSchoolVolumes } from "@physics-lab/knowled
 import { createCapacitorHistory, switchCapacitorMode, validatedHighSchoolParameters, defaultHighSchoolParameters, HIGH_SCHOOL_EXPERIMENTS, simulateHighSchoolExperiment, type HighSchoolExperimentDefinition } from "@physics-lab/physics";
 import type { CapacitorHistory, CapacitorMode } from "@physics-lab/contracts";
 import { publishHighSchoolContext } from "../../../data/highSchoolContext";
+import { registerLabParameterController } from "../../../data/agentLabControlBridge";
 import { getHighSchoolRecordScope, isCurrentHighSchoolRecordScope, subscribeHighSchoolRecordScope, type HighSchoolRecordScope } from "../../../data/highSchoolRecordScope";
 import { HighSchoolHeader } from "../components/HighSchoolHeader";
 import { PrecisionReadingPractice } from "../components/PrecisionReadingPractice";
@@ -102,6 +103,20 @@ export function HighSchoolWorkbench({ definition, scope }: { definition: HighSch
     publishHighSchoolContext({ experimentId: id, parameters, timeSeconds: clock.time, recordCount: records.length, samples: contextSamples, ...(capacitorHistory ? { capacitorHistory } : {}), ...manualContext }, scope);
   }, [id, parameters, contextTick, clock.running, records.length, contextSamples, capacitorHistory, manualContext, scope]);
   useEffect(() => () => { publishHighSchoolContext(null, scope); }, [scope]);
+  useEffect(() => registerLabParameterController(id, (patch) => {
+    const entries = Object.entries(patch);
+    if (!entries.length || entries.some(([key, value]) => !Number.isFinite(value) || !definition.parameters.some((item) => item.key === key))) {
+      return { applied: false, message: "题目参数与当前实验台不完全匹配，未改动设置。" };
+    }
+    const actual = changeParameters(Object.fromEntries(entries));
+    if (!actual) return { applied: false, message: "参数不符合当前实验模型的要求，实验台保持原设置。" };
+    setParameterResetToken((token) => token + 1);
+    const summary = entries.map(([k]) => `${definition.parameters.find((p) => p.key === k)?.label ?? k}=${actual[k]}`).join("，");
+    const bounded = entries.some(([k, v]) => actual[k] !== v);
+    const message = `${bounded ? "题目数值超出实验台范围，已按可用范围设为" : "已写入实验台"}：${summary}`;
+    setNotice(`${message}，可以点击播放或记录读数验证。`);
+    return { applied: true, message };
+  }), [id, definition, parameters, clock]);
 
   function restartCapacitorRun() { if (id === "capacitor-charge") setCapacitorHistory(createCapacitorHistory(crypto.randomUUID())); }
   function resetClock() { clock.reset(); restartCapacitorRun(); setClockResetToken((token) => token + 1); }
@@ -122,17 +137,18 @@ export function HighSchoolWorkbench({ definition, scope }: { definition: HighSch
   }
   function changeParameters(patch: Record<string, number>) {
     const entries = Object.entries(patch);
-    if (!entries.length || entries.some(([key, value]) => !Number.isFinite(value) || !definition.parameters.some((item) => item.key === key))) return;
+    if (!entries.length || entries.some(([key, value]) => !Number.isFinite(value) || !definition.parameters.some((item) => item.key === key))) return null;
     const bounded = Object.fromEntries(entries.map(([key, value]) => {
       const parameter = definition.parameters.find((item) => item.key === key)!;
       return [key, Math.min(parameter.max, Math.max(parameter.min, value))];
     }));
     let next: Record<string, number>;
     try { next = validatedHighSchoolParameters(id, { ...parameters, ...bounded }); }
-    catch (error) { setNotice(error instanceof Error ? error.message : "当前器材条件无效，已保留原设置。"); return; }
+    catch (error) { setNotice(error instanceof Error ? error.message : "当前器材条件无效，已保留原设置。"); return null; }
     resetClock();
     // Dragging changes direction and magnitude in one state transition.
     setParameters(next);
+    return next;
   }
   function changeParameter(key: string, value: number) { changeParameters({ [key]: value }); }
   function resetExperiment() {

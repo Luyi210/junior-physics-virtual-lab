@@ -3,9 +3,13 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUp, ChevronDown, FlaskConical, MessageCircle, Square, X } from "lucide-react";
 import type { LiliChatReply, LiliExperimentContext } from "@physics-lab/contracts";
 import { createLiliGuidance, isLiliCurrentCheck, isLiliEvidenceCoachRequest, isLiliLifeConnectionRequest, isLiliReflectionRequest, isLiliSimplificationRequest, liliHintLevel, resolveLiliFollowUp, type LiliHintLevel } from "@physics-lab/harness/lili";
+import { getBktMasterySnapshots, runPhysicsTutorAgent, type BktSkillState, type LearnerMemoryItem, type TutorAgentResult } from "@physics-lab/harness/agent";
 import { getHighSchoolExperiment } from "@physics-lab/knowledge/high-school";
 import { getHighSchoolContext, getHighSchoolExperimentVisit, subscribeHighSchoolContext } from "../../../data/highSchoolContext";
 import { getHighSchoolRecordScope, isCurrentHighSchoolRecordScope, subscribeHighSchoolRecordScope, type HighSchoolRecordScope } from "../../../data/highSchoolRecordScope";
+import { loadLocalLearnerMemories, recordLearnerMemoryDrafts, removeLocalLearnerMemory } from "../../../data/learnerMemoryStore";
+import { loadLocalBktStates, recordLocalBktAttempt } from "../../../data/bktMasteryStore";
+import { applyAgentLabParameters } from "../../../data/agentLabControlBridge";
 import { canRequestLiliNetwork, requestLiliForScope } from "./liliRequest";
 import { CorgiAvatar } from "./CorgiAvatar";
 import { CorgiAvatarControls } from "./CorgiAvatarControls";
@@ -13,13 +17,14 @@ import { useCorgiAvatarRotation } from "./useCorgiAvatarRotation";
 import { captureLiliContext, collectLiliRecentDialogue, createLiliConversationId } from "./liliConversationContext";
 import { LiliQuestionContext } from "./LiliQuestionContext";
 import { LiliReviewPanel } from "./LiliReviewPanel";
+import { AgentActionDeck, AgentQuickTools } from "../../../shared/components/AgentActionDeck";
 import { TutorHintLadder } from "../../../shared/components/TutorHintLadder";
 import { useVisualViewportPanel } from "../../../shared/hooks/useVisualViewportPanel";
 import "./LiliAssistant.css";
 import "./LiliCosmicTheme.css";
 import "../styles/HighSchoolTypography.css";
 
-type Message = { id: string; visit: number; role: "student" | "lili"; text: string; reply?: LiliChatReply; questionContext?: LiliExperimentContext | null; hintLevel?: LiliHintLevel | null; effectiveQuestion?: string };
+type Message = { id: string; visit: number; role: "student" | "lili"; text: string; reply?: LiliChatReply; questionContext?: LiliExperimentContext | null; hintLevel?: LiliHintLevel | null; effectiveQuestion?: string; agentResult?: TutorAgentResult };
 const serverContext = () => null;
 
 export function LiliManualContextNotice({ context, busy, onAsk }: { context: LiliExperimentContext | null; busy: boolean; onAsk: (question: string) => void }) {
@@ -44,6 +49,9 @@ function LiliConversation({ scope }: { scope: HighSchoolRecordScope }) {
   const [input, setInput] = useState("");
   const [draftCue, setDraftCue] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [memories, setMemories] = useState<LearnerMemoryItem[]>(() => loadLocalLearnerMemories("high-school", scope.key));
+  const [bktStates, setBktStates] = useState<BktSkillState[]>(() => loadLocalBktStates("high-school", scope.key));
+  const bktSnapshots = getBktMasterySnapshots(bktStates, "high-school");
   const [busy, setBusy] = useState(false);
   const avatarRotation = useCorgiAvatarRotation({ open, busy });
   const [notice, setNotice] = useState("");
@@ -96,9 +104,24 @@ function LiliConversation({ scope }: { scope: HighSchoolRecordScope }) {
     const questionVisit = getHighSchoolExperimentVisit();
     const recentDialogue = collectLiliRecentDialogue(messages.filter(message => message.visit === questionVisit), current);
     const resolved = resolveLiliFollowUp(question, current, recentDialogue);
-    const fallback = createLiliGuidance(question, current, recentDialogue);
+    const baseFallback = createLiliGuidance(question, current, recentDialogue);
+    const agentResult = runPhysicsTutorAgent({
+      scope: "high-school",
+      experimentId: current?.experimentId ?? null,
+      experimentName: experiment?.name ?? null,
+      question: resolved.question,
+      memories,
+      bktStates,
+      hasMeasurements: Boolean(current?.manualRecordCount && current.manualRecordCount > 0)
+    });
+    if (agentResult.newMemories.length) {
+      setMemories(recordLearnerMemoryDrafts("high-school", scope.key, agentResult.newMemories));
+    }
+    const fallback: LiliChatReply = agentResult.overrideText && agentResult.intent !== "protected"
+      ? { ...baseFallback, text: agentResult.overrideText, mode: "guided" }
+      : baseFallback;
     const hintLevel = liliHintLevel(resolved.question);
-    const localOnly = Boolean(hintLevel || isLiliCurrentCheck(resolved.question) || isLiliEvidenceCoachRequest(resolved.question) || isLiliLifeConnectionRequest(resolved.question) || isLiliReflectionRequest(resolved.question) || isLiliSimplificationRequest(question) || resolved.needsClarification);
+    const localOnly = Boolean(agentResult.overrideText || hintLevel || isLiliCurrentCheck(resolved.question) || isLiliEvidenceCoachRequest(resolved.question) || isLiliLifeConnectionRequest(resolved.question) || isLiliReflectionRequest(resolved.question) || isLiliSimplificationRequest(question) || resolved.needsClarification);
     const controller = new AbortController();
     pending.current = controller;
     setInput(""); setDraftCue(null); setBusy(true); setNotice("");
@@ -126,12 +149,12 @@ function LiliConversation({ scope }: { scope: HighSchoolRecordScope }) {
       }
       // Hints, verified checks and ambiguous follow-ups must work immediately offline.
       if (!isCurrent()) return;
-      setMessages((items) => [...items, { id: replyId, visit: questionVisit, role: "lili", text: reply.text, reply, questionContext: current, hintLevel }]);
+      setMessages((items) => [...items, { id: replyId, visit: questionVisit, role: "lili", text: reply.text, reply, questionContext: current, hintLevel, agentResult }]);
       if (!conversationId) setNotice("浏览器暂不能生成安全会话编号，已提供本地实验引导，未发送联网请求。");
       else if (reply.mode === "guided") setNotice("当前显示本地实验引导，依据提问时的条件生成。");
     } catch {
       if (!isCurrent()) return;
-      setMessages((items) => [...items, { id: replyId, visit: questionVisit, role: "lili", text: fallback.text, reply: fallback, questionContext: current, hintLevel }]);
+      setMessages((items) => [...items, { id: replyId, visit: questionVisit, role: "lili", text: fallback.text, reply: fallback, questionContext: current, hintLevel, agentResult }]);
       setNotice("联网回复未接通，已改用本地实验引导。");
     } finally {
       if (timer) clearTimeout(timer);
@@ -152,11 +175,12 @@ function LiliConversation({ scope }: { scope: HighSchoolRecordScope }) {
       <CorgiAvatarControls rotation={avatarRotation} />
       <div className="lili-dialogue" role="log" aria-live="polite" aria-relevant="additions">
         {!messages.length && <div className="lili-welcome"><span><FlaskConical size={14} aria-hidden="true" />一起想明白</span><h3>带着问题动手，<br /><em>让证据回答。</em></h3><p>我是力力。卡在哪一步，就从哪里聊起。</p><ul aria-label="力力能帮助你"><li>梳理变量</li><li>读懂图像</li><li>检查推理</li></ul><small>提问时参考当前虚拟实验条件；真实测量仍由你完成。未登录或后台不可用时，提供本地引导。</small></div>}
-        {messages.map((message) => <article key={message.id} className={`lili-message is-${message.role}`}><small>{message.role === "student" ? "你" : `力力 · ${message.reply?.mode === "ai" ? "AI 回复" : "本地引导"}`}</small>{message.role === "lili" && <LiliQuestionContext captured={message.questionContext ?? null} current={context} />}<p>{message.text}</p>{message.reply?.sources.length ? <details><summary>参考资料</summary>{message.reply.sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.title}</a>)}</details> : null}</article>)}
+        {messages.map((message) => <article key={message.id} className={`lili-message is-${message.role}`}><small>{message.role === "student" ? "你" : `力力 · ${message.reply?.mode === "ai" ? "AI 回复" : "本地引导"}`}</small>{message.role === "lili" && <LiliQuestionContext captured={message.questionContext ?? null} current={context} />}<p>{message.text}</p>{message.reply?.sources.length ? <details><summary>参考资料</summary>{message.reply.sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.title}</a>)}</details> : null}{message.role === "lili" && message.agentResult && <AgentActionDeck result={message.agentResult} tone="cosmic" disabled={busy || scope.key === null} onAsk={(prompt) => void ask(prompt)} onHint={(level) => void ask(`给我${["一", "二", "三"][level - 1]}级提示`)} onNavigate={dismiss} onApplyParams={(experimentId, patch) => applyAgentLabParameters(experimentId, patch)} onQuizChoice={(action) => { if (action.skillId && typeof action.quizCorrect === "boolean") setBktStates(recordLocalBktAttempt("high-school", scope.key, action.skillId, action.quizCorrect)); if (action.prompt) void ask(action.prompt); }} />}</article>)}
         {busy && <p className="lili-thinking">力力正在整理思路…</p>}
         <LiliManualContextNotice context={context} busy={busy} onAsk={(question) => void ask(question)} />
         <div ref={bottom} />
       </div>
+      <AgentQuickTools tone="cosmic" disabled={busy || scope.key === null} memories={memories} bktSnapshots={bktSnapshots} onPrefillProblem={() => setInput("题目：单摆摆长为 1.5m，摆角 5°，求周期怎么变？")} onStartQuiz={() => void ask("考考我")} onStartWeakestQuiz={() => void ask("专练薄弱点")} onStartPeerDebate={() => void ask("同桌讨论")} onSendScratchpad={(summary) => void ask(summary)} onDeleteMemory={(id) => setMemories(removeLocalLearnerMemory("high-school", scope.key, id))} />
       {experiment && <TutorHintLadder tone="cosmic" currentLevel={currentHintLevel} disabled={busy || scope.key === null} onSelect={(level) => void ask(`给我${["一", "二", "三"][level - 1]}级提示`)} />}
       <div className="lili-suggestions" aria-label="可以这样问"><p>{messages.length ? "继续探究" : "从这里开始"}</p>{visibleSuggestions.map((question) => <button type="button" key={question} disabled={busy || scope.key === null} onClick={() => void ask(question)}><span>{question}</span><ArrowRight size={15} aria-hidden="true" /></button>)}</div>
       {notice && <p className="lili-notice" role="status">{notice}</p>}

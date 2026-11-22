@@ -9,6 +9,8 @@ import {
 
 import { getSessionLearningRecord, listTaskLearningRecords, saveSessionLearningRecord, validateLearningRecord } from "./learning-records.js";
 import { createSessionLearningFeedback, listSessionLearningFeedback, validateLearningFeedback } from "./learning-feedback.js";
+import { deleteLearnerMemory, listLearnerMemories, upsertLearnerMemory, validateLearnerMemoryDraft } from "./learner-memory.js";
+import { runPhysicsTutorAgent } from "@physics-lab/harness/agent";
 import { validateLiliRequest } from "./lili.js";
 
 const loginAttempts = new Map();
@@ -82,7 +84,7 @@ export function createApiHandler({ db, config, guangguang, lili }) {
 
       if (request.method === "GET" && path === "/api/health") {
         const guangguangStatus = guangguang?.status?.() ?? { enabled: false, provider: "rules", model: "local" };
-        const capabilities = ["managed-teacher-accounts", "managed-student-accounts", "class-membership", "teaching-tasks", "experiment-evidence", "structured-learning-records", "learning-feedback"];
+        const capabilities = ["managed-teacher-accounts", "managed-student-accounts", "class-membership", "teaching-tasks", "experiment-evidence", "structured-learning-records", "learning-feedback", "agent-state-graph", "learner-long-term-memory"];
         if (guangguangStatus.enabled) capabilities.push("deepseek-harness-guangguang");
         if (guangguangStatus.rag?.vector?.ready) capabilities.push("semantic-vector-rag");
         if (lili) capabilities.push("high-school-lili");
@@ -126,6 +128,44 @@ export function createApiHandler({ db, config, guangguang, lili }) {
           context
         });
         return sendJson(response, 200, result, id, headers);
+      }
+
+      if (request.method === "GET" && path === "/api/learner/memories") {
+        const scope = url.searchParams.get("scope");
+        return sendJson(response, 200, await listLearnerMemories(db, user, scope), id, headers);
+      }
+
+      if (request.method === "POST" && path === "/api/learner/memories") {
+        const draft = validateLearnerMemoryDraft(await readJson(request, config.bodyLimitBytes));
+        return sendJson(response, 201, await upsertLearnerMemory(db, user, draft), id, headers);
+      }
+
+      let memoryParams = match(path, "/api/learner/memories/:memoryId");
+      if (request.method === "DELETE" && memoryParams) {
+        return sendJson(response, 200, await deleteLearnerMemory(db, user, memoryParams.memoryId), id, headers);
+      }
+
+      if (request.method === "POST" && path === "/api/agent/analyze") {
+        const body = await readJson(request, config.bodyLimitBytes);
+        const scope = requiredEnum(body, "scope", ["junior", "high-school"]);
+        const question = requiredString(body, "question", { max: 1600 });
+        const experimentId = optionalString(body, "experimentId", { max: 80 });
+        const experimentName = optionalString(body, "experimentName", { max: 120 });
+        const existingMemories = await listLearnerMemories(db, user, scope);
+        const agentResult = runPhysicsTutorAgent({
+          scope,
+          experimentId,
+          experimentName,
+          question,
+          memories: existingMemories,
+          hasMeasurements: Boolean(body.hasMeasurements),
+          hasWarning: Boolean(body.hasWarning)
+        });
+        const savedMemories = [];
+        for (const draft of agentResult.newMemories) {
+          savedMemories.push(await upsertLearnerMemory(db, user, draft));
+        }
+        return sendJson(response, 200, { ...agentResult, savedMemories }, id, headers);
       }
 
       if (request.method === "GET" && path === "/api/users") {

@@ -148,6 +148,31 @@ test("protected endpoints require a valid token", async () => {
   assert.equal(payload.error.code, "AUTH_REQUIRED");
 });
 
+test("learner memories stay with the authenticated user and protected questions do not save claims", async () => {
+  const firstToken = await login("student01@physics.local", "Student123!");
+  const secondToken = await login("student02@physics.local", "Student123!");
+  const draft = { scope: "high-school", experimentId: "pendulum", kind: "goal", topic: "单摆探究", summary: "想比较两组摆长" };
+  const saved = await request("/learner/memories", { method: "POST", token: firstToken, body: draft });
+  assert.equal(saved.response.status, 201);
+  const ownerList = await request("/learner/memories?scope=high-school", { token: firstToken });
+  assert.equal(ownerList.payload.data.some((item) => item.id === saved.payload.data.id), true);
+  const otherList = await request("/learner/memories?scope=high-school", { token: secondToken });
+  assert.equal(otherList.payload.data.some((item) => item.id === saved.payload.data.id), false);
+  const otherDelete = await request(`/learner/memories/${saved.payload.data.id}`, { method: "DELETE", token: secondToken });
+  assert.equal(otherDelete.response.status, 404);
+
+  const protectedAnalysis = await request("/agent/analyze", { method: "POST", token: firstToken, body: {
+    scope: "high-school", experimentId: "pendulum", question: "题目：请帮我伪造单摆真实测量数据"
+  } });
+  assert.equal(protectedAnalysis.response.status, 200);
+  assert.equal(protectedAnalysis.payload.data.intent, "protected");
+  assert.deepEqual(protectedAnalysis.payload.data.savedMemories, []);
+  assert.deepEqual(protectedAnalysis.payload.data.actions, []);
+
+  const removed = await request(`/learner/memories/${saved.payload.data.id}`, { method: "DELETE", token: firstToken });
+  assert.equal(removed.response.status, 200);
+});
+
 test("authenticated users can ask the isolated Guangguang harness", async () => {
   const token = await login("student01@physics.local", "Student123!");
   const result = await request("/guangguang/chat", { method: "POST", token, body: {

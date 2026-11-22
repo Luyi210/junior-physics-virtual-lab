@@ -11,9 +11,12 @@ import {
   RuleBasedDialogueAssistant,
   RuleBasedLearningAssistant
 } from "@physics-lab/harness";
+import { runPhysicsTutorAgent, type TutorAgentResult } from "@physics-lab/harness/agent";
 import type { HarnessArea, HarnessDialogueMessage, HarnessEventType, HarnessSession, HarnessValue } from "@physics-lab/harness";
 import { create } from "zustand";
 import { localHarnessSessionRepository } from "../../data/harnessSessionRepository";
+import { loadLocalLearnerMemories, recordLearnerMemoryDrafts } from "../../data/learnerMemoryStore";
+import { loadLocalBktStates } from "../../data/bktMasteryStore";
 import { syncHarnessEvent, syncHarnessObservation } from "../../data/studentSessionSync";
 import { studentApi } from "../../data/teacherApi";
 import { getApparatusContext, subscribeApparatusSnapshots } from "./tutorialBridge";
@@ -77,6 +80,7 @@ interface HarnessUiState {
   questionNotice?: string;
   dialogueProvider: "rules" | "deepseek-harness";
   dialogueFallbackReason?: "login-required" | "request-failed" | "guided-hint" | "guided-check" | "guided-follow-up" | "guided-next-step";
+  agentResults: Record<string, TutorAgentResult>;
   panelOpen: boolean;
   enterArea: (area: HarnessArea, module: string) => Promise<void>;
   leaveArea: () => void;
@@ -94,6 +98,7 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
   guidedHintLevel: 0,
   dialogueProvider: "rules",
   dialogueFallbackReason: undefined,
+  agentResults: {},
   panelOpen: false,
 
   async enterArea(area, module) {
@@ -121,7 +126,7 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
       if (version !== entryVersion || !latest || conversationWindow?.revision === revision) return;
       conversationWindow = undefined;
       currentConversation(latest, module, revision);
-      set({ guidedHintLevel: 0 });
+      set({ guidedHintLevel: 0, agentResults: {} });
     });
     scheduleSave(session);
   },
@@ -133,7 +138,7 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
     unsubscribeConversationScope = undefined;
     conversationWindow = undefined;
     clearControlTimers();
-    set({ activeArea: undefined, activeModule: undefined, session: undefined, loading: false, asking: false, guidedHintLevel: 0, questionNotice: undefined });
+    set({ activeArea: undefined, activeModule: undefined, session: undefined, loading: false, asking: false, guidedHintLevel: 0, questionNotice: undefined, agentResults: {} });
   },
 
   cancelQuestion() {
@@ -208,10 +213,25 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
       && get().session?.id === current.id && get().activeModule === module
       && getStudentRecordScope().revision === scope.revision;
     const localQuestion = hintLevel ? `给我${["一", "二", "三"][hintLevel - 1]}级提示` : question;
-    const localReply = dialogueAssistant.respondToQuestion(scopedSession, module, localQuestion, apparatus);
+    const baseLocalReply = dialogueAssistant.respondToQuestion(scopedSession, module, localQuestion, apparatus);
+    const agentResult = runPhysicsTutorAgent({
+      scope: "junior",
+      experimentId: module,
+      experimentName: module,
+      question: localQuestion,
+      memories: loadLocalLearnerMemories("junior", scope.key),
+      bktStates: loadLocalBktStates("junior", scope.key),
+      hasMeasurements: scopedSession.observations.length > 0
+    });
+    if (agentResult.newMemories.length) {
+      recordLearnerMemoryDrafts("junior", scope.key, agentResult.newMemories);
+    }
+    const localReply = agentResult.overrideText
+      ? { ...baseLocalReply, text: agentResult.overrideText }
+      : baseLocalReply;
     let reply = localReply;
     let dialogueProvider: HarnessUiState["dialogueProvider"] = "rules";
-    let dialogueFallbackReason: HarnessUiState["dialogueFallbackReason"] = hintLevel ? "guided-hint" : checkingApparatus ? "guided-check" : planningNextStep ? "guided-next-step" : shortFollowUp ? "guided-follow-up" : "login-required";
+    let dialogueFallbackReason: HarnessUiState["dialogueFallbackReason"] = hintLevel ? "guided-hint" : checkingApparatus ? "guided-check" : planningNextStep ? "guided-next-step" : (shortFollowUp || agentResult.overrideText) ? "guided-follow-up" : "login-required";
     set({ asking: true, questionNotice: undefined });
     let apparatusChangedWhileWaiting = false;
     const unsubscribeApparatus = subscribeApparatusSnapshots((context) => {
@@ -229,7 +249,7 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
     let timeout: ReturnType<typeof setTimeout> | undefined;
     let removeAbortListener = () => {};
     try {
-      if (!hintLevel && !checkingApparatus && !planningNextStep && !shortFollowUp && studentApi.hasSession() && scope.mode === "account" && scope.canWrite) {
+      if (!agentResult.overrideText && !hintLevel && !checkingApparatus && !planningNextStep && !shortFollowUp && studentApi.hasSession() && scope.mode === "account" && scope.canWrite) {
         const interrupted = new Promise<never>((_, reject) => {
           const onAbort = () => reject(new Error("question-interrupted"));
           controller.signal.addEventListener("abort", onAbort, { once: true });
@@ -277,6 +297,7 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
     contextSnapshot.changedWhileWaiting = apparatusChangedWhileWaiting || capturedSignature !== apparatusSignature(getApparatusContext(module));
     const session = appendDialogueExchange(latest, module, question, { ...reply, contextSnapshot });
     const completed = session.dialogue!.slice(-2);
+    const assistantMessage = completed[1];
     const resolvedFollowUp = shortFollowUp ? resolveHarnessFollowUp(question, module, conversation.dialogue) : undefined;
     const relativeHint = resolvedFollowUp?.kind === "hint" ? resolvedFollowUp : undefined;
     const continuedTopic = resolvedFollowUp?.previous && (resolvedFollowUp.kind === "why" || resolvedFollowUp.kind === "simplify")
@@ -286,7 +307,8 @@ export const useHarnessStore = create<HarnessUiState>((set, get) => ({
     // A next-step check concerns the current apparatus, so it never carries an old topic forward.
     const memoryQuestion = relativeHint?.previous ? `给我${["一", "二", "三"][relativeHint.nextHintLevel - 1]}级提示` : continuedTopic ?? question;
     conversation.dialogue = [...conversation.dialogue, { ...completed[0]!, text: memoryQuestion }, completed[1]!].slice(-6);
-    set({ session });
+    const nextAgentResults = assistantMessage ? { ...get().agentResults, [assistantMessage.id]: agentResult } : get().agentResults;
+    set({ session, agentResults: nextAgentResults });
     scheduleSave(session);
     set({ asking: false, dialogueProvider, dialogueFallbackReason,
       guidedHintLevel: hintLevel || (relativeHint?.previous ? relativeHint.nextHintLevel : get().guidedHintLevel) });
