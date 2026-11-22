@@ -42,6 +42,7 @@ function LiliConversation({ scope }: { scope: HighSchoolRecordScope }) {
   const [panelView, setPanelView] = useState<"dialogue" | "review">("dialogue");
   const viewportStyle = useVisualViewportPanel(open);
   const [input, setInput] = useState("");
+  const [draftCue, setDraftCue] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [busy, setBusy] = useState(false);
   const avatarRotation = useCorgiAvatarRotation({ open, busy });
@@ -58,13 +59,14 @@ function LiliConversation({ scope }: { scope: HighSchoolRecordScope }) {
   const currentHintLevel = currentReplies.find((message) => message.hintLevel)?.hintLevel ?? 0;
   const suggestions = latest?.suggestions ?? (experiment ? ["怎样控制变量？"] : ["我应该先做哪一步？", "怎样控制变量？", "怎么分析图像？"]);
   const visibleSuggestions = [...new Set([...(experiment ? ["生活中有什么例子？", "帮我规划下一步", "检查我的记录", "帮我检查当前实验"] : []), ...suggestions, ...(currentReplies.length ? ["换个说法", "下一步呢？"] : [])])];
+  const canSend = Boolean(input.trim()) && !/^检查这条(?:观察|假设|推理|结论)[：:]\s*$/u.test(input.trim()) && scope.key !== null;
 
   function syncExperimentVisit() {
     const nextVisit = getHighSchoolExperimentVisit();
     if (activeVisit.current === nextVisit) return;
     activeVisit.current = nextVisit;
     pending.current?.abort(); pending.current = null;
-    setBusy(false); setInput("");
+    setBusy(false); setInput(""); setDraftCue(null);
     setNotice("已切换实验。旧回复保留原条件，本次从新的讨论开始。");
   }
   useEffect(() => {
@@ -99,7 +101,7 @@ function LiliConversation({ scope }: { scope: HighSchoolRecordScope }) {
     const localOnly = Boolean(hintLevel || isLiliCurrentCheck(resolved.question) || isLiliEvidenceCoachRequest(resolved.question) || isLiliLifeConnectionRequest(resolved.question) || isLiliReflectionRequest(resolved.question) || isLiliSimplificationRequest(question) || resolved.needsClarification);
     const controller = new AbortController();
     pending.current = controller;
-    setInput(""); setBusy(true); setNotice("");
+    setInput(""); setDraftCue(null); setBusy(true); setNotice("");
     const questionId = `question-${++messageSequence.current}`;
     const replyId = `${questionId}-reply`;
     setMessages((items) => [...items.slice(-18), { id: questionId, visit: questionVisit, role: "student", text: question, effectiveQuestion: resolved.question }]);
@@ -146,7 +148,7 @@ function LiliConversation({ scope }: { scope: HighSchoolRecordScope }) {
       <header><div className="lili-portrait"><CorgiAvatar speaking={busy} avatarIndex={avatarRotation.index} /></div><div className="lili-heading"><span className="lili-eyebrow">高中实验伙伴</span><h2 id="lili-title">力力<span className="lili-capability">{latest?.mode === "ai" ? "上条为 AI 回复" : latest || !conversationId || !canRequestLiliNetwork(scope) ? "本地引导" : "联网待验证"}</span></h2><p>{experiment?.name ?? "从一个好问题开始"}</p></div><button type="button" aria-label="收起力力" onClick={dismiss}><X size={19} aria-hidden="true" /></button></header>
       <div className="lili-view-tabs" role="tablist" aria-label="力力辅导方式"><button id="lili-dialogue-tab" type="button" role="tab" aria-selected={panelView === "dialogue"} aria-controls="lili-dialogue-view" onClick={() => setPanelView("dialogue")}>问力力</button><button id="lili-review-tab" type="button" role="tab" aria-selected={panelView === "review"} aria-controls="lili-review-view" onClick={() => setPanelView("review")}>现场判断</button></div>
       <div className="lili-body">
-      {panelView === "review" ? <div id="lili-review-view" role="tabpanel" aria-labelledby="lili-review-tab"><LiliReviewPanel context={context} busy={busy || scope.key === null} onAsk={(question) => { setPanelView("dialogue"); void ask(question); }} onPrepare={(kind) => { setInput(`检查这条${kind}：`); setPanelView("dialogue"); }} /></div> : <div id="lili-dialogue-view" role="tabpanel" aria-labelledby="lili-dialogue-tab">
+      {panelView === "review" ? <div id="lili-review-view" role="tabpanel" aria-labelledby="lili-review-tab"><LiliReviewPanel context={context} busy={busy || scope.key === null} onAsk={(question) => { setPanelView("dialogue"); void ask(question); }} onPrepare={(kind, cue) => { setInput(`检查这条${kind}：`); setDraftCue(cue ?? null); setPanelView("dialogue"); }} /></div> : <div id="lili-dialogue-view" role="tabpanel" aria-labelledby="lili-dialogue-tab">
       <CorgiAvatarControls rotation={avatarRotation} />
       <div className="lili-dialogue" role="log" aria-live="polite" aria-relevant="additions">
         {!messages.length && <div className="lili-welcome"><span><FlaskConical size={14} aria-hidden="true" />一起想明白</span><h3>带着问题动手，<br /><em>让证据回答。</em></h3><p>我是力力。卡在哪一步，就从哪里聊起。</p><ul aria-label="力力能帮助你"><li>梳理变量</li><li>读懂图像</li><li>检查推理</li></ul><small>提问时参考当前虚拟实验条件；真实测量仍由你完成。未登录或后台不可用时，提供本地引导。</small></div>}
@@ -160,7 +162,7 @@ function LiliConversation({ scope }: { scope: HighSchoolRecordScope }) {
       {notice && <p className="lili-notice" role="status">{notice}</p>}
       </div>}
       </div>
-      {panelView === "dialogue" && <form onSubmit={(event) => { event.preventDefault(); void ask(input); }}><label className="lili-input-label" htmlFor="lili-question">向力力提问</label><textarea id="lili-question" value={input} onChange={(event) => setInput(event.target.value)} maxLength={1600} rows={2} placeholder="这次实验，我想弄明白…" disabled={busy || scope.key === null} /><div><small>当前会话不作为实验记录保存</small>{busy ? <button type="button" onClick={cancel} aria-label="停止等待"><Square size={15} aria-hidden="true" /><span>停止</span></button> : <button type="submit" disabled={!input.trim() || scope.key === null} aria-label="发送问题"><span>发送</span><ArrowUp size={18} aria-hidden="true" /></button>}</div></form>}
+      {panelView === "dialogue" && <form onSubmit={(event) => { event.preventDefault(); if (canSend) void ask(input); }}>{draftCue && <p className="lili-draft-cue"><strong>本轮小挑战</strong>{draftCue}</p>}<label className="lili-input-label" htmlFor="lili-question">向力力提问</label><textarea id="lili-question" value={input} onChange={(event) => setInput(event.target.value)} maxLength={1600} rows={2} placeholder="这次实验，我想弄明白…" disabled={busy || scope.key === null} /><div><small>当前会话不作为实验记录保存</small>{busy ? <button type="button" onClick={cancel} aria-label="停止等待"><Square size={15} aria-hidden="true" /><span>停止</span></button> : <button type="submit" disabled={!canSend} aria-label="发送问题"><span>发送</span><ArrowUp size={18} aria-hidden="true" /></button>}</div></form>}
       <footer><span>当前档案：{scope.label}</span>{scope.mode === "guest" || (scope.mode === "account" && !scope.canWrite) ? <Link to={scope.authChannel === "teacher" ? "/teacher" : "/student"}>{scope.mode === "account" ? "重新登录" : "账号登录"}<ArrowRight size={13} aria-hidden="true" /></Link> : null}</footer>
     </section>}
     <button className="lili-launcher" type="button" ref={launcher} onClick={() => open ? dismiss() : setOpen(true)} onMouseEnter={() => avatarRotation.setInteracting(true)} onMouseLeave={() => avatarRotation.setInteracting(false)} onFocus={() => avatarRotation.setInteracting(true, "focus")} onBlur={() => avatarRotation.setInteracting(false, "focus")} aria-expanded={open} aria-controls="lili-panel" aria-label={open ? "收起力力助手" : "和力力讨论实验"}><CorgiAvatar speaking={busy} avatarIndex={avatarRotation.index} /><span><b>力力</b><small>{open ? "一起找证据" : "需要一个提示吗？"}</small></span>{open ? <ChevronDown size={16} /> : <MessageCircle size={17} />}</button>

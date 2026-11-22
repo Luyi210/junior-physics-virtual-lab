@@ -10,6 +10,17 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.22.5",
+    date: "2026-11-22",
+    title: "力力增加变量导航与记录复盘",
+    summary: "高中实验现场判断现在会指出研究变量、下一项小挑战，并分开复盘两类记录。",
+    changes: [
+      "每项高中实验显示要改变、观察和控制的变量。",
+      "没有记录时引导先作预测；收到记录后引导用原始证据写出有限度的结论。",
+      "自动模型采样按可比较条件分组，手动虚拟读数保留原值，分别显示复盘入口。"
+    ]
+  },
+  {
     version: "2026.11.22.4",
     date: "2026-11-22",
     title: "力力增加现场判断与思路检查",

@@ -188,11 +188,13 @@ export type LiliCoachState = {
   manualRecordCount: number;
   timeSeconds: number;
   evidence: readonly string[];
+  variables: { independent: string; dependent: string; controlled: string } | null;
+  challenge: { title: string; prompt: string; kind: "假设" | "结论" } | null;
 };
 
 /** A live, bounded coaching snapshot. Counts describe available evidence, never mastery. */
 export function getLiliCoachState(context: LiliExperimentContext | null): LiliCoachState {
-  if (!context) return { stage: "choose", label: "先选择实验", summary: "打开一项高中实验后，我才能读取当前虚拟条件。", next: "从实验目录选择一项，先说出你想研究的变量。", question: "我应该先做哪一步？", issue: null, modelSamples: 0, manualSamples: 0, modelRecordCount: 0, manualRecordCount: 0, timeSeconds: 0, evidence: [] };
+  if (!context) return { stage: "choose", label: "先选择实验", summary: "打开一项高中实验后，我才能读取当前虚拟条件。", next: "从实验目录选择一项，先说出你想研究的变量。", question: "我应该先做哪一步？", issue: null, modelSamples: 0, manualSamples: 0, modelRecordCount: 0, manualRecordCount: 0, timeSeconds: 0, evidence: [], variables: null, challenge: null };
   const experiment = getHighSchoolExperiment(context.experimentId);
   const profile = guidance[context.experimentId];
   const id = context.experimentId as HighSchoolExperimentId;
@@ -205,8 +207,13 @@ export function getLiliCoachState(context: LiliExperimentContext | null): LiliCo
   const modelSamples = Math.min(context.recordCount, context.samples?.length ?? 0);
   const manualRecordCount = context.manualRecordCount ?? 0;
   const manualSamples = Math.min(manualRecordCount, context.manualSamples?.length ?? 0);
-  const common = { issue, modelSamples, manualSamples, modelRecordCount: context.recordCount, manualRecordCount, timeSeconds: Math.min(context.timeSeconds, simulation.durationSeconds), evidence: experiment?.evidence ?? [] };
-  if (issue) return { ...common, stage: "check", label: "先核对当前条件", summary: issue, next: "按上面的条件提示调整或确认，再检查当前实验。已保存的旧记录仍使用保存时的条件。", question: "帮我检查当前实验" };
+  const variables = experiment ? { independent: experiment.variables.independent[0] ?? "一个自变量", dependent: (id === "spring-force" ? experiment.variables.dependent.find((item) => item.includes("伸长量")) : undefined) ?? experiment.variables.dependent[0] ?? "相应读数", controlled: experiment.variables.controlled[0] ?? "其他条件" } : null;
+  const hasSamples = modelSamples + manualSamples > 0;
+  const challenge: LiliCoachState["challenge"] = variables ? hasSamples
+    ? { title: "用自己的证据作解释", prompt: `从已保存的同一类记录中选两组：在什么条件下，${variables.independent}与${variables.dependent}呈现什么关系？请指出对应读数，并说明哪些情况还不能外推。`, kind: "结论" }
+    : { title: "操作前先作预测", prompt: `保持${variables.controlled}不变，只改变${variables.independent}，你预计${variables.dependent}怎样变化？准备保存哪两组条件和读数来验证？`, kind: "假设" } : null;
+  const common = { issue, modelSamples, manualSamples, modelRecordCount: context.recordCount, manualRecordCount, timeSeconds: Math.min(context.timeSeconds, simulation.durationSeconds), evidence: experiment?.evidence ?? [], variables, challenge };
+  if (issue) return { ...common, challenge: null, stage: "check", label: "先核对当前条件", summary: issue, next: "按上面的条件提示调整或确认，再检查当前实验。已保存的旧记录仍使用保存时的条件。", question: "帮我检查当前实验" };
   if (context.recordCount > modelSamples && modelSamples === 0 && manualSamples === 0) return { ...common, stage: "review", label: "记录尚未提供", summary: `页面显示 ${context.recordCount} 条模型记录，但本次没有收到具体采样。条数不能代替证据。`, next: "到实验记录区核对是否已加载具体记录，再让力力检查；不要根据总条数判断实验完成。", question: "检查我的记录" };
   if (modelSamples || manualSamples) return { ...common, stage: "review", label: "可核对已有记录", summary: `本次可参考 ${modelSamples} 条自动模型采样、${manualSamples} 条手动虚拟读数；两类来源须分开分析。`, next: "选定一类记录，核对保存时的条件、单位和可比较的变量，再讨论结论。", question: modelSamples && manualSamples ? "检查我的记录" : manualSamples ? "看看我的手动读数" : "检查我的记录" };
   if (context.timeSeconds > 0 && simulation.durationSeconds > 0) return { ...common, stage: "record", label: "正在观察现象", summary: `当前虚拟过程在 ${Number(context.timeSeconds.toFixed(3))} s，尚未收到具体保存读数。`, next: "在要比较的时刻保存一组条件和读数，再改变一个变量或时间作对照。", question: "我应该记录哪些证据？" };

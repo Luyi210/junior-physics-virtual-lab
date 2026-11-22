@@ -45,4 +45,20 @@ describe("Lili live coaching state", () => {
     expect(coaching.question).toBe("我应该记录哪些证据？");
     expect(getLiliCoachState(null).stage).toBe("choose");
   });
+
+  it("offers a variable-specific prediction before evidence and a bounded conclusion challenge after it", () => {
+    const current = context("spring-force");
+    const before = getLiliCoachState(current);
+    expect(before.variables?.independent).toContain("悬挂总质量");
+    expect(before.challenge?.kind).toBe("假设");
+    expect(before.challenge?.prompt).toContain("伸长量x=L−L₀");
+    current.recordCount = 1;
+    current.samples = [{ id: "one", parameters: { ...current.parameters }, timeSeconds: 0 }];
+    const after = getLiliCoachState(current);
+    expect(after.challenge?.kind).toBe("结论");
+    expect(after.challenge?.prompt).toContain("哪些情况还不能外推");
+    const blocked = context("pendulum");
+    blocked.parameters.amplitudeDegrees = 20;
+    expect(getLiliCoachState(blocked).challenge).toBeNull();
+  });
 });

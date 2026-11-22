@@ -121,9 +121,31 @@ describe("Lili action coaching and experiment visits", () => {
     const draft = nodes(LiliReviewPanel(review.props as Parameters<typeof LiliReviewPanel>[0])).find(node => node.type === "button" && text(node) === "观察")!;
     click(draft); app.render();
     expect(find(app.tree, "textarea").props.value).toBe("检查这条观察：");
+    expect(nodes(app.tree).find(node => node.type === "button" && node.props["aria-label"] === "发送问题")?.props.disabled).toBe(true);
     app.ask("检查这条观察：保持原长不变，把质量从 50 g 调到 100 g，弹力从 0.49 N 变为 0.98 N。");
     expect(text(replies(app).at(-1))).toContain("观察证据的表述检查");
     expect(state.request).not.toHaveBeenCalled();
+  });
+  it("keeps the experiment-specific challenge visible while the student writes a hypothesis", () => {
+    const app = mountConversation();
+    click(nodes(app.tree).find(node => node.props.role === "tab" && text(node) === "现场判断")!); app.render();
+    const review = nodes(app.tree).find(node => node.type === LiliReviewPanel)!;
+    const challenge = nodes(LiliReviewPanel(review.props as Parameters<typeof LiliReviewPanel>[0])).find(node => node.type === "button" && text(node).includes("写下我的假设"))!;
+    click(challenge); app.render();
+    expect(find(app.tree, "textarea").props.value).toBe("检查这条假设：");
+    expect(text(app.tree)).toContain("本轮小挑战");
+    expect(text(app.tree)).toContain("准备保存哪两组条件和读数来验证");
+  });
+  it("reviews actual model samples by source and keeps them separate from manual readings", () => {
+    const parameters = defaultHighSchoolParameters("spring-force");
+    state.context = { experimentId: "spring-force", parameters, timeSeconds: 0, recordCount: 1, samples: [{ id: "sample-1", parameters, timeSeconds: 0 }] };
+    const app = mountConversation();
+    click(nodes(app.tree).find(node => node.props.role === "tab" && text(node) === "现场判断")!); app.render();
+    const review = nodes(app.tree).find(node => node.type === LiliReviewPanel)!;
+    const html = renderToStaticMarkup(LiliReviewPanel(review.props as Parameters<typeof LiliReviewPanel>[0]));
+    expect(html).toContain("自动模型采样 · 1 条参与分析");
+    expect(html).toContain("1 个不同横坐标");
+    expect(html).not.toContain("手动虚拟读数 · 1 条可核对");
   });
   it("checks actual record availability locally and explains a topic more simply without another network call", async () => {
     state.context!.recordCount = 12;
