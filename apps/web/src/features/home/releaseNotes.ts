@@ -10,6 +10,17 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.23.1",
+    date: "2026-11-23",
+    title: "光光与力力增加探究工具",
+    summary: "可用支持的物理题定位实验、做情境自测，并让实验同桌提出可验证的观点。",
+    changes: [
+      "光光与力力新增题目关键词匹配、实验入口和部分实验的参数写入；未匹配的题会请你补充条件。",
+      "新增情境同桌、自测与草图白板。草图仅供自己画图，助手不会读取具体线条，只提供常见画法的核对建议。",
+      "修正波长单位与抛体高度映射；未作答的知识点显示“未自测”，学习记录按本机档案区分。"
+    ]
+  },
+  {
     version: "2026.11.22.8",
     date: "2026-11-22",
     title: "高中运动过程新增动态轨迹",
