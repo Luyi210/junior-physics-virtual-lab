@@ -29,13 +29,12 @@ function samples(end: number, at: (time: number) => Record<string, number>, coun
 function periodicSamples(end: number, period: number, at: (time: number) => Record<string, number>) {
   // This undamped model repeats exactly. Integrate only one cycle, then shift
   // the samples in time; 48 samples/cycle gives <2700 rows at the allowed L≥0.3m.
-  const phases = samples(period, at, 48).slice(0, -1);
+  const step = period / 48;
+  const phases = Array.from({ length: 48 }, (_, index) => at(index * step));
   const rows: Record<string, number>[] = [];
-  for (let cycle = 0; cycle * period < end; cycle += 1) {
-    for (const phase of phases) {
-      const time = cycle * period + numeric(phase, "time");
-      if (time < end) rows.push({ ...phase, time });
-    }
+  for (let index = 0; index * step < end; index += 1) {
+    // One global time grid avoids a rounded cycle boundary overlapping a phase.
+    rows.push({ ...phases[index % phases.length]!, time: index * step });
   }
   rows.push(at(end));
   return rows;

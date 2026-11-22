@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { ArrowDown, ArrowRight, BookOpen, Compass, MoveUpRight, Search, SlidersHorizontal, X } from "lucide-react";
+import { ArrowDown, ArrowRight, Atom, BookOpen, Compass, MoveUpRight, Orbit, Search, SlidersHorizontal, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { highSchoolCurriculumNote, highSchoolCurriculumSources, highSchoolDomains, highSchoolExperiments, highSchoolVolumes } from "@physics-lab/knowledge/high-school";
 import { HIGH_SCHOOL_EXPERIMENTS } from "@physics-lab/physics";
@@ -10,10 +10,12 @@ import { HighSchoolShowcase } from "../components/showcase/HighSchoolShowcase";
 import { CosmicObservatory } from "../components/cosmos/CosmicObservatory";
 import { HighSchoolRecordScopePanel } from "../components/HighSchoolRecordScopePanel";
 import { getHighSchoolRecordScope, subscribeHighSchoolRecordScope } from "../../../data/highSchoolRecordScope";
+import { PageIntroduction } from "../../../shared/components/PageIntroduction";
 import "./HighSchoolPages.css";
 import "../styles/HighSchoolTheme.css";
 import "../styles/HighSchoolMobile.css";
 import "./HighSchoolHome.css";
+import "./HighSchoolGuide.css";
 
 const experimentNumbers = new Map(highSchoolExperiments.map((item, index) => [item.id, String(index + 1).padStart(2, "0")]));
 const volumeCounts = new Map(highSchoolVolumes.map(volume => [volume.id, highSchoolExperiments.filter(item => item.volume === volume.id).length]));
@@ -57,6 +59,24 @@ export function HighSchoolHomePage() {
   }
 
   return <div className="hs-page hs-home hs-lab-theme hs-cosmic-theme">
+    <PageIntroduction
+      pageKey="high-school-lab-guide"
+      eyebrow="WELCOME / 高中物理实验室"
+      title="从题目出发，让物理过程可见。"
+      description="先选一个问题或实验，再改变条件、观察现象、保存证据。每一步都能随时向力力求助。"
+      points={["从实验目录或题目可视化进入", "调一个变量，看动态与图像变化", "保存读数，分开分析模型与手动证据"]}
+      icon={Orbit}
+      accent="#8edcef"
+      enterLabel="开始探究"
+      variant="highschool"
+      persistence="local"
+      triggerLabel="高中使用引导"
+      steps={[
+        { eyebrow: "01 / CHOOSE A QUESTION", title: "先选问题，再进实验。", description: "可以从教材实验目录选主题，也可以在题目可视化中粘贴题干。识别到受支持的题型和完整数值后，才会生成可调场景。", points: ["当前支持抛体与弹簧静态平衡", "识别不了时会说明缺少条件或适用范围"], icon: Atom },
+        { eyebrow: "02 / CHANGE ONE VARIABLE", title: "让一个条件发生变化。", description: "在实验中调节参数、观察动态、读取图像。想比较关系时，保留其他会影响结果的条件。", points: ["先预测，再改变条件", "可切换适合屏幕的二维或三维视图"], icon: SlidersHorizontal },
+        { eyebrow: "03 / KEEP THE EVIDENCE", title: "用保存的读数解释现象。", description: "记录当前条件和读数，再让力力帮你核对证据、发现卡点。模型采样与手动虚拟读数分开看。", points: ["记录不足时继续采样", "结论写明条件与适用范围"], icon: BookOpen }
+      ]}
+    />
     <HighSchoolHeader />
     <main>
       <section className="hs-cosmic-hero" aria-labelledby="hs-home-title">
@@ -65,7 +85,7 @@ export function HighSchoolHomePage() {
           <span className="hs-kicker"><i aria-hidden="true" />高中物理 · 虚拟实验室</span>
           <h1 id="hs-home-title">从宏观宇宙，<br /><em>到微观世界。</em></h1>
           <p>追踪运动，改变场与光。<br />亲手调整条件，用图像与数据回应你的猜想。</p>
-          <div className="hs-cosmic-actions"><button className="hs-button hs-primary" type="button" onClick={exploreCatalog}>探索全部实验<ArrowDown size={18} /></button><Link className="hs-hero-quick-start" to="/high-school/experiments/uniform-acceleration">从小车运动开始<ArrowRight size={17} /></Link></div>
+          <div className="hs-cosmic-actions"><button className="hs-button hs-primary" type="button" onClick={exploreCatalog}>探索全部实验<ArrowDown size={18} /></button><Link className="hs-hero-quick-start hs-problem-link" to="/high-school/problems"><Atom size={18} />题目可视化<ArrowRight size={17} /></Link><Link className="hs-hero-quick-start" to="/high-school/experiments/uniform-acceleration">从小车运动开始<ArrowRight size={17} /></Link></div>
           <div className="hs-cosmic-count"><strong>{String(readyCount).padStart(2, "0")}</strong><span>项实验已开放<small>{highSchoolVolumes.length} 册教材 · {highSchoolDomains.length} 个物理领域</small></span></div>
         </div>
         <div className="hs-cosmic-observatory"><div className="hs-observatory-frame"><CosmicObservatory /></div></div>

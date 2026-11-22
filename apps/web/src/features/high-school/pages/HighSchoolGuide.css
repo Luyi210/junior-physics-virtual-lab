@@ -1,0 +1,49 @@
+@layer pages {
+  .hs-home > .page-intro-trigger {
+    right: auto;
+    left: max(20px, env(safe-area-inset-left));
+    bottom: max(20px, env(safe-area-inset-bottom));
+    color: #e4f8ff;
+    background: #0a2033;
+    border-color: #5ccce188;
+    box-shadow: 4px 4px 0 #327d9b99, 0 12px 30px #0008;
+  }
+  .hs-home .hs-problem-link {
+    gap: 9px;
+    color: #9eeeff;
+    font-weight: 700;
+  }
+  .hs-home .hs-problem-link svg:last-child { margin-left: 4px; }
+  .guide-variant-highschool .page-guide-dialog {
+    color: #eaf6ff;
+    background: #071b2c;
+    border-color: #72d7ec66;
+    box-shadow: 12px 12px 0 #327d9b77, 0 34px 90px #000b;
+  }
+  .guide-variant-highschool .page-guide-content {
+    background: radial-gradient(circle at 100% 0, #287e9b2b, transparent 44%), #0a1e30;
+  }
+  .guide-variant-highschool .page-intro-content > p { color: #b1c8da; }
+  .guide-variant-highschool .page-intro-content h2 { font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+  .guide-variant-highschool .page-intro-content li { color: #e4f2fb; border-color: #7dbed13b; }
+  .guide-variant-highschool .page-intro-close,
+  .guide-variant-highschool .page-guide-later,
+  .guide-variant-highschool .page-guide-previous { color: #b1c8da; border-color: #72d7ec66; }
+  .guide-variant-highschool .page-guide-progress { color: #9bc4d9; }
+  .guide-variant-highschool .page-guide-progress > i { background: #32657d66; }
+  .guide-variant-highschool .page-intro-enter { color: #061824; background: #9be8f5; border-color: #9be8f5; }
+  .guide-variant-highschool .page-intro-hint { color: #8daabd; }
+  .guide-variant-highschool .page-intro-visual { background-color: #09192b; }
+  @media (max-width: 650px) {
+    .hs-home > .page-intro-trigger { left: max(12px, env(safe-area-inset-left)); bottom: max(12px, env(safe-area-inset-bottom)); }
+    .hs-home .hs-problem-link { width: 100%; }
+  }
+}
+
+/* The guide is portaled to body, so it needs the page type tokens here. */
+body .guide-variant-highschool {
+  --font-display: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-body: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --kai: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-family: var(--font-body);
+}

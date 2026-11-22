@@ -10,6 +10,17 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.22.6",
+    date: "2026-11-22",
+    title: "高中实验室增加题目可视化",
+    summary: "可粘贴题干识别受支持的题型，查看同步更新的物理场景、读数与推演步骤。",
+    changes: [
+      "高中实验室新增三步使用引导，可从页面入口重新打开。",
+      "题目可视化首批支持粘贴抛体运动与弹簧静态平衡题干，识别数值后生成场景；不完整或不支持的题会明确提示。",
+      "完整题目和模型适用条件可在弹窗中查看；画面按理想模型计算。"
+    ]
+  },
+  {
     version: "2026.11.22.5",
     date: "2026-11-22",
     title: "力力增加变量导航与记录复盘",

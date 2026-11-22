@@ -1,6 +1,6 @@
 import { ArrowLeft, ArrowRight, BookOpenText, Check, CircleHelp, Compass, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { hasSeenPageIntroduction, rememberPageIntroduction } from "./pageIntroductionStorage";
@@ -22,7 +22,7 @@ interface PageIntroductionProps {
   icon: LucideIcon;
   accent?: string;
   enterLabel?: string;
-  variant?: "field" | "optics" | "home" | "teacher" | "student";
+  variant?: "field" | "optics" | "home" | "teacher" | "student" | "highschool";
   steps?: IntroductionStep[];
   persistence?: "session" | "local";
   triggerLabel?: string;
@@ -35,6 +35,8 @@ export function PageIntroduction({
   variant = "field", steps, persistence = "session", triggerLabel = "使用引导"
 }: PageIntroductionProps) {
   const titleId = useId();
+  const dialogRef = useRef<HTMLElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const storageKey = `${STORAGE_PREFIX}${pageKey}`;
   const guideSteps: IntroductionStep[] = steps?.length ? steps : [{ eyebrow, title, description, points, icon: Icon }];
   const [open, setOpen] = useState(() => !hasSeenPageIntroduction(storageKey, persistence));
@@ -52,12 +54,27 @@ export function PageIntroduction({
 
   useEffect(() => {
     if (!open) return;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeButtonRef.current?.focus();
+    return () => { previous?.focus(); };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") close();
       if (event.key === "ArrowRight" && stepIndex < guideSteps.length - 1) setStepIndex((value) => value + 1);
       if (event.key === "ArrowLeft" && stepIndex > 0) setStepIndex((value) => value - 1);
+      if (event.key === "Tab") {
+        const controls = [...(dialogRef.current?.querySelectorAll<HTMLElement>("button, a, input, select, textarea, [tabindex]:not([tabindex='-1'])") ?? [])].filter((item) => !item.hasAttribute("disabled"));
+        if (!controls.length) return;
+        const first = controls[0]!;
+        const last = controls[controls.length - 1]!;
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => { document.body.style.overflow = previousOverflow; window.removeEventListener("keydown", onKeyDown); };
@@ -65,10 +82,10 @@ export function PageIntroduction({
 
   const modal = open ? createPortal(
     <div className={`page-intro-backdrop guide-variant-${variant} ${variant === "home" ? "home-intro-backdrop" : ""}`} role="presentation">
-      <section className={`page-intro-dialog page-guide-dialog ${variant === "home" ? "home-intro-dialog" : ""}`} style={{ "--intro-accent": accent } as CSSProperties} role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <section ref={dialogRef} className={`page-intro-dialog page-guide-dialog ${variant === "home" ? "home-intro-dialog" : ""}`} style={{ "--intro-accent": accent } as CSSProperties} role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <GuideVisual variant={variant} icon={StepIcon} step={stepIndex} total={guideSteps.length} />
         <div className="page-intro-content page-guide-content">
-          <button className="page-intro-close" type="button" onClick={close} aria-label="稍后查看引导"><X size={18} /></button>
+          <button ref={closeButtonRef} className="page-intro-close" type="button" onClick={close} aria-label="稍后查看引导"><X size={18} /></button>
           <div className="page-guide-progress"><span>{String(stepIndex + 1).padStart(2, "0")} / {String(guideSteps.length).padStart(2, "0")}</span><i><b style={{ width: `${((stepIndex + 1) / guideSteps.length) * 100}%` }} /></i></div>
           <span className="page-intro-eyebrow">{step.eyebrow ?? eyebrow}</span>
           <h2 id={titleId}>{step.title}</h2>
@@ -79,7 +96,7 @@ export function PageIntroduction({
             {stepIndex > 0 && <button className="page-guide-previous" type="button" onClick={() => setStepIndex((value) => value - 1)}><ArrowLeft size={15} />上一步</button>}
             <button className="page-intro-enter" type="button" onClick={() => finished ? close() : setStepIndex((value) => value + 1)}>{finished ? <Check size={16} /> : null}{finished ? enterLabel : "下一步"}{!finished && <ArrowRight size={17} />}</button>
           </div>
-          <small className="page-intro-hint">关闭后可通过右下角“{triggerLabel}”随时重新查看</small>
+          <small className="page-intro-hint">关闭后可通过页面上的“{triggerLabel}”随时重新查看</small>
         </div>
       </section>
     </div>, document.body
@@ -92,11 +109,11 @@ function GuideVisual({ variant, icon: Icon, step, total }: { variant: NonNullabl
   if (variant === "optics") return <OpticsIntroVisual step={step} total={total} />;
   if (variant === "home") return <HomeIntroVisual icon={Icon} step={step} total={total} />;
   return <div className={`page-intro-visual page-guide-visual visual-${variant}`} aria-hidden="true">
-    <header><span>{variant === "teacher" ? "TEACHING WORKFLOW" : variant === "student" ? "DISCOVERY ROUTE" : "PHYSICS OPEN LAB"}</span><b>GUIDE / {String(step + 1).padStart(2, "0")}</b></header>
+    <header><span>{variant === "teacher" ? "TEACHING WORKFLOW" : variant === "student" ? "DISCOVERY ROUTE" : variant === "highschool" ? "PHYSICS OBSERVATORY" : "PHYSICS OPEN LAB"}</span><b>GUIDE / {String(step + 1).padStart(2, "0")}</b></header>
     <span className="page-intro-orbit orbit-a" /><span className="page-intro-orbit orbit-b" /><i />
     <Icon className="page-intro-icon" size={42} strokeWidth={1.6} />
     <div className="page-guide-coordinate"><Compass size={14} /><span>{step + 1} / {total}</span></div>
-    <small>{variant === "teacher" ? "ORGANIZE · PUBLISH · OBSERVE" : "QUESTION · OPERATE · EVIDENCE"}</small>
+    <small>{variant === "teacher" ? "ORGANIZE · PUBLISH · OBSERVE" : variant === "highschool" ? "PREDICT · SIMULATE · VERIFY" : "QUESTION · OPERATE · EVIDENCE"}</small>
   </div>;
 }
 
