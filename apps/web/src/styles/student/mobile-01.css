@@ -49,6 +49,19 @@
   .notebook-cloud-strip article { flex-basis: 50%; }
 }
 
+@media (max-width: 600px) {
+  .page-intro-visual.optics-intro-visual { min-height: 122px; max-height: 122px; }
+  .optics-intro-visual + .page-intro-content .page-intro-close { transform: translateY(-122px); }
+  .page-intro-content { padding: 20px 18px; }
+  .page-intro-content h2 { font-size: 22px; }
+  .page-intro-content ul { margin-block: 13px 16px; }
+}
+
+@media (max-width: 360px) {
+  .page-intro-visual.optics-intro-visual { display: none; }
+  .optics-intro-visual + .page-intro-content .page-intro-close { top: 8px; right: 8px; transform: none; color: #21464a; border-color: #9ab9b4; background: #e6f1eb; }
+}
+
 .notebook-storage-message { width: calc(100% - 2 * var(--page-gutter)); max-width: calc(var(--site-width) - 2 * var(--page-gutter)); margin: 20px auto; padding: 14px 18px; border: 1px solid #b8573f; color: #7a3325; background: #fff4e9; line-height: 1.7; overflow-wrap: anywhere; }
 .notebook-draft-message { margin: 18px 0 0; color: #415d5c; font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
 .notebook-draft-message[role="alert"] { color: #9b3b28; }

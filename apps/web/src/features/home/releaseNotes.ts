@@ -10,6 +10,17 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.23.3",
+    date: "2026-11-23",
+    title: "手机实验画面可调大小",
+    summary: "高中二维实验可按需缩小、放大或重置画面；手机首页与初中光学引导也更紧凑。",
+    changes: [
+      "高中实验二维装置新增 80%、100%、125% 三档画面大小；放大后可在装置内滚动查看，缩放不改变物理参数和读数。",
+      "收紧高中实验目录的手机标题、卡片和场景占屏面积，保留清晰的按钮和文字。",
+      "初中光学实验的手机引导弹窗缩小插图与留白，小屏幕可更方便地看到操作按钮。"
+    ]
+  },
+  {
     version: "2026.11.23.2",
     date: "2026-11-23",
     title: "光光与力力新增功能明细",

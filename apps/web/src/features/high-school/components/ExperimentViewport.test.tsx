@@ -38,6 +38,7 @@ type Element = ReactElement<Record<string, unknown>>;
 function nodes(tree: ReactNode): Element[] { return Array.isArray(tree) ? tree.flatMap(nodes) : isValidElement<Record<string, unknown>>(tree) ? [tree, ...nodes(tree.props.children as ReactNode)] : []; }
 function content(tree: ReactNode): string { return typeof tree === 'string' || typeof tree === 'number' ? String(tree) : Array.isArray(tree) ? tree.map(content).join('') : isValidElement<Record<string, unknown>>(tree) ? content(tree.props.children as ReactNode) : ''; }
 function button(tree: ReactNode, label: string) { const found = nodes(tree).find(item => item.type === 'button' && content(item).includes(label)); expect(found, label).toBeDefined(); return found!; }
+function labelledButton(tree: ReactNode, label: string) { const found = nodes(tree).find(item => item.type === 'button' && item.props['aria-label'] === label); expect(found, label).toBeDefined(); return found!; }
 function fire(element: Element, event = 'onClick', value: unknown = {}) { (element.props[event] as (event: unknown) => void)(value); }
 const cleanups: Array<() => void> = [];
 function mount<P extends object>(component: (props: P) => ReactNode, initial: P) {
@@ -101,6 +102,24 @@ describe('view-only controls and operable fallback', () => {
     operateActualFallback(app.tree);
     expect(props.onParametersChange).toHaveBeenCalledExactlyOnceWith({ amplitudeDegrees: 45 });
     expect(activeThree(app.tree)).toBeUndefined();
+  });
+
+  it('resizes the mobile 2D drawing independently of experiment conditions and readings', () => {
+    probe('available'); screen(true); const props = scene(), app = mount(ExperimentViewport, props);
+    const stage = () => nodes(app.tree).find(node => node.props['data-scene-size'] !== undefined)!;
+    expect(stage().props['data-scene-size']).toBe(100);
+    fire(labelledButton(app.tree, '缩小实验画面')); app.render();
+    expect(stage().props['data-scene-size']).toBe(80);
+    expect(labelledButton(app.tree, '缩小实验画面').props.disabled).toBe(true);
+    fire(labelledButton(app.tree, '放大实验画面')); app.render();
+    fire(labelledButton(app.tree, '放大实验画面')); app.render();
+    expect(stage().props['data-scene-size']).toBe(125);
+    expect(stage().props.role).toBe('region');
+    fire(button(app.tree, '重置')); app.render();
+    expect(stage().props['data-scene-size']).toBe(100);
+    expect(fallbackDiagram(app.tree).props.simulation).toBe(props.simulation);
+    expect(props.onParametersChange).not.toHaveBeenCalled();
+    expect(props.onCapacitorModeChange).not.toHaveBeenCalled();
   });
 
   it('follows the display only until the user explicitly chooses a view, without resetting live experiment progress', () => {

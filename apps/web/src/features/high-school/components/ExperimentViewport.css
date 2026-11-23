@@ -64,6 +64,13 @@
     font-size: 13px;
   }
   .hs-experiment-page :is(.hs-camera-reset, .hs-diagram-zoom, .hs-touch-rotation):hover { background: #203b53; border-color: #67ddf3; }
+  .hs-scene-size { display: flex; align-items: center; gap: 6px; color: #c3e6f1; font-size: 13px; }
+  .hs-scene-size > span { margin-right: 5px; white-space: nowrap; }
+  .hs-scene-size output { min-width: 42px; text-align: center; font-variant-numeric: tabular-nums; }
+  .hs-experiment-page .hs-scene-size button { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; padding: 0 8px; border: 1px solid #3c5972; border-radius: 6px; color: #d8eef6; background: #13253a; }
+  .hs-experiment-page .hs-scene-size button:disabled { opacity: .48; cursor: default; }
+  .hs-experiment-page .hs-scene-size button:not(:disabled):hover { border-color: #67ddf3; background: #203b53; }
+  .hs-experiment-page .hs-scene-size .hs-scene-size-reset { padding-inline: 10px; font-size: 12px; }
   .hs-experiment-page .hs-touch-rotation[aria-pressed="true"] { color: #082734; background: #8be4f4; border-color: #8be4f4; }
   .hs-viewport button:focus-visible, .hs-camera-tools select:focus-visible, .hs-viewport-stage:focus-visible { outline: 2px solid #67ddf3; outline-offset: 3px; }
   .hs-experiment-page .hs-viewport-stage:not(.hs-force-viewport-stage):not(.hs-capacitor-viewport-stage):not(.hs-pendulum-viewport-stage):not(.is-magnified) { height: clamp(400px, 37vw, 600px); }
@@ -75,6 +82,9 @@
   .hs-viewport .hs-viewport-stage.is-magnified { height: min(65vh, 600px); min-height: 300px; overflow: auto; overscroll-behavior: contain; }
   .hs-diagram-surface.is-magnified { width: max(100%, 800px); height: auto; min-height: 100%; }
   .hs-diagram-surface.is-magnified .hs-diagram { height: auto; min-height: 430px; }
+  .hs-viewport-stage[data-scene-size="80"] .hs-diagram-surface { zoom: .8; margin-inline: auto; }
+  .hs-viewport-stage[data-scene-size="125"] { max-height: min(65vh, 600px); overflow: auto; overscroll-behavior: contain; }
+  .hs-viewport-stage[data-scene-size="125"] .hs-diagram-surface { zoom: 1.25; }
   .hs-experiment-page .hs-viewport > footer {
     flex-wrap: wrap;
     align-items: start;
@@ -110,8 +120,12 @@
     .hs-viewport-toolbar { gap: 10px; }
     .hs-experiment-page .hs-view-switch { width: 100%; }
     .hs-experiment-page .hs-view-switch button { flex: 1; justify-content: center; padding: 8px 5px; gap: 6px; }
+    .hs-scene-size { width: 100%; justify-content: space-between; }
+    .hs-scene-size > span { margin-right: auto; }
     .hs-camera-tools { width: 100%; justify-content: space-between; }
     .hs-experiment-page .hs-viewport-stage:not(.hs-force-viewport-stage):not(.hs-capacitor-viewport-stage):not(.hs-pendulum-viewport-stage):not(.is-magnified) { height: clamp(280px, 78vw, 420px); min-height: 280px; }
+    .hs-experiment-page .hs-viewport-stage[data-scene-size="80"]:not(.hs-force-viewport-stage):not(.hs-capacitor-viewport-stage):not(.hs-pendulum-viewport-stage) { height: clamp(230px, 63vw, 340px); min-height: 230px; }
+    .hs-experiment-page .hs-viewport-stage[data-scene-size="80"].hs-pendulum-viewport-stage { min-height: 0; }
     .hs-experiment-page .hs-viewport > footer { padding: 12px; }
   }
   @media (prefers-reduced-motion: reduce) { .hs-experiment-page .hs-scene-loading svg { animation: none; } }

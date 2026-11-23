@@ -122,9 +122,10 @@
     .hs-problem-header { grid-template-columns: 1fr auto; min-height: 72px; }
     .hs-problem-header > span { grid-column: 1 / -1; grid-row: 1; justify-self: center; margin-top: 8px; font-size: 15px; }
     .hs-problem-header > a, .hs-problem-header > button { grid-row: 2; font-size: 12px; }
-    .hs-problem-main { padding-top: 37px; padding-bottom: 95px; }
-    .hs-problem-hero h1 { font-size: clamp(33px, 8vw, 46px); }
-    .hs-problem-import { margin-top: 24px; padding: 18px; }
+    .hs-problem-main { padding-top: 25px; padding-bottom: 95px; }
+    .hs-problem-hero h1 { margin-block: 12px; font-size: clamp(29px, 8vw, 38px); }
+    .hs-problem-hero p { font-size: 14px; line-height: 1.7; }
+    .hs-problem-import { margin-top: 18px; padding: 16px; }
     .hs-problem-import label { font-size: 18px; }
     .hs-problem-import-footer button { width: 100%; justify-content: center; }
     .hs-problem-tabs { grid-template-columns: 1fr; gap: 9px; margin-top: 12px; }
