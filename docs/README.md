@@ -2,8 +2,11 @@
 
 这里存放设计与验收记录；运行代码在 `apps/` 和 `packages/`。需要快速找源码，先看[代码导览](代码导览.md)。
 
+第一次使用产品，请看[用户使用指南](用户使用指南.md)；网页首页也有同名入口。
+
 | 文档类型 | 从这里开始 | 内容 |
 | --- | --- | --- |
+| 产品使用 | [用户使用指南](用户使用指南.md) | 初中、高中、教师演示、助手、记录与手机操作 |
 | 项目结构 | [代码架构说明](CODE_ARCHITECTURE.md)、[页面地图](PAGE_MAP.md) | 模块边界、路由与入口 |
 | 当前开发 | [开发状态](DEVELOPMENT_STATUS.md)、[开发流程](DEVELOPMENT_WORKFLOW.md) | 当前能力、检查与发布方式 |
 | 高中产品 | [高中产品设计](high-school/PRODUCT_DESIGN.md)、[实验补齐记录](high-school/EXPANSION_ACCEPTANCE.md) | 课程实验、交互与教学范围 |

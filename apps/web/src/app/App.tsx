@@ -7,6 +7,7 @@ const HighSchoolHomePage = lazy(() => import("../features/high-school/pages/High
 const HighSchoolExperimentPage = lazy(() => import("../features/high-school/pages/HighSchoolExperimentPage").then((module) => ({ default: module.HighSchoolExperimentPage })));
 const HighSchoolProblemPage = lazy(() => import("../features/high-school/problems/HighSchoolProblemPage").then((module) => ({ default: module.HighSchoolProblemPage })));
 const LiliAssistant = lazy(() => import("../features/high-school/assistant/LiliAssistant").then((module) => ({ default: module.LiliAssistant })));
+const UserGuidePage = lazy(() => import("../features/guide/UserGuidePage").then((module) => ({ default: module.UserGuidePage })));
 
 const ExperimentTaskContextBar = lazy(async () => {
   const module = await import("../features/experiments/shared/ExperimentTaskContextBar");
@@ -70,6 +71,7 @@ export default function App() {
     <>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/guide" element={<Suspense fallback={<PageRouteLoading title="正在打开使用指南" />}><UserGuidePage /></Suspense>} />
         <Route path="/high-school" element={<Suspense fallback={<PageRouteLoading title="正在打开高中实验室" />}><HighSchoolHomePage /></Suspense>} />
         <Route path="/high-school/problems" element={<Suspense fallback={<PageRouteLoading title="正在绘制物理题目" />}><HighSchoolProblemPage /></Suspense>} />
         <Route path="/high-school/experiments/:experimentId" element={<Suspense fallback={<PageRouteLoading title="正在装配高中实验仪器" />}><HighSchoolExperimentPage /></Suspense>} />

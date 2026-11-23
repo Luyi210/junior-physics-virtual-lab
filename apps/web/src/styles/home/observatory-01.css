@@ -274,6 +274,10 @@
   .home-page .architecture-steps span { color: #829fb3; }
   .home-page .home-footer { border-top: 1px solid rgba(140,221,255,.2); background: #041420; }
   .home-page .home-footer .brand-symbol { color: var(--home-cyan); }
+.home-page .home-guide-entry{max-width:660px;min-height:65px;display:flex;align-items:center;gap:14px;margin-top:15px;padding:13px 17px;color:#d9f7ff;border:1px solid #528da2;border-radius:10px;background:linear-gradient(100deg,#113d56,#0a273d);text-decoration:none;box-shadow:inset 0 1px #ffffff17}
+.home-page .home-guide-entry>svg:first-child{flex:none;color:#9beaf3}.home-page .home-guide-entry>svg:last-child{flex:none;margin-left:auto;color:#9beaf3}.home-page .home-guide-entry span{display:grid;gap:3px}.home-page .home-guide-entry strong{font-size:15px}.home-page .home-guide-entry small{color:#a7cbd9;font-size:12px}.home-page .home-guide-entry:hover{border-color:#a3edf2;background:#174b62}
+.home-page .home-footer>a{display:inline-flex;align-items:center;gap:6px;color:#a4e5ee;font-size:13px}
+@media(max-width:760px){.home-page .home-guide-entry{margin-top:14px}.home-page .home-guide-entry strong{font-size:14px}.home-page .home-guide-entry small{font-size:11px}}
 
   .home-intro-backdrop {
     background:

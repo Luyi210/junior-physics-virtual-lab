@@ -10,6 +10,17 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.23.5",
+    date: "2026-11-23",
+    title: "新增平台使用指南",
+    summary: "首页和高中实验室可打开完整指南，按身份查看操作步骤与演示数据范围。",
+    changes: [
+      "新增初中学生、高中学生、教师演示的快速上手步骤，并介绍光光、力力、实验记录与手机浏览方式。",
+      "明确公开演示的浏览器本地保存范围、题目可视化目前支持的题型，以及真实班级任务需要教学后台。",
+      "指南可直接打印或保存为 PDF；仓库 docs 目录同步提供文字版说明。"
+    ]
+  },
+  {
     version: "2026.11.23.4",
     date: "2026-11-23",
     title: "高中实验室界面更新",

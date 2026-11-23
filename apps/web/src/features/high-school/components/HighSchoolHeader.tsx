@@ -11,6 +11,7 @@ export function HighSchoolHeader({ experiment = false }: { experiment?: boolean 
     </Link>
     <span className="hs-header-method" aria-hidden="true"><span><small>01</small>观察</span><i /><span><small>02</small>推演</span><i /><span><small>03</small>验证</span></span>
     <nav aria-label="高中专区导航">
+      {!experiment && <Link to="/guide">使用指南</Link>}
       <Link to={experiment ? "/high-school" : "/"}><ArrowLeft size={15} />{experiment ? "实验目录" : "平台首页"}</Link>
       <button type="button" onClick={() => scrollToWorkbenchSection(experiment ? "hs-evidence" : "hs-catalog")}>{experiment ? "实验记录" : "探索课程"}<ArrowUpRight size={15} /></button>
     </nav>

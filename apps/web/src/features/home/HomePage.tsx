@@ -2,6 +2,7 @@ import {
   ArrowRight,
   Atom,
   Beaker,
+  BookOpenText,
   CircuitBoard,
   Compass,
   Flame,
@@ -66,6 +67,7 @@ export function HomePage() {
           <Link to="/student">初中探索</Link>
           <Link to="/high-school">高中实验室</Link>
           <Link to="/teacher">教师端</Link>
+          <Link to="/guide">使用指南</Link>
           <a href="#/?section=labs" onClick={(event) => { event.preventDefault(); document.getElementById("labs")?.scrollIntoView({ behavior: "smooth" }); }}>探索领域</a>
           <a href="#/?section=architecture" onClick={(event) => { event.preventDefault(); document.getElementById("architecture")?.scrollIntoView({ behavior: "smooth" }); }}>探究方式</a>
           <span className="version-chip"><span /> 六大领域开放探索</span>
@@ -109,6 +111,7 @@ export function HomePage() {
                 <ArrowRight size={19} />
               </Link>
             </div>
+            <Link className="home-guide-entry" to="/guide"><BookOpenText size={20} /><span><strong>第一次使用？先看使用指南</strong><small>初中、高中、教师演示与记录说明</small></span><ArrowRight size={18} /></Link>
             <p className="entry-model-note"><strong>没有固定关卡，也没有唯一的探索路线。</strong>从一个问题出发，尝试改变条件、比较现象，用自己的证据理解物理。</p>
             <dl className="hero-stats">
               <div><dt>06</dt><dd>物理探索领域</dd></div>
@@ -175,6 +178,7 @@ export function HomePage() {
       <footer className="home-footer">
         <BrandMark />
         <p>让每一次操作都有回应，让每一个问题都值得探索</p>
+        <Link to="/guide">使用指南 <ArrowRight size={15} /></Link>
       </footer>
     </div>
   );
