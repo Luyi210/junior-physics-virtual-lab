@@ -1,19 +1,302 @@
-/* Route-level senior assistant: all color and material choices stay local. */
-.lili-assistant{--lili-ink:#e5eef8;--lili-paper:#101c2d;--lili-copper:#eec78a;--lili-cyan:#67ddf3;--lili-muted:#a0b3c8;--kai:"Avenir Next","PingFang SC","Microsoft YaHei",sans-serif;--font-body:var(--kai);--font-display:var(--kai);color-scheme:dark}
-.lili-assistant .lili-launcher{background:linear-gradient(120deg,#152a3b,#101c2d 70%);border-color:#446174;box-shadow:0 12px 38px #0007,inset 0 1px #a4d7eb1a;transition:border-color .18s,box-shadow .18s,transform .18s}
-.lili-assistant .lili-launcher b{color:#f1f5f8}.lili-assistant .lili-launcher small{color:var(--lili-muted)}.lili-assistant .lili-launcher>svg{color:var(--lili-cyan)}
-.lili-assistant .lili-panel{background:var(--lili-paper);border-color:#375267;box-shadow:0 28px 90px #000a,0 0 0 4px #07111b70,inset 0 1px #a5d9ed12}
-.lili-assistant .lili-panel>header{background:radial-gradient(ellipse at 10% 40%,#bf97501c,transparent 62%),linear-gradient(100deg,#162334,#101c2d);border-color:#2a3c50}.lili-assistant .lili-panel>header:after{content:"";position:absolute;left:20px;right:20px;bottom:-1px;height:1px;background:linear-gradient(90deg,#eec78a60,#67ddf340,transparent);pointer-events:none}
-.lili-assistant .lili-portrait{background:radial-gradient(ellipse at 50% 80%,#eec78a25,transparent 65%);box-shadow:inset 0 -1px #eec78a26}.lili-assistant .lili-eyebrow{color:var(--lili-copper)}.lili-assistant .lili-panel h2{color:#edf6fd}.lili-assistant .lili-panel h2 .lili-capability{border-color:#365064;background:#0c1a28;color:#a9c8d9}.lili-assistant .lili-panel header p{color:var(--lili-muted)}.lili-assistant .lili-panel header button{color:#b1c4d6}
-.lili-assistant .lili-body{background:linear-gradient(180deg,#0b1523,#101c2d 300px);scrollbar-color:#3d566d transparent}
-.lili-assistant .lili-welcome>span{color:var(--lili-copper)}.lili-assistant .lili-welcome h3{color:#f0f5fa}.lili-assistant .lili-welcome h3 em{color:#91e2ee}.lili-assistant .lili-welcome p{color:#b7c6d5}.lili-assistant .lili-welcome li{color:#b0c7d8}.lili-assistant .lili-welcome li:before{border-color:#668e9f}.lili-assistant .lili-welcome small{color:#a0b3c8;border-color:#2b3d50}
-.lili-assistant .lili-message>small{color:#92a8bd}.lili-assistant .lili-message.is-lili>small{color:var(--lili-copper)}.lili-assistant .lili-message.is-student{color:#e0effa;background:linear-gradient(115deg,#193244,#172b3d);border-color:#355164}.lili-assistant .lili-message.is-student>small{color:#b7cfdf}.lili-assistant .lili-message details{color:#a9bed0}.lili-assistant .lili-message details a{color:#8cdeed}
-.lili-assistant .lili-question-context{margin:11px 0 13px;padding:0 12px;border:1px solid #30485c;border-radius:10px;background:#0c1927}.lili-assistant .lili-question-context p{margin:8px 0 11px;color:#a9bdcf;font-size:11px;line-height:1.8}.lili-assistant .lili-question-context .lili-context-changed{color:#f0cf9f;border-bottom:1px solid #69533566;padding-bottom:10px}.lili-assistant .lili-question-context summary{display:flex;align-items:center;justify-content:space-between;gap:10px;list-style:none;color:#aecddd;overflow-wrap:anywhere}.lili-assistant .lili-question-context summary::-webkit-details-marker{display:none}.lili-assistant .lili-question-context summary svg{flex:none;transition:transform .18s}.lili-assistant .lili-question-context details[open] summary svg{transform:rotate(180deg)}.lili-assistant .lili-question-context dl{margin:1px 0 10px;padding-top:7px;border-top:1px solid #233b4d}.lili-assistant .lili-question-context dl>div{display:flex;flex-wrap:wrap;justify-content:space-between;gap:3px 12px;margin:7px 0}.lili-assistant .lili-question-context :is(dt,dd){min-width:0;margin:0;overflow-wrap:anywhere}.lili-assistant .lili-question-context dd{color:#e0edf6;font-variant-numeric:tabular-nums}.lili-assistant .lili-context-history{padding-bottom:8px}.lili-assistant .lili-context-history strong{font-size:11px;font-weight:500;color:#b9cddd}.lili-assistant .lili-context-history ol{margin:6px 0;padding-left:20px}
-.lili-assistant .lili-thinking{color:var(--lili-copper)}.lili-assistant .lili-thinking:before{content:"";width:7px;height:7px;flex:none;border-radius:50%;background:var(--lili-copper);box-shadow:0 0 0 4px #eec78a10;animation:lili-thought-light 1.6s ease-in-out infinite}
-.lili-assistant .lili-manual-context{color:#e1eaf4;border-color:#345060;background:linear-gradient(130deg,#122b38,#10212f)}.lili-assistant .lili-manual-context :is(span,p){color:#a8c1cf}.lili-assistant .lili-manual-context strong{color:#bde5ec}.lili-assistant .lili-manual-context button{color:#a7e8f1;border-color:#3c6877;background:#173746}
-.lili-assistant .lili-suggestions>p{color:#98aec0}.lili-assistant .lili-suggestions button{color:#c1d2e0;border-color:#2b4358;background:#142336;transition:background .16s,border-color .16s,transform .16s}.lili-assistant .lili-suggestions button svg{color:#6dbecb}.lili-assistant .lili-notice{color:#ddc39e;border-color:#5b4b3766;background:#29261e55}
-.lili-assistant .lili-panel form{border-color:#41586e;background:#070f1c;box-shadow:inset 0 2px 12px #0002}.lili-assistant .lili-panel textarea{color:#e0edf7}.lili-assistant .lili-panel textarea::placeholder{color:#92a9be}.lili-assistant .lili-panel form small,.lili-assistant .lili-panel footer{color:#95abc0}.lili-assistant .lili-panel form button{background:linear-gradient(135deg,#98e8f4,#67cfe3);color:#08202c;transition:filter .16s}.lili-assistant .lili-panel form:focus-within{outline-color:var(--lili-cyan)}.lili-assistant .lili-panel footer a{color:#a1d9e7}
-.lili-assistant :is(button,a,summary):focus-visible{outline-color:var(--lili-cyan)}
-@media(hover:hover){.lili-assistant .lili-launcher:hover{border-color:#75a6b9;box-shadow:0 15px 42px #0008,inset 0 1px #a4d7eb2a;transform:translateY(-2px)}.lili-assistant .lili-panel header button:hover{background:#263b4e;border-color:#3a5368}.lili-assistant .lili-suggestions button:not(:disabled):hover{background:#1d3447;border-color:#53798b;transform:translateX(2px)}.lili-assistant .lili-manual-context button:not(:disabled):hover{background:#204756}.lili-assistant .lili-panel form button:not(:disabled):hover{filter:brightness(1.1)}}
-@keyframes lili-thought-light{50%{opacity:.4}}
-@media(prefers-reduced-motion:reduce){.lili-assistant .lili-thinking:before{animation:none}}
+/* Route-level high-school assistant (力力) — Scheme C: Matte Carbon Scientific Suite.
+ * All color and material choices stay strictly scoped to .lili-assistant so
+ * junior high (光光) and the main platform homepage remain untouched. */
+.lili-assistant {
+  --lili-bg: #0b0e14;
+  --lili-paper: rgba(17, 21, 29, 0.94);
+  --lili-surface-alt: #151b26;
+  --lili-well: #0c1017;
+  --lili-line: #232a36;
+  --lili-line-strong: #334054;
+  --lili-ink: #f1f5f9;
+  --lili-ink-soft: #cbd5e1;
+  --lili-muted: #94a3b8;
+  --lili-dim: #64748b;
+  --lili-emerald: #10b981;
+  --lili-emerald-bright: #34d399;
+  --lili-copper: #34d399;
+  --lili-cyan: #60a5fa;
+  --lili-amber: #f59e0b;
+  --kai: "SF Pro Text", "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-body: var(--kai);
+  --font-display: var(--kai);
+  color-scheme: dark;
+}
+
+.lili-assistant .lili-launcher {
+  background: linear-gradient(145deg, rgba(21, 27, 38, 0.94), rgba(17, 21, 29, 0.96) 72%);
+  border-color: var(--lili-line-strong);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.56), inset 0 1px rgba(241, 245, 249, 0.07);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+.lili-assistant .lili-launcher b { color: var(--lili-ink); }
+.lili-assistant .lili-launcher small { color: var(--lili-muted); }
+.lili-assistant .lili-launcher > svg { color: var(--lili-emerald-bright); }
+
+.lili-assistant .lili-panel {
+  background: var(--lili-paper);
+  border-color: var(--lili-line-strong);
+  box-shadow: 0 28px 84px rgba(0, 0, 0, 0.68), 0 0 0 1px rgba(16, 185, 129, 0.1), inset 0 1px rgba(241, 245, 249, 0.06);
+}
+
+.lili-assistant .lili-panel > header {
+  background:
+    radial-gradient(ellipse at 12% 35%, rgba(16, 185, 129, 0.14), transparent 62%),
+    radial-gradient(ellipse at 88% 15%, rgba(96, 165, 250, 0.08), transparent 55%),
+    linear-gradient(180deg, #141923, #11151d);
+  border-color: var(--lili-line);
+}
+.lili-assistant .lili-panel > header:after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.6), rgba(96, 165, 250, 0.4), transparent);
+  pointer-events: none;
+}
+
+.lili-assistant .lili-portrait {
+  background: radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.18), transparent 68%), #0c1017;
+  border: 1px solid var(--lili-line);
+  box-shadow: inset 0 -1px rgba(52, 211, 153, 0.22);
+}
+.lili-assistant .lili-eyebrow { color: var(--lili-emerald-bright); }
+.lili-assistant .lili-panel h2 { color: var(--lili-ink); }
+.lili-assistant .lili-panel h2 .lili-capability {
+  border-color: var(--lili-line);
+  background: var(--lili-well);
+  color: var(--lili-muted);
+}
+.lili-assistant .lili-panel header p { color: var(--lili-muted); }
+.lili-assistant .lili-panel header button { color: var(--lili-muted); }
+
+.lili-assistant .lili-body {
+  background: linear-gradient(180deg, #0b0e14, #11151d 260px);
+  scrollbar-color: #334054 transparent;
+}
+
+.lili-assistant .lili-welcome > span { color: var(--lili-emerald-bright); }
+.lili-assistant .lili-welcome h3 { color: var(--lili-ink); }
+.lili-assistant .lili-welcome h3 em { color: var(--lili-emerald-bright); }
+.lili-assistant .lili-welcome p { color: var(--lili-ink-soft); }
+.lili-assistant .lili-welcome li { color: var(--lili-muted); }
+.lili-assistant .lili-welcome li:before {
+  border-color: var(--lili-emerald);
+  background: var(--lili-emerald);
+}
+.lili-assistant .lili-welcome small {
+  color: var(--lili-dim);
+  border-color: var(--lili-line);
+}
+
+.lili-assistant .lili-message-head > small,
+.lili-assistant .lili-message > small { color: var(--lili-dim); }
+.lili-assistant .lili-message.is-lili .lili-message-head > small { color: var(--lili-emerald-bright); }
+.lili-assistant .lili-message.is-student {
+  color: var(--lili-ink);
+  background: linear-gradient(135deg, #16202e, #121824);
+  border-color: rgba(96, 165, 250, 0.34);
+}
+.lili-assistant .lili-message.is-student .lili-message-head > small { color: #93c5fd; }
+.lili-assistant .lili-message details { color: var(--lili-muted); }
+.lili-assistant .lili-message details a { color: var(--lili-cyan); }
+
+.lili-assistant .lili-question-context {
+  margin: 10px 0 12px;
+  padding: 0 12px;
+  border: 1px solid var(--lili-line);
+  border-radius: 10px;
+  background: var(--lili-well);
+}
+.lili-assistant .lili-question-context p {
+  margin: 8px 0 10px;
+  color: var(--lili-muted);
+  font-size: 11px;
+  line-height: 1.75;
+}
+.lili-assistant .lili-question-context .lili-context-changed {
+  color: #fbbf24;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+  padding-bottom: 9px;
+}
+.lili-assistant .lili-question-context summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  list-style: none;
+  color: var(--lili-ink-soft);
+  overflow-wrap: anywhere;
+}
+.lili-assistant .lili-question-context summary::-webkit-details-marker { display: none; }
+.lili-assistant .lili-question-context summary svg {
+  flex: none;
+  transition: transform 0.18s ease;
+}
+.lili-assistant .lili-question-context details[open] summary svg { transform: rotate(180deg); }
+.lili-assistant .lili-question-context dl {
+  margin: 1px 0 10px;
+  padding-top: 7px;
+  border-top: 1px solid var(--lili-line);
+}
+.lili-assistant .lili-question-context dl > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 3px 12px;
+  margin: 7px 0;
+}
+.lili-assistant .lili-question-context :is(dt, dd) {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.lili-assistant .lili-question-context dd {
+  color: var(--lili-ink);
+  font-variant-numeric: tabular-nums;
+}
+.lili-assistant .lili-context-history { padding-bottom: 8px; }
+.lili-assistant .lili-context-history strong {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--lili-ink-soft);
+}
+.lili-assistant .lili-context-history ol {
+  margin: 6px 0;
+  padding-left: 20px;
+}
+
+.lili-assistant .lili-thinking { color: var(--lili-emerald-bright); }
+.lili-assistant .lili-thinking:before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--lili-emerald);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.18);
+  animation: lili-thought-light 1.6s ease-in-out infinite;
+}
+
+.lili-assistant .lili-manual-context {
+  color: var(--lili-ink);
+  border-color: var(--lili-line);
+  background: var(--lili-well);
+}
+.lili-assistant .lili-manual-context :is(span, p) { color: var(--lili-muted); }
+.lili-assistant .lili-manual-context strong { color: var(--lili-emerald-bright); }
+.lili-assistant .lili-manual-context button {
+  color: #a7f3d0;
+  border-color: rgba(16, 185, 129, 0.45);
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.lili-assistant .lili-suggestions > p { color: var(--lili-dim); }
+.lili-assistant .lili-suggestions button {
+  color: var(--lili-ink-soft);
+  border-color: var(--lili-line);
+  background: var(--lili-well);
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+.lili-assistant .lili-suggestions button svg { color: var(--lili-emerald-bright); }
+
+.lili-assistant .lili-notice {
+  color: #fde68a;
+  border-color: rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.lili-assistant .lili-panel form {
+  border-color: var(--lili-line-strong);
+  background: var(--lili-well);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.28);
+}
+.lili-assistant .lili-panel textarea { color: var(--lili-ink); }
+.lili-assistant .lili-panel textarea::placeholder { color: var(--lili-dim); }
+.lili-assistant .lili-panel form small,
+.lili-assistant .lili-panel footer { color: var(--lili-dim); }
+.lili-assistant .lili-panel form button {
+  background: linear-gradient(135deg, #34d399, #10b981);
+  color: #052e16;
+  transition: filter 0.16s ease, background 0.16s ease;
+}
+.lili-assistant .lili-panel form:focus-within { outline-color: var(--lili-emerald); }
+.lili-assistant .lili-panel footer a { color: var(--lili-cyan); }
+.lili-assistant :is(button, a, summary):focus-visible { outline-color: var(--lili-emerald); }
+
+/* Harmonize nested AI tutor sub-components (quick tools, BKT mastery, hint ladder) inside 力力 */
+.lili-assistant .agent-quick-tools,
+.lili-assistant .tutor-hint-ladder,
+.lili-assistant .agent-action-deck {
+  border-color: var(--lili-line);
+  background: var(--lili-well);
+}
+.lili-assistant :is(.agent-quick-tools, .tutor-hint-ladder, .agent-action-deck) button {
+  border-color: var(--lili-line);
+  background: #11151d;
+  color: var(--lili-ink-soft);
+}
+.lili-assistant :is(.agent-quick-tools, .tutor-hint-ladder, .agent-action-deck) button:hover:not(:disabled) {
+  border-color: var(--lili-emerald);
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--lili-ink);
+}
+
+@media (hover: hover) {
+  .lili-assistant .lili-launcher:hover {
+    border-color: rgba(16, 185, 129, 0.65);
+    background: linear-gradient(145deg, rgba(25, 33, 48, 0.96), rgba(17, 21, 29, 0.98) 72%);
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.62), 0 0 0 1px rgba(16, 185, 129, 0.18);
+    transform: translateY(-2px);
+  }
+  .lili-assistant .lili-panel header button:hover {
+    background: var(--lili-surface-alt);
+    border-color: var(--lili-line-strong);
+    color: var(--lili-ink);
+  }
+  .lili-assistant .lili-view-tabs button:hover:not([aria-selected="true"]) {
+    border-color: var(--lili-line-strong);
+    background: var(--lili-surface-alt);
+    color: var(--lili-ink);
+  }
+  .lili-assistant .lili-quick-bar button:not(:disabled):hover,
+  .lili-assistant .lili-toolkit-grid button:not(:disabled):hover,
+  .lili-assistant .lili-copy-btn:hover {
+    border-color: rgba(16, 185, 129, 0.55);
+    background: rgba(16, 185, 129, 0.12);
+    color: #ecfdf5;
+  }
+  .lili-assistant .lili-toolkit-primary:not(:disabled):hover {
+    border-color: var(--lili-emerald-bright);
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.26), rgba(16, 185, 129, 0.2));
+    color: #ecfdf5;
+  }
+  .lili-assistant .lili-toolkit-methods button:not(:disabled):hover {
+    border-color: var(--lili-cyan);
+    background: rgba(96, 165, 250, 0.2);
+    color: #eff6ff;
+  }
+  .lili-assistant .lili-suggestions button:not(:disabled):hover {
+    background: var(--lili-surface-alt);
+    border-color: rgba(16, 185, 129, 0.5);
+    color: var(--lili-ink);
+    transform: translateX(2px);
+  }
+  .lili-assistant .lili-manual-context button:not(:disabled):hover {
+    background: rgba(16, 185, 129, 0.22);
+    border-color: var(--lili-emerald-bright);
+  }
+  .lili-assistant .lili-panel form button:not(:disabled):hover {
+    filter: brightness(1.08);
+  }
+}
+
+@keyframes lili-thought-light {
+  50% { opacity: 0.38; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lili-assistant .lili-thinking:before { animation: none; }
+}

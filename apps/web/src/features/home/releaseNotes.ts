@@ -10,6 +10,17 @@ export interface ReleaseNote {
 // even for visitors who dismissed a previous version.
 export const releaseNotes: readonly ReleaseNote[] = [
   {
+    version: "2026.11.23.4",
+    date: "2026-11-23",
+    title: "高中实验室界面更新",
+    summary: "高中首页与实验工作台改用新的仪器台风格，力力增加实验速查工具。",
+    changes: [
+      "高中首页调整配色、字体、实验目录和模型展台；实验工作台把装置、图像、变量、读数与记录分区呈现。",
+      "力力新增当前实验状态、变量与方法速查，以及误差分析等快捷提问入口；速查参数使用实验中的中文名称。",
+      "力力支持宽屏阅读、复制回复和开启空白对话；空白对话会使用新的会话编号。物理模型与实验数据计算方式未因此改变。"
+    ]
+  },
+  {
     version: "2026.11.23.3",
     date: "2026-11-23",
     title: "手机实验画面可调大小",

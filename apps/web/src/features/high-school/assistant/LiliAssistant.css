@@ -1,82 +1,1267 @@
-.lili-assistant{--lili-ink:#e5eef8;--lili-paper:#101c2d;--lili-copper:#eec78a;position:fixed;right:max(24px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));z-index:85;color:var(--lili-ink);font-family:"Avenir Next","PingFang SC","Microsoft YaHei",sans-serif}
-.lili-assistant,.lili-assistant *{box-sizing:border-box}
-.lili-assistant button,.lili-assistant summary{-webkit-tap-highlight-color:transparent}
-.lili-launcher{display:flex;align-items:center;gap:10px;min-height:64px;margin-left:auto;border:1px solid;border-radius:18px;padding:5px 16px 5px 3px;cursor:pointer;color:inherit;text-align:left}
-.lili-launcher span{display:grid;gap:4px;min-width:0}.lili-launcher b{font-size:20px;font-weight:650;letter-spacing:1px}.lili-launcher small{font-size:11px;line-height:1.4}.lili-launcher>svg{flex:none;margin-left:5px}
-.lili-corgi{width:72px;height:72px;overflow:visible;flex:none}.lili-corgi-head{transform-origin:80px 112px}.lili-corgi-eyes{transform-origin:80px 76px;animation:lili-blink 7s infinite}.is-speaking .lili-corgi-head{animation:lili-nod 1s ease-in-out infinite}.is-speaking .lili-corgi-tongue{animation:lili-talk .55s ease-in-out infinite}
-.lili-panel{width:418px;max-height:min(800px,calc(100dvh - 116px));display:flex;flex-direction:column;min-width:0;border:1px solid;border-radius:22px;overflow:hidden;margin-bottom:14px;isolation:isolate}
-.lili-panel>header{display:flex;align-items:center;gap:13px;padding:19px 17px 16px;flex:none;border-bottom:1px solid;position:relative}
-.lili-portrait{display:grid;place-items:center;width:76px;height:76px;flex:none;border-radius:20px}
-.lili-heading{flex:1;min-width:0}.lili-eyebrow{display:block;font-size:10px;letter-spacing:2px;line-height:1.6}.lili-panel h2{margin:4px 0 6px;display:flex;align-items:center;flex-wrap:wrap;gap:7px 10px;font-size:27px;font-weight:650;line-height:1.2;letter-spacing:1px}.lili-panel h2 .lili-capability{display:inline-flex;align-items:center;min-height:23px;padding:3px 7px;border:1px solid;border-radius:5px;font-size:10px;font-weight:500;letter-spacing:0;line-height:1.5}.lili-panel header p{font-size:11px;line-height:1.6;margin:0;overflow-wrap:anywhere}.lili-panel header button{width:44px;height:44px;flex:none;display:grid;place-items:center;align-self:flex-start;border:1px solid transparent;border-radius:12px;background:none;color:inherit;cursor:pointer;margin:-5px -6px 0 0}
-.lili-view-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:9px 17px 8px;flex:none;border-bottom:1px solid #294154;background:#0c1a2a}.lili-view-tabs button{min-height:44px;border:1px solid #314e63;border-radius:9px;background:#12283b;color:#a8c8d9;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}.lili-view-tabs button[aria-selected="true"]{border-color:#77d6e8;background:#1a3c50;color:#e9faff}
-.lili-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scroll-padding:14px}.lili-dialogue{padding:24px 22px 4px;overflow-wrap:anywhere;min-width:0}
-.lili-review{display:grid;gap:16px;padding:20px 22px 24px;overflow-wrap:anywhere}.lili-review>header{display:grid;gap:7px}.lili-review>header span,.lili-review-next>span{display:flex;align-items:center;gap:7px;color:#e3bf86;font-size:10px;font-weight:700;letter-spacing:.1em}.lili-review>header strong{color:#e6f3fc;font-size:22px;line-height:1.35}.lili-review-summary{margin:0;color:#bdd0df;font-size:13px;line-height:1.8}.lili-review.stage-check .lili-review-summary{padding:12px 13px;border:1px solid #9a713e;background:#332a21;border-radius:9px;color:#f2d7ad}.lili-review-evidence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0}.lili-review-evidence>div{display:grid;align-content:space-between;gap:8px;min-height:74px;padding:9px;border:1px solid #34516a;border-radius:9px;background:#122638}.lili-review-evidence dt{color:#a8bdcc;font-size:10px;line-height:1.5}.lili-review-evidence dd{margin:0;color:#daf4fb;font-size:12px;font-weight:650;line-height:1.4;font-variant-numeric:tabular-nums}.lili-review-next{padding:15px;border:1px solid #315a68;border-radius:11px;background:linear-gradient(130deg,#143443,#102838)}.lili-review-next>span{color:#92e2ec}.lili-review-next p{margin:10px 0 0;color:#deebf3;font-size:13px;line-height:1.8}.lili-review-prompts>span{color:#a7c0cf;font-size:11px}.lili-review-prompts ul{display:grid;gap:7px;margin:9px 0 0;padding-left:19px;color:#bed2de;font-size:11px;line-height:1.6}.lili-review-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lili-review-actions button{display:flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:9px 7px;border:1px solid #5c96a3;border-radius:9px;background:#1a4050;color:#e5faff;font-family:inherit;font-size:11px;font-weight:600;line-height:1.4;cursor:pointer}.lili-review-actions button:disabled{opacity:.48;cursor:default}.lili-review>small{color:#91acbf;font-size:10px;line-height:1.65}
-.lili-review-reflection{padding-top:13px;border-top:1px solid #344d61}.lili-review-reflection>span{color:#bce4ed;font-size:12px;font-weight:600}.lili-review-reflection p{margin:7px 0 11px;color:#9fb7c8;font-size:11px;line-height:1.65}.lili-review-reflection>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.lili-review-reflection button{min-height:44px;border:1px solid #41657a;border-radius:8px;background:#142d41;color:#d4e9f5;font-family:inherit;font-size:11px;cursor:pointer}
-.lili-review-variables{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0}.lili-review-variables>div{min-width:0;padding:9px;border:1px solid #34516a;border-radius:9px;background:#102535}.lili-review-variables dt{color:#9cb8c8;font-size:10px;line-height:1.5}.lili-review-variables dd{margin:5px 0 0;color:#e4eff7;font-size:11px;line-height:1.55}.lili-review-challenge{display:grid;gap:9px;padding:14px;border:1px solid #92794f;border-radius:11px;background:linear-gradient(140deg,#312a26,#192a35)}.lili-review-challenge>span{color:#f0d59e;font-size:12px;font-weight:650}.lili-review-challenge p{margin:0;color:#e4edf4;font-size:12px;line-height:1.75}.lili-review-challenge button{display:flex;align-items:center;justify-content:center;gap:6px;width:fit-content;min-height:44px;padding:8px 13px;border:1px solid #b59466;border-radius:9px;background:#60482d;color:#fff1d4;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}.lili-review-challenge small{color:#aabfcc;font-size:10px;line-height:1.6}
-.lili-review-analysis{display:grid;gap:9px}.lili-review-analysis>header{display:grid;gap:3px}.lili-review-analysis>header strong{color:#dcebf4;font-size:14px}.lili-review-analysis>header small{color:#91acbf;font-size:10px;line-height:1.55}.lili-review-analysis article{display:grid;gap:8px;padding:12px;border:1px solid #3b6074;border-radius:10px;background:#10283a}.lili-review-analysis article>span{color:#8de0e9;font-size:11px;font-weight:600}.lili-review-analysis article>strong{color:#e8f4f8;font-size:12px}.lili-review-analysis article p{margin:0;color:#bfd0dc;font-size:11px;line-height:1.75}.lili-review-analysis article>small{color:#9cb6c8;font-size:10px;line-height:1.6}.lili-review-analysis article button{display:flex;align-items:center;justify-content:center;gap:6px;width:fit-content;min-height:44px;padding:8px 12px;border:1px solid #548c9b;border-radius:8px;background:#1a3e50;color:#e3f8fb;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer}
-.lili-welcome{padding:3px 0 22px}.lili-welcome>span{display:inline-flex;gap:8px;align-items:center;font-size:11px;letter-spacing:2px}.lili-welcome h3{font-size:30px;line-height:1.55;font-weight:600;letter-spacing:1px;margin:15px 0 12px}.lili-welcome h3 em{font-style:normal}.lili-welcome p{font-size:13px;line-height:1.85;margin:0}.lili-welcome ul{display:flex;gap:8px 13px;flex-wrap:wrap;margin:15px 0 20px;padding:0;list-style:none}.lili-welcome li{font-size:11px;line-height:1.7;display:flex;align-items:center;gap:6px}.lili-welcome li:before{content:"";width:4px;height:4px;border:1px solid;transform:rotate(45deg)}.lili-welcome small{display:block;font-size:11px;line-height:1.85;border-top:1px solid;padding-top:14px}
-.lili-message{margin-bottom:23px;max-width:100%;overflow-wrap:anywhere;min-width:0}.lili-message>small{display:block;font-size:10px;letter-spacing:.5px;line-height:1.6}.lili-message>p{white-space:pre-wrap;font-size:13px;line-height:1.9;margin:8px 0}.lili-message.is-student{padding:12px 15px;border:1px solid;border-radius:15px 15px 4px 15px;margin-left:25px}.lili-message.is-student>p{margin:6px 0 0}.lili-message.is-lili{padding-right:2px}.lili-message details{font-size:11px;line-height:1.7}.lili-message details summary{min-height:44px;cursor:pointer;padding:11px 0}.lili-message details a{display:flex;align-items:center;min-height:44px;margin:3px 0;text-decoration:underline;text-underline-offset:4px}.lili-thinking{display:flex;align-items:center;gap:9px;font-size:12px;line-height:1.8;margin:0 0 20px}
-.lili-manual-context{border:1px solid;border-radius:13px;padding:14px;margin-bottom:20px;overflow-wrap:anywhere}.lili-manual-context>div{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 10px}.lili-manual-context strong{font-size:12px;font-weight:600}.lili-manual-context span{font-size:10px}.lili-manual-context p{font-size:11px;line-height:1.8;margin:8px 0 12px}.lili-manual-context button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:44px;padding:10px 12px;border:1px solid;border-radius:8px;font:inherit;font-size:12px;cursor:pointer}.lili-manual-context button svg{flex:none}
-.lili-suggestions{display:grid;gap:7px;padding:0 22px 20px}.lili-suggestions>p{font-size:10px;letter-spacing:1.5px;line-height:1.5;margin:3px 0 4px}.lili-suggestions button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;border:1px solid;border-radius:10px;padding:11px 13px;font-size:12px;line-height:1.6;text-align:left;cursor:pointer}.lili-suggestions button span{min-width:0;overflow-wrap:anywhere}.lili-suggestions button svg{flex:none}
-.lili-panel button:disabled{opacity:.48;cursor:default}.lili-notice{font-size:11px;line-height:1.8;margin:0 22px 19px;padding:10px 12px;border:1px solid;border-radius:8px;overflow-wrap:anywhere}
-.lili-panel form{flex:none;border:1px solid;margin:0 17px 0;border-radius:13px;overflow:hidden}.lili-input-label{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden}.lili-panel textarea{display:block;width:100%;border:0;resize:vertical;min-height:64px;max-height:120px;outline:0;padding:14px;background:transparent;color:inherit;font:13px/1.7 "Avenir Next","PingFang SC",sans-serif}.lili-panel form:focus-within{outline:2px solid;outline-offset:3px}.lili-panel form>div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 8px 8px 13px}.lili-panel form small{font-size:9px;line-height:1.6;min-width:0;max-width:210px;overflow-wrap:anywhere}.lili-panel form button{flex:none;border:0;border-radius:9px;min-width:78px;min-height:44px;padding:10px 12px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;cursor:pointer}
-.lili-draft-cue{display:grid;gap:4px;margin:0;padding:10px 13px;border-bottom:1px solid #3c6175;background:#173247;color:#d9eaf4;font-size:11px;line-height:1.55}.lili-draft-cue strong{color:#f0d59e;font-size:10px}
-.lili-panel footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1px 10px;flex:none;padding:8px 20px 12px;font-size:10px;line-height:1.6;min-width:0}.lili-panel footer>span{min-width:0;overflow-wrap:anywhere}.lili-panel footer a{display:inline-flex;align-items:center;gap:5px;min-height:44px;text-decoration:none}
-.lili-assistant :is(button,a,summary):focus-visible{outline:2px solid;outline-offset:3px}
-@keyframes lili-blink{0%,44%,48%,100%{transform:scaleY(1)}46%{transform:scaleY(.12)}}@keyframes lili-nod{50%{transform:rotate(3deg)}}@keyframes lili-talk{50%{transform:translateY(2px)}}
-@media (max-width:600px), (max-height:500px) and (pointer:coarse) {
-  .lili-assistant { right:max(12px,env(safe-area-inset-right)); bottom:max(12px,env(safe-area-inset-bottom)); }
-  .lili-panel {
-    --panel-edge-left:max(8px,env(safe-area-inset-left));
-    --panel-edge-right:max(8px,env(safe-area-inset-right));
-    --panel-edge-top:max(8px,env(safe-area-inset-top));
-    --panel-edge-bottom:max(8px,env(safe-area-inset-bottom));
-    position:fixed;
-    z-index:1;
-    top:calc(var(--panel-viewport-top,0px) + var(--panel-edge-top));
-    left:calc(var(--panel-viewport-left,0px) + var(--panel-edge-left));
-    width:calc(var(--panel-viewport-width,100vw) - var(--panel-edge-left) - var(--panel-edge-right));
-    height:calc(var(--panel-viewport-height,100dvh) - var(--panel-edge-top) - var(--panel-edge-bottom));
-    max-height:none;
-    border-radius:18px;
-    margin:0;
-    overscroll-behavior:contain;
+.lili-assistant {
+  --lili-ink: #f1f5f9;
+  --lili-paper: #11151d;
+  --lili-copper: #34d399;
+  position: fixed;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 85;
+  color: var(--lili-ink);
+  font-family: "SF Pro Text", "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.lili-assistant,
+.lili-assistant * {
+  box-sizing: border-box;
+}
+.lili-assistant button,
+.lili-assistant summary {
+  -webkit-tap-highlight-color: transparent;
+}
+.lili-live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22);
+  vertical-align: middle;
+}
+.lili-launcher {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 62px;
+  max-width: 280px;
+  margin-left: auto;
+  border: 1px solid;
+  border-radius: 16px;
+  padding: 5px 16px 5px 5px;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.lili-launcher span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.lili-launcher b {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: 0.5px;
+}
+.lili-launcher small {
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lili-launcher > svg {
+  flex: none;
+  margin-left: 5px;
+}
+.lili-corgi {
+  width: 68px;
+  height: 68px;
+  overflow: visible;
+  flex: none;
+}
+.lili-corgi-head {
+  transform-origin: 80px 112px;
+}
+.lili-corgi-eyes {
+  transform-origin: 80px 76px;
+  animation: lili-blink 7s infinite;
+}
+.is-speaking .lili-corgi-head {
+  animation: lili-nod 1s ease-in-out infinite;
+}
+.is-speaking .lili-corgi-tongue {
+  animation: lili-talk 0.55s ease-in-out infinite;
+}
+.lili-panel {
+  width: 432px;
+  max-height: min(820px, calc(100dvh - 112px));
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  isolation: isolate;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: width 0.22s ease;
+  animation: lili-panel-enter 0.2s ease-out;
+}
+.lili-assistant.is-wide .lili-panel {
+  width: min(560px, calc(100vw - 48px));
+}
+.lili-panel > header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 15px 13px;
+  flex: none;
+  border-bottom: 1px solid;
+  position: relative;
+}
+.lili-portrait {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  flex: none;
+  border-radius: 14px;
+}
+.lili-heading {
+  flex: 1;
+  min-width: 0;
+}
+.lili-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.lili-panel h2 {
+  margin: 3px 0 4px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  font-size: 23px;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0.4px;
+}
+.lili-panel h2 .lili-capability {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 7px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+.lili-panel header p {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.lili-header-tools {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  flex: none;
+  align-self: flex-start;
+}
+.lili-panel header button {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.lili-view-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 8px 15px;
+  flex: none;
+  border-bottom: 1px solid #232a36;
+  background: #0d1118;
+}
+.lili-view-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 42px;
+  padding: 6px 8px;
+  border: 1px solid #232a36;
+  border-radius: 9px;
+  background: #11151d;
+  color: #94a3b8;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+.lili-view-tabs button[aria-selected="true"] {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  color: #a7f3d0;
+}
+.lili-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scroll-padding: 14px;
+}
+.lili-dialogue {
+  padding: 18px 18px 4px;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+/* ---- Toolkit Tab (速查工具) ---- */
+.lili-toolkit {
+  display: grid;
+  gap: 12px;
+  padding: 16px 16px 20px;
+}
+.lili-toolkit-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #232a36;
+  border-radius: 12px;
+  background: #0e1219;
+}
+.lili-toolkit-card > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.lili-toolkit-card > header span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #34d399;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.lili-toolkit-card > header small {
+  color: #64748b;
+  font-size: 11px;
+}
+.lili-toolkit-card > strong {
+  color: #f1f5f9;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.lili-toolkit-card > p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.lili-toolkit-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+.lili-toolkit-stats > div {
+  padding: 8px 9px;
+  border: 1px solid #232a36;
+  border-radius: 8px;
+  background: #11151d;
+}
+.lili-toolkit-stats dt {
+  color: #64748b;
+  font-size: 10px;
+}
+.lili-toolkit-stats dd {
+  margin: 4px 0 0;
+  color: #f1f5f9;
+  font-size: 13px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.lili-toolkit-params {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.lili-toolkit-params span {
+  padding: 3px 8px;
+  border: 1px solid #232a36;
+  border-radius: 6px;
+  background: #151b26;
+  color: #cbd5e1;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.lili-toolkit-params b {
+  color: #60a5fa;
+  font-weight: 600;
+}
+.lili-toolkit-var-grid {
+  display: grid;
+  gap: 6px;
+}
+.lili-toolkit-var-grid > div {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #11151d;
+  border: 1px solid #1e2532;
+}
+.lili-toolkit-var-grid small {
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 600;
+}
+.lili-toolkit-var-grid span {
+  color: #e2e8f0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.lili-toolkit-primary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 13px;
+  border: 1px solid rgba(52, 211, 153, 0.55);
+  border-radius: 9px;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.18), rgba(16, 185, 129, 0.12));
+  color: #a7f3d0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.lili-toolkit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+.lili-toolkit-grid button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 11px;
+  border: 1px solid #232a36;
+  border-radius: 9px;
+  background: #11151d;
+  color: #cbd5e1;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 550;
+  cursor: pointer;
+}
+.lili-toolkit-methods {
+  display: grid;
+  gap: 8px;
+}
+.lili-toolkit-methods article {
+  display: grid;
+  gap: 5px;
+  padding: 11px 12px;
+  border: 1px solid #1f2633;
+  border-radius: 9px;
+  background: #11151d;
+}
+.lili-toolkit-methods strong {
+  color: #e2e8f0;
+  font-size: 13px;
+}
+.lili-toolkit-methods p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 11.5px;
+  line-height: 1.65;
+}
+.lili-toolkit-methods button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  min-height: 36px;
+  margin-top: 2px;
+  padding: 5px 10px;
+  border: 1px solid rgba(96, 165, 250, 0.36);
+  border-radius: 7px;
+  background: rgba(96, 165, 250, 0.1);
+  color: #93c5fd;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---- Review Tab ---- */
+.lili-review {
+  display: grid;
+  gap: 15px;
+  padding: 18px 18px 22px;
+  overflow-wrap: anywhere;
+}
+.lili-review > header {
+  display: grid;
+  gap: 6px;
+}
+.lili-review > header span,
+.lili-review-next > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #34d399;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.lili-review > header strong {
+  color: #f1f5f9;
+  font-size: 20px;
+  line-height: 1.35;
+}
+.lili-review-summary {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.lili-review.stage-check .lili-review-summary {
+  padding: 12px 13px;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  background: rgba(245, 158, 11, 0.08);
+  border-radius: 10px;
+  color: #fde68a;
+}
+.lili-review-evidence {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+.lili-review-evidence > div {
+  display: grid;
+  align-content: space-between;
+  gap: 8px;
+  min-height: 74px;
+  padding: 9px 10px;
+  border: 1px solid #232a36;
+  border-radius: 10px;
+  background: #0e1219;
+}
+.lili-review-evidence dt {
+  color: #94a3b8;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.lili-review-evidence dd {
+  margin: 0;
+  color: #f1f5f9;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+.lili-review-next {
+  padding: 14px;
+  border: 1px solid rgba(16, 185, 129, 0.36);
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.08);
+}
+.lili-review-next > span {
+  color: #34d399;
+}
+.lili-review-next p {
+  margin: 8px 0 0;
+  color: #e2e8f0;
+  font-size: 13px;
+  line-height: 1.75;
+}
+.lili-review-prompts > span {
+  color: #94a3b8;
+  font-size: 11px;
+}
+.lili-review-prompts ul {
+  display: grid;
+  gap: 7px;
+  margin: 9px 0 0;
+  padding-left: 19px;
+  color: #cbd5e1;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.lili-review-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.lili-review-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 44px;
+  padding: 9px 8px;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  border-radius: 9px;
+  background: rgba(16, 185, 129, 0.14);
+  color: #a7f3d0;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.lili-review-actions button:disabled {
+  opacity: 0.48;
+  cursor: default;
+}
+.lili-review > small {
+  color: #64748b;
+  font-size: 10px;
+  line-height: 1.65;
+}
+.lili-review-reflection {
+  padding-top: 13px;
+  border-top: 1px solid #232a36;
+}
+.lili-review-reflection > span {
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+}
+.lili-review-reflection p {
+  margin: 7px 0 11px;
+  color: #94a3b8;
+  font-size: 11px;
+  line-height: 1.65;
+}
+.lili-review-reflection > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.lili-review-reflection button {
+  min-height: 44px;
+  border: 1px solid #232a36;
+  border-radius: 8px;
+  background: #151b26;
+  color: #cbd5e1;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.lili-review-variables {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+.lili-review-variables > div {
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid #232a36;
+  border-radius: 10px;
+  background: #0e1219;
+}
+.lili-review-variables dt {
+  color: #94a3b8;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.lili-review-variables dd {
+  margin: 5px 0 0;
+  color: #f1f5f9;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.lili-review-challenge {
+  display: grid;
+  gap: 9px;
+  padding: 14px;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.08);
+}
+.lili-review-challenge > span {
+  color: #fbbf24;
+  font-size: 12px;
+  font-weight: 650;
+}
+.lili-review-challenge p {
+  margin: 0;
+  color: #e2e8f0;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.lili-review-challenge button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+  min-height: 44px;
+  padding: 8px 13px;
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.16);
+  color: #fef3c7;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.lili-review-challenge small {
+  color: #94a3b8;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.lili-review-analysis {
+  display: grid;
+  gap: 9px;
+}
+.lili-review-analysis > header {
+  display: grid;
+  gap: 3px;
+}
+.lili-review-analysis > header strong {
+  color: #f1f5f9;
+  font-size: 14px;
+}
+.lili-review-analysis > header small {
+  color: #94a3b8;
+  font-size: 10px;
+  line-height: 1.55;
+}
+.lili-review-analysis article {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #232a36;
+  border-radius: 10px;
+  background: #0e1219;
+}
+.lili-review-analysis article > span {
+  color: #60a5fa;
+  font-size: 11px;
+  font-weight: 600;
+}
+.lili-review-analysis article > strong {
+  color: #f1f5f9;
+  font-size: 12px;
+}
+.lili-review-analysis article p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 11px;
+  line-height: 1.75;
+}
+.lili-review-analysis article > small {
+  color: #94a3b8;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.lili-review-analysis article button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid rgba(96, 165, 250, 0.45);
+  border-radius: 8px;
+  background: rgba(96, 165, 250, 0.14);
+  color: #bfdbfe;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---- Dialogue Messages & Welcome ---- */
+.lili-welcome {
+  padding: 2px 0 18px;
+}
+.lili-welcome > span {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+.lili-welcome h3 {
+  font-size: 26px;
+  line-height: 1.45;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  margin: 12px 0 10px;
+}
+.lili-welcome h3 em {
+  font-style: normal;
+}
+.lili-welcome p {
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 0;
+}
+.lili-welcome ul {
+  display: flex;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+  margin: 14px 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.lili-welcome li {
+  font-size: 11px;
+  line-height: 1.7;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.lili-welcome li:before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1px solid;
+}
+.lili-welcome small {
+  display: block;
+  font-size: 11px;
+  line-height: 1.8;
+  border-top: 1px solid;
+  padding-top: 12px;
+}
+.lili-message {
+  margin-bottom: 18px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.lili-message-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.lili-message-head > small,
+.lili-message > small {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  line-height: 1.6;
+}
+.lili-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 2px 8px;
+  border: 1px solid #232a36;
+  border-radius: 6px;
+  background: #11151d;
+  color: #94a3b8;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+.lili-message > p {
+  white-space: pre-wrap;
+  font-size: 13px;
+  line-height: 1.85;
+  margin: 6px 0;
+}
+.lili-message.is-student {
+  padding: 11px 14px;
+  border: 1px solid;
+  border-radius: 12px 12px 4px 12px;
+  margin-left: 22px;
+}
+.lili-message.is-student > p {
+  margin: 5px 0 0;
+}
+.lili-message.is-lili {
+  padding: 11px 13px;
+  border: 1px solid #1e2532;
+  border-radius: 12px;
+  background: rgba(17, 21, 29, 0.72);
+}
+.lili-message details {
+  font-size: 11px;
+  line-height: 1.7;
+}
+.lili-message details summary {
+  min-height: 44px;
+  cursor: pointer;
+  padding: 11px 0;
+}
+.lili-message details a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 3px 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.lili-thinking {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 0 0 18px;
+}
+.lili-manual-context {
+  border: 1px solid;
+  border-radius: 12px;
+  padding: 13px;
+  margin-bottom: 18px;
+  overflow-wrap: anywhere;
+}
+.lili-manual-context > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px 10px;
+}
+.lili-manual-context strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+.lili-manual-context span {
+  font-size: 10px;
+}
+.lili-manual-context p {
+  font-size: 11px;
+  line-height: 1.75;
+  margin: 8px 0 11px;
+}
+.lili-manual-context button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.lili-manual-context button svg {
+  flex: none;
+}
+.lili-suggestions {
+  display: grid;
+  gap: 7px;
+  padding: 0 18px 16px;
+}
+.lili-suggestions > p {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
+  margin: 3px 0 4px;
+  text-transform: uppercase;
+}
+.lili-suggestions button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid;
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: left;
+  cursor: pointer;
+}
+.lili-suggestions button span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.lili-suggestions button svg {
+  flex: none;
+}
+.lili-panel button:disabled {
+  opacity: 0.48;
+  cursor: default;
+}
+.lili-notice {
+  font-size: 11px;
+  line-height: 1.75;
+  margin: 0 18px 14px;
+  padding: 10px 12px;
+  border: 1px solid;
+  border-radius: 9px;
+  overflow-wrap: anywhere;
+}
+
+/* ---- Quick Prompt Chip Bar above Composer ---- */
+.lili-quick-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 8px 15px 6px;
+  flex: none;
+  border-top: 1px solid #1e2532;
+  background: #0d1118;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.lili-quick-bar::-webkit-scrollbar {
+  display: none;
+}
+.lili-quick-bar button {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 5px 11px;
+  border: 1px solid #232a36;
+  border-radius: 999px;
+  background: #141923;
+  color: #cbd5e1;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 550;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.lili-panel form {
+  flex: none;
+  border: 1px solid;
+  margin: 4px 15px 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.lili-input-label {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.lili-panel textarea {
+  display: block;
+  width: 100%;
+  border: 0;
+  resize: vertical;
+  min-height: 58px;
+  max-height: 120px;
+  outline: 0;
+  padding: 11px 14px;
+  background: transparent;
+  color: inherit;
+  font: 13px/1.7 "SF Pro Text", "PingFang SC", sans-serif;
+}
+.lili-panel form:focus-within {
+  outline: 2px solid;
+  outline-offset: 2px;
+}
+.lili-panel form > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 8px 8px 13px;
+}
+.lili-panel form small {
+  font-size: 10px;
+  line-height: 1.55;
+  min-width: 0;
+  max-width: 220px;
+  overflow-wrap: anywhere;
+}
+.lili-panel form button {
+  flex: none;
+  border: 0;
+  border-radius: 9px;
+  min-width: 78px;
+  min-height: 44px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.lili-draft-cue {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 10px 13px;
+  border-bottom: 1px solid #232a36;
+  background: rgba(245, 158, 11, 0.08);
+  color: #e2e8f0;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.lili-draft-cue strong {
+  color: #fbbf24;
+  font-size: 10px;
+}
+.lili-panel footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  flex: none;
+  padding: 6px 16px 10px;
+  font-size: 10px;
+  line-height: 1.6;
+  min-width: 0;
+}
+.lili-panel footer > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.lili-panel footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
+  text-decoration: none;
+}
+.lili-assistant :is(button, a, summary):focus-visible {
+  outline: 2px solid;
+  outline-offset: 2px;
+}
+@keyframes lili-panel-enter {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes lili-blink {
+  0%, 44%, 48%, 100% { transform: scaleY(1); }
+  46% { transform: scaleY(0.12); }
+}
+@keyframes lili-nod {
+  50% { transform: rotate(3deg); }
+}
+@keyframes lili-talk {
+  50% { transform: translateY(2px); }
+}
+@media (max-width: 600px), (max-height: 500px) and (pointer: coarse) {
+  .lili-assistant {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
   }
-  .lili-panel :is(button,summary,a) { touch-action:manipulation; }
-  .lili-launcher { min-height:54px; padding-right:13px; gap:8px; }
-  .lili-launcher span small { display:none; }
-  .lili-panel>header { gap:10px; padding:8px 12px; }
-  .lili-view-tabs { padding:7px 12px; }
-  .lili-review { padding:16px; gap:13px; }
-  .lili-review-evidence { grid-template-columns:1fr 1fr; }
-  .lili-review-variables { grid-template-columns:1fr; }
-  .lili-review-evidence>div:first-child { grid-column:1 / -1; min-height:54px; }
-  .lili-portrait { width:46px; height:50px; border-radius:12px; }
-  .lili-panel h2 { font-size:22px; margin:2px 0 3px; }
-  .lili-panel .lili-eyebrow { font-size:10px; letter-spacing:1px; }
-  .lili-panel header button { margin:0; }
-  .lili-assistant .lili-panel>header .lili-corgi-photo { width:52px; height:52px; }
-  .lili-dialogue { padding:18px 16px 2px; }
-  .lili-welcome h3 { font-size:26px; }
-  .lili-assistant.is-open .lili-panel :is(.lili-message>p,.lili-welcome p) { font-size:15px; line-height:1.8; }
-  .lili-suggestions { padding:0 16px 16px; }
-  .lili-suggestions button,.lili-manual-context button { font-size:13px; }
-  .lili-notice { margin:0 16px 16px; }
-  .lili-panel form { margin:4px 12px 0; }
-  .lili-assistant.is-open .lili-panel form textarea { font-size:16px; padding:9px 12px; min-height:52px; max-height:80px; resize:none; }
-  .lili-panel form small { max-width:150px; font-size:10px; }
-  .lili-panel form button { min-width:70px; padding:10px; }
-  .lili-panel footer { padding:2px 15px 4px; font-size:11px; }
-  .lili-panel:has(textarea:focus)>header .lili-eyebrow { display:none; }
-  .lili-panel:has(textarea:focus)>footer { display:none; }
-  .lili-panel:has(textarea:focus)>form { margin-bottom:8px; }
+  .lili-panel,
+  .lili-assistant.is-wide .lili-panel {
+    --panel-edge-left: max(8px, env(safe-area-inset-left));
+    --panel-edge-right: max(8px, env(safe-area-inset-right));
+    --panel-edge-top: max(8px, env(safe-area-inset-top));
+    --panel-edge-bottom: max(8px, env(safe-area-inset-bottom));
+    position: fixed;
+    z-index: 1;
+    top: calc(var(--panel-viewport-top, 0px) + var(--panel-edge-top));
+    left: calc(var(--panel-viewport-left, 0px) + var(--panel-edge-left));
+    width: calc(var(--panel-viewport-width, 100vw) - var(--panel-edge-left) - var(--panel-edge-right));
+    height: calc(var(--panel-viewport-height, 100dvh) - var(--panel-edge-top) - var(--panel-edge-bottom));
+    max-height: none;
+    border-radius: 16px;
+    margin: 0;
+    overscroll-behavior: contain;
+  }
+  .lili-wide-toggle {
+    display: none !important;
+  }
+  .lili-panel :is(button, summary, a) {
+    touch-action: manipulation;
+  }
+  .lili-launcher {
+    min-height: 54px;
+    max-width: calc(100vw - 24px);
+    padding-right: 13px;
+    gap: 8px;
+    border-radius: 999px;
+  }
+  .lili-launcher span small {
+    display: none;
+  }
+  .lili-panel > header {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  .lili-panel header button {
+    width: 44px;
+    height: 44px;
+  }
+  .lili-view-tabs {
+    padding: 7px 12px;
+  }
+  .lili-view-tabs button {
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .lili-toolkit {
+    padding: 14px 12px 18px;
+  }
+  .lili-toolkit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lili-review {
+    padding: 14px 14px 18px;
+    gap: 12px;
+  }
+  .lili-review-evidence {
+    grid-template-columns: 1fr 1fr;
+  }
+  .lili-review-variables {
+    grid-template-columns: 1fr;
+  }
+  .lili-review-evidence > div:first-child {
+    grid-column: 1 / -1;
+    min-height: 54px;
+  }
+  .lili-review-reflection > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lili-portrait {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+  }
+  .lili-panel h2 {
+    font-size: 20px;
+    margin: 2px 0 2px;
+  }
+  .lili-panel .lili-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+  .lili-assistant .lili-panel > header .lili-corgi-photo {
+    width: 48px;
+    height: 48px;
+  }
+  .lili-dialogue {
+    padding: 14px 12px 2px;
+  }
+  .lili-welcome h3 {
+    font-size: 22px;
+  }
+  .lili-assistant.is-open .lili-panel :is(.lili-message > p, .lili-welcome p) {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+  .lili-copy-btn {
+    min-height: 36px;
+    padding: 4px 10px;
+  }
+  .lili-suggestions {
+    padding: 0 12px 14px;
+  }
+  .lili-suggestions button,
+  .lili-manual-context button {
+    font-size: 13px;
+  }
+  .lili-notice {
+    margin: 0 12px 12px;
+  }
+  .lili-quick-bar {
+    padding: 7px 12px 5px;
+  }
+  .lili-quick-bar button {
+    min-height: 38px;
+    padding: 6px 13px;
+    font-size: 12px;
+  }
+  .lili-panel form {
+    margin: 4px 12px 0;
+  }
+  .lili-assistant.is-open .lili-panel form textarea {
+    font-size: 16px;
+    padding: 10px 12px;
+    min-height: 50px;
+    max-height: 82px;
+    resize: none;
+  }
+  .lili-panel form small {
+    max-width: 165px;
+    font-size: 10px;
+  }
+  .lili-panel form button {
+    min-width: 72px;
+    padding: 10px 12px;
+  }
+  .lili-panel footer {
+    padding: 4px 14px 6px;
+    font-size: 11px;
+  }
+  .lili-panel:has(textarea:focus) > header .lili-eyebrow {
+    display: none;
+  }
+  .lili-panel:has(textarea:focus) > .lili-quick-bar {
+    display: none;
+  }
+  .lili-panel:has(textarea:focus) > footer {
+    display: none;
+  }
+  .lili-panel:has(textarea:focus) > form {
+    margin-bottom: 8px;
+  }
 }
 /* Desktop short windows may scroll the full card. On a phone the visible
    viewport drives its height, keeping the close button and composer in place. */
-@media (min-width:601px) and (max-height:540px) and (pointer:fine) {
-  .lili-panel { overflow-y:auto; overscroll-behavior:contain; }
-  .lili-panel>*,.lili-body { flex-shrink:0; }
-  .lili-body { overflow:visible; flex:none; }
-  .lili-panel>header { padding-top:11px; padding-bottom:11px; }
+@media (min-width: 601px) and (max-height: 540px) and (pointer: fine) {
+  .lili-panel {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .lili-panel > *,
+  .lili-body {
+    flex-shrink: 0;
+  }
+  .lili-body {
+    overflow: visible;
+    flex: none;
+  }
+  .lili-panel > header {
+    padding-top: 11px;
+    padding-bottom: 11px;
+  }
 }
-@media(prefers-reduced-motion:reduce){.lili-assistant *,.lili-assistant *:before,.lili-assistant *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media (prefers-reduced-motion: reduce) {
+  .lili-assistant *,
+  .lili-assistant *:before,
+  .lili-assistant *:after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

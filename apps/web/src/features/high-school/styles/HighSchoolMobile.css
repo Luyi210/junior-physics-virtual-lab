@@ -19,7 +19,7 @@
 
 @media (max-width: 760px) {
   .hs-page.hs-lab-theme { box-sizing: border-box; padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px); }
-  .hs-page.hs-lab-theme :is(main, section, fieldset, .hs-apparatus-column, .hs-lab-layout > *, .hs-records-empty > div) { min-width: 0; }
+  .hs-page.hs-lab-theme :is(main, section, fieldset, .hs-apparatus-column, .hs-lab-layout > *, .hs-carbon-stage > *, .hs-carbon-dock > *, .hs-carbon-secondary-grid > *, .hs-records-empty > div) { min-width: 0; }
   .hs-page.hs-lab-theme :is(.hs-record-actions, .hs-confirm-clear, .hs-analysis-conditions dl > div) { flex-wrap: wrap; }
   .hs-page.hs-lab-theme :is(.hs-record-notice, .hs-storage-error, .hs-analysis-conditions dd, .hs-control-note) { overflow-wrap: anywhere; }
   .hs-page.hs-lab-theme .hs-header nav { flex-wrap: wrap; }
@@ -39,8 +39,17 @@
   .hs-experiment-page.hs-lab-theme .hs-header nav :is(a, button) { flex: 0 1 auto; gap: 4px; padding-inline: 7px; font-size: 12px; }
   .hs-experiment-page.hs-lab-theme .hs-breadcrumb { padding: 12px 0 8px; font-size: 11px; }
   .hs-experiment-page.hs-lab-theme .hs-experiment-heading { margin-bottom: 12px; padding: 0 0 12px; }
-  .hs-experiment-page.hs-lab-theme .hs-experiment-heading h1 { margin: 6px 0; font-size: 25px; line-height: 1.45; }
-  .hs-experiment-page.hs-lab-theme .hs-experiment-heading p { font-size: 13px; line-height: 1.7; }
+  .hs-experiment-page.hs-lab-theme .hs-experiment-heading h1 { margin: 4px 0; font-size: 23px; line-height: 1.35; }
+  .hs-experiment-page.hs-lab-theme .hs-experiment-heading p { font-size: 13px; line-height: 1.65; }
+  .hs-experiment-page.hs-lab-theme .hs-heading-actions { width: 100%; }
+  .hs-experiment-page.hs-lab-theme .hs-carbon-export { width: 100%; justify-content: center; min-height: 44px; }
+  .hs-experiment-page.hs-lab-theme .hs-carbon-stage,
+  .hs-experiment-page.hs-lab-theme .hs-carbon-dock,
+  .hs-experiment-page.hs-lab-theme .hs-carbon-secondary-grid { gap: 12px; }
+  .hs-experiment-page.hs-lab-theme .hs-carbon-card-head { padding: 10px 14px; flex-wrap: wrap; }
+  .hs-experiment-page.hs-lab-theme .hs-live-readings { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .hs-experiment-page.hs-lab-theme .hs-live-readings > div { padding: 10px 11px; }
+  .hs-experiment-page.hs-lab-theme .hs-live-readings > div strong { font-size: 19px; flex-wrap: wrap; }
   .hs-experiment-page.hs-lab-theme .hs-record-scope[data-mode] { margin-bottom: 12px; padding: 12px; gap: 6px; }
   .hs-experiment-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions { display: flex; gap: 6px; padding-top: 0; }
   .hs-experiment-page.hs-lab-theme .hs-record-scope[data-mode] .hs-record-scope-actions :is(button, a) { flex: 1 1 110px; padding: 7px 8px; }
@@ -58,7 +67,11 @@
   .hs-page.hs-lab-theme .hs-records-empty { align-items: flex-start; }
   .hs-page.hs-lab-theme .hs-records-empty button { margin-left: 0; width: 100%; }
   .hs-page.hs-lab-theme .hs-record-actions { width: 100%; gap: 8px; }
-  .hs-page.hs-lab-theme .hs-record-actions .hs-button { flex: 1 1 120px; justify-content: center; }
+  .hs-page.hs-lab-theme .hs-record-actions .hs-button { flex: 1 1 120px; justify-content: center; min-height: 44px; }
+  .hs-experiment-page.hs-lab-theme .hs-records-panel .hs-table-scroll { max-height: 300px; }
+}
+@media (max-width: 360px) {
+  .hs-experiment-page.hs-lab-theme .hs-live-readings { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* These controls are outside the camera projection, so every release-angle

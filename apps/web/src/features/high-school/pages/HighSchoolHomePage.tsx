@@ -58,7 +58,7 @@ export function HighSchoolHomePage() {
     catalog?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   }
 
-  return <div className="hs-page hs-home hs-lab-theme hs-cosmic-theme">
+  return <div className="hs-page hs-home hs-lab-theme hs-cosmic-theme hs-carbon-suite">
     <PageIntroduction
       pageKey="high-school-lab-guide"
       eyebrow="WELCOME / 高中物理实验室"
@@ -66,7 +66,7 @@ export function HighSchoolHomePage() {
       description="先选一个问题或实验，再改变条件、观察现象、保存证据。每一步都能随时向力力求助。"
       points={["从实验目录或题目可视化进入", "调一个变量，看动态与图像变化", "保存读数，分开分析模型与手动证据"]}
       icon={Orbit}
-      accent="#8edcef"
+      accent="#10b981"
       enterLabel="开始探究"
       variant="highschool"
       persistence="local"

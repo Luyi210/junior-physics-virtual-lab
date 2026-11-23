@@ -214,52 +214,106 @@ export function HighSchoolWorkbench({ definition, scope }: { definition: HighSch
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  return <div className="hs-page hs-experiment-page hs-lab-theme hs-cosmic-theme"><HighSchoolHeader experiment />
+  return <div className="hs-page hs-experiment-page hs-lab-theme hs-cosmic-theme hs-carbon-suite"><HighSchoolHeader experiment />
     <main className="hs-workbench">
       <div className="hs-breadcrumb"><Link to="/high-school">实验目录</Link><span>/</span><span>{highSchoolVolumes.find((volume) => volume.id === catalog?.volume)?.name}</span><span>/</span><span>{definition.field}</span></div>
-      <header className="hs-experiment-heading"><div><span className="hs-kicker">{catalog?.chapter ?? "高中物理探究"}</span><h1>{definition.title}</h1><p>{catalog?.learningGoal ?? definition.description}</p></div><span className="hs-open-badge"><i />可交互实验</span></header>
+      <header className="hs-experiment-heading">
+        <div>
+          <span className="hs-kicker">{catalog?.chapter ?? "高中物理探究"}</span>
+          <div className="hs-heading-title-row">
+            <h1>{definition.title}</h1>
+            <span className="hs-open-badge"><i />{clock.running ? "运行中" : "可交互实验"}</span>
+          </div>
+          <p>{catalog?.learningGoal ?? definition.description}</p>
+        </div>
+        <div className="hs-heading-actions">
+          <button className="hs-button hs-carbon-export" type="button" onClick={exportCsv} disabled={!records.length}><Download size={15} />导出 CSV</button>
+        </div>
+      </header>
       <HighSchoolRecordScopePanel scope={scope} />
       <HighSchoolClassroomPanel experimentId={id} scope={scope} />
       <WorkbenchNavigation />
       {expandedProtocols[id] && <details className="hs-prelab-guide"><summary><span><BookOpen size={16} />本次探究 · 从一个问题开始</span><small>查看步骤与预测</small><ChevronDown size={16} /></summary><InquiryGuide key={id} experimentId={id} /></details>}
 
-      <div className="hs-lab-layout" id="hs-stage"><section className="hs-lab-main hs-apparatus-console" aria-label="装置与计时"><ExperimentViewport experimentId={id} parameters={parameters} simulation={simulation} trajectory={trajectory} onParametersChange={changeParameters} capacitorMode={simulation.capacitor?.mode} onCapacitorModeChange={changeCapacitorMode} capacitorSwitchDisabled={clock.time >= initial.durationSeconds} />
-        <div className="hs-playbar"><div className="hs-clock"><small>{initial.durationSeconds > 0 ? "实验时间" : "稳态实验"}</small><strong>{initial.durationSeconds > 0 ? <>{clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)}<span> / {initial.durationSeconds.toFixed(id === "transformer-ratio" ? 4 : 2)} s</span></> : "即时读数"}</strong></div><div className="hs-play-controls"><button className="hs-play-toggle" type="button" disabled={initial.durationSeconds <= 0} onClick={toggleClock} aria-label={clock.running ? "暂停实验" : "播放实验"}>{clock.running ? <Pause size={17} /> : <Play size={17} />}{clock.running ? "暂停" : "播放"}</button><button type="button" disabled={initial.durationSeconds <= 0 || clock.time >= initial.durationSeconds} onClick={clock.step} title={id === "transformer-ratio" ? "前进1/60个交流周期（按实际频率换算秒）" : "前进一个固定时间步（1/60 秒）"}><SkipForward size={16} />单步</button><button type="button" disabled={initial.durationSeconds <= 0} onClick={resetClock}><RotateCcw size={15} />重新计时</button></div>
-          {initial.durationSeconds > 0 && id !== "capacitor-charge" && <div className="hs-time-scrubber"><div><label htmlFor="hs-experiment-time">定位物理时刻</label><span>{clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)} / {initial.durationSeconds.toFixed(id === "transformer-ratio" ? 4 : 2)} s</span></div><input id="hs-experiment-time" type="range" min="0" max={initial.durationSeconds} step="any" value={clock.time} onChange={(event) => seekClock(Number(event.target.value))} aria-label="实验时间轴" aria-valuetext={`${clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)} 秒`} style={{ "--hs-time-progress": `${clock.time / initial.durationSeconds * 100}%` } as CSSProperties} /><p>拖动可暂停并回看任意时刻；画面、图像和读数按同一物理时间更新。{id === "pendulum" || id === "mechanical-energy" ? " 时间跳转会结束正在进行的手动测量。" : ""}</p></div>}
-          {initial.durationSeconds > 0 && <div className="hs-speed-controls" role="group" aria-label="观察速度"><span>观察速度</span><div>{PLAYBACK_SPEEDS.map((speed) => <button key={speed} type="button" aria-pressed={playbackSpeed === speed} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}</div><p>速度设置只改变演示节奏，实验时间、图像和保存读数仍按物理秒计算。{id === "transformer-ratio" && " 变压器的 1× 演示为每秒一个交流周期。"}</p></div>}
-        </div>
-        <ExperimentPlaybackStatus time={clock.time} duration={initial.durationSeconds} running={clock.running} />
-      </section>
-      <aside className="hs-controls" id="hs-conditions" aria-labelledby="hs-controls-title"><header><span className="hs-console-label">条件控制台</span><h2 id="hs-controls-title" tabIndex={-1}>先改变一个变量。</h2><p>设定条件，观察变化，再记录一组可比较的读数。</p></header><div className="hs-parameter-list">{definition.parameters.map((parameter) => <ExperimentParameterControl key={`${parameter.key}:${parameterResetToken}`} parameter={parameter} value={parameters[parameter.key]} onChange={(value) => changeParameter(parameter.key, value)} />)}</div><button className="hs-button hs-primary hs-record-button" type="button" onClick={recordMeasurement} disabled={!scope.canWrite || retainedRecordCount >= 120 || !validInstrumentReading}><Plus size={17} />记录这组读数<span>{retainedRecordCount} / 120</span></button><button className="hs-reset-parameters" type="button" onClick={resetExperiment}><RotateCcw size={13} />恢复默认条件</button><p className="hs-control-note">{initial.durationSeconds > 0 ? "调整条件后重新计时，已有记录保留，便于比较。" : "调整条件后立即更新静态读数，已有记录保留。"}待恢复读数也计入本页新增上限。</p>{simulation.warnings.length > 0 && <div className="hs-model-warning" role="note">{simulation.warnings.map((warning) => <p key={warning}>{warning}</p>)}</div>}</aside>
-      <section className="hs-observation-console" id="hs-readings" aria-labelledby="hs-readings-title">
-        <header className="hs-observation-heading"><div><span className="hs-console-label">观察与读数</span><h2 id="hs-readings-title">把变化，看清楚。</h2></div><span className="hs-reading-provenance">当前条件 · 模型计算</span></header>
-        <ExperimentReadings simulation={simulation} />
-        {id === "momentum-conservation" && <CollisionLearningPanel parameters={parameters} simulation={simulation} onChange={changeParameters} />}
-        {id === "refractive-index" && <RefractionLearningPanel parameters={parameters} simulation={simulation} onChange={changeParameters} />}
-        {id === "multimeter" && <MultimeterControlPanel parameters={parameters} simulation={simulation} onChange={changeParameters} />}
-        {id === "transformer-ratio" && <p className="hs-control-note">当前每秒展示 {playbackSpeed} 个交流周期；物理频率为 {parameters.frequency} Hz，单步为 1/60 周期。时间、曲线和保存读数均使用实际物理秒，三周期后停止。</p>}
-        {id === "spring-force" && <SpringLoadControl massGrams={parameters.loadMassGrams} onChange={(value) => changeParameter("loadMassGrams", value)} />}
-        {id === "force-composition" && <ForceCompositionControl parameters={parameters} simulation={simulation} onChange={changeParameters} onRecord={recordMeasurement} recordDisabled={!scope.canWrite || retainedRecordCount >= 120} />}
-        {id === "capacitor-charge" && capacitorHistory && simulation.capacitor && <><CapacitorSwitchControl parameters={parameters} simulation={simulation} mode={simulation.capacitor.mode} onModeChange={changeCapacitorMode} switchDisabled={clock.time >= initial.durationSeconds} /><p className="hs-control-note">切换开关保留电压与电荷；暂停只停止计时。重新计时或调整 R、C、E 会从 0 V 接电源开始新一轮，已保存记录保留。本轮观察窗为 20RC，到时不会强制充满或放空。最多保留 32 段切换，达到上限后先保存读数再重新开始。</p><CapacitorHistoryDetails history={capacitorHistory} timeSeconds={clock.time} /></>}
-        {id === "precision-length" && <PrecisionReadingPractice key={`${parameters.instrument}:${parameters.objectLengthMm}:${parameters.zeroErrorMm}`} instrument={parameters.instrument} contactMode={parameters.contactMode} indicatedLengthMm={simulation.state.indicatedLengthMm} zeroReadingMm={simulation.state.zeroReadingMm} />}
-        <p className="hs-apparatus-caption">{sceneDescriptions[id]}{initial.durationSeconds > 0 ? " 动画按固定时间步推进，切换视图不改变实验进度。" : " 本实验为稳态模型，调整参数后立即得到新的工作点。"}</p>
-      </section></div>
+      {/* Scheme C Upper Split Row: Synchronized Apparatus Viewport + Real-time Data Plot */}
+      <div className="hs-carbon-stage" id="hs-stage">
+        <section className="hs-lab-main hs-apparatus-console hs-carbon-card" aria-label="装置与计时">
+          <header className="hs-carbon-card-head">
+            <span className="hs-carbon-tag">物理仿真视窗</span>
+            <span className="hs-carbon-meta">{initial.durationSeconds > 0 ? `t = ${clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)} / ${initial.durationSeconds.toFixed(id === "transformer-ratio" ? 4 : 2)} s` : "稳态即时模型"}</span>
+          </header>
+          <ExperimentViewport experimentId={id} parameters={parameters} simulation={simulation} trajectory={trajectory} onParametersChange={changeParameters} capacitorMode={simulation.capacitor?.mode} onCapacitorModeChange={changeCapacitorMode} capacitorSwitchDisabled={clock.time >= initial.durationSeconds} />
+          <div className="hs-playbar"><div className="hs-clock"><small>{initial.durationSeconds > 0 ? "实验时间" : "稳态实验"}</small><strong>{initial.durationSeconds > 0 ? <>{clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)}<span> / {initial.durationSeconds.toFixed(id === "transformer-ratio" ? 4 : 2)} s</span></> : "即时读数"}</strong></div><div className="hs-play-controls"><button className="hs-play-toggle" type="button" disabled={initial.durationSeconds <= 0} onClick={toggleClock} aria-label={clock.running ? "暂停实验" : "播放实验"}>{clock.running ? <Pause size={17} /> : <Play size={17} />}{clock.running ? "暂停" : "播放"}</button><button type="button" disabled={initial.durationSeconds <= 0 || clock.time >= initial.durationSeconds} onClick={clock.step} title={id === "transformer-ratio" ? "前进1/60个交流周期（按实际频率换算秒）" : "前进一个固定时间步（1/60 秒）"}><SkipForward size={16} />单步</button><button type="button" disabled={initial.durationSeconds <= 0} onClick={resetClock}><RotateCcw size={15} />重新计时</button></div>
+            {initial.durationSeconds > 0 && id !== "capacitor-charge" && <div className="hs-time-scrubber"><div><label htmlFor="hs-experiment-time">定位物理时刻</label><span>{clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)} / {initial.durationSeconds.toFixed(id === "transformer-ratio" ? 4 : 2)} s</span></div><input id="hs-experiment-time" type="range" min="0" max={initial.durationSeconds} step="any" value={clock.time} onChange={(event) => seekClock(Number(event.target.value))} aria-label="实验时间轴" aria-valuetext={`${clock.time.toFixed(id === "transformer-ratio" ? 4 : 2)} 秒`} style={{ "--hs-time-progress": `${clock.time / initial.durationSeconds * 100}%` } as CSSProperties} /><p>拖动可暂停并回看任意时刻；画面、图像和读数按同一物理时间更新。{id === "pendulum" || id === "mechanical-energy" ? " 时间跳转会结束正在进行的手动测量。" : ""}</p></div>}
+            {initial.durationSeconds > 0 && <div className="hs-speed-controls" role="group" aria-label="观察速度"><span>观察速度</span><div>{PLAYBACK_SPEEDS.map((speed) => <button key={speed} type="button" aria-pressed={playbackSpeed === speed} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}</div><p>速度设置只改变演示节奏，实验时间、图像和保存读数仍按物理秒计算。{id === "transformer-ratio" && " 变压器的 1× 演示为每秒一个交流周期。"}</p></div>}
+          </div>
+          <ExperimentPlaybackStatus time={clock.time} duration={initial.durationSeconds} running={clock.running} />
+        </section>
 
-      <LifeConnectionCard experimentId={id} />
-
-      <div className="hs-evidence-layout" id="hs-graphs"><section className="hs-chart-panel" aria-labelledby="hs-chart-title"><header className="hs-panel-heading"><span>01 / 图像与关系</span><h2 id="hs-chart-title">读出变化的规律。</h2></header><div className="hs-chart-tabs" role="group" aria-label="选择数据图像">{simulation.series.map((series) => <button key={seriesIdentity(series)} type="button" aria-pressed={Boolean(selectedSeries && seriesIdentity(series) === seriesIdentity(selectedSeries))} onClick={() => setSeriesId(seriesIdentity(series))}>{series.label}</button>)}</div>{selectedSeries && <ExperimentPlot key={`${seriesIdentity(selectedSeries)}:${JSON.stringify(parameters)}:${JSON.stringify(capacitorHistory)}`} series={selectedSeries} historyOnly={id === "capacitor-charge"} currentPoint={!validInstrumentReading || (id === "photoelectric-effect" && selectedSeries.key === "stoppingVoltage" && !simulation.state.emissionAllowed) || (id === "force-composition" && !simulation.state.angleBetweenDefined) ? undefined : { x: simulation.state[selectedSeries.xKey], y: simulation.state[selectedSeries.key] }} probeAtX={selectedSeries.xKey === "time" && id !== "capacitor-charge" ? (time) => { const state = simulateHighSchoolExperiment(id, parameters, time).state; return state.readingValid === 0 ? null : { x: state.time, y: state[selectedSeries.key] }; } : undefined} />}{id === "force-composition" && !selectedSeries && <p className="hs-control-note">任一分力为零时，两力夹角未定义，暂不绘制 R²—cosθ 关系。先设两个非零分力，再比较不同夹角。</p>}</section>
-        <section className="hs-model-panel" aria-labelledby="hs-model-title"><header className="hs-panel-heading"><span>02 / 模型与边界</span><h2 id="hs-model-title">这次实验怎样计算？</h2></header><div className="hs-equations">{simulation.equations.map((equation) => <code key={equation}>{equation}</code>)}</div><details open><summary>使用这些关系式的前提<ChevronDown size={15} /></summary><ul>{definition.assumptions.map((assumption) => <li key={assumption}>{assumption}</li>)}</ul></details></section>
+        <section className="hs-chart-panel hs-carbon-card" id="hs-graphs" aria-labelledby="hs-chart-title">
+          <header className="hs-panel-heading"><span>数据分析图表</span><h2 id="hs-chart-title">图像与关系</h2></header>
+          <div className="hs-chart-tabs" role="group" aria-label="选择数据图像">{simulation.series.map((series) => <button key={seriesIdentity(series)} type="button" aria-pressed={Boolean(selectedSeries && seriesIdentity(series) === seriesIdentity(selectedSeries))} onClick={() => setSeriesId(seriesIdentity(series))}>{series.label}</button>)}</div>
+          {selectedSeries && <ExperimentPlot key={`${seriesIdentity(selectedSeries)}:${JSON.stringify(parameters)}:${JSON.stringify(capacitorHistory)}`} series={selectedSeries} historyOnly={id === "capacitor-charge"} currentPoint={!validInstrumentReading || (id === "photoelectric-effect" && selectedSeries.key === "stoppingVoltage" && !simulation.state.emissionAllowed) || (id === "force-composition" && !simulation.state.angleBetweenDefined) ? undefined : { x: simulation.state[selectedSeries.xKey], y: simulation.state[selectedSeries.key] }} probeAtX={selectedSeries.xKey === "time" && id !== "capacitor-charge" ? (time) => { const state = simulateHighSchoolExperiment(id, parameters, time).state; return state.readingValid === 0 ? null : { x: state.time, y: state[selectedSeries.key] }; } : undefined} />}
+          {id === "force-composition" && !selectedSeries && <p className="hs-control-note">任一分力为零时，两力夹角未定义，暂不绘制 R²—cosθ 关系。先设两个非零分力，再比较不同夹角。</p>}
+          <p className="hs-apparatus-caption">{sceneDescriptions[id]}{initial.durationSeconds > 0 ? " 动画按固定时间步推进，左右视窗与曲线实时同步。" : " 本实验为稳态模型，调整参数后左右视窗与曲线同步更新。"}</p>
+        </section>
       </div>
 
-      <section className="hs-records-panel" id="hs-evidence" aria-labelledby="hs-records-title"><header className="hs-records-heading"><div><span className="hs-kicker">03 / 实验证据</span><h2 id="hs-records-title">留下读数，也留下条件。</h2><p>本机记录独立保存于高中专区，可导出 CSV 继续分析。</p></div><div className="hs-record-actions"><button className="hs-button" type="button" onClick={exportCsv} disabled={!records.length}><Download size={15} />导出 CSV</button><button className="hs-icon-button" type="button" onClick={() => setConfirmClear(true)} disabled={!scope.canWrite || !records.length} aria-label="清空本实验记录"><Trash2 size={17} /></button></div></header>{notice && <p className="hs-record-notice" role="status"><Check size={15} />{notice}</p>}{storageError && <div className="hs-storage-error" role="alert"><p>浏览器本机记录读取或保存异常。当前页面的读数仍在，请先导出 CSV，避免刷新后丢失。</p><button className="hs-button" type="button" onClick={retrySavingMeasurements} disabled={!scope.canWrite}>重试本机保存</button></div>}{confirmClear && scope.canWrite && <div className="hs-clear-confirm"><span>清空当前实验的 {records.length} 条本机记录？</span><button type="button" onClick={clearMeasurements}>确认清空</button><button type="button" onClick={() => setConfirmClear(false)}>保留记录</button></div>}
-        {records.length ? <div className="hs-table-scroll" tabIndex={0} aria-label="可横向滚动的实验记录表"><table><thead><tr><th scope="col">序号</th><th scope="col">实验时间 / s</th>{recordMetrics.map((metric) => <th key={measurementColumnKey(metric)} scope="col">{metric.label}{metric.unit && <small>{metric.unit}</small>}</th>)}<th scope="col">当时的实验条件</th></tr></thead><tbody>{records.map((record, index) => <tr key={record.id}><th scope="row">{String(index + 1).padStart(2, "0")}</th><td>{formatMeasurement(record.timeSeconds)}</td>{recordMetrics.map((metric) => <td key={measurementColumnKey(metric)}>{formatMetric({ key: metric.key, value: savedMetric(record, metric)?.value ?? NaN }, metricState(record.metrics))}</td>)}<td><details><summary>查看条件</summary><dl>{definition.parameters.map((parameter) => <div key={parameter.key}><dt>{parameter.label}</dt><dd>{formatParameterValue(parameter, record.parameters[parameter.key])} {parameter.unit}</dd></div>)}</dl>{record.capacitorHistory && <CapacitorHistoryDetails history={record.capacitorHistory} timeSeconds={record.timeSeconds} />}</details></td></tr>)}</tbody></table></div> : <div className="hs-records-empty"><BookOpen size={27} /><div><h3>第一组证据，从一次记录开始。</h3><p>调整条件或播放实验，在合适的时刻点击“记录这组读数”。</p></div><button type="button" disabled={!scope.canWrite || retainedRecordCount >= 120 || !validInstrumentReading} onClick={recordMeasurement}>记录当前读数<ArrowRight size={15} /></button></div>}
-      </section>
+      {/* Scheme C Lower 3-Column Dock: Controls | Live Telemetry | Experimental Evidence */}
+      <div className="hs-carbon-dock">
+        <aside className="hs-controls hs-carbon-card" id="hs-conditions" aria-labelledby="hs-controls-title">
+          <header><span className="hs-console-label">条件控制台 · Parameters</span><h2 id="hs-controls-title" tabIndex={-1}>变量设定</h2><p>调节参数并观察视窗、曲线与读数的同步变化。</p></header>
+          <div className="hs-parameter-list">{definition.parameters.map((parameter) => <ExperimentParameterControl key={`${parameter.key}:${parameterResetToken}`} parameter={parameter} value={parameters[parameter.key]} onChange={(value) => changeParameter(parameter.key, value)} />)}</div>
+          <div className="hs-control-actions-row">
+            <button className="hs-button hs-primary hs-record-button" type="button" onClick={recordMeasurement} disabled={!scope.canWrite || retainedRecordCount >= 120 || !validInstrumentReading}><Plus size={17} />记录这组读数<span>{retainedRecordCount} / 120</span></button>
+            <button className="hs-reset-parameters" type="button" onClick={resetExperiment}><RotateCcw size={13} />恢复默认条件</button>
+          </div>
+          <p className="hs-control-note">{initial.durationSeconds > 0 ? "调整条件后重新计时，已有记录保留，便于比较。" : "调整条件后立即更新静态读数，已有记录保留。"}</p>
+          {simulation.warnings.length > 0 && <div className="hs-model-warning" role="note">{simulation.warnings.map((warning) => <p key={warning}>{warning}</p>)}</div>}
+        </aside>
+
+        <section className="hs-observation-console hs-carbon-card" id="hs-readings" aria-labelledby="hs-readings-title">
+          <header className="hs-observation-heading"><div><span className="hs-console-label">实时读数 · Telemetry</span><h2 id="hs-readings-title">当前模型遥测</h2></div><span className="hs-reading-provenance">实时计算</span></header>
+          <ExperimentReadings simulation={simulation} />
+          {id === "momentum-conservation" && <CollisionLearningPanel parameters={parameters} simulation={simulation} onChange={changeParameters} />}
+          {id === "refractive-index" && <RefractionLearningPanel parameters={parameters} simulation={simulation} onChange={changeParameters} />}
+          {id === "multimeter" && <MultimeterControlPanel parameters={parameters} simulation={simulation} onChange={changeParameters} />}
+          {id === "transformer-ratio" && <p className="hs-control-note">当前每秒展示 {playbackSpeed} 个交流周期；物理频率为 {parameters.frequency} Hz，单步为 1/60 周期。时间、曲线和保存读数均使用实际物理秒，三周期后停止。</p>}
+          {id === "spring-force" && <SpringLoadControl massGrams={parameters.loadMassGrams} onChange={(value) => changeParameter("loadMassGrams", value)} />}
+          {id === "force-composition" && <ForceCompositionControl parameters={parameters} simulation={simulation} onChange={changeParameters} onRecord={recordMeasurement} recordDisabled={!scope.canWrite || retainedRecordCount >= 120} />}
+          {id === "capacitor-charge" && capacitorHistory && simulation.capacitor && <><CapacitorSwitchControl parameters={parameters} simulation={simulation} mode={simulation.capacitor.mode} onModeChange={changeCapacitorMode} switchDisabled={clock.time >= initial.durationSeconds} /><p className="hs-control-note">切换开关保留电压与电荷；暂停只停止计时。重新计时或调整 R、C、E 会从 0 V 接电源开始新一轮，已保存记录保留。本轮观察窗为 20RC，到时不会强制充满或放空。最多保留 32 段切换，达到上限后先保存读数再重新开始。</p><CapacitorHistoryDetails history={capacitorHistory} timeSeconds={clock.time} /></>}
+          {id === "precision-length" && <PrecisionReadingPractice key={`${parameters.instrument}:${parameters.objectLengthMm}:${parameters.zeroErrorMm}`} instrument={parameters.instrument} contactMode={parameters.contactMode} indicatedLengthMm={simulation.state.indicatedLengthMm} zeroReadingMm={simulation.state.zeroReadingMm} />}
+        </section>
+
+        <section className="hs-records-panel hs-carbon-card" id="hs-evidence" aria-labelledby="hs-records-title">
+          <header className="hs-records-heading">
+            <div><span className="hs-kicker">实验数据表 · Evidence</span><h2 id="hs-records-title">实验证据</h2></div>
+            <div className="hs-record-actions">
+              <button className="hs-button hs-primary hs-dock-record-btn" type="button" onClick={recordMeasurement} disabled={!scope.canWrite || retainedRecordCount >= 120 || !validInstrumentReading}><Plus size={15} />记录当前数据</button>
+              <button className="hs-icon-button" type="button" onClick={() => setConfirmClear(true)} disabled={!scope.canWrite || !records.length} aria-label="清空本实验记录"><Trash2 size={16} /></button>
+            </div>
+          </header>
+          {notice && <p className="hs-record-notice" role="status"><Check size={15} />{notice}</p>}
+          {storageError && <div className="hs-storage-error" role="alert"><p>浏览器本机记录读取或保存异常。当前页面的读数仍在，请先导出 CSV，避免刷新后丢失。</p><button className="hs-button" type="button" onClick={retrySavingMeasurements} disabled={!scope.canWrite}>重试本机保存</button></div>}
+          {confirmClear && scope.canWrite && <div className="hs-clear-confirm"><span>清空当前实验的 {records.length} 条本机记录？</span><button type="button" onClick={clearMeasurements}>确认清空</button><button type="button" onClick={() => setConfirmClear(false)}>保留记录</button></div>}
+          {records.length ? <div className="hs-table-scroll" tabIndex={0} aria-label="可横向滚动的实验记录表"><table><thead><tr><th scope="col">序号</th><th scope="col">时间 / s</th>{recordMetrics.map((metric) => <th key={measurementColumnKey(metric)} scope="col">{metric.label}{metric.unit && <small>{metric.unit}</small>}</th>)}<th scope="col">实验条件</th></tr></thead><tbody>{records.map((record, index) => <tr key={record.id}><th scope="row">{String(index + 1).padStart(2, "0")}</th><td>{formatMeasurement(record.timeSeconds)}</td>{recordMetrics.map((metric) => <td key={measurementColumnKey(metric)}>{formatMetric({ key: metric.key, value: savedMetric(record, metric)?.value ?? NaN }, metricState(record.metrics))}</td>)}<td><details><summary>查看条件</summary><dl>{definition.parameters.map((parameter) => <div key={parameter.key}><dt>{parameter.label}</dt><dd>{formatParameterValue(parameter, record.parameters[parameter.key])} {parameter.unit}</dd></div>)}</dl>{record.capacitorHistory && <CapacitorHistoryDetails history={record.capacitorHistory} timeSeconds={record.timeSeconds} />}</details></td></tr>)}</tbody></table></div> : <div className="hs-records-empty"><BookOpen size={24} /><div><h3>尚无实验记录</h3><p>调节条件或播放实验后，点击上方“记录当前数据”即可生成对照表。</p></div><button type="button" disabled={!scope.canWrite || retainedRecordCount >= 120 || !validInstrumentReading} onClick={recordMeasurement}>记录第一组<ArrowRight size={15} /></button></div>}
+        </section>
+      </div>
+
+      {/* Secondary Scientific Reference Row: Physical Model & Life Connection */}
+      <div className="hs-carbon-secondary-grid">
+        <section className="hs-model-panel hs-carbon-card" aria-labelledby="hs-model-title"><header className="hs-panel-heading"><span>模型与边界</span><h2 id="hs-model-title">物理方程与前提</h2></header><div className="hs-equations">{simulation.equations.map((equation) => <code key={equation}>{equation}</code>)}</div><details open><summary>使用这些关系式的前提<ChevronDown size={15} /></summary><ul>{definition.assumptions.map((assumption) => <li key={assumption}>{assumption}</li>)}</ul></details></section>
+        <div className="hs-carbon-context-stack">
+          <LifeConnectionCard experimentId={id} />
+          {catalog && <section className="hs-inquiry-prompts hs-carbon-card"><div><span className="hs-kicker">下一步探究</span><h2>试着用证据回答。</h2></div><ul>{catalog.evidence.map((evidence) => <li key={evidence}>{evidence}</li>)}</ul><p>可以向力力描述你的预测和观察，或开启「同桌讨论」和「草图白板」设计下一次对照实验。</p></section>}
+        </div>
+      </div>
+
       {recovery && <MeasurementRecoveryPanel records={recovery.records} definition={definition} reviewToken={recovery.reviewToken} writable={scope.canWrite} onExport={exportRecoveryCsv} onRecover={recoverMeasurements} />}
       {(id === "pendulum" || id === "double-slit") && <ManualMeasurementPanel experimentId={id} parameters={parameters} timeSeconds={clock.time} simulation={simulation} clockRunning={clock.running} resetToken={clockResetToken} onClockToggle={toggleClock} onClockStep={clock.step} onRecordsChange={setManualRecords} scopeKey={scope.key} recordWritable={scope.canWrite} canWrite={canWrite} canRead={canRead} />}
       {id === "mechanical-energy" && <MechanicalEnergyMeasurementPanel parameters={parameters} timeSeconds={clock.time} simulation={simulation} clockRunning={clock.running} resetToken={clockResetToken} onClockToggle={toggleClock} onClockStep={clock.step} onRecordsChange={setManualRecords} scopeKey={scope.key} recordWritable={scope.canWrite} canWrite={canWrite} canRead={canRead} />}
       <MeasurementAnalysisPanel experimentId={id} records={records} />
       <LegacyHighSchoolRecords definition={definition} />
-      {catalog && <section className="hs-inquiry-prompts"><div><span className="hs-kicker">下一步探究</span><h2>试着用证据回答。</h2></div><ul>{catalog.evidence.map((evidence) => <li key={evidence}>{evidence}</li>)}</ul><p>可以向力力描述你的预测和观察，请它帮你设计下一次对照实验。</p></section>}
     </main><footer className="hs-footer"><Link to="/high-school"><ArrowLeft size={14} />返回高中实验目录</Link><p>真实的理解，来自可以反复检验的解释。</p></footer>
   </div>;
 }

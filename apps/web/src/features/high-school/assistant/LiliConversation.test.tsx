@@ -99,6 +99,27 @@ beforeEach(() => {
 afterEach(() => { state.frame = null; cleanups.splice(0).forEach(cleanup => cleanup()); vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 describe("Lili action coaching and experiment visits", () => {
+  it("starts a fresh server conversation when the student clears the visible dialogue", async () => {
+    let sequence = 0;
+    vi.stubGlobal("crypto", { randomUUID: () => `10000000-0000-4000-8000-${String(++sequence).padStart(12, "0")}` });
+    state.request.mockImplementation(({ localReply }) => Promise.resolve(localReply));
+    const app = mountConversation();
+    app.ask("怎样控制变量？"); await settle(); app.render();
+    const firstId = state.request.mock.calls[0][0].request.conversationId;
+    click(find(app.tree, "button", "清空当前对话")); app.render();
+    expect(replies(app)).toHaveLength(0);
+    app.ask("怎样控制变量？"); await settle(); app.render();
+    expect(state.request).toHaveBeenCalledTimes(2);
+    expect(state.request.mock.calls[1][0].request.conversationId).not.toBe(firstId);
+    expect(state.request.mock.calls[1][0].request.recentDialogue).toEqual([]);
+  });
+  it("shows readable experiment parameter labels in the toolkit", () => {
+    const app = mountConversation();
+    click(nodes(app.tree).find(node => node.props.role === "tab" && text(node).includes("速查工具"))!); app.render();
+    const toolkit = nodes(app.tree).find(node => node.props.id === "lili-toolkit-view")!;
+    expect(text(toolkit)).toContain("悬挂总质量（含托盘）");
+    expect(text(toolkit)).not.toContain("loadMassGrams");
+  });
   it("opens the live review and carries its condition check into the same conversation", () => {
     state.scope = { key: "guest", mode: "guest", label: "本机访客", canWrite: true, authChannel: null, revision: 1 };
     state.context = { experimentId: "pendulum", parameters: { ...defaultHighSchoolParameters("pendulum"), amplitudeDegrees: 20 }, timeSeconds: 0, recordCount: 0 };
